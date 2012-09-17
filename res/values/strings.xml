@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="languages">"en"</string>
+	<string name="continue_">"Continue"</string>
+	<string name="help">"Help"</string>
+	<string name="give_up">"Quit"</string>
+	<string name="mode_1">"Score race"</string>
+	<string name="mode_2">"Time attack"</string>
+	<string name="mode_3">"100 seconds"</string>
+	<string name="score">"Highscores:"</string>
+	<string name="play">"Start"</string>
+	<string name="restart">"Restart"</string>
+	<string name="diff_1">"Easy"</string>
+	<string name="diff_2">"Medium"</string>
+	<string name="diff_3">"Hard"</string>
+	<string name="lvl">"lvl"</string>
+	<string name="lvlcap">"Lvl"</string>
+	<string name="enter_name">"Enter your name"</string>
+	<string name="save_name">"Save"</string>
+	<string name="congrats">"New high score!"</string>
+	<string name="reuse_name">"Or pick one:"</string>
+	<string name="success">"Success"</string>
+	<string name="how_to_play">"How to play?"</string>
+	<string name="bonus_x2">"Bonus x2"</string>
+	<string name="objective">"Goal"</string>
+	<string name="level">"Level"</string>
+	<string name="leave_left">"leaves left"</string>
+	<string name="quit">"Exit"</string>
+	<string name="please_rate_it">"If you enjoy using Heriswap, please take a moment to rate it. Thanks for your support!"</string>
+	<string name="rate_now">"Right now"</string>
+	<string name="rate_later">"Later"</string>
+	<string name="rate_never">"No thanks"</string>
+	<string name="get_swarm">"Get Swarm (blue icon) and compare your score with others players !"</string>
+	<string name="change_difficulty">"You seem really good.nWould you like to start a new game with increased difficulty ?"</string>
+	<string name="change_difficulty_yes">"Increase difficulty"</string>
+	<string name="change_difficulty_no">"No,keep it easy"</string>
+	<string name="average_score">"Recent scores avg:"</string>
+</resources>

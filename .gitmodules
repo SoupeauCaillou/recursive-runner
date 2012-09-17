@@ -1,0 +1,3 @@
+[submodule "sac"]
+	path = sac
+	url = gitolite@git.damsy.net:sac
