@@ -234,6 +234,7 @@ static void updateAndRenderLoop() {
 			} else {
 				backIsDown = false;
 			}
+         #if 0
 			if (glfwGetKey( GLFW_KEY_LSHIFT)) {
 				uint8_t* state = 0;
 				int size = game->saveState(&state);
@@ -246,6 +247,7 @@ static void updateAndRenderLoop() {
 				running = false;
 				break;
 			}
+         #endif
 			timer -= DT;
 			frames++;
 			if (time > nextfps) {
@@ -285,11 +287,7 @@ static void updateAndRender() {
 extern bool __log_enabled;
 int main(int argc, char** argv) {
 	Vector2 reso16_9(394, 700);
-#ifdef EMSCRIPTEN
-	Vector2 reso16_10(800 * 1.5, 461 * 1.5);
-#else
-	Vector2 reso16_10(800 * 1.5, 461 * 1.5);
-#endif
+	Vector2 reso16_10(800, 400);
 	Vector2* reso = &reso16_10;
 
 #ifdef EMSCRIPTEN
