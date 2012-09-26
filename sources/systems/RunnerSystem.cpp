@@ -48,6 +48,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 PhysicsComponent* pc = PHYSICS(a);
                 pc->linearVelocity = Vector2::Zero;
                 pc->gravity.Y = 0;
+                rc->coins.clear();
             }
         }
         

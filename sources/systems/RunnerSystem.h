@@ -29,6 +29,7 @@ struct RunnerComponent {
     float startTime, elapsed;
     int currentJump;
     std::vector<float> jumpTimes; 
+    std::vector<Entity> coins;
 };
 
 #define theRunnerSystem RunnerSystem::GetInstance()

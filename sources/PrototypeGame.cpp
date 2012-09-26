@@ -58,6 +58,8 @@
 
 Entity background, startButton, scoreText;
 std::vector<Entity> player;
+int playerCount;
+std::vector<Entity> coins, gains, explosions;
 bool playing;
 int score;
 float cameraMaxAccel = 0.5;
@@ -81,10 +83,47 @@ static void resetGame() {
     RENDERING(startButton)->hide = false;
     BUTTON(startButton)->enabled = true;
     playing = false;
+    
+    for (int i=0; i<20; i++) {
+        Entity e = theEntityManager.CreateEntity();
+        ADD_COMPONENT(e, Transformation);
+        TRANSFORM(e)->size = Vector2(0.3, 0.3);
+        TRANSFORM(e)->position = Vector2(
+            MathUtil::RandomFloatInRange(
+                -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
+                LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
+            MathUtil::RandomFloatInRange(
+                -0.4 * PlacementHelper::ScreenHeight,
+                -0.2 * PlacementHelper::ScreenHeight));
+        TRANSFORM(e)->rotation = MathUtil::RandomFloat() * 6.28;
+        TRANSFORM(e)->z = 0.5;
+        ADD_COMPONENT(e, Rendering);
+        RENDERING(e)->color = Color(1, 1, 0);
+        RENDERING(e)->hide = false;
+        coins.push_back(e);
+    }
+}
+
+static void spawnGainEntity(int gain, const Vector2& pos) {
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = pos;
+    TRANSFORM(e)->z = 0.7;
+    ADD_COMPONENT(e, TextRendering);
+    std::stringstream a;
+    a << gain;
+    TEXT_RENDERING(e)->text = a.str();
+    TEXT_RENDERING(e)->charHeight = 0.5;
+    TEXT_RENDERING(e)->color = Color(1, 1, 0);
+    TEXT_RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    PHYSICS(e)->gravity = Vector2(0, 6);
+    gains.push_back(e);
 }
 
 static void addPlayer() {
-    int direction = (player.size() % 2) ? -1 : 1;
+    int direction = (playerCount % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
@@ -99,7 +138,7 @@ static void addPlayer() {
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->speed = direction * playerSpeed * (1 + 0.1 * player.size());
+    RUNNER(e)->speed = direction * playerSpeed * (1 + 0.1 * playerCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     ADD_COMPONENT(e, CameraTarget);
     CAM_TARGET(e)->enabled = true;
@@ -110,7 +149,9 @@ static void addPlayer() {
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
 
+    playerCount++;
     player.push_back(e);
+    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << std::endl;
 }
 
 static void startGame() {
@@ -118,7 +159,7 @@ static void startGame() {
         theEntityManager.DeleteEntity(player[i]);
     }
     player.clear();
-
+    playerCount = 0;
     addPlayer();
     score = 0;
     playing = true;
@@ -144,7 +185,7 @@ void PrototypeGame::init(const uint8_t* in, int size) {
 
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
-    TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, 0.5 * PlacementHelper::ScreenHeight);
+    TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, 0.7 * PlacementHelper::ScreenHeight);
     TRANSFORM(background)->position.Y = -(PlacementHelper::ScreenHeight - TRANSFORM(background)->size.Y)*0.5;
     TRANSFORM(background)->z = 0.1;
     ADD_COMPONENT(background, Rendering);
@@ -167,7 +208,7 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     
     scoreText = theEntityManager.CreateEntity();
     ADD_COMPONENT(scoreText, Transformation);
-    TRANSFORM(scoreText)->position = Vector2(0, 0.5 * PlacementHelper::ScreenHeight);
+    TRANSFORM(scoreText)->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
     TRANSFORM(scoreText)->z = 0.9;
     ADD_COMPONENT(scoreText, TextRendering);
     TEXT_RENDERING(scoreText)->text = "";
@@ -258,7 +299,7 @@ void PrototypeGame::tick(float dt) {
             TEXT_RENDERING(scoreText)->text = a.str();
 
             if (RUNNER(current)->finished) {
-                if (player.size() == 10) {
+                if (playerCount == 10) {
                     CAM_TARGET(current)->enabled = false;
                     theRenderingSystem.cameraPosition = Vector2::Zero;
                     // end of game
@@ -280,7 +321,43 @@ void PrototypeGame::tick(float dt) {
                     RUNNER(current)->jumpTimes.push_back(RUNNER(current)->elapsed);
                 }
             }
-            CAM_TARGET(current)->offset.Y = 0 - TRANSFORM(current)->position.Y;
+            
+            TransformationComponent* tc = TRANSFORM(current);
+            CAM_TARGET(current)->offset.Y = 0 - tc->position.Y;
+            
+            // check for collisions
+            for (int i=0; i<player.size()-1; i++) {
+                if (current == player[i])
+                    continue;
+                if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(player[i]))) {
+                    std::cout << current << " killed " << player[i] << ", " << tc->position << std::endl;                    
+                    // create explosions
+                    int c = MathUtil::RandomIntInRange(4, 7);
+                    for (int j=0; j<c; j++) {
+                        Entity e = theEntityManager.CreateEntity();
+                        ADD_COMPONENT(e, Transformation);
+                        Vector2 size = Vector2(0.4, 1.0/c);
+                        TRANSFORM(e)->size = size;
+                        TRANSFORM(e)->position = 
+                            TRANSFORM(player[i])->position + Vector2(0, 0.5 - (j+0.5) * size.Y);
+                        TRANSFORM(e)->z = TRANSFORM(player[i])->z;
+                        ADD_COMPONENT(e, Rendering);
+                        RENDERING(e)->color = RENDERING(player[i])->color;
+                        RENDERING(e)->hide = false;
+                        ADD_COMPONENT(e, Physics);
+                        PHYSICS(e)->mass = 1;
+                        PHYSICS(e)->gravity.Y = -10;
+                        PHYSICS(e)->forces.push_back(std::make_pair(
+                            Force(Vector2::Rotate(Vector2(1000, 0), MathUtil::RandomFloat(3.14)),
+                                  Vector2::Rotate(size, MathUtil::RandomFloat(6.28))), 0.016));
+                        explosions.push_back(e);
+                    }
+                    // remove player
+                    theEntityManager.DeleteEntity(player[i]);
+                    player.erase(player.begin() + i);
+                    i--;
+                }
+            }
         }
     } else {
         if (BUTTON(startButton)->clicked) {
@@ -289,15 +366,51 @@ void PrototypeGame::tick(float dt) {
         }
     }
     
-    for (int i=0; i<player.size(); i++) {
-        Entity e = player[i];
-        PhysicsComponent* pc = PHYSICS(e);
-        if (pc->gravity.Y < 0) {
+    if (playing) {
+        for (int i=0; i<player.size(); i++) {
+            Entity e = player[i];
             TransformationComponent* tc = TRANSFORM(e);
-            if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
-                pc->gravity.Y = 0;
-                pc->linearVelocity = Vector2::Zero;
-                tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
+            RunnerComponent* rc = RUNNER(e);
+            PhysicsComponent* pc = PHYSICS(e);
+            
+            // check jumps
+            if (pc->gravity.Y < 0) {
+                if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
+                    pc->gravity.Y = 0;
+                    pc->linearVelocity = Vector2::Zero;
+                    tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
+                }
+            }
+            // check coins
+            for (std::vector<Entity>::iterator it=coins.begin(); it!=coins.end(); ++it) {
+                Entity coin = *it;
+                if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
+                    if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
+                        std::cout << "yay pick up coin" << std::endl;
+                        rc->coins.push_back(coin);
+                        int gain = 10 * (player.size() - i);
+                        score += gain;
+                        spawnGainEntity(gain, TRANSFORM(coin)->position);
+                    }
+                }
+            }
+        }
+        
+        for (int i=0; i<gains.size(); i++) {
+            Entity e = gains[i];
+            float& a = TEXT_RENDERING(e)->color.a;
+            a -= 1 * dt;
+            if (a <= 0) {
+                theTextRenderingSystem.DeleteEntity(e);
+                gains.erase(gains.begin() + i);
+                i--;
+            }
+        }
+        for (int i=0; i<explosions.size(); i++) {
+            if (TRANSFORM(explosions[i])->position.Y < PlacementHelper::ScreenHeight * -0.5) {
+                theEntityManager.DeleteEntity(explosions[i]);
+                explosions.erase(explosions.begin() + i);
+                i--;
             }
         }
     }
