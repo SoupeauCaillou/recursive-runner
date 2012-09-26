@@ -42,6 +42,7 @@
 #include "systems/ParticuleSystem.h"
 #include "systems/ScrollingSystem.h"
 #include "systems/MorphingSystem.h"
+#include "systems/RunnerSystem.h"
 
 #include <cmath>
 #include <vector>
@@ -50,42 +51,13 @@
 #include <GL/glfw.h>
 #endif
 
-Entity background;
-std::vector<Entity> decors, murs, sols;
-int activeIndex = -1;
-std::vector<Entity> monstrons;
+#ifndef EMSCRIPTEN
+// #define IN_GAME_EDITOR 0
+#endif
 
-Entity zolon;
-
-#define SOL 0.0
-#define MUR 1.0
-
-float decorsDef[] = {
--2.025, -0.875, 0.617455, 1.09657, 0.466667, MUR,
--2, -1.7, 0.482553, 1.32046, -0.433333, MUR,
--2.6, -3.175, 1, 2.39753, 0, MUR,
-
-0.75, -4.5, 7.37226, 1, 0.0333333, SOL, 
-
-4.4, -2.9, 0.698124, 3.53807, -0.2, MUR,
-4.5, -0.0500002, 0.84981, 3.43235, 0.2, MUR,
-
-5.1, 1.275, 2.60176, 0.764209, 0, SOL,
-7.35, 0.0749998, 3.60588, 0.831206, -0.8, SOL, 
-9.25, -1.375, 3.66604, 1, 0,SOL,
--8.175, -0.375, 6.47703, 1, -0.166667, SOL,
--4.3, -0.8, 4.68243, 1, 0,SOL,
--9.5, 0.275, 3.66975, 1, 0,SOL,
-
--7.95, 0.0749998, 0.815077, 2.87012, 0, MUR,
--10.275, 1.65, 0.815077, 2.87012, 0, MUR
-};
-
-float monstresDef[] = {
--0.65, -1.075, 0.76271, 0.76271, 
--4.6, 0.375, 0.76271, 0.76271, 
-2.8, 0.475, 0.76271, 0.76271,
-};
+Entity background, startButton;
+std::vector<Entity> player;
+bool playing;
 
 static void updateFps(float dt);
 
@@ -93,73 +65,71 @@ PrototypeGame::PrototypeGame(AssetAPI* ast, NameInputAPI* inputUI, LocalizeAPI* 
 	asset = ast;
 	exitAPI = exAPI;
 }
+
+static void reset() {
+    TEXT_RENDERING(startButton)->hide = false;
+    CONTAINER(startButton)->enable = true;
+    RENDERING(startButton)->hide = false;
+    BUTTON(startButton)->enabled = true;
+    playing = false;
+}
+
+static void init() {
+    for (int i=0; i<player.size(); i++) {
+        theEntityManager.DeleteEntity(player[i]);
+    }
+    player.clear();
+
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = Vector2(-9, 2);
+    TRANSFORM(e)->size = Vector2(0.572173, 0.815538);
+    TRANSFORM(e)->rotation = 0;
+    TRANSFORM(e)->z = 0.8;
+    ADD_COMPONENT(e, Rendering);
+    RENDERING(e)->color = Color(0,0,1);
+    RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Runner);
+    player.push_back(e);
+}
+
 void PrototypeGame::init(const uint8_t* in, int size) {    
 	theRenderingSystem.loadAtlas("alphabet", true);   
-    theRenderingSystem.loadAtlas("decor", true);   
 
 	// init font
 	loadFont(asset, "typo");
 	
 	PlacementHelper::GimpWidth = 800;
-    PlacementHelper::GimpHeight = 400;
+    PlacementHelper::GimpHeight = 600;
 
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
     TRANSFORM(background)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
     TRANSFORM(background)->z = 0.1;
     ADD_COMPONENT(background, Rendering);
-    RENDERING(background)->texture = theRenderingSystem.loadTextureFile("background");
+    RENDERING(background)->color = Color(0.3, 0.3, 0.3);
     RENDERING(background)->hide = false;
-    
-    for (int i=0; i<14; i++) {
-        Entity e = theEntityManager.CreateEntity();
-        ADD_COMPONENT(e, Transformation);
-        TRANSFORM(e)->position = Vector2(decorsDef[6*i], decorsDef[6*i+1]);
-        TRANSFORM(e)->size = Vector2(decorsDef[6*i+2], decorsDef[6*i+3]);
-        TRANSFORM(e)->rotation = decorsDef[6*i+4];
-        TRANSFORM(e)->z = 0.5;
-        ADD_COMPONENT(e, Rendering);
-        RENDERING(e)->color = Color::random();
-        RENDERING(e)->color.a = 0.5;
-        RENDERING(e)->hide = false;
-        
-        if (decorsDef[6*i+5] == MUR)
-            murs.push_back(e);
-        else
-            sols.push_back(e);
-        
-        decors.push_back(e);
-    }
-    zolon = theEntityManager.CreateEntity();
-    ADD_COMPONENT(zolon, Transformation);
-    TRANSFORM(zolon)->position = Vector2(-9, 2);
-    TRANSFORM(zolon)->size = Vector2(0.572173, 0.815538);
-    TRANSFORM(zolon)->rotation = 0;
-    TRANSFORM(zolon)->z = 0.8;
-    ADD_COMPONENT(zolon, Rendering);
-    RENDERING(zolon)->texture = theRenderingSystem.loadTextureFile("zolon");
-    RENDERING(zolon)->hide = false;
-    ADD_COMPONENT(zolon, Physics);
-    PHYSICS(zolon)->mass = 1;
-    PHYSICS(zolon)->gravity = Vector2(0, -10);
-    
 
-    for (int i=0; i<3;i ++) {
-        Entity e = theEntityManager.CreateEntity();
-        ADD_COMPONENT(e, Transformation);
-        TRANSFORM(e)->position = Vector2(monstresDef[4*i], monstresDef[4*i+1]);
-        TRANSFORM(e)->size = Vector2(monstresDef[4*i+2], monstresDef[4*i+3]);
-        TRANSFORM(e)->z = 0.6;
-        ADD_COMPONENT(e, Rendering);
-        RENDERING(e)->texture = theRenderingSystem.loadTextureFile("monstron");
-        RENDERING(e)->hide = false;
-        monstrons.push_back(e);
-    }
+    startButton = theEntityManager.CreateEntity();
+    ADD_COMPONENT(startButton, Transformation);
+    TRANSFORM(startButton)->position = Vector2::Zero;
+    TRANSFORM(startButton)->z = 0.9;
+    ADD_COMPONENT(startButton, TextRendering);
+    TEXT_RENDERING(startButton)->text = "Jouer";
+    TEXT_RENDERING(startButton)->charHeight = 1;
+    ADD_COMPONENT(startButton, Container);
+    CONTAINER(startButton)->entities.push_back(startButton);
+    CONTAINER(startButton)->includeChildren = true;
+    ADD_COMPONENT(startButton, Rendering);
+    RENDERING(startButton)->color = Color(0.2, 0.2, 0.2, 0.5);
+    ADD_COMPONENT(startButton, Button);
+    
+    reset();
 }
 
 
 void PrototypeGame::backPressed() {
-#ifndef EMSCRIPTEN
+#if IN_GAME_EDITOR
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->size = Vector2(1, 1);
@@ -175,7 +145,7 @@ void PrototypeGame::backPressed() {
 }
 
 void PrototypeGame::togglePause(bool activate) {
-#ifndef EMSCRIPTEN
+#if IN_GAME_EDITOR
     if (activeIndex >= 0) {
         Entity e = decors[activeIndex];
         std::cout << "{ " << TRANSFORM(e)->position << ", " 
@@ -185,25 +155,10 @@ void PrototypeGame::togglePause(bool activate) {
 #endif
 }
 
-void entityToLinePoints(Entity e, Vector2& a, Vector2& b, bool top) {
-    const Vector2& size = TRANSFORM(e)->size;
-    const Vector2& pos = TRANSFORM(e)->worldPosition;
-    const float rot =  TRANSFORM(e)->rotation;
-    if (top) {
-        a = pos + Vector2::Rotate(Vector2(-size.X * 0.5, size.Y * 0.5), rot);
-        b = pos + Vector2::Rotate(Vector2(size.X * 0.5, size.Y * 0.5), rot);
-    } else {
-        a = pos + Vector2::Rotate(Vector2(-size.X * 0.5, -size.Y * 0.5), rot);
-        b = pos + Vector2::Rotate(Vector2(size.X * 0.5, -size.Y * 0.5), rot);
-    }
-}
-
-float zolonSpeed = 1;
-
 void PrototypeGame::tick(float dt) {
 	theTouchInputManager.Update(dt);
  
-#ifndef EMSCRIPTEN
+#if IN_GAME_EDITOR
     if (activeIndex >= 0) {
         Entity e = decors[activeIndex];
         if (theTouchInputManager.isTouched()) {
@@ -244,47 +199,6 @@ void PrototypeGame::tick(float dt) {
         }
     }
 #endif
-
-    if (TRANSFORM(zolon)->parent) {
-        // check we are still on platform
-        Entity plat = TRANSFORM(zolon)->parent;
-        if (IntersectionUtil::rectangleRectangle(
-                TRANSFORM(zolon)->worldPosition, TRANSFORM(zolon)->size, TRANSFORM(zolon)->rotation,
-                TRANSFORM(plat)->position, TRANSFORM(plat)->size, TRANSFORM(plat)->rotation)) {
-            // move along platform
-            TRANSFORM(zolon)->position.X += zolonSpeed * dt;
-        } else {
-         std::cout << "plus intersect " << TRANSFORM(zolon)->parent << std::endl;
-            TRANSFORM(zolon)->parent = 0;
-            TRANSFORM(zolon)->position = TRANSFORM(zolon)->worldPosition;
-        }
-        
-        // if we hit a wall -> turn back
-        for (int i=0; i<murs.size(); i++) {
-            if (IntersectionUtil::rectangleRectangle(
-                    TRANSFORM(zolon)->worldPosition, TRANSFORM(zolon)->size, TRANSFORM(zolon)->rotation,
-                    TRANSFORM(murs[i])->position, TRANSFORM(murs[i])->size, TRANSFORM(murs[i])->rotation)) {
-                zolonSpeed = -zolonSpeed;
-                TRANSFORM(zolon)->position.X += 2*zolonSpeed * dt;
-                std::cout << zolonSpeed << std::endl;
-            }
-        }
-    } else {
-        for (int i=0; i<sols.size(); i++) {
-            if (IntersectionUtil::rectangleRectangle(
-                TRANSFORM(zolon)->worldPosition, TRANSFORM(zolon)->size, TRANSFORM(zolon)->rotation,
-                TRANSFORM(sols[i])->position, TRANSFORM(sols[i])->size, TRANSFORM(sols[i])->rotation)) {
-                 std::cout << "youpi " << sols[i] << std::endl;
-                TRANSFORM(zolon)->parent = sols[i];
-                TRANSFORM(zolon)->rotation = 0;
-                TRANSFORM(zolon)->position = Vector2::Rotate(TRANSFORM(zolon)->worldPosition - TRANSFORM(sols[i])->position, -TRANSFORM(sols[i])->rotation);
-                TRANSFORM(zolon)->position.Y = TRANSFORM(zolon)->size.Y * 0.5 + TRANSFORM(sols[i])->size.Y * 0.4;
-                break;
-            }
-        }
-    }
-    
-
 
     // systems update
 	theADSRSystem.Update(dt);
