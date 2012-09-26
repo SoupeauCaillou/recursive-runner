@@ -22,8 +22,11 @@
 #include "base/Vector2.h"
 
 struct RunnerComponent {
+    RunnerComponent() : finished(false), startTime(0), currentJump(0) {}
     Vector2 startPoint, endPoint;
     float speed;
+    bool finished;
+    float startTime, elapsed;
     int currentJump;
     std::vector<float> jumpTimes; 
 };

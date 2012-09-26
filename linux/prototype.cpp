@@ -287,7 +287,7 @@ static void updateAndRender() {
 extern bool __log_enabled;
 int main(int argc, char** argv) {
 	Vector2 reso16_9(394, 700);
-	Vector2 reso16_10(800, 400);
+	Vector2 reso16_10(800, 500);
 	Vector2* reso = &reso16_10;
 
 #ifdef EMSCRIPTEN

@@ -43,6 +43,7 @@
 #include "systems/ScrollingSystem.h"
 #include "systems/MorphingSystem.h"
 #include "systems/RunnerSystem.h"
+#include "systems/CameraTargetSystem.h"
 
 #include <cmath>
 #include <vector>
@@ -55,9 +56,15 @@
 // #define IN_GAME_EDITOR 0
 #endif
 
-Entity background, startButton;
+Entity background, startButton, scoreText;
 std::vector<Entity> player;
 bool playing;
+int score;
+float cameraMaxAccel = 0.5;
+float cameraSpeed;
+float playerSpeed = 6;
+
+#define LEVEL_SIZE 3
 
 static void updateFps(float dt);
 
@@ -66,45 +73,79 @@ PrototypeGame::PrototypeGame(AssetAPI* ast, NameInputAPI* inputUI, LocalizeAPI* 
 	exitAPI = exAPI;
 }
 
-static void reset() {
+static void resetGame() {
+    theRenderingSystem.cameraPosition = Vector2::Zero;
     TEXT_RENDERING(startButton)->hide = false;
+    TEXT_RENDERING(scoreText)->hide = false;
     CONTAINER(startButton)->enable = true;
     RENDERING(startButton)->hide = false;
     BUTTON(startButton)->enabled = true;
     playing = false;
 }
 
-static void init() {
+static void addPlayer() {
+    int direction = (player.size() % 2) ? -1 : 1;
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = Vector2(-9, 2);
+    TRANSFORM(e)->size = Vector2(0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->rotation = 0;
+    TRANSFORM(e)->z = 0.8;
+    ADD_COMPONENT(e, Rendering);
+    RENDERING(e)->color = Color::random();
+    RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Runner);
+    TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
+        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
+        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
+    RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
+    RUNNER(e)->speed = direction * playerSpeed * (1 + 0.1 * player.size());
+    RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
+    ADD_COMPONENT(e, CameraTarget);
+    CAM_TARGET(e)->enabled = true;
+    CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
+    CAM_TARGET(e)->offset = Vector2(
+        direction * 0.25 * PlacementHelper::ScreenWidth, 
+        0 - TRANSFORM(e)->position.Y);
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+
+    player.push_back(e);
+}
+
+static void startGame() {
     for (int i=0; i<player.size(); i++) {
         theEntityManager.DeleteEntity(player[i]);
     }
     player.clear();
 
-    Entity e = theEntityManager.CreateEntity();
-    ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.572173, 0.815538);
-    TRANSFORM(e)->rotation = 0;
-    TRANSFORM(e)->z = 0.8;
-    ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->color = Color(0,0,1);
-    RENDERING(e)->hide = false;
-    ADD_COMPONENT(e, Runner);
-    player.push_back(e);
+    addPlayer();
+    score = 0;
+    playing = true;
+    
+    TEXT_RENDERING(scoreText)->hide = false;
+    TEXT_RENDERING(startButton)->hide = true;
+    RENDERING(startButton)->hide = true;
+    cameraSpeed = 0;
+    theRenderingSystem.cameraPosition.X = TRANSFORM(player[0])->position.X + PlacementHelper::ScreenWidth * 0.5;
 }
 
-void PrototypeGame::init(const uint8_t* in, int size) {    
+void PrototypeGame::init(const uint8_t* in, int size) {
 	theRenderingSystem.loadAtlas("alphabet", true);   
-
+ 
+    RunnerSystem::CreateInstance();
+    CameraTargetSystem::CreateInstance();
+ 
 	// init font
 	loadFont(asset, "typo");
 	
 	PlacementHelper::GimpWidth = 800;
-    PlacementHelper::GimpHeight = 600;
+    PlacementHelper::GimpHeight = 500;
 
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
-    TRANSFORM(background)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
+    TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, 0.5 * PlacementHelper::ScreenHeight);
+    TRANSFORM(background)->position.Y = -(PlacementHelper::ScreenHeight - TRANSFORM(background)->size.Y)*0.5;
     TRANSFORM(background)->z = 0.1;
     ADD_COMPONENT(background, Rendering);
     RENDERING(background)->color = Color(0.3, 0.3, 0.3);
@@ -124,7 +165,15 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     RENDERING(startButton)->color = Color(0.2, 0.2, 0.2, 0.5);
     ADD_COMPONENT(startButton, Button);
     
-    reset();
+    scoreText = theEntityManager.CreateEntity();
+    ADD_COMPONENT(scoreText, Transformation);
+    TRANSFORM(scoreText)->position = Vector2(0, 0.5 * PlacementHelper::ScreenHeight);
+    TRANSFORM(scoreText)->z = 0.9;
+    ADD_COMPONENT(scoreText, TextRendering);
+    TEXT_RENDERING(scoreText)->text = "";
+    TEXT_RENDERING(scoreText)->charHeight = 1;
+    
+    resetGame();
 }
 
 
@@ -199,6 +248,70 @@ void PrototypeGame::tick(float dt) {
         }
     }
 #endif
+
+    if (playing) {
+        if (!player.empty()) {
+            Entity current = *player.rbegin();
+
+            std::stringstream a;
+            a << "Score: " << score;
+            TEXT_RENDERING(scoreText)->text = a.str();
+
+            if (RUNNER(current)->finished) {
+                if (player.size() == 10) {
+                    CAM_TARGET(current)->enabled = false;
+                    theRenderingSystem.cameraPosition = Vector2::Zero;
+                    // end of game
+                    resetGame();
+                } else {
+                    // re-init all players
+                    for (int i=0; i<player.size(); i++) {
+                        CAM_TARGET(player[i])->enabled = false;
+                    }
+                    // add a new one
+                    addPlayer();
+                    current = *player.rbegin();
+                }
+            }
+            
+            PhysicsComponent* pc = PHYSICS(current);
+            if (pc->gravity.Y >= 0) {
+                if (!theTouchInputManager.wasTouched() && theTouchInputManager.isTouched()) {
+                    RUNNER(current)->jumpTimes.push_back(RUNNER(current)->elapsed);
+                }
+            }
+            CAM_TARGET(current)->offset.Y = 0 - TRANSFORM(current)->position.Y;
+        }
+    } else {
+        if (BUTTON(startButton)->clicked) {
+            std::cout << "Start game!" << std::endl;
+            startGame();
+        }
+    }
+    
+    for (int i=0; i<player.size(); i++) {
+        Entity e = player[i];
+        PhysicsComponent* pc = PHYSICS(e);
+        if (pc->gravity.Y < 0) {
+            TransformationComponent* tc = TRANSFORM(e);
+            if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
+                pc->gravity.Y = 0;
+                pc->linearVelocity = Vector2::Zero;
+                tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
+            }
+        }
+    }
+
+    theRunnerSystem.Update(dt);
+    theCameraTargetSystem.Update(dt);
+    
+    // limit cam pos
+    if (theRenderingSystem.cameraPosition.X < - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
+        theRenderingSystem.cameraPosition.X = - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
+    } else if (theRenderingSystem.cameraPosition.X > PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
+        theRenderingSystem.cameraPosition.X = PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
+    }
+    
 
     // systems update
 	theADSRSystem.Update(dt);

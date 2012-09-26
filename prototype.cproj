@@ -32,6 +32,7 @@
     <Compile Include="sources\DepthLayer.h" />
     <Compile Include="sources\PrototypeGame.h" />
     <Compile Include="sources\systems\RunnerSystem.cpp" />
+    <Compile Include="sources\systems\CameraTargetSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\prototype.cpp" />
@@ -44,5 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="sources\systems\RunnerSystem.h" />
+    <None Include="sources\systems\CameraTargetSystem.h" />
   </ItemGroup>
 </Project>
