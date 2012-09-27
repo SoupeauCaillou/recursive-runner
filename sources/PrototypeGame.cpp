@@ -181,11 +181,15 @@ static void startGame() {
     theRenderingSystem.cameraPosition.X = TRANSFORM(player[0])->position.X + PlacementHelper::ScreenWidth * 0.5;
 }
 
-void PrototypeGame::init(const uint8_t* in, int size) {
-	theRenderingSystem.loadAtlas("alphabet", true);
+void PrototypeGame::sacInit(int windowW, int windowH) {
+    PlacementHelper::GimpWidth = 800;
+    PlacementHelper::GimpHeight = 500;
+
+    Game::sacInit(windowW, windowH);
+    theRenderingSystem.loadAtlas("alphabet", true);
     theRenderingSystem.loadAtlas("dummy", false);
     
-    // register 4 animations
+// register 4 animations
     std::string runL2R[] = { "obj_Run000", "obj_Run001", "obj_Run002", "obj_Run003", "obj_Run004", "obj_Run005", "obj_Run006", "obj_Run007" }; 
     std::string runR2L[] = { "obj_Run100", "obj_Run101", "obj_Run102", "obj_Run103", "obj_Run104", "obj_Run105", "obj_Run106", "obj_Run107" }; 
     std::string jumpL2R[] = { "obj_Run004" };
@@ -199,15 +203,14 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     theAnimationSystem.registerAnim("jumpR2L", jumpR2L, 1, 0);
     theAnimationSystem.registerAnim("flyL2R", flyL2R, 2, 3);
     theAnimationSystem.registerAnim("flyR2L", flyR2L, 2, 3);
+    
+    // init font
+    loadFont(asset, "typo");
+}
 
+void PrototypeGame::init(const uint8_t* in, int size) {
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
- 
-	// init font
-	loadFont(asset, "typo");
-
-	PlacementHelper::GimpWidth = 800;
-    PlacementHelper::GimpHeight = 500;
 
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);

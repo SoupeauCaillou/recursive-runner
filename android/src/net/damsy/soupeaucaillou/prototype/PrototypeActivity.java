@@ -50,7 +50,7 @@ public class PrototypeActivity extends SacActivity {
 		return HeriswapSecret.Swarm_gameID;
 	}
 	
-	@Override
+	@Override  
 	public String getSwarmGameKey() {
 		return HeriswapSecret.Swarm_gameKey;
 	}
