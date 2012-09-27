@@ -20,7 +20,9 @@
 #include "base/MathUtil.h"
 #include "systems/TransformationSystem.h"
 #include "systems/PhysicsSystem.h"
+#include "systems/AnimationSystem.h"
 #include "util/IntersectionUtil.h"
+
 INSTANCE_IMPL(RunnerSystem);
  
 const float MinJumpDuration = 0.016;
@@ -68,10 +70,12 @@ void RunnerSystem::DoUpdate(float dt) {
         
         if (!rc->jumpTimes.empty() && rc->currentJump < rc->jumpTimes.size()) {
             if (rc->elapsed >= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {           
-                std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
+                // std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
                 Vector2 force = Vector2(0, 1000);
                 pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), 0.016));
                 rc->jumpingSince = 0.001;
+                
+                ANIMATION(a)->name = (rc->speed > 0) ? "jumpL2R" : "jumpR2L";
             } else {
                 if (rc->jumpingSince > 0) {
                     rc->jumpingSince += dt;

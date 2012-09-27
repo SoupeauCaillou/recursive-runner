@@ -42,8 +42,10 @@
 #include "systems/ParticuleSystem.h"
 #include "systems/ScrollingSystem.h"
 #include "systems/MorphingSystem.h"
+#include "systems/AnimationSystem.h"
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
+
 
 #include <cmath>
 #include <vector>
@@ -133,11 +135,11 @@ static void addPlayer() {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8;
     ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->color = Color::random();
+    // RENDERING(e)->color = Color::random();
     RENDERING(e)->hide = false;
     ADD_COMPONENT(e, Runner);
     TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
@@ -154,6 +156,8 @@ static void addPlayer() {
         0 - TRANSFORM(e)->position.Y);
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
+    ADD_COMPONENT(e, Animation);
+    ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
 
     playerCount++;
     player.push_back(e);
@@ -178,14 +182,26 @@ static void startGame() {
 }
 
 void PrototypeGame::init(const uint8_t* in, int size) {
-	theRenderingSystem.loadAtlas("alphabet", true);   
- 
+	theRenderingSystem.loadAtlas("alphabet", true);
+    theRenderingSystem.loadAtlas("dummy", false);
+    
+    // register 4 animations
+    std::string runL2R[] = { "obj_Run000", "obj_Run001", "obj_Run002", "obj_Run003", "obj_Run004", "obj_Run005", "obj_Run006", "obj_Run007" }; 
+    std::string runR2L[] = { "obj_Run100", "obj_Run101", "obj_Run102", "obj_Run103", "obj_Run104", "obj_Run105", "obj_Run106", "obj_Run107" }; 
+    std::string jumpL2R[] = { "obj_Run004" };
+    std::string jumpR2L[] = { "obj_Run104" };
+
+    theAnimationSystem.registerAnim("runL2R", runL2R, 8, 16);
+    theAnimationSystem.registerAnim("runR2L", runR2L, 8, 16);
+    theAnimationSystem.registerAnim("jumpL2R", jumpL2R, 1, 0);
+    theAnimationSystem.registerAnim("jumpR2L", jumpR2L, 1, 0);
+
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
  
 	// init font
 	loadFont(asset, "typo");
-	
+
 	PlacementHelper::GimpWidth = 800;
     PlacementHelper::GimpHeight = 500;
 
@@ -398,6 +414,7 @@ void PrototypeGame::tick(float dt) {
                     pc->gravity.Y = 0;
                     pc->linearVelocity = Vector2::Zero;
                     tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
+                    ANIMATION(e)->name = (rc->speed > 0) ? "runL2R" : "runR2L";
                 }
             }
             // check coins
@@ -448,6 +465,7 @@ void PrototypeGame::tick(float dt) {
 
     // systems update
 	theADSRSystem.Update(dt);
+    theAnimationSystem.Update(dt);
 	theButtonSystem.Update(dt);
     theParticuleSystem.Update(dt);
 	theMorphingSystem.Update(dt);
