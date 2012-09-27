@@ -24,6 +24,7 @@
 struct RunnerComponent {
     RunnerComponent() : finished(false), startTime(0), currentJump(0) {}
     Vector2 startPoint, endPoint;
+    float maxSpeed;
     float speed;
     bool finished;
     float startTime, elapsed;

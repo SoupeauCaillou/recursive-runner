@@ -35,7 +35,19 @@ void RunnerSystem::DoUpdate(float dt) {
         rc->elapsed += dt;
 
         if (rc->elapsed >= rc->startTime) {
+            PhysicsComponent* pc = PHYSICS(a);
             TransformationComponent* tc = TRANSFORM(a);
+            
+            if (pc->gravity.Y < 0) {
+                rc->speed -= rc->speed * dt * 0.3;
+            } else if (rc->maxSpeed < 0) {
+                rc->speed = MathUtil::Max(rc->maxSpeed,
+                    rc->speed + rc->speed * dt * 4.f);
+            } else {
+                rc->speed = MathUtil::Min(rc->maxSpeed,
+                    rc->speed + rc->speed * dt * 4.f);
+            }
+            
             tc->position.X += rc->speed * dt;
             
             if ((tc->position.X > rc->endPoint.X && rc->speed > 0) || 
@@ -45,7 +57,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 tc->position = rc->startPoint;
                 rc->elapsed = 0;
                 rc->currentJump = 0;
-                PhysicsComponent* pc = PHYSICS(a);
+                
                 pc->linearVelocity = Vector2::Zero;
                 pc->gravity.Y = 0;
                 rc->coins.clear();

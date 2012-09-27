@@ -33,6 +33,7 @@
     <Compile Include="sources\PrototypeGame.h" />
     <Compile Include="sources\systems\RunnerSystem.cpp" />
     <Compile Include="sources\systems\CameraTargetSystem.cpp" />
+    <Compile Include="android\prototype.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\prototype.cpp" />
@@ -46,5 +47,7 @@
   <ItemGroup>
     <None Include="sources\systems\RunnerSystem.h" />
     <None Include="sources\systems\CameraTargetSystem.h" />
+    <None Include="android\Android.mk" />
+    <None Include="android\Application.mk" />
   </ItemGroup>
 </Project>

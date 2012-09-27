@@ -48,12 +48,13 @@
 #include <cmath>
 #include <vector>
 
-#ifndef EMSCRIPTEN
-#include <GL/glfw.h>
-#endif
+
 
 #ifndef EMSCRIPTEN
 // #define IN_GAME_EDITOR 0
+#endif
+#if IN_GAME_EDITOR
+#include <GL/glfw.h>
 #endif
 
 Entity background, startButton, scoreText;
@@ -84,6 +85,10 @@ static void resetGame() {
     BUTTON(startButton)->enabled = true;
     playing = false;
     
+    for (int i=0; i<coins.size(); i++) {
+        theEntityManager.DeleteEntity(coins[i]);
+    }
+    coins.clear();
     for (int i=0; i<20; i++) {
         Entity e = theEntityManager.CreateEntity();
         ADD_COMPONENT(e, Transformation);
@@ -138,13 +143,13 @@ static void addPlayer() {
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->speed = direction * playerSpeed * (1 + 0.1 * playerCount);
+    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.1 * playerCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     ADD_COMPONENT(e, CameraTarget);
     CAM_TARGET(e)->enabled = true;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
     CAM_TARGET(e)->offset = Vector2(
-        direction * 0.25 * PlacementHelper::ScreenWidth, 
+        direction * 0.4 * PlacementHelper::ScreenWidth, 
         0 - TRANSFORM(e)->position.Y);
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
@@ -375,6 +380,8 @@ void PrototypeGame::tick(float dt) {
             
             // check jumps
             if (pc->gravity.Y < 0) {
+                // if (pc->linearVelocity.Y < 0)
+                //    pc->gravity.Y = -80;
                 if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
                     pc->gravity.Y = 0;
                     pc->linearVelocity = Vector2::Zero;
