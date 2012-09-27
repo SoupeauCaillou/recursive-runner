@@ -329,7 +329,7 @@ void PrototypeGame::tick(float dt) {
                             RUNNER(current)->jumpTimes.push_back(RUNNER(current)->elapsed);
                             RUNNER(current)->jumpDurations.push_back(0.001);
                         }
-                    } else {
+                    } else if (!RUNNER(current)->jumpTimes.empty()) {
                      
                         float& d = *(RUNNER(current)->jumpDurations.rbegin());
                         if (d < MaxJumpDuration) {
