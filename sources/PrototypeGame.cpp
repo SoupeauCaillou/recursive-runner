@@ -59,7 +59,7 @@
 #include <GL/glfw.h>
 #endif
 
-Entity background, startButton, scoreText;
+Entity background, startButton, scoreText, goldCoin;
 std::vector<Entity> player;
 int playerCount;
 std::vector<Entity> coins, gains, explosions;
@@ -92,6 +92,7 @@ static void resetGame() {
         theEntityManager.DeleteEntity(coins[i]);
     }
     coins.clear();
+    float min = LEVEL_SIZE * PlacementHelper::ScreenWidth;
     for (int i=0; i<20; i++) {
         Entity e = theEntityManager.CreateEntity();
         ADD_COMPONENT(e, Transformation);
@@ -109,7 +110,14 @@ static void resetGame() {
         RENDERING(e)->color = Color(1, 1, 0);
         RENDERING(e)->hide = false;
         coins.push_back(e);
+        
+        if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
+            goldCoin = e;
+            min = MathUtil::Abs(TRANSFORM(e)->position.X);
+        }
     }
+    
+    RENDERING(goldCoin)->color = Color(0, 1, 0);
 }
 
 static void spawnGainEntity(int gain, const Vector2& pos) {
@@ -447,7 +455,7 @@ void PrototypeGame::tick(float dt) {
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
                     if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
                         rc->coins.push_back(coin);
-                        int gain = 10 * pow(2, player.size() - i - 1);
+                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2, player.size() - i - 1);
                         score += gain;
                         spawnGainEntity(gain, TRANSFORM(coin)->position);
                     }
