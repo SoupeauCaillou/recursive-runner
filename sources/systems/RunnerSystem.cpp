@@ -81,7 +81,7 @@ void RunnerSystem::DoUpdate(float dt) {
                     rc->jumpingSince += dt;
                     if (rc->jumpingSince > rc->jumpDurations[rc->currentJump] && rc->jumpingSince >= MinJumpDuration) {
                         
-                        pc->gravity.Y = -150;
+                        pc->gravity.Y = -100;
                         rc->jumpingSince = 0;
                         rc->currentJump++;
                     }

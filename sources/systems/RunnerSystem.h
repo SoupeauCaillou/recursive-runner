@@ -22,7 +22,7 @@
 #include "base/Vector2.h"
 
 struct RunnerComponent {
-    RunnerComponent() : finished(false), startTime(0), jumpingSince(0), currentJump(0) {}
+    RunnerComponent() : finished(false), startTime(0), elapsed(0), jumpingSince(0), currentJump(0) {}
     Vector2 startPoint, endPoint;
     float maxSpeed;
     float speed;

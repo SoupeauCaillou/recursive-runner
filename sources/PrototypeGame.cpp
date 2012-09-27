@@ -190,11 +190,15 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     std::string runR2L[] = { "obj_Run100", "obj_Run101", "obj_Run102", "obj_Run103", "obj_Run104", "obj_Run105", "obj_Run106", "obj_Run107" }; 
     std::string jumpL2R[] = { "obj_Run004" };
     std::string jumpR2L[] = { "obj_Run104" };
+    std::string flyL2R[] = { "obj_Flying000", "obj_Flying001" };
+    std::string flyR2L[] = { "obj_Flying100", "obj_Flying101" };
 
     theAnimationSystem.registerAnim("runL2R", runL2R, 8, 16);
     theAnimationSystem.registerAnim("runR2L", runR2L, 8, 16);
     theAnimationSystem.registerAnim("jumpL2R", jumpL2R, 1, 0);
     theAnimationSystem.registerAnim("jumpR2L", jumpR2L, 1, 0);
+    theAnimationSystem.registerAnim("flyL2R", flyL2R, 2, 3);
+    theAnimationSystem.registerAnim("flyR2L", flyR2L, 2, 3);
 
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
@@ -363,7 +367,23 @@ void PrototypeGame::tick(float dt) {
                 if (current == player[i])
                     continue;
                 if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(player[i]))) {
-                    std::cout << current << " killed " << player[i] << ", " << tc->position << std::endl;                    
+                    int dir = (RUNNER(current)->speed > 0) ? 1 : -1;
+                    std::cout << current << " killed " << player[i] << ", " << tc->position << std::endl;
+                    Entity e = theEntityManager.CreateEntity();
+                    ADD_COMPONENT(e, Transformation);
+                    *TRANSFORM(e) = *TRANSFORM(player[i]);
+                    ADD_COMPONENT(e, Rendering);
+                    RENDERING(e)->hide = false;
+                    ADD_COMPONENT(e, Animation);
+                    ANIMATION(e)->name = (dir > 0) ? "flyL2R" : "flyR2L";
+                    ADD_COMPONENT(e, Physics);
+                    PHYSICS(e)->mass = 1;
+                    PHYSICS(e)->gravity.Y = -10;
+                    PHYSICS(e)->forces.push_back(std::make_pair(
+                        Force(Vector2::Rotate(Vector2(MathUtil::RandomIntInRange(500, 700), 0), dir > 0 ? MathUtil::RandomFloatInRange(0.25, 1.5) : MathUtil::RandomFloatInRange(1.5, 3.14-0.25)),
+                                  Vector2::Rotate(TRANSFORM(e)->size * 0.2, MathUtil::RandomFloat(6.28))), 0.016));
+                    explosions.push_back(e);
+                    #if 0
                     // create explosions
                     int c = MathUtil::RandomIntInRange(4, 7);
                     for (int j=0; j<c; j++) {
@@ -385,6 +405,7 @@ void PrototypeGame::tick(float dt) {
                                   Vector2::Rotate(size, MathUtil::RandomFloat(6.28))), 0.016));
                         explosions.push_back(e);
                     }
+                    #endif
                     // remove player
                     theEntityManager.DeleteEntity(player[i]);
                     player.erase(player.begin() + i);
