@@ -23,6 +23,9 @@
 #include "util/IntersectionUtil.h"
 INSTANCE_IMPL(RunnerSystem);
  
+const float MinJumpDuration = 0.016;
+float MaxJumpDuration = 0.15;
+
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") { 
  
 }
@@ -31,13 +34,12 @@ void RunnerSystem::DoUpdate(float dt) {
     for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
         Entity a = (*it).first;         
         RunnerComponent* rc = (*it).second;
-        
+        PhysicsComponent* pc = PHYSICS(a);
         rc->elapsed += dt;
 
         if (rc->elapsed >= rc->startTime) {
-            PhysicsComponent* pc = PHYSICS(a);
             TransformationComponent* tc = TRANSFORM(a);
-            
+            /*
             if (pc->gravity.Y < 0) {
                 rc->speed -= rc->speed * dt * 0.3;
             } else if (rc->maxSpeed < 0) {
@@ -46,7 +48,7 @@ void RunnerSystem::DoUpdate(float dt) {
             } else {
                 rc->speed = MathUtil::Min(rc->maxSpeed,
                     rc->speed + rc->speed * dt * 4.f);
-            }
+            }*/
             
             tc->position.X += rc->speed * dt;
             
@@ -55,7 +57,7 @@ void RunnerSystem::DoUpdate(float dt) {
                  std::cout << "finished" << std::endl;
                 rc->finished = true;
                 tc->position = rc->startPoint;
-                rc->elapsed = 0;
+                rc->elapsed = rc->jumpingSince = 0;
                 rc->currentJump = 0;
                 
                 pc->linearVelocity = Vector2::Zero;
@@ -65,13 +67,21 @@ void RunnerSystem::DoUpdate(float dt) {
         }
         
         if (!rc->jumpTimes.empty() && rc->currentJump < rc->jumpTimes.size()) {
-            if (rc->elapsed >= rc->jumpTimes[rc->currentJump]) {
-             std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
-                PhysicsComponent* pc = PHYSICS(a);
-                Vector2 force = Vector2(0, 800);
+            if (rc->elapsed >= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {           
+                std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
+                Vector2 force = Vector2(0, 1000);
                 pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), 0.016));
-                pc->gravity.Y = -30;
-                rc->currentJump++;
+                rc->jumpingSince = 0.001;
+            } else {
+                if (rc->jumpingSince > 0) {
+                    rc->jumpingSince += dt;
+                    if (rc->jumpingSince > rc->jumpDurations[rc->currentJump] && rc->jumpingSince >= MinJumpDuration) {
+                        
+                        pc->gravity.Y = -150;
+                        rc->jumpingSince = 0;
+                        rc->currentJump++;
+                    }
+                }
             }
         }
     }

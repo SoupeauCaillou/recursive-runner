@@ -32,7 +32,7 @@ import android.widget.RelativeLayout;
 
 public class PrototypeActivity extends SacActivity {
 	static {
-        System.loadLibrary("cars");
+        System.loadLibrary("prototype");
     }
 	
 	@Override

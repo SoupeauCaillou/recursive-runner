@@ -68,6 +68,7 @@ float cameraSpeed;
 float playerSpeed = 6;
 
 #define LEVEL_SIZE 3
+extern float MaxJumpDuration;
 
 static void updateFps(float dt);
 
@@ -156,7 +157,7 @@ static void addPlayer() {
 
     playerCount++;
     player.push_back(e);
-    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << std::endl;
+    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << std::endl;
 }
 
 static void startGame() {
@@ -322,8 +323,19 @@ void PrototypeGame::tick(float dt) {
             
             PhysicsComponent* pc = PHYSICS(current);
             if (pc->gravity.Y >= 0) {
-                if (!theTouchInputManager.wasTouched() && theTouchInputManager.isTouched()) {
-                    RUNNER(current)->jumpTimes.push_back(RUNNER(current)->elapsed);
+                if (theTouchInputManager.isTouched()) {
+                    if (!theTouchInputManager.wasTouched()) {
+                        if (RUNNER(current)->jumpingSince <= 0) {
+                            RUNNER(current)->jumpTimes.push_back(RUNNER(current)->elapsed);
+                            RUNNER(current)->jumpDurations.push_back(0.001);
+                        }
+                    } else {
+                     
+                        float& d = *(RUNNER(current)->jumpDurations.rbegin());
+                        if (d < MaxJumpDuration) {
+                            d += dt;
+                        }
+                    }
                 }
             }
             
@@ -393,7 +405,6 @@ void PrototypeGame::tick(float dt) {
                 Entity coin = *it;
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
                     if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
-                        std::cout << "yay pick up coin" << std::endl;
                         rc->coins.push_back(coin);
                         int gain = 10 * (player.size() - i);
                         score += gain;
@@ -422,8 +433,10 @@ void PrototypeGame::tick(float dt) {
         }
     }
 
-    theRunnerSystem.Update(dt);
-    theCameraTargetSystem.Update(dt);
+    if (playing) {
+        theRunnerSystem.Update(dt);
+        theCameraTargetSystem.Update(dt);
+    }
     
     // limit cam pos
     if (theRenderingSystem.cameraPosition.X < - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
