@@ -146,7 +146,7 @@ static void addPlayer() {
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.1 * playerCount);
+    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * playerCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     ADD_COMPONENT(e, CameraTarget);
     CAM_TARGET(e)->enabled = true;
@@ -447,7 +447,7 @@ void PrototypeGame::tick(float dt) {
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
                     if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
                         rc->coins.push_back(coin);
-                        int gain = 10 * (player.size() - i);
+                        int gain = 10 * pow(2, player.size() - i - 1);
                         score += gain;
                         spawnGainEntity(gain, TRANSFORM(coin)->position);
                     }
