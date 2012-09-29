@@ -50,6 +50,7 @@
 #include "api/linux/LocalizeAPILinuxImpl.h"
 #include "api/linux/NameInputAPILinuxImpl.h"
 #include "api/linux/ExitAPILinuxImpl.h"
+#include "api/linux/NetworkAPILinuxImpl.h"
 
 #include "systems/TextRenderingSystem.h"
 #include "systems/ButtonSystem.h"
@@ -297,6 +298,7 @@ int main(int argc, char** argv) {
 	}
 
 	SDL_Surface *ecran = SDL_SetVideoMode(reso->X, reso->Y, 16, SDL_OPENGL ); /* Double Buffering */
+    __log_enabled = false;
 #else
 	if (!glfwInit())
 		return 1;
@@ -342,9 +344,10 @@ int main(int argc, char** argv) {
     theRenderingSystem.assetAPI = new AssetAPILinuxImpl();
     SoundAPILinuxOpenALImpl* soundAPI = new SoundAPILinuxOpenALImpl();
     theSoundSystem.soundAPI = soundAPI;
-    openal->init();
+    LOGE("Remove music init");
+    // openal->init();
     theMusicSystem.init();
-    soundAPI->init();
+    // soundAPI->init();
 
 	game->sacInit(reso->X,reso->Y);
 	game->init(state, size);
@@ -391,6 +394,17 @@ int main(int argc, char** argv) {
 	RENDERING(nameInput->background)->texture = theRenderingSystem.loadTextureFile("fond_bouton");
 	RENDERING(nameInput->background)->color.a = 1;
 
+    NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
+    net->connectToLobby(argv[1], "127.0.0.1");
+
+    while (true) {
+        std::cout << "Is connected ? " << net->isConnectedToAnotherPlayer() << std::endl;
+        
+        struct timespec ts;
+        ts.tv_sec = 0;
+        ts.tv_nsec = 0.25 * 1000000000LL;
+        nanosleep(&ts, 0);
+    }
 #ifndef EMSCRIPTEN
 	updateAndRenderLoop();
 #else

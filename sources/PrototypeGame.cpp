@@ -87,7 +87,7 @@ static void resetGame() {
     RENDERING(startButton)->hide = false;
     BUTTON(startButton)->enabled = true;
     playing = false;
-    
+
     for (int i=0; i<coins.size(); i++) {
         theEntityManager.DeleteEntity(coins[i]);
     }
@@ -196,6 +196,7 @@ void PrototypeGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
     theRenderingSystem.loadAtlas("alphabet", true);
     theRenderingSystem.loadAtlas("dummy", false);
+    theRenderingSystem.loadAtlas("decor", false);
     
 // register 4 animations
     std::string runL2R[] = { "obj_Run000", "obj_Run001", "obj_Run002", "obj_Run003", "obj_Run004", "obj_Run005", "obj_Run006", "obj_Run007" }; 
@@ -223,11 +224,13 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
     TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, 0.7 * PlacementHelper::ScreenHeight);
+    TRANSFORM(background)->position.X = 0;
     TRANSFORM(background)->position.Y = -(PlacementHelper::ScreenHeight - TRANSFORM(background)->size.Y)*0.5;
     TRANSFORM(background)->z = 0.1;
     ADD_COMPONENT(background, Rendering);
-    RENDERING(background)->color = Color(0.3, 0.3, 0.3);
+    RENDERING(background)->texture = theRenderingSystem.loadTextureFile("fond");//color = Color(0.3, 0.3, 0.3);
     RENDERING(background)->hide = false;
+    RENDERING(background)->opaqueType = RenderingComponent::FULL_OPAQUE;
 
     startButton = theEntityManager.CreateEntity();
     ADD_COMPONENT(startButton, Transformation);
