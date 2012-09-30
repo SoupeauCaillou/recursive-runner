@@ -34,6 +34,8 @@
     <Compile Include="sources\systems\RunnerSystem.cpp" />
     <Compile Include="sources\systems\CameraTargetSystem.cpp" />
     <Compile Include="android\prototype.cpp" />
+    <Compile Include="sources\systems\PlayerSystem.cpp" />
+    <Compile Include="sources\systems\GameSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\prototype.cpp" />
@@ -43,11 +45,14 @@
     <Folder Include="sources\api\android\" />
     <Folder Include="linux\" />
     <Folder Include="sources\systems\" />
+    <Folder Include="sources\menus\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sources\systems\RunnerSystem.h" />
     <None Include="sources\systems\CameraTargetSystem.h" />
     <None Include="android\Android.mk" />
     <None Include="android\Application.mk" />
+    <None Include="sources\systems\PlayerSystem.h" />
+    <None Include="sources\systems\GameSystem.h" />
   </ItemGroup>
 </Project>

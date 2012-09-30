@@ -45,6 +45,8 @@
 #include "systems/AnimationSystem.h"
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
+#include "systems/PlayerSystem.h"
+#include "systems/GameSystem.h"
 
 
 #include <cmath>
@@ -59,15 +61,17 @@
 #include <GL/glfw.h>
 #endif
 
+// NETWORK SHARED VAR
+Entity me;
+
+std::vector<Entity> player, coins;
+
+
+// PURE LOCAL VARS
 Entity background, startButton, scoreText, goldCoin;
-std::vector<Entity> player;
-int playerCount;
-std::vector<Entity> coins, gains, explosions;
+std::vector<Entity> gains, explosions;
 bool playing;
-int score;
-float cameraMaxAccel = 0.5;
-float cameraSpeed;
-float playerSpeed = 6;
+const float playerSpeed = 6;
 
 #define LEVEL_SIZE 3
 extern float MaxJumpDuration;
@@ -88,7 +92,7 @@ static void resetGame() {
     BUTTON(startButton)->enabled = true;
     playing = false;
 
-    for (int i=0; i<coins.size(); i++) {
+    for (unsigned i=0; i<coins.size(); i++) {
         theEntityManager.DeleteEntity(coins[i]);
     }
     coins.clear();
@@ -138,8 +142,8 @@ static void spawnGainEntity(int gain, const Vector2& pos) {
     gains.push_back(e);
 }
 
-static void addPlayer() {
-    int direction = (playerCount % 2) ? -1 : 1;
+static void addRunnerToPlayer(PlayerComponent* p) {
+    int direction = (p->runnersCount % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
@@ -154,7 +158,7 @@ static void addPlayer() {
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * playerCount);
+    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     ADD_COMPONENT(e, CameraTarget);
     CAM_TARGET(e)->enabled = true;
@@ -167,25 +171,23 @@ static void addPlayer() {
     ADD_COMPONENT(e, Animation);
     ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
 
-    playerCount++;
+    p->runnersCount++;
     player.push_back(e);
     std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << std::endl;
 }
 
 static void startGame() {
-    for (int i=0; i<player.size(); i++) {
+    for (unsigned i=0; i<player.size(); i++) {
         theEntityManager.DeleteEntity(player[i]);
     }
     player.clear();
-    playerCount = 0;
-    addPlayer();
-    score = 0;
+    PLAYER(me)->runnersCount = PLAYER(me)->score = 0;
+    addRunnerToPlayer(PLAYER(me));
     playing = true;
     
     TEXT_RENDERING(scoreText)->hide = false;
     TEXT_RENDERING(startButton)->hide = true;
     RENDERING(startButton)->hide = true;
-    cameraSpeed = 0;
     theRenderingSystem.cameraPosition.X = TRANSFORM(player[0])->position.X + PlacementHelper::ScreenWidth * 0.5;
 }
 
@@ -220,6 +222,13 @@ void PrototypeGame::sacInit(int windowW, int windowH) {
 void PrototypeGame::init(const uint8_t* in, int size) {
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
+    GameSystem::CreateInstance();
+    PlayerSystem::CreateInstance();
+    
+    me = theEntityManager.CreateEntity();
+    ADD_COMPONENT(me, Player);
+    PLAYER(me)->score = 0;
+    PLAYER(me)->runnersCount = 0;
 
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
@@ -228,7 +237,7 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     TRANSFORM(background)->position.Y = -(PlacementHelper::ScreenHeight - TRANSFORM(background)->size.Y)*0.5;
     TRANSFORM(background)->z = 0.1;
     ADD_COMPONENT(background, Rendering);
-    RENDERING(background)->texture = theRenderingSystem.loadTextureFile("fond");//color = Color(0.3, 0.3, 0.3);
+    RENDERING(background)->color = Color(0.3, 0.3, 0.3);
     RENDERING(background)->hide = false;
     RENDERING(background)->opaqueType = RenderingComponent::FULL_OPAQUE;
 
@@ -288,6 +297,8 @@ void PrototypeGame::togglePause(bool activate) {
 void PrototypeGame::tick(float dt) {
 	theTouchInputManager.Update(dt);
  
+    PlayerComponent* myPlayer = PLAYER(me);
+ 
 #if IN_GAME_EDITOR
     if (activeIndex >= 0) {
         Entity e = decors[activeIndex];
@@ -335,22 +346,22 @@ void PrototypeGame::tick(float dt) {
             Entity current = *player.rbegin();
 
             std::stringstream a;
-            a << "Score: " << score;
+            a << "Score: " << myPlayer->score;
             TEXT_RENDERING(scoreText)->text = a.str();
 
             if (RUNNER(current)->finished) {
-                if (playerCount == 10) {
+                if (myPlayer->runnersCount == 10) {
                     CAM_TARGET(current)->enabled = false;
                     theRenderingSystem.cameraPosition = Vector2::Zero;
                     // end of game
                     resetGame();
                 } else {
                     // re-init all players
-                    for (int i=0; i<player.size(); i++) {
+                    for (unsigned i=0; i<player.size(); i++) {
                         CAM_TARGET(player[i])->enabled = false;
                     }
                     // add a new one
-                    addPlayer();
+                    addRunnerToPlayer(myPlayer);
                     current = *player.rbegin();
                 }
             }
@@ -377,7 +388,7 @@ void PrototypeGame::tick(float dt) {
             CAM_TARGET(current)->offset.Y = 0 - tc->position.Y;
             
             // check for collisions
-            for (int i=0; i<player.size()-1; i++) {
+            for (unsigned i=0; i<player.size()-1; i++) {
                 if (current == player[i])
                     continue;
                 if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(player[i]))) {
@@ -435,7 +446,7 @@ void PrototypeGame::tick(float dt) {
     }
     
     if (playing) {
-        for (int i=0; i<player.size(); i++) {
+        for (unsigned i=0; i<player.size(); i++) {
             Entity e = player[i];
             TransformationComponent* tc = TRANSFORM(e);
             RunnerComponent* rc = RUNNER(e);
@@ -459,14 +470,14 @@ void PrototypeGame::tick(float dt) {
                     if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
                         rc->coins.push_back(coin);
                         int gain = ((coin == goldCoin) ? 30 : 10) * pow(2, player.size() - i - 1);
-                        score += gain;
+                        myPlayer->score += gain;
                         spawnGainEntity(gain, TRANSFORM(coin)->position);
                     }
                 }
             }
         }
         
-        for (int i=0; i<gains.size(); i++) {
+        for (unsigned i=0; i<gains.size(); i++) {
             Entity e = gains[i];
             float& a = TEXT_RENDERING(e)->color.a;
             a -= 1 * dt;
@@ -476,7 +487,7 @@ void PrototypeGame::tick(float dt) {
                 i--;
             }
         }
-        for (int i=0; i<explosions.size(); i++) {
+        for (unsigned i=0; i<explosions.size(); i++) {
             if (TRANSFORM(explosions[i])->position.Y < PlacementHelper::ScreenHeight * -0.5) {
                 theEntityManager.DeleteEntity(explosions[i]);
                 explosions.erase(explosions.begin() + i);
@@ -486,6 +497,8 @@ void PrototypeGame::tick(float dt) {
     }
 
     if (playing) {
+        theGameSystem.Update(dt);
+        thePlayerSystem.Update(dt);
         theRunnerSystem.Update(dt);
         theCameraTargetSystem.Update(dt);
     }
@@ -512,10 +525,12 @@ void PrototypeGame::tick(float dt) {
     theMusicSystem.Update(dt);
     theTransformationSystem.Update(dt);
     theRenderingSystem.Update(dt);
+
+    updateFps(dt);
 }
 
 void updateFps(float dt) {
-    #define COUNT 250
+    #define COUNT 1000
     static int frameCount = 0;
     static float accum = 0, t = 0;
     frameCount++;

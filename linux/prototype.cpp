@@ -394,8 +394,9 @@ int main(int argc, char** argv) {
 	RENDERING(nameInput->background)->texture = theRenderingSystem.loadTextureFile("fond_bouton");
 	RENDERING(nameInput->background)->color.a = 1;
 
+#if 0
     NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
-    net->connectToLobby(argv[1], "127.0.0.1");
+    net->connectToLobby(argv[1], "66.228.34.226");//127.0.0.1");
 
     while (true) {
         std::cout << "Is connected ? " << net->isConnectedToAnotherPlayer() << std::endl;
@@ -405,6 +406,8 @@ int main(int argc, char** argv) {
         ts.tv_nsec = 0.25 * 1000000000LL;
         nanosleep(&ts, 0);
     }
+#endif
+
 #ifndef EMSCRIPTEN
 	updateAndRenderLoop();
 #else
