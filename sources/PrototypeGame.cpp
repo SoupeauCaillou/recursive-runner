@@ -61,6 +61,9 @@
 #include <GL/glfw.h>
 #endif
 
+static void spawnGainEntity(int gain, const Vector2& pos);
+static void addRunnerToPlayer(PlayerComponent* p);
+
 // NETWORK SHARED VAR
 Entity me;
 
@@ -122,58 +125,6 @@ static void resetGame() {
     }
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
-}
-
-static void spawnGainEntity(int gain, const Vector2& pos) {
-    Entity e = theEntityManager.CreateEntity();
-    ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = pos;
-    TRANSFORM(e)->z = 0.7;
-    ADD_COMPONENT(e, TextRendering);
-    std::stringstream a;
-    a << gain;
-    TEXT_RENDERING(e)->text = a.str();
-    TEXT_RENDERING(e)->charHeight = 0.5;
-    TEXT_RENDERING(e)->color = Color(1, 1, 0);
-    TEXT_RENDERING(e)->hide = false;
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    PHYSICS(e)->gravity = Vector2(0, 6);
-    gains.push_back(e);
-}
-
-static void addRunnerToPlayer(PlayerComponent* p) {
-    int direction = (p->runnersCount % 2) ? -1 : 1;
-    Entity e = theEntityManager.CreateEntity();
-    ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
-    TRANSFORM(e)->rotation = 0;
-    TRANSFORM(e)->z = 0.8;
-    ADD_COMPONENT(e, Rendering);
-    // RENDERING(e)->color = Color::random();
-    RENDERING(e)->hide = false;
-    ADD_COMPONENT(e, Runner);
-    TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
-        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
-        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
-    RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
-    RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
-    ADD_COMPONENT(e, CameraTarget);
-    CAM_TARGET(e)->enabled = true;
-    CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
-    CAM_TARGET(e)->offset = Vector2(
-        direction * 0.4 * PlacementHelper::ScreenWidth, 
-        0 - TRANSFORM(e)->position.Y);
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
-
-    p->runnersCount++;
-    player.push_back(e);
-    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << std::endl;
 }
 
 static void startGame() {
@@ -543,3 +494,54 @@ void updateFps(float dt) {
      }
 }
 
+static void spawnGainEntity(int gain, const Vector2& pos) {
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = pos;
+    TRANSFORM(e)->z = 0.7;
+    ADD_COMPONENT(e, TextRendering);
+    std::stringstream a;
+    a << gain;
+    TEXT_RENDERING(e)->text = a.str();
+    TEXT_RENDERING(e)->charHeight = 0.5;
+    TEXT_RENDERING(e)->color = Color(1, 1, 0);
+    TEXT_RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    PHYSICS(e)->gravity = Vector2(0, 6);
+    gains.push_back(e);
+}
+
+static void addRunnerToPlayer(PlayerComponent* p) {
+    int direction = (p->runnersCount % 2) ? -1 : 1;
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = Vector2(-9, 2);
+    TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->rotation = 0;
+    TRANSFORM(e)->z = 0.8;
+    ADD_COMPONENT(e, Rendering);
+    // RENDERING(e)->color = Color::random();
+    RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Runner);
+    TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
+        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
+        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
+    RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
+    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
+    RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
+    ADD_COMPONENT(e, CameraTarget);
+    CAM_TARGET(e)->enabled = true;
+    CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
+    CAM_TARGET(e)->offset = Vector2(
+        direction * 0.4 * PlacementHelper::ScreenWidth, 
+        0 - TRANSFORM(e)->position.Y);
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    ADD_COMPONENT(e, Animation);
+    ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
+
+    p->runnersCount++;
+    player.push_back(e);
+    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << std::endl;
+}
