@@ -69,7 +69,7 @@ static void updateFps(float dt);
 
 
 // PURE LOCAL VARS
-Entity background, startButton, scoreText, goldCoin;
+Entity background, startSingleButton, startMultiButton, scoreText, goldCoin;
 
 enum GameState {
     Menu,
@@ -156,19 +156,33 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     RENDERING(background)->hide = false;
     RENDERING(background)->opaqueType = RenderingComponent::FULL_OPAQUE;
 
-    startButton = theEntityManager.CreateEntity();
-    ADD_COMPONENT(startButton, Transformation);
-    TRANSFORM(startButton)->position = Vector2::Zero;
-    TRANSFORM(startButton)->z = 0.9;
-    ADD_COMPONENT(startButton, TextRendering);
-    TEXT_RENDERING(startButton)->text = "Jouer";
-    TEXT_RENDERING(startButton)->charHeight = 1;
-    ADD_COMPONENT(startButton, Container);
-    CONTAINER(startButton)->entities.push_back(startButton);
-    CONTAINER(startButton)->includeChildren = true;
-    ADD_COMPONENT(startButton, Rendering);
-    RENDERING(startButton)->color = Color(0.2, 0.2, 0.2, 0.5);
-    ADD_COMPONENT(startButton, Button);
+    startSingleButton = theEntityManager.CreateEntity();
+    ADD_COMPONENT(startSingleButton, Transformation);
+    TRANSFORM(startSingleButton)->position = Vector2(-PlacementHelper::ScreenWidth /6, 0);
+    TRANSFORM(startSingleButton)->z = 0.9;
+    ADD_COMPONENT(startSingleButton, TextRendering);
+    TEXT_RENDERING(startSingleButton)->text = "Jouer solo";
+    TEXT_RENDERING(startSingleButton)->charHeight = 1;
+    ADD_COMPONENT(startSingleButton, Container);
+    CONTAINER(startSingleButton)->entities.push_back(startSingleButton);
+    CONTAINER(startSingleButton)->includeChildren = true;
+    ADD_COMPONENT(startSingleButton, Rendering);
+    RENDERING(startSingleButton)->color = Color(0.2, 0.2, 0.2, 0.5);
+    ADD_COMPONENT(startSingleButton, Button);
+
+    startMultiButton = theEntityManager.CreateEntity();
+    ADD_COMPONENT(startMultiButton, Transformation);
+    TRANSFORM(startMultiButton)->position = Vector2(PlacementHelper::ScreenWidth /6, 0);
+    TRANSFORM(startMultiButton)->z = 0.9;
+    ADD_COMPONENT(startMultiButton, TextRendering);
+    TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
+    TEXT_RENDERING(startMultiButton)->charHeight = 1;
+    ADD_COMPONENT(startMultiButton, Container);
+    CONTAINER(startMultiButton)->entities.push_back(startMultiButton);
+    CONTAINER(startMultiButton)->includeChildren = true;
+    ADD_COMPONENT(startMultiButton, Rendering);
+    RENDERING(startMultiButton)->color = Color(0.2, 0.2, 0.2, 0.5);
+    ADD_COMPONENT(startMultiButton, Button);
     
     scoreText = theEntityManager.CreateEntity();
     ADD_COMPONENT(scoreText, Transformation);
@@ -241,11 +255,11 @@ void PrototypeGame::tick(float dt) {
 	theMorphingSystem.Update(dt);
 	thePhysicsSystem.Update(dt);
 	theScrollingSystem.Update(dt);
-	theContainerSystem.Update(dt);
-	theTextRenderingSystem.Update(dt);
+    theTextRenderingSystem.Update(dt);
 	theSoundSystem.Update(dt);
     theMusicSystem.Update(dt);
     theTransformationSystem.Update(dt);
+    theContainerSystem.Update(dt);
     theAutoDestroySystem.Update(dt);
     theRenderingSystem.Update(dt);
 
@@ -323,7 +337,7 @@ static Entity addRunnerToPlayer(PlayerComponent* p) {
 }
 
 static GameState updateMenu(float dt) {
-    if (BUTTON(startButton)->clicked) {
+    if (BUTTON(startSingleButton)->clicked) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
         gameTempVars.me = theEntityManager.CreateEntity();
@@ -373,8 +387,10 @@ static void transitionWaitingPlayersPlaying() {
     gameTempVars.localRunners.push_back(gameTempVars.currentRunner);
     
     TEXT_RENDERING(scoreText)->hide = false;
-    TEXT_RENDERING(startButton)->hide = true;
-    RENDERING(startButton)->hide = true;
+    TEXT_RENDERING(startSingleButton)->hide = true;
+    RENDERING(startSingleButton)->hide = true;
+    TEXT_RENDERING(startMultiButton)->hide = true;
+    RENDERING(startMultiButton)->hide = true;
     // hmm
     theRenderingSystem.cameraPosition.X = TRANSFORM(gameTempVars.currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
 }
@@ -501,11 +517,15 @@ static void transitionPlayingMenu() {
     // Restore camera position
     theRenderingSystem.cameraPosition = Vector2::Zero;
     // Show menu UI
-    TEXT_RENDERING(startButton)->hide = false;
+    TEXT_RENDERING(startSingleButton)->hide = false;
+    CONTAINER(startSingleButton)->enable = true;
+    RENDERING(startSingleButton)->hide = false;
+    BUTTON(startSingleButton)->enabled = true;
+    TEXT_RENDERING(startMultiButton)->hide = false;
+    CONTAINER(startMultiButton)->enable = true;
+    RENDERING(startMultiButton)->hide = false;
+    BUTTON(startMultiButton)->enabled = true;
     TEXT_RENDERING(scoreText)->hide = false;
-    CONTAINER(startButton)->enable = true;
-    RENDERING(startButton)->hide = false;
-    BUTTON(startButton)->enabled = true;
     // Cleanup previous game variables
     gameTempVars.cleanup();
 }
