@@ -275,7 +275,7 @@ static GameState updateMenu(float dt) {
     } else if (BUTTON(startMultiButton)->clicked) {
         TEXT_RENDERING(startMultiButton)->text = "Finding opp.";
         NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
-        net->connectToLobby("my_name", "66.228.34.226");//127.0.0.1");
+        net->connectToLobby("my_name", "127.0.0.1"); // 66.228.34.226");//127.0.0.1");
         theNetworkSystem.networkAPI = net;
         gameTempVars.numPlayers = 2;
         gameTempVars.isGameMaster = false;
