@@ -49,7 +49,7 @@
 #include "systems/CameraTargetSystem.h"
 #include "systems/PlayerSystem.h"
 #include "systems/GameSystem.h"
-
+#include "api/linux/NetworkAPILinuxImpl.h"
 
 #include <cmath>
 #include <vector>
@@ -64,7 +64,7 @@
 #endif
 
 static void spawnGainEntity(int gain, const Vector2& pos);
-static Entity addRunnerToPlayer(PlayerComponent* p);
+static Entity addRunnerToPlayer(Entity player, PlayerComponent* p);
 static void updateFps(float dt);
 
 
@@ -79,13 +79,14 @@ enum GameState {
 
 struct GameTempVar {
     void syncRunners();
+    void syncCoins();
     void cleanup();
+    int playerIndex();
 
-    Entity me;
     unsigned numPlayers;
     bool isGameMaster;
     Entity currentRunner;
-    std::vector<Entity> runners, localRunners, coins, players; 
+    std::vector<Entity> runners[2], coins, players; 
  
 } gameTempVars;
 
@@ -266,91 +267,26 @@ void PrototypeGame::tick(float dt) {
     updateFps(dt);
 }
 
-void updateFps(float dt) {
-    #define COUNT 1000
-    static int frameCount = 0;
-    static float accum = 0, t = 0;
-    frameCount++;
-    accum += dt;
-    if (frameCount == COUNT) {
-         LOGI("%d frames: %.3f s - diff: %.3f s - ms per frame: %.3f", COUNT, accum, TimeUtil::getTime() - t, accum / COUNT);
-         t = TimeUtil::getTime();
-         accum = 0;
-         frameCount = 0;
-     }
-}
-
-static void spawnGainEntity(int gain, const Vector2& pos) {
-    Entity e = theEntityManager.CreateEntity();
-    ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = pos;
-    TRANSFORM(e)->z = 0.7;
-    ADD_COMPONENT(e, TextRendering);
-    std::stringstream a;
-    a << gain;
-    TEXT_RENDERING(e)->text = a.str();
-    TEXT_RENDERING(e)->charHeight = 0.5;
-    TEXT_RENDERING(e)->color = Color(1, 1, 0);
-    TEXT_RENDERING(e)->hide = false;
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    PHYSICS(e)->gravity = Vector2(0, 6);
-    ADD_COMPONENT(e, AutoDestroy);
-    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.value = 1;
-    AUTO_DESTROY(e)->params.lifetime.map2AlphaTextRendering = true;
-    AUTO_DESTROY(e)->hasTextRendering = true;
-}
-
-static Entity addRunnerToPlayer(PlayerComponent* p) {
-    int direction = (p->runnersCount % 2) ? -1 : 1;
-    Entity e = theEntityManager.CreateEntity();
-    ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
-    TRANSFORM(e)->rotation = 0;
-    TRANSFORM(e)->z = 0.8;
-    ADD_COMPONENT(e, Rendering);
-    // RENDERING(e)->color = Color::random();
-    RENDERING(e)->hide = false;
-    ADD_COMPONENT(e, Runner);
-    TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
-        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
-        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
-    RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
-    RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
-    ADD_COMPONENT(e, CameraTarget);
-    CAM_TARGET(e)->enabled = true;
-    CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
-    CAM_TARGET(e)->offset = Vector2(
-        direction * 0.4 * PlacementHelper::ScreenWidth, 
-        0 - TRANSFORM(e)->position.Y);
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
-
-    p->runnersCount++;
-    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << std::endl;
-    return e;
-}
-
 static GameState updateMenu(float dt) {
     if (BUTTON(startSingleButton)->clicked) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
-        gameTempVars.me = theEntityManager.CreateEntity();
-        ADD_COMPONENT(gameTempVars.me, Player);
-        PLAYER(gameTempVars.me)->score = 0;
-        PLAYER(gameTempVars.me)->runnersCount = 0;
+        return WaitingPlayers;
+    } else if (BUTTON(startMultiButton)->clicked) {
+        TEXT_RENDERING(startMultiButton)->text = "Finding opp.";
+        NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
+        net->connectToLobby("my_name", "66.228.34.226");//127.0.0.1");
+        theNetworkSystem.networkAPI = net;
+        gameTempVars.numPlayers = 2;
+        gameTempVars.isGameMaster = false;
         return WaitingPlayers;
     }
     return Menu;
 }
 
 static void transitionMenuWaitingPlayers() {
-    PLAYER(gameTempVars.me)->ready = true;
+    BUTTON(startSingleButton)->enabled = false;
+    BUTTON(startMultiButton)->enabled = false;
     theNetworkSystem.deleteAllNonLocalEntities();
     // Create coins for next game
     if (gameTempVars.isGameMaster) {
@@ -359,9 +295,27 @@ static void transitionMenuWaitingPlayers() {
 }
 
 static GameState updateWaitingPlayers(float dt) {
+    if (theNetworkSystem.networkAPI) {
+        if (theNetworkSystem.networkAPI->isConnectedToAnotherPlayer()) {
+            gameTempVars.isGameMaster = theNetworkSystem.networkAPI->amIGameMaster();
+        }
+    }
     gameTempVars.players = thePlayerSystem.RetrieveAllEntityWithComponent();
-    if (gameTempVars.players.size() != gameTempVars.numPlayers)
+    if (gameTempVars.players.size() != gameTempVars.numPlayers) {
+        // create both players
+        if (gameTempVars.isGameMaster) {
+            for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+                Entity e = theEntityManager.CreateEntity();
+                ADD_COMPONENT(e, Player);
+                ADD_COMPONENT(e, Network);
+                NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0;
+
+                addRunnerToPlayer(e, PLAYER(e));
+            }
+        }
         return WaitingPlayers;
+    }
+    PLAYER(gameTempVars.players[gameTempVars.isGameMaster ? 0 : 1])->ready = true;
     for (std::vector<Entity>::iterator it=gameTempVars.players.begin(); it!=gameTempVars.players.end(); ++it) {
         if (!PLAYER(*it)->ready) {
             return WaitingPlayers;
@@ -372,20 +326,9 @@ static GameState updateWaitingPlayers(float dt) {
 
 static void transitionWaitingPlayersPlaying() {
     // store a few entities to avoid permanent lookups
-    std::vector<Entity> t = theTransformationSystem.RetrieveAllEntityWithComponent();
-    for (unsigned i=0; i<t.size(); i++) {
-        //...
-        float x = TRANSFORM(t[i])->size.X;
-        if (MathUtil::Abs(x - 0.3) < 0.01) {
-            gameTempVars.coins.push_back(t[i]);
-        }
-    }
+    gameTempVars.syncCoins();
+    gameTempVars.syncRunners();
 
-    // prepare game objets
-    PLAYER(gameTempVars.me)->runnersCount = PLAYER(gameTempVars.me)->score = 0;
-    gameTempVars.currentRunner = addRunnerToPlayer(PLAYER(gameTempVars.me));
-    gameTempVars.localRunners.push_back(gameTempVars.currentRunner);
-    
     TEXT_RENDERING(scoreText)->hide = false;
     TEXT_RENDERING(startSingleButton)->hide = true;
     RENDERING(startSingleButton)->hide = true;
@@ -400,11 +343,12 @@ static void transitionWaitingPlayersMenu() {
 }
 
 static GameState updatePlaying(float dt) {
-    PlayerComponent* myPlayer = PLAYER(gameTempVars.me);
+    int myPlayerIndex = gameTempVars.playerIndex();
+    PlayerComponent* myPlayer = PLAYER(gameTempVars.players[myPlayerIndex]);
     gameTempVars.syncRunners();
 
-    // Manage local players
-    if (!gameTempVars.localRunners.empty()) {
+    // Manage player's current runner
+    if (!gameTempVars.runners[myPlayerIndex].empty()) {
         // If current runner has reached the edge of the screen
         if (RUNNER(gameTempVars.currentRunner)->finished) {
             if (myPlayer->runnersCount == 10) {
@@ -416,8 +360,7 @@ static GameState updatePlaying(float dt) {
             } else {
                 CAM_TARGET(gameTempVars.currentRunner)->enabled = false;
                 // add a new one
-                gameTempVars.currentRunner = addRunnerToPlayer(myPlayer);
-                gameTempVars.localRunners.push_back(gameTempVars.currentRunner);
+                gameTempVars.currentRunner = addRunnerToPlayer(gameTempVars.players[myPlayerIndex], myPlayer);
             }
         }
 
@@ -447,52 +390,59 @@ static GameState updatePlaying(float dt) {
     if (gameTempVars.isGameMaster) { // maybe do it for non master too (but do not delete entities, maybe only hide ?)
         std::vector<TransformationComponent*> actives;
         // check for collisions for non-ghost runners
-        for (unsigned i=0; i<gameTempVars.runners.size(); i++) {
-            if (RUNNER(gameTempVars.runners[i])->ghost)
-                continue;
-            actives.push_back(TRANSFORM(gameTempVars.runners[i]));
+        for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+            for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
+                if (RUNNER(gameTempVars.runners[i][j])->ghost)
+                    continue;
+                actives.push_back(TRANSFORM(gameTempVars.runners[i][j]));
+            }
         }
         const unsigned count = actives.size();
-        for (unsigned i=0; i<gameTempVars.runners.size(); i++) {
-            TransformationComponent* ghostTc = TRANSFORM(gameTempVars.runners[i]);
-            for (unsigned j=0; j<count; j++) {
-                if (ghostTc == actives[j]) continue;
-                if (IntersectionUtil::rectangleRectangle(ghostTc, actives[j])) {
-                    RUNNER(gameTempVars.runners[i])->killed = true;
-                    gameTempVars.runners.erase(gameTempVars.runners.begin() + i);
-                    i--;
-                    break;
+        for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+            for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
+                Entity ghost = gameTempVars.runners[i][j];
+                TransformationComponent* ghostTc = TRANSFORM(ghost);
+                for (unsigned k=0; k<count; k++) {
+                    if (ghostTc == actives[k]) continue;
+                    if (IntersectionUtil::rectangleRectangle(ghostTc, actives[k])) {
+                        RUNNER(ghost)->killed = true;
+                        gameTempVars.runners[i].erase(gameTempVars.runners[i].begin() + j);
+                        j--;
+                        break;
+                    }
                 }
             }
         }
     }
 
-    for (unsigned i=0; i<gameTempVars.runners.size(); i++) {
-        Entity e = gameTempVars.runners[i];
-        RunnerComponent* rc = RUNNER(e);
-        if (rc->killed)
-            continue;
-        TransformationComponent* tc = TRANSFORM(e);
-        PhysicsComponent* pc = PHYSICS(e);
-
-        // check jumps
-        if (pc->gravity.Y < 0) {
-            if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
-                pc->gravity.Y = 0;
-                pc->linearVelocity = Vector2::Zero;
-                tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
-                ANIMATION(e)->name = (rc->speed > 0) ? "runL2R" : "runR2L";
+    for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+        for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
+            Entity e = gameTempVars.runners[i][j];
+            RunnerComponent* rc = RUNNER(e);
+            if (rc->killed)
+                continue;
+            TransformationComponent* tc = TRANSFORM(e);
+            PhysicsComponent* pc = PHYSICS(e);
+    
+            // check jumps
+            if (pc->gravity.Y < 0) {
+                if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
+                    pc->gravity.Y = 0;
+                    pc->linearVelocity = Vector2::Zero;
+                    tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
+                    ANIMATION(e)->name = (rc->speed > 0) ? "runL2R" : "runR2L";
+                }
             }
-        }
-        // check coins
-        for (std::vector<Entity>::iterator it=gameTempVars.coins.begin(); it!=gameTempVars.coins.end(); ++it) {
-            Entity coin = *it;
-            if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
-                if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
-                    rc->coins.push_back(coin);
-                    int gain = 10; // TODO ((coin == goldCoin) ? 30 : 10) * pow(2, player.size() - i - 1);
-                    myPlayer->score += gain;
-                    spawnGainEntity(gain, TRANSFORM(coin)->position);
+            // check coins
+            for (std::vector<Entity>::iterator it=gameTempVars.coins.begin(); it!=gameTempVars.coins.end(); ++it) {
+                Entity coin = *it;
+                if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
+                    if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
+                        rc->coins.push_back(coin);
+                        int gain = 10; // TODO ((coin == goldCoin) ? 30 : 10) * pow(2, player.size() - i - 1);
+                        myPlayer->score += gain;
+                        spawnGainEntity(gain, TRANSFORM(coin)->position);
+                    }
                 }
             }
         }
@@ -536,16 +486,41 @@ void GameTempVar::cleanup() {
         theEntityManager.DeleteEntity(coins[i]);
     }
     coins.clear();
-    for (unsigned i=0; i<runners.size(); i++) {
-        theEntityManager.DeleteEntity(runners[i]);
+    for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+        for (unsigned j=0; j<runners[i].size(); j++) {
+            theEntityManager.DeleteEntity(runners[i][j]);
+        }
+        runners[i].clear();
+        theEntityManager.DeleteEntity(players[i]);
     }
-    runners.clear();
-    localRunners.clear();
-    theEntityManager.DeleteEntity(me);
 }
 
 void GameTempVar::syncRunners() {
-    runners = theRunnerSystem.RetrieveAllEntityWithComponent();
+    std::vector<Entity> r = theRunnerSystem.RetrieveAllEntityWithComponent();
+    for (unsigned i=0; i<players.size(); i++) {
+        for (unsigned j=0; j<r.size(); j++) {
+            if (RUNNER(r[j])->playerOwner == gameTempVars.players[i]) {
+                runners[i].push_back(r[j]);
+                break;
+            }
+        }
+    }
+    currentRunner = *(runners[playerIndex()].rbegin());
+}
+
+void GameTempVar::syncCoins() {
+    std::vector<Entity> t = theTransformationSystem.RetrieveAllEntityWithComponent();
+    for (unsigned i=0; i<t.size(); i++) {
+        //...
+        float x = TRANSFORM(t[i])->size.X;
+        if (MathUtil::Abs(x - 0.3) < 0.01) {
+            coins.push_back(t[i]);
+        }
+    }
+}
+
+int GameTempVar::playerIndex() {
+    return (isGameMaster ? 0 : 1);
 }
 
 static void createCoins(int count) {
@@ -570,8 +545,87 @@ static void createCoins(int count) {
             goldCoin = e;
             min = MathUtil::Abs(TRANSFORM(e)->position.X);
         }
+        ADD_COMPONENT(e, Network);
+        NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
+        NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
     }
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
 }
 
+static void updateFps(float dt) {
+    #define COUNT 1000
+    static int frameCount = 0;
+    static float accum = 0, t = 0;
+    frameCount++;
+    accum += dt;
+    if (frameCount == COUNT) {
+         LOGI("%d frames: %.3f s - diff: %.3f s - ms per frame: %.3f", COUNT, accum, TimeUtil::getTime() - t, accum / COUNT);
+         t = TimeUtil::getTime();
+         accum = 0;
+         frameCount = 0;
+     }
+}
+
+static void spawnGainEntity(int gain, const Vector2& pos) {
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = pos;
+    TRANSFORM(e)->z = 0.7;
+    ADD_COMPONENT(e, TextRendering);
+    std::stringstream a;
+    a << gain;
+    TEXT_RENDERING(e)->text = a.str();
+    TEXT_RENDERING(e)->charHeight = 0.5;
+    TEXT_RENDERING(e)->color = Color(1, 1, 0);
+    TEXT_RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    PHYSICS(e)->gravity = Vector2(0, 6);
+    ADD_COMPONENT(e, AutoDestroy);
+    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
+    AUTO_DESTROY(e)->params.lifetime.value = 1;
+    AUTO_DESTROY(e)->params.lifetime.map2AlphaTextRendering = true;
+    AUTO_DESTROY(e)->hasTextRendering = true;
+}
+
+static Entity addRunnerToPlayer(Entity player, PlayerComponent* p) {
+    int direction = (p->runnersCount % 2) ? -1 : 1;
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = Vector2(-9, 2);
+    TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->rotation = 0;
+    TRANSFORM(e)->z = 0.8;
+    ADD_COMPONENT(e, Rendering);
+    // RENDERING(e)->color = Color::random();
+    RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Runner);
+    TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
+        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
+        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
+    RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
+    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
+    RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
+    RUNNER(e)->playerOwner = player;
+    ADD_COMPONENT(e, CameraTarget);
+    CAM_TARGET(e)->enabled = true;
+    CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
+    CAM_TARGET(e)->offset = Vector2(
+        direction * 0.4 * PlacementHelper::ScreenWidth, 
+        0 - TRANSFORM(e)->position.Y);
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    ADD_COMPONENT(e, Animation);
+    ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
+
+    ADD_COMPONENT(e, Network);
+    NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0.016;
+    NETWORK(e)->systemUpdatePeriod[theRunnerSystem.getName()] = 0.016;
+    NETWORK(e)->systemUpdatePeriod[thePhysicsSystem.getName()] = 0.016;
+    NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
+        
+    p->runnersCount++;
+    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << std::endl;
+    return e;
+}

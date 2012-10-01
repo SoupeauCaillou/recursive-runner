@@ -21,6 +21,8 @@
 #include "systems/System.h"
 
 struct PlayerComponent {
+    PlayerComponent() : name("dummy"), score(0), runnersCount(0), ready(false) {}
+    std::string name;
     int score;
     int runnersCount;
     bool ready;
