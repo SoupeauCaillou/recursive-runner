@@ -402,8 +402,8 @@ int main(int argc, char** argv) {
         std::cout << "Is connected ? " << net->isConnectedToAnotherPlayer() << std::endl;
         
         struct timespec ts;
-        ts.tv_sec = 0;
-        ts.tv_nsec = 0.25 * 1000000000LL;
+        ts.tv_sec = 1;
+        ts.tv_nsec = 0;// 0.25 * 1000000000LL;
         nanosleep(&ts, 0);
     }
 #endif

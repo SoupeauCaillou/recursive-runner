@@ -23,6 +23,7 @@
 struct PlayerComponent {
     int score;
     int runnersCount;
+    bool ready;
 };
 
 #define thePlayerSystem PlayerSystem::GetInstance()

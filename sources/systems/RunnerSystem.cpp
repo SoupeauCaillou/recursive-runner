@@ -18,8 +18,10 @@
 */
 #include "RunnerSystem.h"
 #include "base/MathUtil.h"
+#include "base/EntityManager.h"
 #include "systems/TransformationSystem.h"
 #include "systems/PhysicsSystem.h"
+#include "systems/RenderingSystem.h"
 #include "systems/AnimationSystem.h"
 #include "util/IntersectionUtil.h"
 
@@ -32,13 +34,41 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
  
 }
 
+static void killRunner(Entity runner) {
+    RENDERING(runner)->hide = true;
+    int dir = 1 - 2 * MathUtil::RandomIntInRange(0, 2);//(RUNNER(current)->speed > 0) ? 1 : -1;
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    *TRANSFORM(e) = *TRANSFORM(runner);
+    ADD_COMPONENT(e, Rendering);
+    RENDERING(e)->hide = false;
+    ADD_COMPONENT(e, Animation);
+    ANIMATION(e)->name = (dir > 0) ? "flyL2R" : "flyR2L";
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    PHYSICS(e)->gravity.Y = -10;
+    PHYSICS(e)->forces.push_back(std::make_pair(
+    Force(Vector2::Rotate(Vector2(MathUtil::RandomIntInRange(500, 700), 0), dir > 0 ? MathUtil::RandomFloatInRange(0.25, 1.5) : MathUtil::RandomFloatInRange(1.5, 3.14-0.25)),
+        Vector2::Rotate(TRANSFORM(e)->size * 0.2, MathUtil::RandomFloat(6.28))), 0.016));
+    // explosions.push_back(e);
+}
+
 void RunnerSystem::DoUpdate(float dt) {
     for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
         Entity a = (*it).first;         
         RunnerComponent* rc = (*it).second;
         PhysicsComponent* pc = PHYSICS(a);
-        rc->elapsed += dt;
 
+        if (rc->killed) {
+            if (rc->elapsed >= 0) {
+                killRunner(a);
+            }
+            rc->elapsed = -1;
+            continue;
+        }
+
+        rc->elapsed += dt;
+        
         if (rc->elapsed >= rc->startTime) {
             TransformationComponent* tc = TRANSFORM(a);
             /*
@@ -58,6 +88,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
                  std::cout << "finished" << std::endl;
                 rc->finished = true;
+                rc->ghost = true;
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
                 rc->currentJump = 0;
