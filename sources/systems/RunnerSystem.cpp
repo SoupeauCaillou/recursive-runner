@@ -23,6 +23,7 @@
 #include "systems/PhysicsSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/AnimationSystem.h"
+#include "systems/AutoDestroySystem.h"
 #include "util/IntersectionUtil.h"
 
 INSTANCE_IMPL(RunnerSystem);
@@ -50,7 +51,8 @@ static void killRunner(Entity runner) {
     PHYSICS(e)->forces.push_back(std::make_pair(
     Force(Vector2::Rotate(Vector2(MathUtil::RandomIntInRange(500, 700), 0), dir > 0 ? MathUtil::RandomFloatInRange(0.25, 1.5) : MathUtil::RandomFloatInRange(1.5, 3.14-0.25)),
         Vector2::Rotate(TRANSFORM(e)->size * 0.2, MathUtil::RandomFloat(6.28))), 0.016));
-    // explosions.push_back(e);
+    ADD_COMPONENT(e, AutoDestroy);
+    AUTO_DESTROY(e)->type = AutoDestroyComponent::OUT_OF_SCREEN;
 }
 
 void RunnerSystem::DoUpdate(float dt) {

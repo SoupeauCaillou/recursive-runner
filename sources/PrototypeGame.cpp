@@ -43,6 +43,7 @@
 #include "systems/ScrollingSystem.h"
 #include "systems/MorphingSystem.h"
 #include "systems/AnimationSystem.h"
+#include "systems/AutoDestroySystem.h"
 #include "systems/NetworkSystem.h"
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -69,7 +70,6 @@ static void updateFps(float dt);
 
 // PURE LOCAL VARS
 Entity background, startButton, scoreText, goldCoin;
-std::vector<Entity> gains, explosions;
 
 enum GameState {
     Menu,
@@ -246,6 +246,7 @@ void PrototypeGame::tick(float dt) {
 	theSoundSystem.Update(dt);
     theMusicSystem.Update(dt);
     theTransformationSystem.Update(dt);
+    theAutoDestroySystem.Update(dt);
     theRenderingSystem.Update(dt);
 
     updateFps(dt);
@@ -280,7 +281,11 @@ static void spawnGainEntity(int gain, const Vector2& pos) {
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
     PHYSICS(e)->gravity = Vector2(0, 6);
-    gains.push_back(e);
+    ADD_COMPONENT(e, AutoDestroy);
+    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
+    AUTO_DESTROY(e)->params.lifetime.value = 1;
+    AUTO_DESTROY(e)->params.lifetime.map2AlphaTextRendering = true;
+    AUTO_DESTROY(e)->hasTextRendering = true;
 }
 
 static Entity addRunnerToPlayer(PlayerComponent* p) {
@@ -474,24 +479,6 @@ static GameState updatePlaying(float dt) {
                     spawnGainEntity(gain, TRANSFORM(coin)->position);
                 }
             }
-        }
-    }
-
-    for (unsigned i=0; i<gains.size(); i++) {
-        Entity e = gains[i];
-        float& a = TEXT_RENDERING(e)->color.a;
-        a -= 1 * dt;
-        if (a <= 0) {
-            theTextRenderingSystem.DeleteEntity(e);
-            gains.erase(gains.begin() + i);
-            i--;
-        }
-    }
-    for (unsigned i=0; i<explosions.size(); i++) {
-        if (TRANSFORM(explosions[i])->position.Y < PlacementHelper::ScreenHeight * -0.5) {
-            theEntityManager.DeleteEntity(explosions[i]);
-            explosions.erase(explosions.begin() + i);
-            i--;
         }
     }
     
