@@ -298,6 +298,11 @@ static GameState updateWaitingPlayers(float dt) {
     if (theNetworkSystem.networkAPI) {
         if (theNetworkSystem.networkAPI->isConnectedToAnotherPlayer()) {
             gameTempVars.isGameMaster = theNetworkSystem.networkAPI->amIGameMaster();
+            if (gameTempVars.isGameMaster) {
+                TEXT_RENDERING(startMultiButton)->text = "Connected S";
+            } else {
+                TEXT_RENDERING(startMultiButton)->text = "Connected C";
+            }
         }
     }
     gameTempVars.players = thePlayerSystem.RetrieveAllEntityWithComponent();
