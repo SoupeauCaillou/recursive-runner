@@ -275,7 +275,7 @@ static GameState updateMenu(float dt) {
     } else if (BUTTON(startMultiButton)->clicked) {
         TEXT_RENDERING(startMultiButton)->text = "Finding opp.";
         NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
-        net->connectToLobby("my_name", "127.0.0.1"); // 66.228.34.226");//127.0.0.1");
+        net->connectToLobby("my_name", "66.228.34.226");//127.0.0.1");
         theNetworkSystem.networkAPI = net;
         gameTempVars.numPlayers = 2;
         gameTempVars.isGameMaster = false;
@@ -421,6 +421,7 @@ static GameState updatePlaying(float dt) {
     }
 
     for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+        //std::cout << i << " -> " << gameTempVars.runners[i].size() << std::endl;
         for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
             Entity e = gameTempVars.runners[i][j];
             RunnerComponent* rc = RUNNER(e);
@@ -503,14 +504,17 @@ void GameTempVar::cleanup() {
 void GameTempVar::syncRunners() {
     std::vector<Entity> r = theRunnerSystem.RetrieveAllEntityWithComponent();
     for (unsigned i=0; i<players.size(); i++) {
+        runners[i].clear();
         for (unsigned j=0; j<r.size(); j++) {
             if (RUNNER(r[j])->playerOwner == gameTempVars.players[i]) {
                 runners[i].push_back(r[j]);
-                break;
+                if (i == playerIndex()) {
+                    if (!RUNNER(r[j])->ghost)
+                        currentRunner = r[j];
+                }
             }
         }
     }
-    currentRunner = *(runners[playerIndex()].rbegin());
 }
 
 void GameTempVar::syncCoins() {
@@ -631,6 +635,6 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p) {
     NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
         
     p->runnersCount++;
-    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << std::endl;
+    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << "/" << player << std::endl;
     return e;
 }
