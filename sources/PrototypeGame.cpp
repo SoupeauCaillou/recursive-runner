@@ -64,7 +64,7 @@
 #endif
 
 static void spawnGainEntity(int gain, const Vector2& pos);
-static Entity addRunnerToPlayer(Entity player, PlayerComponent* p);
+static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex);
 static void updateFps(float dt);
 
 
@@ -275,7 +275,7 @@ static GameState updateMenu(float dt) {
     } else if (BUTTON(startMultiButton)->clicked) {
         TEXT_RENDERING(startMultiButton)->text = "Finding opp.";
         NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
-        net->connectToLobby("my_name", "66.228.34.226");//127.0.0.1");
+        net->connectToLobby("my_name", "127.0.0.1"); //66.228.34.226");//127.0.0.1");
         theNetworkSystem.networkAPI = net;
         gameTempVars.numPlayers = 2;
         gameTempVars.isGameMaster = false;
@@ -285,6 +285,7 @@ static GameState updateMenu(float dt) {
 }
 
 static void transitionMenuWaitingPlayers() {
+    LOGI("Change state");
     BUTTON(startSingleButton)->enabled = false;
     BUTTON(startMultiButton)->enabled = false;
     theNetworkSystem.deleteAllNonLocalEntities();
@@ -315,7 +316,7 @@ static GameState updateWaitingPlayers(float dt) {
                 ADD_COMPONENT(e, Network);
                 NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0;
 
-                addRunnerToPlayer(e, PLAYER(e));
+                addRunnerToPlayer(e, PLAYER(e), i);
             }
         }
         return WaitingPlayers;
@@ -330,6 +331,7 @@ static GameState updateWaitingPlayers(float dt) {
 }
 
 static void transitionWaitingPlayersPlaying() {
+    LOGI("Change state");
     // store a few entities to avoid permanent lookups
     gameTempVars.syncCoins();
     gameTempVars.syncRunners();
@@ -365,7 +367,7 @@ static GameState updatePlaying(float dt) {
             } else {
                 CAM_TARGET(gameTempVars.currentRunner)->enabled = false;
                 // add a new one
-                gameTempVars.currentRunner = addRunnerToPlayer(gameTempVars.players[myPlayerIndex], myPlayer);
+                gameTempVars.currentRunner = addRunnerToPlayer(gameTempVars.players[myPlayerIndex], myPlayer, myPlayerIndex);
             }
         }
 
@@ -408,7 +410,7 @@ static GameState updatePlaying(float dt) {
                 Entity ghost = gameTempVars.runners[i][j];
                 TransformationComponent* ghostTc = TRANSFORM(ghost);
                 for (unsigned k=0; k<count; k++) {
-                    if (ghostTc == actives[k]) continue;
+                    if (!RUNNER(ghost)->ghost) continue;
                     if (IntersectionUtil::rectangleRectangle(ghostTc, actives[k])) {
                         RUNNER(ghost)->killed = true;
                         gameTempVars.runners[i].erase(gameTempVars.runners[i].begin() + j);
@@ -470,6 +472,7 @@ static GameState updatePlaying(float dt) {
 }
 
 static void transitionPlayingMenu() {
+    LOGI("Change state");
     // Restore camera position
     theRenderingSystem.cameraPosition = Vector2::Zero;
     // Show menu UI
@@ -598,8 +601,8 @@ static void spawnGainEntity(int gain, const Vector2& pos) {
     AUTO_DESTROY(e)->hasTextRendering = true;
 }
 
-static Entity addRunnerToPlayer(Entity player, PlayerComponent* p) {
-    int direction = (p->runnersCount % 2) ? -1 : 1;
+static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex) {
+    int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
@@ -633,6 +636,8 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p) {
     NETWORK(e)->systemUpdatePeriod[theRunnerSystem.getName()] = 0.016;
     NETWORK(e)->systemUpdatePeriod[thePhysicsSystem.getName()] = 0.016;
     NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
+    NETWORK(e)->systemUpdatePeriod[theAnimationSystem.getName()] = 0.1;
+    NETWORK(e)->systemUpdatePeriod[theCameraTargetSystem.getName()] = 0.1;
         
     p->runnersCount++;
     std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << "/" << player << std::endl;
