@@ -32,7 +32,32 @@ const float MinJumpDuration = 0.016;
 float MaxJumpDuration = 0.15;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") { 
- 
+    Entity playerOwner;
+    Vector2 startPoint, endPoint;
+    float maxSpeed;
+    float speed;
+    bool finished, ghost, killed;
+    float startTime, elapsed, jumpingSince;
+    int currentJump;
+    std::vector<float> jumpTimes;
+    std::vector<float> jumpDurations;
+    std::vector<Entity> coins;
+
+    RunnerComponent tc;
+    componentSerializer.add(new EntityProperty(OFFSET(playerOwner, tc)));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.X, tc), 0.001));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.Y, tc), 0.001));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.X, tc), 0.001));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.Y, tc), 0.001));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(maxSpeed, tc), 0.001));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(speed, tc), 0.001));
+    componentSerializer.add(new Property(OFFSET(finished, tc), sizeof(bool)));
+    componentSerializer.add(new Property(OFFSET(ghost, tc), sizeof(bool)));
+    componentSerializer.add(new Property(OFFSET(killed, tc), sizeof(bool)));
+    componentSerializer.add(new Property(OFFSET(currentJump, tc), sizeof(bool)));
+    componentSerializer.add(new VectorProperty<float>(OFFSET(jumpTimes, tc)));
+    componentSerializer.add(new VectorProperty<float>(OFFSET(jumpDurations, tc)));
+    componentSerializer.add(new VectorProperty<float>(OFFSET(coins, tc)));
 }
 
 static void killRunner(Entity runner) {
