@@ -32,17 +32,6 @@ const float MinJumpDuration = 0.016;
 float MaxJumpDuration = 0.15;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") { 
-    Entity playerOwner;
-    Vector2 startPoint, endPoint;
-    float maxSpeed;
-    float speed;
-    bool finished, ghost, killed;
-    float startTime, elapsed, jumpingSince;
-    int currentJump;
-    std::vector<float> jumpTimes;
-    std::vector<float> jumpDurations;
-    std::vector<Entity> coins;
-
     RunnerComponent tc;
     componentSerializer.add(new EntityProperty(OFFSET(playerOwner, tc)));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.X, tc), 0.001));
@@ -61,7 +50,8 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
 }
 
 static void killRunner(Entity runner) {
-    RENDERING(runner)->hide = true;
+    RENDERING(runner)->hide = false;
+    RENDERING(runner)->color = Color(0,0,1);
     int dir = 1 - 2 * MathUtil::RandomIntInRange(0, 2);//(RUNNER(current)->speed > 0) ? 1 : -1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
@@ -90,6 +80,7 @@ void RunnerSystem::DoUpdate(float dt) {
             if (rc->elapsed >= 0) {
                 killRunner(a);
             }
+            RENDERING(a)->color = Color(0, 0, 0.3);
             rc->elapsed = -1;
             continue;
         }

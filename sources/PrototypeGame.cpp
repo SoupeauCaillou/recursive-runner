@@ -289,10 +289,6 @@ static void transitionMenuWaitingPlayers() {
     BUTTON(startSingleButton)->enabled = false;
     BUTTON(startMultiButton)->enabled = false;
     theNetworkSystem.deleteAllNonLocalEntities();
-    // Create coins for next game
-    if (gameTempVars.isGameMaster) {
-        createCoins(20);
-    }
 }
 
 static GameState updateWaitingPlayers(float dt) {
@@ -314,10 +310,15 @@ static GameState updateWaitingPlayers(float dt) {
                 Entity e = theEntityManager.CreateEntity();
                 ADD_COMPONENT(e, Player);
                 ADD_COMPONENT(e, Network);
-                NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0;
+                NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0.1;
 
-                addRunnerToPlayer(e, PLAYER(e), i);
+                Entity run = addRunnerToPlayer(e, PLAYER(e), i);
+                if (i != gameTempVars.playerIndex()) {
+                    NETWORK(run)->newOwnerShipRequest = 1;
+                }
             }
+            // Create coins for next game
+            createCoins(20);
         }
         return WaitingPlayers;
     }
@@ -356,15 +357,24 @@ static GameState updatePlaying(float dt) {
 
     // Manage player's current runner
     if (!gameTempVars.runners[myPlayerIndex].empty()) {
+        CAM_TARGET(gameTempVars.currentRunner)->enabled = true;
+        CAM_TARGET(gameTempVars.currentRunner)->offset = Vector2(
+            ((RUNNER(gameTempVars.currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth, 
+            0 - TRANSFORM(gameTempVars.currentRunner)->position.Y);
+        
         // If current runner has reached the edge of the screen
         if (RUNNER(gameTempVars.currentRunner)->finished) {
+            // return Runner control to master
+            if (!gameTempVars.isGameMaster) {
+                NETWORK(gameTempVars.currentRunner)->newOwnerShipRequest = 0;
+            }
             if (myPlayer->runnersCount == 10) {
                 CAM_TARGET(gameTempVars.currentRunner)->enabled = false;
                 theRenderingSystem.cameraPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
                 return Menu;
-            } else {
+            } else /*if (gameTempVars.isGameMaster)*/ {
                 CAM_TARGET(gameTempVars.currentRunner)->enabled = false;
                 // add a new one
                 gameTempVars.currentRunner = addRunnerToPlayer(gameTempVars.players[myPlayerIndex], myPlayer, myPlayerIndex);
@@ -408,13 +418,14 @@ static GameState updatePlaying(float dt) {
         for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
             for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
                 Entity ghost = gameTempVars.runners[i][j];
+                if (!RUNNER(ghost)->ghost || RUNNER(ghost)->killed)
+                    continue;
                 TransformationComponent* ghostTc = TRANSFORM(ghost);
                 for (unsigned k=0; k<count; k++) {
-                    if (!RUNNER(ghost)->ghost) continue;
                     if (IntersectionUtil::rectangleRectangle(ghostTc, actives[k])) {
                         RUNNER(ghost)->killed = true;
-                        gameTempVars.runners[i].erase(gameTempVars.runners[i].begin() + j);
-                        j--;
+                        // gameTempVars.runners[i].erase(gameTempVars.runners[i].begin() + j);
+                        // j--;
                         break;
                     }
                 }
@@ -423,6 +434,7 @@ static GameState updatePlaying(float dt) {
     }
 
     for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+        PlayerComponent* player = PLAYER(gameTempVars.players[i]);
         //std::cout << i << " -> " << gameTempVars.runners[i].size() << std::endl;
         for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
             Entity e = gameTempVars.runners[i][j];
@@ -448,7 +460,7 @@ static GameState updatePlaying(float dt) {
                     if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
                         rc->coins.push_back(coin);
                         int gain = 10; // TODO ((coin == goldCoin) ? 30 : 10) * pow(2, player.size() - i - 1);
-                        myPlayer->score += gain;
+                        player->score += gain;
                         spawnGainEntity(gain, TRANSFORM(coin)->position);
                     }
                 }
@@ -509,14 +521,22 @@ void GameTempVar::syncRunners() {
     for (unsigned i=0; i<players.size(); i++) {
         runners[i].clear();
         for (unsigned j=0; j<r.size(); j++) {
-            if (RUNNER(r[j])->playerOwner == gameTempVars.players[i]) {
+            RunnerComponent* rc = RUNNER(r[j]);
+            if (rc->killed)
+                continue;
+            if (rc->playerOwner == gameTempVars.players[i]) {
                 runners[i].push_back(r[j]);
                 if (i == playerIndex()) {
-                    if (!RUNNER(r[j])->ghost)
+                    if (!rc->ghost)
                         currentRunner = r[j];
                 }
             }
         }
+    }
+    if (currentRunner == 0) {
+        LOGE("No current runner => bug. Nb players=%d, nb runners=%d",players.size(), r.size());
+        for (unsigned i=0; i<players.size(); i++)
+            LOGE("    runners[%d] = %d", i, runners[i].size());
     }
 }
 
@@ -602,7 +622,7 @@ static void spawnGainEntity(int gain, const Vector2& pos) {
 }
 
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex) {
-    int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
+    int direction = ((p->runnersCount /*+ playerIndex*/) % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
@@ -610,7 +630,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8;
     ADD_COMPONENT(e, Rendering);
-    // RENDERING(e)->color = Color::random();
+    RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
     RENDERING(e)->hide = false;
     ADD_COMPONENT(e, Runner);
     TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
@@ -621,11 +641,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, CameraTarget);
-    CAM_TARGET(e)->enabled = true;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
-    CAM_TARGET(e)->offset = Vector2(
-        direction * 0.4 * PlacementHelper::ScreenWidth, 
-        0 - TRANSFORM(e)->position.Y);
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
     ADD_COMPONENT(e, Animation);
@@ -637,7 +653,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     NETWORK(e)->systemUpdatePeriod[thePhysicsSystem.getName()] = 0.016;
     NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
     NETWORK(e)->systemUpdatePeriod[theAnimationSystem.getName()] = 0.1;
-    NETWORK(e)->systemUpdatePeriod[theCameraTargetSystem.getName()] = 0.1;
+    NETWORK(e)->systemUpdatePeriod[theCameraTargetSystem.getName()] = 0.016;
         
     p->runnersCount++;
     std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << "/" << player << std::endl;
