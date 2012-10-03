@@ -70,6 +70,7 @@ static void updateFps(float dt);
 
 // PURE LOCAL VARS
 Entity background, startSingleButton, startMultiButton, scoreText, goldCoin;
+Entity networkUL, networkDL;
 
 enum GameState {
     Menu,
@@ -192,6 +193,26 @@ void PrototypeGame::init(const uint8_t* in, int size) {
     ADD_COMPONENT(scoreText, TextRendering);
     TEXT_RENDERING(scoreText)->text = "";
     TEXT_RENDERING(scoreText)->charHeight = 1;
+
+    networkUL = theEntityManager.CreateEntity();
+    ADD_COMPONENT(networkUL, Transformation);
+    TRANSFORM(networkUL)->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.46 * PlacementHelper::ScreenHeight);
+    TRANSFORM(networkUL)->z = 0.9;
+    ADD_COMPONENT(networkUL, TextRendering);
+    TEXT_RENDERING(networkUL)->text = "";
+    TEXT_RENDERING(networkUL)->charHeight = 0.35;
+    TEXT_RENDERING(networkUL)->color = Color(0, 1, 0);
+    TEXT_RENDERING(networkUL)->positioning = TextRenderingComponent::LEFT;
+
+    networkDL = theEntityManager.CreateEntity();
+    ADD_COMPONENT(networkDL, Transformation);
+    TRANSFORM(networkDL)->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.43 * PlacementHelper::ScreenHeight);
+    TRANSFORM(networkDL)->z = 0.9;
+    ADD_COMPONENT(networkDL, TextRendering);
+    TEXT_RENDERING(networkDL)->text = "";
+    TEXT_RENDERING(networkDL)->charHeight = 0.35;
+    TEXT_RENDERING(networkDL)->color = Color(1, 0, 0);
+    TEXT_RENDERING(networkDL)->positioning = TextRenderingComponent::LEFT;
     
     transitionPlayingMenu();
 }
@@ -274,6 +295,8 @@ static GameState updateMenu(float dt) {
         return WaitingPlayers;
     } else if (BUTTON(startMultiButton)->clicked) {
         TEXT_RENDERING(startMultiButton)->text = "Finding opp.";
+        TEXT_RENDERING(networkUL)->hide = false;
+        TEXT_RENDERING(networkDL)->hide = false;
         NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
         net->connectToLobby("my_name", "127.0.0.1"); //66.228.34.226");//127.0.0.1");
         theNetworkSystem.networkAPI = net;
@@ -483,12 +506,27 @@ static GameState updatePlaying(float dt) {
         a << "  " << PLAYER(gameTempVars.players[i])->score;
     }
     TEXT_RENDERING(scoreText)->text = a.str();
-        
+
     theGameSystem.Update(dt);
     thePlayerSystem.Update(dt);
     theRunnerSystem.Update(dt);
     theCameraTargetSystem.Update(dt);
 
+    {
+        std::stringstream a;
+        a << (int)theNetworkSystem.ulRate/1024 << "kops, " << theNetworkSystem.bytesSent / 1024 << " ko"; 
+        TEXT_RENDERING(networkUL)->text = a.str();
+        TRANSFORM(networkUL)->position = theRenderingSystem.cameraPosition + 
+            Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.46 * PlacementHelper::ScreenHeight);
+    }
+    {
+        std::stringstream a;
+        a << (int)theNetworkSystem.dlRate/1024 << "kops, " << theNetworkSystem.bytesReceived / 1024 << " ko"; 
+        TEXT_RENDERING(networkDL)->text = a.str();
+        TRANSFORM(networkDL)->position = theRenderingSystem.cameraPosition + 
+            Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.43 * PlacementHelper::ScreenHeight);
+    }
+    
     return Playing;
 }
 
