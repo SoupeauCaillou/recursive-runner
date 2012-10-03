@@ -19,6 +19,7 @@
 #pragma once
 
 #include "systems/System.h"
+#include <set>
 
 struct PlayerComponent {
     PlayerComponent() : name("dummy"), score(0), runnersCount(0), ready(true) {}
@@ -26,6 +27,7 @@ struct PlayerComponent {
     int score;
     int runnersCount;
     bool ready;
+    std::set<Entity> runners;
 };
 
 #define thePlayerSystem PlayerSystem::GetInstance()

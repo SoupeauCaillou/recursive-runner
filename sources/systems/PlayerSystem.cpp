@@ -17,6 +17,7 @@
  along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "PlayerSystem.h"
+#include "RunnerSystem.h"
 
 INSTANCE_IMPL(PlayerSystem);
 
@@ -29,9 +30,16 @@ PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
 }
 
 void PlayerSystem::DoUpdate(float dt) {
+    std::vector<Entity> runners = theRunnerSystem.RetrieveAllEntityWithComponent();
     for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
         Entity a = (*it).first;         
         PlayerComponent* rc = (*it).second;
+        for(int i=0; i<runners.size(); i++) {
+            if (RUNNER(runners[i])->playerOwner == a) {
+                rc->runners.insert(runners[i]);
+            }
+        }
+        rc->runnersCount = rc->runners.size();
     }
 }
 

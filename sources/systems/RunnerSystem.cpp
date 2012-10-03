@@ -50,7 +50,7 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
 }
 
 static void killRunner(Entity runner) {
-    RENDERING(runner)->hide = false;
+    RENDERING(runner)->hide = true;
     RENDERING(runner)->color = Color(0,0,1);
     int dir = 1 - 2 * MathUtil::RandomIntInRange(0, 2);//(RUNNER(current)->speed > 0) ? 1 : -1;
     Entity e = theEntityManager.CreateEntity();
@@ -68,6 +68,7 @@ static void killRunner(Entity runner) {
         Vector2::Rotate(TRANSFORM(e)->size * 0.2, MathUtil::RandomFloat(6.28))), 0.016));
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::OUT_OF_SCREEN;
+    // theEntityManager.DeleteEntity(runner);
 }
 
 void RunnerSystem::DoUpdate(float dt) {
@@ -104,7 +105,7 @@ void RunnerSystem::DoUpdate(float dt) {
             
             if ((tc->position.X > rc->endPoint.X && rc->speed > 0) || 
                 (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
-                 std::cout << "finished" << std::endl;
+                 std::cout << a << " finished!" << std::endl;
                 rc->finished = true;
                 rc->ghost = true;
                 tc->position = rc->startPoint;
