@@ -70,10 +70,10 @@ static void killRunner(Entity runner) {
         Vector2::Rotate(TRANSFORM(e)->size * 0.2, MathUtil::RandomFloat(6.28))), 0.016));
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::OUT_OF_SCREEN;
-    // theEntityManager.DeleteEntity(runner);
 }
 
 void RunnerSystem::DoUpdate(float dt) {
+    std::vector<Entity> killedRunners;
     for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
         Entity a = (*it).first;         
         RunnerComponent* rc = (*it).second;
@@ -82,8 +82,8 @@ void RunnerSystem::DoUpdate(float dt) {
         if (rc->killed) {
             if (rc->elapsed >= 0) {
                 killRunner(a);
+                killedRunners.push_back(a);
             }
-            RENDERING(a)->color = Color(0, 0, 0.3);
             rc->elapsed = -1;
             continue;
         }
@@ -140,6 +140,9 @@ void RunnerSystem::DoUpdate(float dt) {
                 }
             }
         }
+    }
+    for (int i=0;i<killedRunners.size(); i++) {
+        theEntityManager.DeleteEntity(killedRunners[i]);
     }
 }
 

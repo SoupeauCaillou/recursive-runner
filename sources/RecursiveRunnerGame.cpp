@@ -349,8 +349,9 @@ static GameState updateWaitingPlayers(float dt) {
                 #ifdef SAC_NETWORK
                 ADD_COMPONENT(e, Network);
                 NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0.1;
-
+                #endif
                 Entity run = addRunnerToPlayer(e, PLAYER(e), i);
+                #ifdef SAC_NETWORK
                 if (i != gameTempVars.playerIndex()) {
                     NETWORK(run)->newOwnerShipRequest = 1;
                 }
