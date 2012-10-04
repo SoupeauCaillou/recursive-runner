@@ -507,16 +507,26 @@ static GameState updatePlaying(float dt) {
                 }
             }
             // check coins
-            for (std::vector<Entity>::iterator it=gameTempVars.coins.begin(); it!=gameTempVars.coins.end(); ++it) {
-                Entity coin = *it;
+            int end = gameTempVars.coins.size();
+            Entity prev = 0;
+            for(int idx=0; idx<end; idx++) {
+                Entity coin = rc->speed > 0 ? gameTempVars.coins[idx] : gameTempVars.coins[end - idx - 1];
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
                     if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
+                        if (!rc->coins.empty()) {
+                            if (rc->coins.back() == prev) {
+                                rc->coinSequenceBonus++;
+                            } else {
+                                rc->coinSequenceBonus = 1;
+                            }
+                        }
                         rc->coins.push_back(coin);
-                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2, rc->oldNessBonus);
+                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
                         spawnGainEntity(gain, TRANSFORM(coin)->position);
                     }
                 }
+                prev = coin;
             }
         }
     }
@@ -612,6 +622,10 @@ void GameTempVar::syncRunners() {
     }
 }
 
+static bool sortFromLeftToRight(Entity c1, Entity c2) {
+    return TRANSFORM(c1)->position.X < TRANSFORM(c2)->position.X;
+}
+
 void GameTempVar::syncCoins() {
     std::vector<Entity> t = theTransformationSystem.RetrieveAllEntityWithComponent();
     for (unsigned i=0; i<t.size(); i++) {
@@ -621,6 +635,7 @@ void GameTempVar::syncCoins() {
             coins.push_back(t[i]);
         }
     }
+    std::sort(coins.begin(), coins.end(), sortFromLeftToRight);
 }
 
 int GameTempVar::playerIndex() {

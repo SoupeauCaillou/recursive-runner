@@ -110,6 +110,7 @@ void RunnerSystem::DoUpdate(float dt) {
                  std::cout << a << " finished!" << std::endl;
                 rc->finished = true;
                 rc->oldNessBonus++;
+                rc->coinSequenceBonus = 1;
                 rc->ghost = true;
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
