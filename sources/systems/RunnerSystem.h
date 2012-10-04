@@ -22,14 +22,14 @@
 #include "base/Vector2.h"
 
 struct RunnerComponent {
-    RunnerComponent() : finished(false), ghost(false), killed(false), startTime(0), elapsed(0), jumpingSince(0), currentJump(0) {}
+    RunnerComponent() : finished(false), ghost(false), killed(false), startTime(0), elapsed(0), jumpingSince(0), currentJump(0), oldNessBonus(0) {}
     Entity playerOwner;
     Vector2 startPoint, endPoint;
     float maxSpeed;
     float speed;
     bool finished, ghost, killed;
     float startTime, elapsed, jumpingSince;
-    int currentJump;
+    int currentJump, oldNessBonus;
     std::vector<float> jumpTimes;
     std::vector<float> jumpDurations;
     std::vector<Entity> coins;

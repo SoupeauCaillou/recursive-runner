@@ -109,6 +109,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
                  std::cout << a << " finished!" << std::endl;
                 rc->finished = true;
+                rc->oldNessBonus++;
                 rc->ghost = true;
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
@@ -141,8 +142,23 @@ void RunnerSystem::DoUpdate(float dt) {
             }
         }
     }
-    for (int i=0;i<killedRunners.size(); i++) {
-        theEntityManager.DeleteEntity(killedRunners[i]);
+
+    if (!killedRunners.empty()) {
+        for (int i=0;i<killedRunners.size(); i++) {
+            Entity a = killedRunners[i];
+            int bonus = RUNNER(a)->oldNessBonus;
+            for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
+                if (it->first == a)
+                    continue;
+                RunnerComponent* rc = (*it).second;
+                if (bonus < rc->oldNessBonus) {
+                    std::cout << rc->oldNessBonus << " - " << killedRunners.size() << std::endl;
+                    rc->oldNessBonus--;
+                    assert(rc->oldNessBonus >= 0);
+                }
+            }
+            theEntityManager.DeleteEntity(a);
+        }
     }
 }
 

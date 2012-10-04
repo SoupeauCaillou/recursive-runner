@@ -512,7 +512,7 @@ static GameState updatePlaying(float dt) {
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
                     if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
                         rc->coins.push_back(coin);
-                        int gain = 10; // TODO ((coin == goldCoin) ? 30 : 10) * pow(2, player.size() - i - 1);
+                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2, rc->oldNessBonus);
                         player->score += gain;
                         spawnGainEntity(gain, TRANSFORM(coin)->position);
                     }
