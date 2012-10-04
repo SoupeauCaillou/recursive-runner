@@ -44,12 +44,13 @@
 #include "systems/MorphingSystem.h"
 #include "systems/AnimationSystem.h"
 #include "systems/AutoDestroySystem.h"
+#ifdef SAC_NETWORK
 #include "systems/NetworkSystem.h"
+#include "api/linux/NetworkAPILinuxImpl.h"
+#endif
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
 #include "systems/PlayerSystem.h"
-#include "systems/GameSystem.h"
-#include "api/linux/NetworkAPILinuxImpl.h"
 
 #include <cmath>
 #include <vector>
@@ -69,8 +70,13 @@ static void updateFps(float dt);
 
 
 // PURE LOCAL VARS
-Entity background, startSingleButton, startMultiButton, scoreText, goldCoin;
+Entity background, startSingleButton;
+#ifdef SAC_NETWORK
+Entity startMultiButton;
 Entity networkUL, networkDL;
+#endif
+Entity scoreText, goldCoin;
+
 
 enum GameState {
     Menu,
@@ -122,7 +128,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theRenderingSystem.loadAtlas("dummy", false);
     theRenderingSystem.loadAtlas("decor", false);
     
-// register 4 animations
+    // register 4 animations
     std::string runL2R[] = { "obj_Run000", "obj_Run001", "obj_Run002", "obj_Run003", "obj_Run004", "obj_Run005", "obj_Run006", "obj_Run007" }; 
     std::string runR2L[] = { "obj_Run100", "obj_Run101", "obj_Run102", "obj_Run103", "obj_Run104", "obj_Run105", "obj_Run106", "obj_Run107" }; 
     std::string jumpL2R[] = { "obj_Run004" };
@@ -144,7 +150,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
-    GameSystem::CreateInstance();
     PlayerSystem::CreateInstance();
 
     background = theEntityManager.CreateEntity();
@@ -171,7 +176,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     ADD_COMPONENT(startSingleButton, Rendering);
     RENDERING(startSingleButton)->color = Color(0.2, 0.2, 0.2, 0.5);
     ADD_COMPONENT(startSingleButton, Button);
-
+#ifdef SAC_NETWORK
     startMultiButton = theEntityManager.CreateEntity();
     ADD_COMPONENT(startMultiButton, Transformation);
     TRANSFORM(startMultiButton)->position = Vector2(PlacementHelper::ScreenWidth /6, 0);
@@ -185,7 +190,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     ADD_COMPONENT(startMultiButton, Rendering);
     RENDERING(startMultiButton)->color = Color(0.2, 0.2, 0.2, 0.5);
     ADD_COMPONENT(startMultiButton, Button);
-    
+#endif
     scoreText = theEntityManager.CreateEntity();
     ADD_COMPONENT(scoreText, Transformation);
     TRANSFORM(scoreText)->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
@@ -193,7 +198,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     ADD_COMPONENT(scoreText, TextRendering);
     TEXT_RENDERING(scoreText)->text = "";
     TEXT_RENDERING(scoreText)->charHeight = 1;
-
+#ifdef SAC_NETWORK
     networkUL = theEntityManager.CreateEntity();
     ADD_COMPONENT(networkUL, Transformation);
     TRANSFORM(networkUL)->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.46 * PlacementHelper::ScreenHeight);
@@ -213,7 +218,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     TEXT_RENDERING(networkDL)->charHeight = 0.35;
     TEXT_RENDERING(networkDL)->color = Color(1, 0, 0);
     TEXT_RENDERING(networkDL)->positioning = TextRenderingComponent::LEFT;
-    
+#endif
     transitionPlayingMenu();
 }
 
@@ -269,7 +274,9 @@ void RecursiveRunnerGame::tick(float dt) {
     
 
     // systems update
+#ifdef SAC_NETWORK
     theNetworkSystem.Update(dt);
+#endif
 	theADSRSystem.Update(dt);
     theAnimationSystem.Update(dt);
 	theButtonSystem.Update(dt);
@@ -293,7 +300,9 @@ static GameState updateMenu(float dt) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
         return WaitingPlayers;
-    } else if (BUTTON(startMultiButton)->clicked) {
+    }
+#ifdef SAC_NETWORK
+    else if (BUTTON(startMultiButton)->clicked) {
         TEXT_RENDERING(startMultiButton)->text = "Finding opp.";
         TEXT_RENDERING(networkUL)->hide = false;
         TEXT_RENDERING(networkDL)->hide = false;
@@ -304,17 +313,21 @@ static GameState updateMenu(float dt) {
         gameTempVars.isGameMaster = false;
         return WaitingPlayers;
     }
+#endif
     return Menu;
 }
 
 static void transitionMenuWaitingPlayers() {
     LOGI("Change state");
     BUTTON(startSingleButton)->enabled = false;
+#ifdef SAC_NETWORK
     BUTTON(startMultiButton)->enabled = false;
     theNetworkSystem.deleteAllNonLocalEntities();
+#endif
 }
 
 static GameState updateWaitingPlayers(float dt) {
+#ifdef SAC_NETWORK
     if (theNetworkSystem.networkAPI) {
         if (theNetworkSystem.networkAPI->isConnectedToAnotherPlayer()) {
             gameTempVars.isGameMaster = theNetworkSystem.networkAPI->amIGameMaster();
@@ -325,6 +338,7 @@ static GameState updateWaitingPlayers(float dt) {
             }
         }
     }
+#endif
     gameTempVars.players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (gameTempVars.players.size() != gameTempVars.numPlayers) {
         // create both players
@@ -332,6 +346,7 @@ static GameState updateWaitingPlayers(float dt) {
             for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
                 Entity e = theEntityManager.CreateEntity();
                 ADD_COMPONENT(e, Player);
+                #ifdef SAC_NETWORK
                 ADD_COMPONENT(e, Network);
                 NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0.1;
 
@@ -339,6 +354,7 @@ static GameState updateWaitingPlayers(float dt) {
                 if (i != gameTempVars.playerIndex()) {
                     NETWORK(run)->newOwnerShipRequest = 1;
                 }
+                #endif
             }
             // Create coins for next game
             createCoins(20);
@@ -363,8 +379,10 @@ static void transitionWaitingPlayersPlaying() {
     TEXT_RENDERING(scoreText)->hide = false;
     TEXT_RENDERING(startSingleButton)->hide = true;
     RENDERING(startSingleButton)->hide = true;
+#ifdef SAC_NETWORK
     TEXT_RENDERING(startMultiButton)->hide = true;
     RENDERING(startMultiButton)->hide = true;
+#endif
     // hmm
     theRenderingSystem.cameraPosition.X = TRANSFORM(gameTempVars.currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
 }
@@ -390,10 +408,12 @@ static GameState updatePlaying(float dt) {
             std::cout << gameTempVars.currentRunner << " finished, add runner or end game" << std::endl;
             CAM_TARGET(gameTempVars.currentRunner)->enabled = false;
             // return Runner control to master
+            #ifdef SAC_NETWORK
             if (!gameTempVars.isGameMaster) {
                 std::cout << "Give back ownership of " << gameTempVars.currentRunner << " to server" << std::endl;
                 NETWORK(gameTempVars.currentRunner)->newOwnerShipRequest = 0;
             }
+            #endif
             if (myPlayer->runnersCount == 10) {
                 theRenderingSystem.cameraPosition = Vector2::Zero;
                 // end of game
@@ -507,11 +527,10 @@ static GameState updatePlaying(float dt) {
     }
     TEXT_RENDERING(scoreText)->text = a.str();
 
-    theGameSystem.Update(dt);
     thePlayerSystem.Update(dt);
     theRunnerSystem.Update(dt);
     theCameraTargetSystem.Update(dt);
-
+#ifdef SAC_NETWORK
     {
         std::stringstream a;
         a << (int)theNetworkSystem.ulRate/1024 << "kops, " << theNetworkSystem.bytesSent / 1024 << " ko"; 
@@ -526,7 +545,7 @@ static GameState updatePlaying(float dt) {
         TRANSFORM(networkDL)->position = theRenderingSystem.cameraPosition + 
             Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.43 * PlacementHelper::ScreenHeight);
     }
-    
+#endif
     return Playing;
 }
 
@@ -539,12 +558,14 @@ static void transitionPlayingMenu() {
     CONTAINER(startSingleButton)->enable = true;
     RENDERING(startSingleButton)->hide = false;
     BUTTON(startSingleButton)->enabled = true;
+#ifdef SAC_NETWORK
     TEXT_RENDERING(startMultiButton)->hide = false;
     CONTAINER(startMultiButton)->enable = true;
     RENDERING(startMultiButton)->hide = false;
     BUTTON(startMultiButton)->enabled = true;
-    TEXT_RENDERING(scoreText)->hide = false;
     TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
+#endif
+    TEXT_RENDERING(scoreText)->hide = false;
     // Cleanup previous game variables
     gameTempVars.cleanup();
 }
@@ -627,9 +648,11 @@ static void createCoins(int count) {
             goldCoin = e;
             min = MathUtil::Abs(TRANSFORM(e)->position.X);
         }
+        #ifdef SAC_NETWORK
         ADD_COMPONENT(e, Network);
         NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
         NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
+        #endif
     }
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
@@ -696,7 +719,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     PHYSICS(e)->mass = 1;
     ADD_COMPONENT(e, Animation);
     ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
-
+#ifdef SAC_NETWORK
     ADD_COMPONENT(e, Network);
     NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0.116;
     NETWORK(e)->systemUpdatePeriod[theRunnerSystem.getName()] = 0.016;
@@ -704,7 +727,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
     NETWORK(e)->systemUpdatePeriod[theAnimationSystem.getName()] = 0.1;
     NETWORK(e)->systemUpdatePeriod[theCameraTargetSystem.getName()] = 0.016;
-
+#endif
     std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << "/" << player << std::endl;
     return e;
 }

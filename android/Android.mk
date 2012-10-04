@@ -22,6 +22,7 @@ LOCAL_SRC_FILES := \
     recursiveRunner.cpp \
     ../sources/RecursiveRunnerGame.cpp \
     ../sources/systems/RunnerSystem.cpp \
+    ../sources/systems/PlayerSystem.cpp \
     ../sources/systems/CameraTargetSystem.cpp \
     ../sac/android/sacjnilib.cpp
 

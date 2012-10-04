@@ -33,7 +33,9 @@ float MaxJumpDuration = 0.15;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") { 
     RunnerComponent tc;
+#ifdef SAC_NETWORK
     componentSerializer.add(new EntityProperty(OFFSET(playerOwner, tc)));
+#endif
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.X, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.Y, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.X, tc), 0.001));
