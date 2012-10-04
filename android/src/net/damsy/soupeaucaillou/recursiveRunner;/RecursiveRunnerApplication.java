@@ -16,32 +16,15 @@
 	You should have received a copy of the GNU General Public License
 	along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
-#pragma once
+package net.damsy.soupeaucaillou.recursiveRunner;
 
-#include <string>
-#include <vector>
+import android.app.Application;
 
-#include "base/MathUtil.h"
-#include "base/Game.h"
 
-#include "systems/RenderingSystem.h"
-
-#include "api/LocalizeAPI.h"
-#include "api/AdAPI.h"
-#include "api/ExitAPI.h"
-#include "api/NameInputAPI.h"
-
-class PrototypeGame : public Game {
-	public:
-		PrototypeGame(AssetAPI* asset, NameInputAPI* inputUI, LocalizeAPI* localizeAPI, AdAPI* ad, ExitAPI* exAPI);
-
-        void sacInit(int windowW, int windowH);
-        void init(const uint8_t* in = 0, int size = 0);
-		void tick(float dt);
-		void togglePause(bool activate);
-		void backPressed();
-        
-	private:
-		AssetAPI* asset;
-		ExitAPI* exitAPI;
-};
+public class RecursiveRunnerApplication extends Application {
+	@Override
+	public void onCreate() {
+		super.onCreate();
+  
+	}
+}

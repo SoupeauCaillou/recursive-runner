@@ -16,7 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
-package net.damsy.soupeaucaillou.prototype;
+package net.damsy.soupeaucaillou.recursiveRunner;
 
 import net.damsy.soupeaucaillou.SacActivity;
 import net.damsy.soupeaucaillou.heriswap.api.NameInputAPI;
@@ -30,9 +30,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-public class PrototypeActivity extends SacActivity {
+public class RecursiveRunnerActivity extends SacActivity {
 	static {
-        System.loadLibrary("prototype");
+        System.loadLibrary("recursiveRunner");
     }
 	
 	@Override
@@ -75,7 +75,7 @@ public class PrototypeActivity extends SacActivity {
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
-		Log.i(PrototypeActivity.Tag, "-> onCreate [" + savedInstanceState);
+		Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
 
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);

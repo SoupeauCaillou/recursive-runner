@@ -58,7 +58,7 @@
 #include "base/PlacementHelper.h"
 #include "DepthLayer.h"
 
-#include "PrototypeGame.h"
+#include "RecursiveRunnerGame.h"
 #include "base/Profiler.h"
 
 #ifndef EMSCRIPTEN
@@ -69,7 +69,7 @@
 #define DT 1/60.
 #define MAGICKEYTIME 0.15
 
-PrototypeGame* game;
+RecursiveRunnerGame* game;
 NameInputAPILinuxImpl* nameInput;
 Entity globalFTW = 0;
 
@@ -305,7 +305,7 @@ int main(int argc, char** argv) {
 	glfwOpenWindowHint( GLFW_WINDOW_NO_RESIZE, GL_TRUE );
 	if( !glfwOpenWindow( reso->X,reso->Y, 8,8,8,8,8,8, GLFW_WINDOW ) )
 		return 1;
-	glfwSetWindowTitle("Prototype");
+	glfwSetWindowTitle("RecursiveRunner");
 	glewInit();
 	__log_enabled = (argc > 1 && !strcmp(argv[1], "--verbose"));
 #endif
@@ -333,7 +333,7 @@ int main(int argc, char** argv) {
 
 	nameInput = new NameInputAPILinuxImpl();
 
-	game = new PrototypeGame(new AssetAPILinuxImpl(), nameInput, loc, new AdAPI(), new ExitAPILinuxImpl());
+	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), nameInput, loc, new AdAPI(), new ExitAPILinuxImpl());
 
 	theRenderingSystem.opengles2 = true;
 	theSoundSystem.init();

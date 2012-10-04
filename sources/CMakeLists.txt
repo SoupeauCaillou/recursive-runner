@@ -9,4 +9,4 @@ file(
         *.cpp *.h systems/*cpp systems/*.h menus/*.cpp menus/*.h
 )
 
-add_library(prototypecommon ${source_files})
+add_library(recursiveRunnercommon ${source_files})

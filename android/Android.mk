@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 APP_DIR := $(LOCAL_PATH)
 
-LOCAL_MODULE := prototype
+LOCAL_MODULE := recursiveRunner
 
 LOCAL_CFLAGS := -DANDROID_NDK \
                 -DDISABLE_IMPORTGL \
@@ -19,8 +19,8 @@ LOCAL_CXXFLAGS := -DANDROID_NDK -DDEBUG -DENABLE_PROFILING \
 				-I$(LOCAL_PATH)/../sac/libs/
 
 LOCAL_SRC_FILES := \
-    prototype.cpp \
-    ../sources/PrototypeGame.cpp \
+    recursiveRunner.cpp \
+    ../sources/RecursiveRunnerGame.cpp \
     ../sources/systems/RunnerSystem.cpp \
     ../sources/systems/CameraTargetSystem.cpp \
     ../sac/android/sacjnilib.cpp

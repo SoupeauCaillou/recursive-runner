@@ -16,7 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "PrototypeGame.h"
+#include "RecursiveRunnerGame.h"
 #include <sstream>
 
 #include <base/Log.h>
@@ -108,12 +108,12 @@ const float playerSpeed = 6;
 extern float MaxJumpDuration;
 
 
-PrototypeGame::PrototypeGame(AssetAPI* ast, NameInputAPI* inputUI, LocalizeAPI* lAPI, AdAPI* ad, ExitAPI* exAPI) : Game() {
+RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, NameInputAPI* inputUI, LocalizeAPI* lAPI, AdAPI* ad, ExitAPI* exAPI) : Game() {
 	asset = ast;
 	exitAPI = exAPI;
 }
 
-void PrototypeGame::sacInit(int windowW, int windowH) {
+void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     PlacementHelper::GimpWidth = 800;
     PlacementHelper::GimpHeight = 500;
 
@@ -141,7 +141,7 @@ void PrototypeGame::sacInit(int windowW, int windowH) {
     loadFont(asset, "typo");
 }
 
-void PrototypeGame::init(const uint8_t* in, int size) {
+void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
     GameSystem::CreateInstance();
@@ -218,15 +218,15 @@ void PrototypeGame::init(const uint8_t* in, int size) {
 }
 
 
-void PrototypeGame::backPressed() {
+void RecursiveRunnerGame::backPressed() {
 
 }
 
-void PrototypeGame::togglePause(bool activate) {
+void RecursiveRunnerGame::togglePause(bool activate) {
 
 }
 
-void PrototypeGame::tick(float dt) {
+void RecursiveRunnerGame::tick(float dt) {
 	theTouchInputManager.Update(dt);
  
     GameState next;

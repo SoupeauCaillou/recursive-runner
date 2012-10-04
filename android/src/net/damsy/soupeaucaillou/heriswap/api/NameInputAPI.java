@@ -1,7 +1,7 @@
 package net.damsy.soupeaucaillou.heriswap.api;
 
-import net.damsy.soupeaucaillou.prototype.PrototypeActivity;
-import net.damsy.soupeaucaillou.prototype.R;
+import net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity;
+import net.damsy.soupeaucaillou.recursiveRunner.R;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
@@ -15,16 +15,16 @@ public class NameInputAPI {
 		static public void showPlayerNameUi() {
 			NameInputAPI.nameReady = false;
 			// show input view
-			PrototypeActivity.playerNameInputView.post(new Runnable() {
+			RecursiveRunnerActivity.playerNameInputView.post(new Runnable() {
 				public void run() {
 					//NOLOGLog.i(HeriswapActivity.Tag, "requesting user input visibility");
-					PrototypeActivity.playerNameInputView
+					RecursiveRunnerActivity.playerNameInputView
 							.setVisibility(View.VISIBLE);
-					PrototypeActivity.playerNameInputView.requestFocus();
-					PrototypeActivity.playerNameInputView.invalidate();
-					PrototypeActivity.playerNameInputView.forceLayout();
-					PrototypeActivity.playerNameInputView.bringToFront();
-					PrototypeActivity.nameEdit.setText("");
+					RecursiveRunnerActivity.playerNameInputView.requestFocus();
+					RecursiveRunnerActivity.playerNameInputView.invalidate();
+					RecursiveRunnerActivity.playerNameInputView.forceLayout();
+					RecursiveRunnerActivity.playerNameInputView.bringToFront();
+					RecursiveRunnerActivity.nameEdit.setText("");
 				}
 			});
 			//NOLOGLog.i(HeriswapActivity.Tag, "showPlayerNameUI");
@@ -33,7 +33,7 @@ public class NameInputAPI {
 		static public String queryPlayerName() {
 			if (NameInputAPI.nameReady) {
 				//NOLOGLog.i(HeriswapActivity.Tag, "queryPlayerName done");
-				return PrototypeActivity.playerName;
+				return RecursiveRunnerActivity.playerName;
 			} else {
 				return null;
 			}
