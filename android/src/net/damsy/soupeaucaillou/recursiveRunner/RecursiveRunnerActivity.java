@@ -39,17 +39,17 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public boolean canShowAppRater() {
 		return false;
 	}
-	
+	   
 	@Override
 	public int[] getSwarmBoards() {
 		return HeriswapSecret.boardsSwarm;
 	}
-	
+
 	@Override
 	public int getSwarmGameID() {
 		return HeriswapSecret.Swarm_gameID;
 	}
-	
+
 	@Override  
 	public String getSwarmGameKey() {
 		return HeriswapSecret.Swarm_gameKey;

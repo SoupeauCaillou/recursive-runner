@@ -521,7 +521,7 @@ static GameState updatePlaying(float dt) {
                             }
                         }
                         rc->coins.push_back(coin);
-                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2, rc->oldNessBonus) * rc->coinSequenceBonus;
+                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
                         spawnGainEntity(gain, TRANSFORM(coin)->position);
                     }
@@ -744,6 +744,6 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     NETWORK(e)->systemUpdatePeriod[theAnimationSystem.getName()] = 0.1;
     NETWORK(e)->systemUpdatePeriod[theCameraTargetSystem.getName()] = 0.016;
 #endif
-    std::cout << "Add player " << e << " at pos : " << TRANSFORM(e)->position << ", speed= " << RUNNER(e)->speed << "/" << player << std::endl;
+	LOGI("Add player %u  at pos : {%.2f, %.2f}, speed: %.2f (player=%u)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
     return e;
 }
