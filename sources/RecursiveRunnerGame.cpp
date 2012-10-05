@@ -221,6 +221,15 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     TEXT_RENDERING(networkDL)->positioning = TextRenderingComponent::LEFT;
 #endif
     transitionPlayingMenu();
+
+    theRenderingSystem.cameras[0].worldSize.Y *= 0.50;
+    theRenderingSystem.cameras[0].worldPosition.Y -= theRenderingSystem.cameras[0].worldSize.Y * 0.5;
+    theRenderingSystem.cameras[0].screenSize.Y *= 0.50;
+    theRenderingSystem.cameras[0].screenPosition.Y  = 0.25;
+
+    RenderingSystem::Camera cam = theRenderingSystem.cameras[0];
+    cam.screenPosition.Y = -0.25;
+    theRenderingSystem.cameras.push_back(cam);
 }
 
 
@@ -267,10 +276,14 @@ void RecursiveRunnerGame::tick(float dt) {
     }
 
     // limit cam pos
-    if (theRenderingSystem.cameraPosition.X < - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
-        theRenderingSystem.cameraPosition.X = - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
-    } else if (theRenderingSystem.cameraPosition.X > PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
-        theRenderingSystem.cameraPosition.X = PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
+    for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
+        float& camPosX = theRenderingSystem.cameras[i].worldPosition.X;
+
+        if (camPosX < - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
+            camPosX = - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
+        } else if (camPosX > PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
+            camPosX = PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
+        }
     }
     
 
@@ -378,7 +391,7 @@ static void transitionWaitingPlayersPlaying() {
     gameTempVars.syncCoins();
     gameTempVars.syncRunners();
 
-    TEXT_RENDERING(scoreText)->hide = false;
+    TEXT_RENDERING(scoreText)->hide = true;
     TEXT_RENDERING(startSingleButton)->hide = true;
     RENDERING(startSingleButton)->hide = true;
 #ifdef SAC_NETWORK
@@ -386,7 +399,7 @@ static void transitionWaitingPlayersPlaying() {
     RENDERING(startMultiButton)->hide = true;
 #endif
     // hmm
-    theRenderingSystem.cameraPosition.X = TRANSFORM(gameTempVars.currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
+    theRenderingSystem.cameras[gameTempVars.playerIndex()].worldPosition.X = TRANSFORM(gameTempVars.currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
 }
 
 static void transitionWaitingPlayersMenu() {
@@ -417,7 +430,7 @@ static GameState updatePlaying(float dt) {
             }
             #endif
             if (myPlayer->runnersCount == 10) {
-                theRenderingSystem.cameraPosition = Vector2::Zero;
+                theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
                 return Menu;
@@ -564,7 +577,9 @@ static GameState updatePlaying(float dt) {
 static void transitionPlayingMenu() {
     LOGI("Change state");
     // Restore camera position
-    theRenderingSystem.cameraPosition = Vector2::Zero;
+    for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
+        theRenderingSystem.cameras[i].worldPosition = Vector2::Zero;
+    }
     // Show menu UI
     TEXT_RENDERING(startSingleButton)->hide = false;
     CONTAINER(startSingleButton)->enable = true;
@@ -745,6 +760,6 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     NETWORK(e)->systemUpdatePeriod[theAnimationSystem.getName()] = 0.1;
     NETWORK(e)->systemUpdatePeriod[theCameraTargetSystem.getName()] = 0.016;
 #endif
-	LOGI("Add player %u  at pos : {%.2f, %.2f}, speed: %.2f (player=%u)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
+	LOGI("Add runner %u  at pos : {%.2f, %.2f}, speed: %.2f (player=%u)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
     return e;
 }

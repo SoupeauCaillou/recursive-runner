@@ -49,16 +49,17 @@ void CameraTargetSystem::DoUpdate(float dt) {
         }
 
         Vector2 target (TRANSFORM(a)->position + ctc->offset);
-        
+
+
         Vector2 force = SteeringBehavior::arrive(
-            theRenderingSystem.cameraPosition,
+            theRenderingSystem.cameras[ctc->cameraIndex].worldPosition,
             ctc->cameraSpeed,
             target,
             ctc->maxCameraSpeed,
             0.3) * 10;
         // accel = force
         ctc->cameraSpeed += force * dt;
-        theRenderingSystem.cameraPosition += ctc->cameraSpeed * dt;
+        theRenderingSystem.cameras[ctc->cameraIndex].worldPosition.X += ctc->cameraSpeed.X * dt;
     }
 }
 

@@ -22,7 +22,8 @@
 #include "base/Vector2.h"
 
 struct CameraTargetComponent {
-    CameraTargetComponent() : enabled(false), cameraSpeed(Vector2::Zero) {}
+    CameraTargetComponent() : cameraIndex(0), enabled(false), cameraSpeed(Vector2::Zero) {}
+    int cameraIndex;
     Vector2 offset;
     float maxCameraSpeed;
     bool enabled;

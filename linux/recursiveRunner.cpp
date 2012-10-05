@@ -335,7 +335,6 @@ int main(int argc, char** argv) {
 
 	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), nameInput, loc, new AdAPI(), new ExitAPILinuxImpl());
 
-	theRenderingSystem.opengles2 = true;
 	theSoundSystem.init();
 	theTouchInputManager.setNativeTouchStatePtr(new MouseNativeTouchState());
 	MusicAPILinuxOpenALImpl* openal = new MusicAPILinuxOpenALImpl();
