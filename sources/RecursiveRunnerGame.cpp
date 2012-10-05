@@ -174,8 +174,9 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     CONTAINER(startSingleButton)->entities.push_back(startSingleButton);
     CONTAINER(startSingleButton)->includeChildren = true;
     ADD_COMPONENT(startSingleButton, Rendering);
-    RENDERING(startSingleButton)->color = Color(0.2, 0.2, 0.2, 0.5);
+    RENDERING(startSingleButton)->color = Color(0.8, 0.8, 0.2, 0.5);
     ADD_COMPONENT(startSingleButton, Button);
+    BUTTON(startSingleButton)->overSize = 2;
 #ifdef SAC_NETWORK
     startMultiButton = theEntityManager.CreateEntity();
     ADD_COMPONENT(startMultiButton, Transformation);

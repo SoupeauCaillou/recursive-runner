@@ -35,7 +35,6 @@
     <Compile Include="sources\systems\CameraTargetSystem.cpp" />
     <Compile Include="android\recursiveRunner.cpp" />
     <Compile Include="sources\systems\PlayerSystem.cpp" />
-    <Compile Include="sources\systems\GameSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -53,6 +52,5 @@
     <None Include="android\Android.mk" />
     <None Include="android\Application.mk" />
     <None Include="sources\systems\PlayerSystem.h" />
-    <None Include="sources\systems\GameSystem.h" />
   </ItemGroup>
 </Project>
