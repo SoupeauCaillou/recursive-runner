@@ -35,7 +35,6 @@ CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetCompo
     // componentSerializer.add(new EpsilonProperty<float>(OFFSET(cameraSpeed.Y, tc), 0.001));
 }
 
-Entity previous;
 void CameraTargetSystem::DoUpdate(float dt) {
     for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
         Entity a = (*it).first;         
@@ -43,10 +42,6 @@ void CameraTargetSystem::DoUpdate(float dt) {
         
         if (!ctc->enabled)
             continue;
-        if (a != previous) {
-            std::cout << "Camera following " << a << std::endl;
-            previous = a;
-        }
 
         Vector2 target (TRANSFORM(a)->position + ctc->offset);
 

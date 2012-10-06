@@ -348,6 +348,7 @@ static GameState updateMenu(float dt) {
         theRenderingSystem.cameras[1].worldPosition.Y = 0;
         theRenderingSystem.cameras[1].screenSize.Y = 1;
         theRenderingSystem.cameras[1].screenPosition.Y  = 0;
+        theRenderingSystem.cameras[1].mirrorY = false;
         return WaitingPlayers;
     } else if (BUTTON(startSplitButton)->clicked) {
         gameTempVars.numPlayers = 2;
@@ -359,6 +360,7 @@ static GameState updateMenu(float dt) {
         theRenderingSystem.cameras[1].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
         theRenderingSystem.cameras[1].screenSize.Y = 0.5;
         theRenderingSystem.cameras[1].screenPosition.Y  = 0.25;
+        theRenderingSystem.cameras[1].mirrorY = true;
         theRenderingSystem.cameras[2].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
         theRenderingSystem.cameras[2].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
         theRenderingSystem.cameras[2].screenSize.Y = 0.5;
