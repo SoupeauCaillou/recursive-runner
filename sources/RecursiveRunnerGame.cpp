@@ -497,19 +497,29 @@ static GameState updatePlaying(float dt) {
         }
 
         // Input (jump) handling
-        RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
-        PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-        if (pc->gravity.Y >= 0) {
-            if (theTouchInputManager.isTouched()) {
-                if (!theTouchInputManager.wasTouched()) {
-                    if (rc->jumpingSince <= 0) {
-                        rc->jumpTimes.push_back(rc->elapsed);
-                        rc->jumpDurations.push_back(0.001);
-                    }
-                } else if (!rc->jumpTimes.empty()) {
-                    float& d = *(rc->jumpDurations.rbegin());
-                    if (d < MaxJumpDuration) {
-                        d += dt;
+        for (int j=0; j<2; j++) {
+            if (theTouchInputManager.isTouched(j)) {
+                if (gameTempVars.numPlayers == 2) {
+                    const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
+                    if (i == 0 && ppp.Y < 0)
+                        continue;
+                    if (i == 1 && ppp.Y > 0)
+                        continue;
+                }
+                PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
+                if (pc->gravity.Y >= 0) {
+                    RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+                    
+                    if (!theTouchInputManager.wasTouched(j)) {
+                        if (rc->jumpingSince <= 0) {
+                            rc->jumpTimes.push_back(rc->elapsed);
+                            rc->jumpDurations.push_back(0.001);
+                        }
+                    } else if (!rc->jumpTimes.empty()) {
+                        float& d = *(rc->jumpDurations.rbegin());
+                        if (d < MaxJumpDuration) {
+                            d += dt;
+                        }
                     }
                 }
             }

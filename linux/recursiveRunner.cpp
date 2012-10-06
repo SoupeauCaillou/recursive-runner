@@ -75,7 +75,7 @@ Entity globalFTW = 0;
 
 class MouseNativeTouchState: public NativeTouchState {
 	public:
-		bool isTouching(Vector2* windowCoords) const {
+		bool isTouching(int index, Vector2* windowCoords) const {
 			#ifdef EMSCRIPTEN
 			 static bool down = false;
 			 static Vector2 position;
@@ -154,6 +154,9 @@ class MouseNativeTouchState: public NativeTouchState {
 			return glfwGetMouseButton(GLFW_MOUSE_BUTTON_1) == GLFW_PRESS;
 			#endif
 		}
+        int maxTouchingCount() {
+            return 1;
+        }
 };
 
 #ifndef EMSCRIPTEN
