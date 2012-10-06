@@ -60,6 +60,7 @@ static void killRunner(Entity runner) {
     *TRANSFORM(e) = *TRANSFORM(runner);
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->hide = false;
+    RENDERING(e)->cameraBitMask = (0x3 << 1);
     ADD_COMPONENT(e, Animation);
     ANIMATION(e)->name = (dir > 0) ? "flyL2R" : "flyR2L";
     ADD_COMPONENT(e, Physics);

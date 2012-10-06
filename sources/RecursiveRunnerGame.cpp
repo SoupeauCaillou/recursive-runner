@@ -70,7 +70,7 @@ static void updateFps(float dt);
 
 
 // PURE LOCAL VARS
-Entity background, startSingleButton;
+Entity background, startSingleButton, startSplitButton;
 #ifdef SAC_NETWORK
 Entity startMultiButton;
 Entity networkUL, networkDL;
@@ -92,7 +92,7 @@ struct GameTempVar {
 
     unsigned numPlayers;
     bool isGameMaster;
-    Entity currentRunner;
+    Entity currentRunner[2];
     std::vector<Entity> runners[2], coins, players; 
  
 } gameTempVars;
@@ -162,6 +162,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     RENDERING(background)->color = Color(0.3, 0.3, 0.3);
     RENDERING(background)->hide = false;
     RENDERING(background)->opaqueType = RenderingComponent::FULL_OPAQUE;
+    RENDERING(background)->cameraBitMask = (0x3 << 1);
 
     startSingleButton = theEntityManager.CreateEntity();
     ADD_COMPONENT(startSingleButton, Transformation);
@@ -170,13 +171,33 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     ADD_COMPONENT(startSingleButton, TextRendering);
     TEXT_RENDERING(startSingleButton)->text = "Jouer solo";
     TEXT_RENDERING(startSingleButton)->charHeight = 1;
+    TEXT_RENDERING(startSingleButton)->cameraBitMask = 0x1;
     ADD_COMPONENT(startSingleButton, Container);
     CONTAINER(startSingleButton)->entities.push_back(startSingleButton);
     CONTAINER(startSingleButton)->includeChildren = true;
     ADD_COMPONENT(startSingleButton, Rendering);
     RENDERING(startSingleButton)->color = Color(0.8, 0.8, 0.2, 0.5);
+    RENDERING(startSingleButton)->cameraBitMask = 0x1;
     ADD_COMPONENT(startSingleButton, Button);
     BUTTON(startSingleButton)->overSize = 2;
+
+    startSplitButton = theEntityManager.CreateEntity();
+    ADD_COMPONENT(startSplitButton, Transformation);
+    TRANSFORM(startSplitButton)->position = Vector2(PlacementHelper::ScreenWidth /6, 0);
+    TRANSFORM(startSplitButton)->z = 0.9;
+    ADD_COMPONENT(startSplitButton, TextRendering);
+    TEXT_RENDERING(startSplitButton)->text = "Splitscreen";
+    TEXT_RENDERING(startSplitButton)->charHeight = 1;
+    TEXT_RENDERING(startSplitButton)->cameraBitMask = 0x1;
+    ADD_COMPONENT(startSplitButton, Container);
+    CONTAINER(startSplitButton)->entities.push_back(startSplitButton);
+    CONTAINER(startSplitButton)->includeChildren = true;
+    ADD_COMPONENT(startSplitButton, Rendering);
+    RENDERING(startSplitButton)->color = Color(0.8, 0.8, 0.2, 0.5);
+    RENDERING(startSplitButton)->cameraBitMask = 0x1;
+    ADD_COMPONENT(startSplitButton, Button);
+    BUTTON(startSplitButton)->overSize = 2;
+
 #ifdef SAC_NETWORK
     startMultiButton = theEntityManager.CreateEntity();
     ADD_COMPONENT(startMultiButton, Transformation);
@@ -222,13 +243,19 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 #endif
     transitionPlayingMenu();
 
+/*
     theRenderingSystem.cameras[0].worldSize.Y *= 0.50;
     theRenderingSystem.cameras[0].worldPosition.Y -= theRenderingSystem.cameras[0].worldSize.Y * 0.5;
     theRenderingSystem.cameras[0].screenSize.Y *= 0.50;
     theRenderingSystem.cameras[0].screenPosition.Y  = 0.25;
-
+*/
+    // 3 cameras
+    // Default camera (UI)
     RenderingSystem::Camera cam = theRenderingSystem.cameras[0];
-    cam.screenPosition.Y = -0.25;
+    cam.enable = false;
+    // 1st player
+    theRenderingSystem.cameras.push_back(cam);
+    // 2nd player
     theRenderingSystem.cameras.push_back(cam);
 }
 
@@ -313,6 +340,29 @@ static GameState updateMenu(float dt) {
     if (BUTTON(startSingleButton)->clicked) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
+
+        theRenderingSystem.cameras[0].enable = false;
+        theRenderingSystem.cameras[1].enable = true;
+        theRenderingSystem.cameras[2].enable = false;
+        theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight;
+        theRenderingSystem.cameras[1].worldPosition.Y = 0;
+        theRenderingSystem.cameras[1].screenSize.Y = 1;
+        theRenderingSystem.cameras[1].screenPosition.Y  = 0;
+        return WaitingPlayers;
+    } else if (BUTTON(startSplitButton)->clicked) {
+        gameTempVars.numPlayers = 2;
+        gameTempVars.isGameMaster = true;
+        theRenderingSystem.cameras[0].enable = false;
+        theRenderingSystem.cameras[1].enable = true;
+        theRenderingSystem.cameras[2].enable = true;
+        theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
+        theRenderingSystem.cameras[1].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
+        theRenderingSystem.cameras[1].screenSize.Y = 0.5;
+        theRenderingSystem.cameras[1].screenPosition.Y  = 0.25;
+        theRenderingSystem.cameras[2].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
+        theRenderingSystem.cameras[2].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
+        theRenderingSystem.cameras[2].screenSize.Y = 0.5;
+        theRenderingSystem.cameras[2].screenPosition.Y  = -0.25;
         return WaitingPlayers;
     }
 #ifdef SAC_NETWORK
@@ -334,6 +384,7 @@ static GameState updateMenu(float dt) {
 static void transitionMenuWaitingPlayers() {
     LOGI("Change state");
     BUTTON(startSingleButton)->enabled = false;
+    BUTTON(startSplitButton)->enabled = false;
 #ifdef SAC_NETWORK
     BUTTON(startMultiButton)->enabled = false;
     theNetworkSystem.deleteAllNonLocalEntities();
@@ -393,13 +444,17 @@ static void transitionWaitingPlayersPlaying() {
 
     TEXT_RENDERING(scoreText)->hide = true;
     TEXT_RENDERING(startSingleButton)->hide = true;
+    TEXT_RENDERING(startSplitButton)->hide = true;
     RENDERING(startSingleButton)->hide = true;
+    RENDERING(startSplitButton)->hide = true;
 #ifdef SAC_NETWORK
     TEXT_RENDERING(startMultiButton)->hide = true;
     RENDERING(startMultiButton)->hide = true;
 #endif
-    // hmm
-    theRenderingSystem.cameras[gameTempVars.playerIndex()].worldPosition.X = TRANSFORM(gameTempVars.currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
+    for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+        theRenderingSystem.cameras[1 + i].worldPosition.X = 
+            TRANSFORM(gameTempVars.currentRunner[i])->position.X + PlacementHelper::ScreenWidth * 0.5;
+    }
 }
 
 static void transitionWaitingPlayersMenu() {
@@ -407,29 +462,27 @@ static void transitionWaitingPlayersMenu() {
 }
 
 static GameState updatePlaying(float dt) {
-    int myPlayerIndex = gameTempVars.playerIndex();
-    PlayerComponent* myPlayer = PLAYER(gameTempVars.players[myPlayerIndex]);
     gameTempVars.syncRunners();
 
     // Manage player's current runner
-    if (!gameTempVars.runners[myPlayerIndex].empty()) {
-        CAM_TARGET(gameTempVars.currentRunner)->enabled = true;
-        CAM_TARGET(gameTempVars.currentRunner)->offset = Vector2(
-            ((RUNNER(gameTempVars.currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth, 
-            0 - TRANSFORM(gameTempVars.currentRunner)->position.Y);
+    for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
+        CAM_TARGET(gameTempVars.currentRunner[i])->enabled = true;
+        CAM_TARGET(gameTempVars.currentRunner[i])->offset = Vector2(
+            ((RUNNER(gameTempVars.currentRunner[i])->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth, 
+            0 - TRANSFORM(gameTempVars.currentRunner[i])->position.Y);
         
         // If current runner has reached the edge of the screen
-        if (RUNNER(gameTempVars.currentRunner)->finished) {
-            std::cout << gameTempVars.currentRunner << " finished, add runner or end game" << std::endl;
-            CAM_TARGET(gameTempVars.currentRunner)->enabled = false;
+        if (RUNNER(gameTempVars.currentRunner[i])->finished) {
+            std::cout << gameTempVars.currentRunner[i] << " finished, add runner or end game" << std::endl;
+            CAM_TARGET(gameTempVars.currentRunner[i])->enabled = false;
             // return Runner control to master
             #ifdef SAC_NETWORK
             if (!gameTempVars.isGameMaster) {
-                std::cout << "Give back ownership of " << gameTempVars.currentRunner << " to server" << std::endl;
-                NETWORK(gameTempVars.currentRunner)->newOwnerShipRequest = 0;
+                std::cout << "Give back ownership of " << gameTempVars.currentRunner[i] << " to server" << std::endl;
+                NETWORK(gameTempVars.currentRunner[i])->newOwnerShipRequest = 0;
             }
             #endif
-            if (myPlayer->runnersCount == 10) {
+            if (PLAYER(gameTempVars.players[i])->runnersCount == 10) {
                 theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
@@ -437,13 +490,13 @@ static GameState updatePlaying(float dt) {
             } else {
                 std::cout << "Create runner" << std::endl;
                 // add a new one
-                gameTempVars.currentRunner = addRunnerToPlayer(gameTempVars.players[myPlayerIndex], myPlayer, myPlayerIndex);
+                gameTempVars.currentRunner[i] = addRunnerToPlayer(gameTempVars.players[i], PLAYER(gameTempVars.players[i]), i);
             }
         }
 
         // Input (jump) handling
-        RunnerComponent* rc = RUNNER(gameTempVars.currentRunner);
-        PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner);
+        RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+        PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
         if (pc->gravity.Y >= 0) {
             if (theTouchInputManager.isTouched()) {
                 if (!theTouchInputManager.wasTouched()) {
@@ -460,8 +513,8 @@ static GameState updatePlaying(float dt) {
             }
         }
 
-        TransformationComponent* tc = TRANSFORM(gameTempVars.currentRunner);
-        CAM_TARGET(gameTempVars.currentRunner)->offset.Y = 0 - tc->position.Y;
+        TransformationComponent* tc = TRANSFORM(gameTempVars.currentRunner[i]);
+        CAM_TARGET(gameTempVars.currentRunner[i])->offset.Y = 0 - tc->position.Y;
     }
 
     if (gameTempVars.isGameMaster) { // maybe do it for non master too (but do not delete entities, maybe only hide ?)
@@ -585,6 +638,10 @@ static void transitionPlayingMenu() {
     CONTAINER(startSingleButton)->enable = true;
     RENDERING(startSingleButton)->hide = false;
     BUTTON(startSingleButton)->enabled = true;
+    TEXT_RENDERING(startSplitButton)->hide = false;
+    CONTAINER(startSplitButton)->enable = true;
+    RENDERING(startSplitButton)->hide = false;
+    BUTTON(startSplitButton)->enabled = true;
 #ifdef SAC_NETWORK
     TEXT_RENDERING(startMultiButton)->hide = false;
     CONTAINER(startMultiButton)->enable = true;
@@ -624,9 +681,8 @@ void GameTempVar::syncRunners() {
                 continue;
             if (rc->playerOwner == gameTempVars.players[i]) {
                 runners[i].push_back(r[j]);
-                if (i == playerIndex()) {
-                    if (!rc->ghost)
-                        currentRunner = r[j];
+                if (!rc->ghost) {
+                        currentRunner[i] = r[j];
                 }
             }
         }
@@ -675,6 +731,7 @@ static void createCoins(int count) {
         TRANSFORM(e)->z = 0.5;
         ADD_COMPONENT(e, Rendering);
         RENDERING(e)->color = Color(1, 1, 0);
+        RENDERING(e)->cameraBitMask = (0x3 << 1);
         RENDERING(e)->hide = false;        
         if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
             goldCoin = e;
@@ -716,6 +773,7 @@ static void spawnGainEntity(int gain, const Vector2& pos) {
     TEXT_RENDERING(e)->charHeight = 0.5;
     TEXT_RENDERING(e)->color = Color(1, 1, 0);
     TEXT_RENDERING(e)->hide = false;
+    TEXT_RENDERING(e)->cameraBitMask = (0x3 << 1);
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
     PHYSICS(e)->gravity = Vector2(0, 6);
@@ -737,6 +795,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
     RENDERING(e)->hide = false;
+    RENDERING(e)->cameraBitMask = (0x3 << 1);
     ADD_COMPONENT(e, Runner);
     TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
@@ -746,6 +805,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, CameraTarget);
+    CAM_TARGET(e)->cameraIndex = 1 + playerIndex;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
