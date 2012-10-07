@@ -83,7 +83,7 @@ Entity background, startSingleButton, startSplitButton;
 Entity startMultiButton;
 Entity networkUL, networkDL;
 #endif
-Entity scoreText, goldCoin;
+Entity scoreText[2], goldCoin;
 
 
 enum GameState {
@@ -221,13 +221,17 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     RENDERING(startMultiButton)->color = Color(0.2, 0.2, 0.2, 0.5);
     ADD_COMPONENT(startMultiButton, Button);
 #endif
-    scoreText = theEntityManager.CreateEntity();
-    ADD_COMPONENT(scoreText, Transformation);
-    TRANSFORM(scoreText)->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
-    TRANSFORM(scoreText)->z = 0.9;
-    ADD_COMPONENT(scoreText, TextRendering);
-    TEXT_RENDERING(scoreText)->text = "";
-    TEXT_RENDERING(scoreText)->charHeight = 1;
+    for (int i=0; i<2; i++) {
+        scoreText[i] = theEntityManager.CreateEntity();
+        ADD_COMPONENT(scoreText[i], Transformation);
+        TRANSFORM(scoreText[i])->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
+        TRANSFORM(scoreText[i])->z = 0.9;
+        ADD_COMPONENT(scoreText[i], TextRendering);
+        TEXT_RENDERING(scoreText[i])->text = "";
+        TEXT_RENDERING(scoreText[i])->charHeight = 1;
+        // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
+        TEXT_RENDERING(scoreText[i])->color = Color(1 - i, i, 1);
+    }
 #ifdef SAC_NETWORK
     networkUL = theEntityManager.CreateEntity();
     ADD_COMPONENT(networkUL, Transformation);
@@ -433,7 +437,7 @@ static void transitionWaitingPlayersPlaying() {
     gameTempVars.syncCoins();
     gameTempVars.syncRunners();
 
-    TEXT_RENDERING(scoreText)->hide = true;
+    //TEXT_RENDERING(scoreText)->hide = true;
     TEXT_RENDERING(startSingleButton)->hide = true;
     TEXT_RENDERING(startSplitButton)->hide = true;
     RENDERING(startSingleButton)->hide = true;
@@ -511,6 +515,7 @@ static GameState updatePlaying(float dt) {
                         }
                     }
                 }
+                break;
             }
         }
 
@@ -598,13 +603,13 @@ static GameState updatePlaying(float dt) {
             }
         }
     }
-    
-    std::stringstream a;
-    a << "Score: ";
+
     for (unsigned i=0; i<gameTempVars.players.size(); i++) {
-        a << "  " << PLAYER(gameTempVars.players[i])->score;
+        std::stringstream a;
+        a << "  " << PLAYER(gameTempVars.players[i])->score << " pts";
+        TEXT_RENDERING(scoreText[i])->text = a.str();
     }
-    TEXT_RENDERING(scoreText)->text = a.str();
+    
 
     thePlayerSystem.Update(dt);
     theRunnerSystem.Update(dt);
@@ -651,7 +656,7 @@ static void transitionPlayingMenu() {
     BUTTON(startMultiButton)->enabled = true;
     TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
 #endif
-    TEXT_RENDERING(scoreText)->hide = false;
+    // TEXT_RENDERING(scoreText)->hide = false;
     // Cleanup previous game variables
     gameTempVars.cleanup();
 }
@@ -837,6 +842,10 @@ static void setupCamera(CameraMode mode) {
             theRenderingSystem.cameras[1].screenSize.Y = 1;
             theRenderingSystem.cameras[1].screenPosition.Y  = 0;
             theRenderingSystem.cameras[1].mirrorY = false;
+            TRANSFORM(scoreText[0])->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
+            TEXT_RENDERING(scoreText[0])->hide = false;
+            TEXT_RENDERING(scoreText[0])->positioning = TextRenderingComponent::CENTER;
+            TEXT_RENDERING(scoreText[1])->hide = true;
             break;
         case CameraModeSplit:
             theRenderingSystem.cameras[0].enable = false;
@@ -851,6 +860,12 @@ static void setupCamera(CameraMode mode) {
             theRenderingSystem.cameras[2].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
             theRenderingSystem.cameras[2].screenSize.Y = 0.5;
             theRenderingSystem.cameras[2].screenPosition.Y  = -0.25;
+            TRANSFORM(scoreText[0])->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, -0.1 * PlacementHelper::ScreenHeight);
+            TRANSFORM(scoreText[1])->position = Vector2(PlacementHelper::ScreenWidth * 0.5, -0.1 * PlacementHelper::ScreenHeight);
+            TEXT_RENDERING(scoreText[0])->hide = false;
+            TEXT_RENDERING(scoreText[0])->positioning = TextRenderingComponent::LEFT;
+            TEXT_RENDERING(scoreText[1])->hide = false;
+            TEXT_RENDERING(scoreText[1])->positioning = TextRenderingComponent::RIGHT;
             break;
         case CameraModeMenu:
             theRenderingSystem.cameras[0].enable = true;
