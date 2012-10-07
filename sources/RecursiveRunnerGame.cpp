@@ -64,9 +64,17 @@
 #include <GL/glfw.h>
 #endif
 
+enum CameraMode {
+    CameraModeMenu,
+    CameraModeSingle,
+    CameraModeSplit
+};
+    
+
 static void spawnGainEntity(int gain, const Vector2& pos);
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex);
 static void updateFps(float dt);
+static void setupCamera(CameraMode mode);
 
 
 // PURE LOCAL VARS
@@ -340,31 +348,12 @@ static GameState updateMenu(float dt) {
     if (BUTTON(startSingleButton)->clicked) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
-
-        theRenderingSystem.cameras[0].enable = false;
-        theRenderingSystem.cameras[1].enable = true;
-        theRenderingSystem.cameras[2].enable = false;
-        theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight;
-        theRenderingSystem.cameras[1].worldPosition.Y = 0;
-        theRenderingSystem.cameras[1].screenSize.Y = 1;
-        theRenderingSystem.cameras[1].screenPosition.Y  = 0;
-        theRenderingSystem.cameras[1].mirrorY = false;
+        setupCamera(CameraModeSingle);
         return WaitingPlayers;
     } else if (BUTTON(startSplitButton)->clicked) {
+        setupCamera(CameraModeSplit);
         gameTempVars.numPlayers = 2;
         gameTempVars.isGameMaster = true;
-        theRenderingSystem.cameras[0].enable = false;
-        theRenderingSystem.cameras[1].enable = true;
-        theRenderingSystem.cameras[2].enable = true;
-        theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
-        theRenderingSystem.cameras[1].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
-        theRenderingSystem.cameras[1].screenSize.Y = 0.5;
-        theRenderingSystem.cameras[1].screenPosition.Y  = 0.25;
-        theRenderingSystem.cameras[1].mirrorY = true;
-        theRenderingSystem.cameras[2].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
-        theRenderingSystem.cameras[2].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
-        theRenderingSystem.cameras[2].screenSize.Y = 0.5;
-        theRenderingSystem.cameras[2].screenPosition.Y  = -0.25;
         return WaitingPlayers;
     }
 #ifdef SAC_NETWORK
@@ -641,6 +630,7 @@ static GameState updatePlaying(float dt) {
 
 static void transitionPlayingMenu() {
     LOGI("Change state");
+    setupCamera(CameraModeMenu);
     // Restore camera position
     for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
         theRenderingSystem.cameras[i].worldPosition = Vector2::Zero;
@@ -700,9 +690,9 @@ void GameTempVar::syncRunners() {
         }
     }
     if (currentRunner == 0) {
-        LOGE("No current runner => bug. Nb players=%d, nb runners=%d",players.size(), r.size());
+        LOGE("No current runner => bug. Nb players=%lu, nb runners=%lu",players.size(), r.size());
         for (unsigned i=0; i<players.size(); i++)
-            LOGE("    runners[%d] = %d", i, runners[i].size());
+            LOGE("    runners[%d] = %lu", i, runners[i].size());
     }
 }
 
@@ -832,6 +822,40 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     NETWORK(e)->systemUpdatePeriod[theAnimationSystem.getName()] = 0.1;
     NETWORK(e)->systemUpdatePeriod[theCameraTargetSystem.getName()] = 0.016;
 #endif
-	LOGI("Add runner %u  at pos : {%.2f, %.2f}, speed: %.2f (player=%u)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
+	LOGI("Add runner %lu at pos : {%.2f, %.2f}, speed: %.2f (player=%lu)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
     return e;
+}
+
+static void setupCamera(CameraMode mode) {
+    switch (mode) {
+        case CameraModeSingle:
+            theRenderingSystem.cameras[0].enable = false;
+            theRenderingSystem.cameras[1].enable = true;
+            theRenderingSystem.cameras[2].enable = false;
+            theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight;
+            theRenderingSystem.cameras[1].worldPosition.Y = 0;
+            theRenderingSystem.cameras[1].screenSize.Y = 1;
+            theRenderingSystem.cameras[1].screenPosition.Y  = 0;
+            theRenderingSystem.cameras[1].mirrorY = false;
+            break;
+        case CameraModeSplit:
+            theRenderingSystem.cameras[0].enable = false;
+            theRenderingSystem.cameras[1].enable = true;
+            theRenderingSystem.cameras[2].enable = true;
+            theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
+            theRenderingSystem.cameras[1].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
+            theRenderingSystem.cameras[1].screenSize.Y = 0.5;
+            theRenderingSystem.cameras[1].screenPosition.Y  = 0.25;
+            theRenderingSystem.cameras[1].mirrorY = true;
+            theRenderingSystem.cameras[2].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
+            theRenderingSystem.cameras[2].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
+            theRenderingSystem.cameras[2].screenSize.Y = 0.5;
+            theRenderingSystem.cameras[2].screenPosition.Y  = -0.25;
+            break;
+        case CameraModeMenu:
+            theRenderingSystem.cameras[0].enable = true;
+            theRenderingSystem.cameras[1].enable = false;
+            theRenderingSystem.cameras[2].enable = false;
+            break;
+    }
 }
