@@ -53,16 +53,17 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
 
 static void killRunner(Entity runner) {
     RENDERING(runner)->hide = true;
-    RENDERING(runner)->color = Color(0,0,1);
     int dir = 1 - 2 * MathUtil::RandomIntInRange(0, 2);//(RUNNER(current)->speed > 0) ? 1 : -1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     *TRANSFORM(e) = *TRANSFORM(runner);
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->hide = false;
+    RENDERING(e)->color = RENDERING(runner)->color;
+    RENDERING(e)->texture = RENDERING(runner)->texture;
     RENDERING(e)->cameraBitMask = (0x3 << 1);
-    ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = (dir > 0) ? "flyL2R" : "flyR2L";
+    // ADD_COMPONENT(e, Animation);
+    // ANIMATION(e)->name = (dir > 0) ? "flyL2R" : "flyR2L";
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
     PHYSICS(e)->gravity.Y = -10;
@@ -113,6 +114,9 @@ void RunnerSystem::DoUpdate(float dt) {
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
                 rc->ghost = true;
+                RENDERING(a)->color.r *= 0.9;
+                RENDERING(a)->color.g *= 0.9;
+                RENDERING(a)->color.a = 0.6;
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
                 rc->currentJump = 0;

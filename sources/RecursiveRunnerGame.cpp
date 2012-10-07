@@ -798,7 +798,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     TRANSFORM(e)->position = Vector2(-9, 2);
     TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
     TRANSFORM(e)->rotation = 0;
-    TRANSFORM(e)->z = 0.8;
+    TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
     RENDERING(e)->hide = false;
