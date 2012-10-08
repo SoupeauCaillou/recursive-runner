@@ -40,22 +40,41 @@ public class RecursiveRunnerActivity extends SacActivity {
 	}   
 	@Override
 	public int[] getSwarmBoards() {
-		return HeriswapSecret.boardsSwarm;
+		return null;
 	}
 
 	@Override
 	public int getSwarmGameID() {
-		return HeriswapSecret.Swarm_gameID;
+		return 0;
 	}
 
 	@Override  
 	public String getSwarmGameKey() {
-		return HeriswapSecret.Swarm_gameKey;
+		return null;
 	}
 	
 	@Override
 	public String getBundleKey() {
 		return TILEMATCH_BUNDLE_KEY;
+	}
+	
+	@Override
+	public int getGLViewId() {
+		return R.id.surfaceviewclass;
+	}
+	
+	@Override
+	public int getLayoutId() {
+		return R.layout.main;
+	}
+	
+	@Override
+	public String getCharboostAppId() {
+		return null;
+	}
+	@Override
+	public String getCharboostAppSignature() {
+		return null;
 	}
 	
 	static public final String Tag = "HeriswapJ";
