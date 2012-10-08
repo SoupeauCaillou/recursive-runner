@@ -273,7 +273,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 
 
 void RecursiveRunnerGame::backPressed() {
-
+    Game::backPressed();
 }
 
 void RecursiveRunnerGame::togglePause(bool activate) {
@@ -529,11 +529,12 @@ static GameState updatePlaying(float dt) {
         // check for collisions for non-ghost runners
         for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
             for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
-                Entity r = gameTempVars.runners[i][j];
-                if (RUNNER(r)->ghost)
+                const Entity r = gameTempVars.runners[i][j];
+                const RunnerComponent* rc = RUNNER(r);
+                if (rc->ghost)
                     continue;
                 actives.push_back(TRANSFORM(r));
-                direction.push_back(RUNNER(r)->speed > 0 ? 1 : -1);
+                direction.push_back(rc->speed > 0 ? 1 : -1);
             }
         }
         const unsigned count = actives.size();
@@ -797,6 +798,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
     TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
+    std::cout << PlacementHelper::ScreenHeight << std::endl;
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);
@@ -808,7 +810,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->maxSpeed = RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
+    RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, CameraTarget);

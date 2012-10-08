@@ -40,7 +40,6 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.Y, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.X, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.Y, tc), 0.001));
-    componentSerializer.add(new EpsilonProperty<float>(OFFSET(maxSpeed, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(speed, tc), 0.001));
     componentSerializer.add(new Property(OFFSET(finished, tc), sizeof(bool)));
     componentSerializer.add(new Property(OFFSET(ghost, tc), sizeof(bool)));
@@ -91,29 +90,19 @@ void RunnerSystem::DoUpdate(float dt) {
         }
 
         rc->elapsed += dt;
-        
+
         if (rc->elapsed >= rc->startTime) {
             TransformationComponent* tc = TRANSFORM(a);
-            /*
-            if (pc->gravity.Y < 0) {
-                rc->speed -= rc->speed * dt * 0.3;
-            } else if (rc->maxSpeed < 0) {
-                rc->speed = MathUtil::Max(rc->maxSpeed,
-                    rc->speed + rc->speed * dt * 4.f);
-            } else {
-                rc->speed = MathUtil::Min(rc->maxSpeed,
-                    rc->speed + rc->speed * dt * 4.f);
-            }*/
-            
             tc->position.X += rc->speed * dt;
-            
+
             if ((tc->position.X > rc->endPoint.X && rc->speed > 0) || 
                 (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
-                 std::cout << a << " finished!" << std::endl;
+                 std::cout << a << " finished! (" << rc->coins.size() << ")" << std::endl;
                 rc->finished = true;
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
                 rc->ghost = true;
+                rc->startTime = MathUtil::RandomFloatInRange(0, 2.0f);
                 RENDERING(a)->color.r *= 0.9;
                 RENDERING(a)->color.g *= 0.9;
                 RENDERING(a)->color.a = 0.6;
@@ -128,7 +117,7 @@ void RunnerSystem::DoUpdate(float dt) {
         }
         
         if (!rc->jumpTimes.empty() && rc->currentJump < rc->jumpTimes.size()) {
-            if (rc->elapsed >= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {           
+            if ((rc->elapsed - rc->startTime)>= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {           
                 // std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
                 Vector2 force = Vector2(0, 900);
                 pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), 0.016));
@@ -150,7 +139,7 @@ void RunnerSystem::DoUpdate(float dt) {
     }
 
     if (!killedRunners.empty()) {
-        for (int i=0;i<killedRunners.size(); i++) {
+        for (unsigned i=0;i<killedRunners.size(); i++) {
             Entity a = killedRunners[i];
             int bonus = RUNNER(a)->oldNessBonus;
             for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
