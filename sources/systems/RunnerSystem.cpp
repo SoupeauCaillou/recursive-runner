@@ -75,9 +75,7 @@ static void killRunner(Entity runner) {
 
 void RunnerSystem::DoUpdate(float dt) {
     std::vector<Entity> killedRunners;
-    for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
-        Entity a = (*it).first;         
-        RunnerComponent* rc = (*it).second;
+    FOR_EACH_ENTITY_COMPONENT(Runner, a, rc)
         PhysicsComponent* pc = PHYSICS(a);
 
         if (rc->killed) {
@@ -142,10 +140,9 @@ void RunnerSystem::DoUpdate(float dt) {
         for (unsigned i=0;i<killedRunners.size(); i++) {
             Entity a = killedRunners[i];
             int bonus = RUNNER(a)->oldNessBonus;
-            for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
-                if (it->first == a)
+            FOR_EACH_ENTITY_COMPONENT(Runner, b, rc)
+                if (b == a)
                     continue;
-                RunnerComponent* rc = (*it).second;
                 if (bonus < rc->oldNessBonus) {
                     std::cout << rc->oldNessBonus << " - " << killedRunners.size() << std::endl;
                     rc->oldNessBonus--;

@@ -36,10 +36,7 @@ CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetCompo
 }
 
 void CameraTargetSystem::DoUpdate(float dt) {
-    for(ComponentIt it=components.begin(); it!=components.end(); ++it) {
-        Entity a = (*it).first;         
-        CameraTargetComponent* ctc = (*it).second;
-        
+    FOR_EACH_ENTITY_COMPONENT(CameraTarget, a, ctc)
         if (!ctc->enabled)
             continue;
 
