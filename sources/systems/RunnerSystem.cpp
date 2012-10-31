@@ -25,6 +25,7 @@
 #include "systems/AnimationSystem.h"
 #include "systems/AutoDestroySystem.h"
 #include "util/IntersectionUtil.h"
+std::map<TextureRef, CollisionZone> texture2Collision;
 
 INSTANCE_IMPL(RunnerSystem);
  
@@ -77,7 +78,19 @@ void RunnerSystem::DoUpdate(float dt) {
     std::vector<Entity> killedRunners;
     FOR_EACH_ENTITY_COMPONENT(Runner, a, rc)
         PhysicsComponent* pc = PHYSICS(a);
-
+        TransformationComponent* tc = TRANSFORM(a);
+        {
+            RenderingComponent* rendc = RENDERING(a);
+            TransformationComponent* ttt = TRANSFORM(rc->collisionZone);
+            const CollisionZone& cz = texture2Collision[rendc->texture];
+            ttt->position = tc->size * cz.position;
+            ttt->size = tc->size * cz.size;
+            ttt->rotation = cz.rotation;
+            if (rendc->mirrorH) {
+                ttt->position.X = -ttt->position.X;
+                ttt->rotation = -ttt->rotation;
+            }
+        }
         if (rc->killed) {
             if (rc->elapsed >= 0) {
                 killRunner(a);
@@ -90,7 +103,7 @@ void RunnerSystem::DoUpdate(float dt) {
         rc->elapsed += dt;
 
         if (rc->elapsed >= rc->startTime) {
-            TransformationComponent* tc = TRANSFORM(a);
+            
             tc->position.X += rc->speed * dt;
 
             if ((tc->position.X > rc->endPoint.X && rc->speed > 0) || 
@@ -154,6 +167,7 @@ void RunnerSystem::DoUpdate(float dt) {
                     assert(rc->oldNessBonus >= 0);
                 }
             }
+            theEntityManager.DeleteEntity(RUNNER(a)->collisionZone);
             theEntityManager.DeleteEntity(a);
         }
     }

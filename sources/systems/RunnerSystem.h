@@ -21,9 +21,20 @@
 #include "systems/System.h"
 #include "base/Vector2.h"
 
+struct CollisionZone {
+    CollisionZone(float x=0,float y=0,float w=0, float h=0, float r=0) {
+        size.X = w / 120.0; size.Y = h / 135.0;
+        position.X = x / 120.0 - 0.5 + size.X * 0.5;
+        position.Y = 0.5 - y / 135.0 - size.Y * 0.5;
+        rotation =r;
+    }
+    Vector2 position, size;
+    float rotation;
+};
+
 struct RunnerComponent {
     RunnerComponent() : finished(false), ghost(false), killed(false), startTime(0), elapsed(0), jumpingSince(0), currentJump(0), oldNessBonus(0), coinSequenceBonus(1) { }
-    Entity playerOwner;
+    Entity playerOwner, collisionZone;
     Vector2 startPoint, endPoint;
     float speed;
     bool finished, ghost, killed;

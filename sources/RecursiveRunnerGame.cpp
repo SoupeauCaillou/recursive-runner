@@ -54,7 +54,7 @@
 
 #include <cmath>
 #include <vector>
-
+#include <iomanip>
 
 
 #ifndef EMSCRIPTEN
@@ -75,6 +75,8 @@ static void spawnGainEntity(int gain, const Vector2& pos);
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex);
 static void updateFps(float dt);
 static void setupCamera(CameraMode mode);
+
+extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 
 // PURE LOCAL VARS
@@ -270,6 +272,29 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     theRenderingSystem.cameras.push_back(cam);
     // 2nd player
     theRenderingSystem.cameras.push_back(cam);
+    
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0000")] =  CollisionZone(50,50,25,77);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0001")] =  CollisionZone(50,50,25,77);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0002")] =  CollisionZone(49,64,22,67);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0003")] =  CollisionZone(49,64,22,67);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0004")] =  CollisionZone(50,56,27,73, -0.3);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0005")] =  CollisionZone(43,35,37,71, -0.5);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0006")] =  CollisionZone(45,30,37,65, -0.5);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0007")] =  CollisionZone(46,17,36,74);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0008")] =  CollisionZone(46,10,35,54);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0009")] =  CollisionZone(40,11,38,60, 0.4);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0010")] =  CollisionZone(39,23,36,62, 0.5);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0011")] =  CollisionZone(38,39,37,69, 0.4);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0012")] =  CollisionZone(45,56,35,73, 0.2);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0013")] =  CollisionZone(46,70,32,62);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0014")] =  CollisionZone(41,71,32,59);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0015")] =  CollisionZone(50,67,28,62);
+    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0016")] =  CollisionZone(47,58,29,74);
+    for (int i=0; i<12; i++) {
+        std::stringstream a;
+        a << "run_l2r_" << std::setfill('0') << std::setw(4) << i;
+        texture2Collision[theRenderingSystem.loadTextureFile(a.str())] =  CollisionZone(58,51,28,65,-0.5);
+    }
 }
 
 
@@ -525,7 +550,7 @@ static GameState updatePlaying(float dt) {
     }
 
     if (gameTempVars.isGameMaster) { // maybe do it for non master too (but do not delete entities, maybe only hide ?)
-        std::vector<TransformationComponent*> actives;
+        std::vector<TransformationComponent*> activesColl;
         std::vector<int> direction;
         // check for collisions for non-ghost runners
         for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
@@ -534,27 +559,25 @@ static GameState updatePlaying(float dt) {
                 const RunnerComponent* rc = RUNNER(r);
                 if (rc->ghost)
                     continue;
-                actives.push_back(TRANSFORM(r));
+                activesColl.push_back(TRANSFORM(rc->collisionZone));
                 direction.push_back(rc->speed > 0 ? 1 : -1);
             }
         }
-        const unsigned count = actives.size();
+        const unsigned count = activesColl.size();
         for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
             for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
                 Entity ghost = gameTempVars.runners[i][j];
                 RunnerComponent* rc = RUNNER(ghost);
                 if (!rc->ghost || rc->killed)
                     continue;
-                TransformationComponent* ghostTc = TRANSFORM(ghost);
+                TransformationComponent* ghostColl = TRANSFORM(rc->collisionZone);
                 for (unsigned k=0; k<count; k++) {
                     // we can only hit guys with opposite direction
                     if (rc->speed * direction[k] > 0)
                         continue;
                     if (rc->elapsed < 0.25)
                         continue;
-                    const Vector2 pos = actives[k]->position + actives[k]->size * Vector2(0, 0.2);
-                    const Vector2 size = actives[k]->size * Vector2(0.25, 0.6);
-                    if (IntersectionUtil::rectangleRectangle(pos, size, 0, ghostTc->position, ghostTc->size * Vector2(0.25, 0.6), 0)) {
+                    if (IntersectionUtil::rectangleRectangle(ghostColl, activesColl[k])) {
                         rc->killed = true;
                         break;
                     }
@@ -571,11 +594,11 @@ static GameState updatePlaying(float dt) {
             RunnerComponent* rc = RUNNER(e);
             if (rc->killed)
                 continue;
-            TransformationComponent* tc = TRANSFORM(e);
             PhysicsComponent* pc = PHYSICS(e);
     
             // check jumps
             if (pc->gravity.Y < 0) {
+                TransformationComponent* tc = TRANSFORM(e);
                 if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
                     pc->gravity.Y = 0;
                     pc->linearVelocity = Vector2::Zero;
@@ -584,15 +607,14 @@ static GameState updatePlaying(float dt) {
                     RENDERING(e)->mirrorH = (rc->speed < 0);
                 }
             }
-            const Vector2 pos = tc->position + tc->size * Vector2(0, 0.2);
-            const Vector2 size = tc->size * Vector2(0.25, 0.6);
+            TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
             // check coins
             int end = gameTempVars.coins.size();
             Entity prev = 0;
             for(int idx=0; idx<end; idx++) {
                 Entity coin = rc->speed > 0 ? gameTempVars.coins[idx] : gameTempVars.coins[end - idx - 1];
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
-                    if (IntersectionUtil::rectangleRectangle(pos, size, 0, TRANSFORM(coin)->position, TRANSFORM(coin)->size, 0)) {
+                    if (IntersectionUtil::rectangleRectangle(collisionZone, TRANSFORM(coin))) {
                         if (!rc->coins.empty()) {
                             if (rc->coins.back() == prev) {
                                 rc->coinSequenceBonus++;
@@ -676,6 +698,7 @@ void GameTempVar::cleanup() {
     coins.clear();
     std::vector<Entity> r = theRunnerSystem.RetrieveAllEntityWithComponent();
     for (unsigned j=0; j<r.size(); j++) {
+        theEntityManager.DeleteEntity(RUNNER(r[j])->collisionZone);
         theEntityManager.DeleteEntity(r[j]);
     }
 
@@ -827,8 +850,18 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     ADD_COMPONENT(e, Animation);
     ANIMATION(e)->name = "runL2R";
     RENDERING(e)->mirrorH = (direction < 0);
+    
+    Entity collisionZone = theEntityManager.CreateEntity();
+    ADD_COMPONENT(collisionZone, Transformation);
+    TRANSFORM(collisionZone)->parent = e;
+    TRANSFORM(collisionZone)->z = 0.01;
+    #if 0
+    ADD_COMPONENT(collisionZone, Rendering);
+    RENDERING(collisionZone)->hide = false;
+    RENDERING(collisionZone)->color = Color(1,0,0,1);
+    #endif
+    RUNNER(e)->collisionZone = collisionZone;
 #ifdef SAC_NETWORK
-    ADD_COMPONENT(e, Network);
     NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0.116;
     NETWORK(e)->systemUpdatePeriod[theRunnerSystem.getName()] = 0.016;
     NETWORK(e)->systemUpdatePeriod[thePhysicsSystem.getName()] = 0.116;
