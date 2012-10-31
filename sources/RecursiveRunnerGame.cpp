@@ -86,7 +86,7 @@ Entity background, startSingleButton, startSplitButton;
 Entity startMultiButton;
 Entity networkUL, networkDL;
 #endif
-Entity scoreText[2], goldCoin;
+Entity scoreText[2], goldCoin, scorePanel;
 
 
 enum GameState {
@@ -132,8 +132,8 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdA
 }
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
-    PlacementHelper::GimpWidth = 800;
-    PlacementHelper::GimpHeight = 500;
+    PlacementHelper::GimpWidth = 1280;
+    PlacementHelper::GimpHeight = 800;
 
     Game::sacInit(windowW, windowH);
     theRenderingSystem.loadAtlas("alphabet", true);
@@ -167,12 +167,12 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
-    TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, 0.7 * PlacementHelper::ScreenHeight);
+    TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
     TRANSFORM(background)->position.X = 0;
     TRANSFORM(background)->position.Y = -(PlacementHelper::ScreenHeight - TRANSFORM(background)->size.Y)*0.5;
     TRANSFORM(background)->z = 0.1;
     ADD_COMPONENT(background, Rendering);
-    RENDERING(background)->color = Color(0.3, 0.3, 0.3);
+    RENDERING(background)->texture = theRenderingSystem.loadTextureFile("decor-entier");
     RENDERING(background)->hide = false;
     RENDERING(background)->opaqueType = RenderingComponent::FULL_OPAQUE;
     RENDERING(background)->cameraBitMask = (0x3 << 1);
@@ -226,16 +226,29 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     RENDERING(startMultiButton)->color = Color(0.2, 0.2, 0.2, 0.5);
     ADD_COMPONENT(startMultiButton, Button);
 #endif
+    scorePanel = theEntityManager.CreateEntity();
+    ADD_COMPONENT(scorePanel, Transformation);
+    TRANSFORM(scorePanel)->size = Vector2(PlacementHelper::GimpWidthToScreen(591), PlacementHelper::GimpWidthToScreen(166));
+    theTransformationSystem.setPosition(TRANSFORM(scorePanel), Vector2(0, PlacementHelper::ScreenHeight * 0.5), TransformationSystem::N);
+    TRANSFORM(scorePanel)->z = 0.8;
+    ADD_COMPONENT(scorePanel, Rendering);
+    RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
+    RENDERING(scorePanel)->hide = false;
+    // RENDERING(scorePanel)->color.a = 0.5;
+
     for (int i=0; i<2; i++) {
         scoreText[i] = theEntityManager.CreateEntity();
         ADD_COMPONENT(scoreText[i], Transformation);
-        TRANSFORM(scoreText[i])->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
-        TRANSFORM(scoreText[i])->z = 0.9;
+        TRANSFORM(scoreText[i])->position = Vector2(0, -0.14);
+        TRANSFORM(scoreText[i])->z = 0.13;
+        TRANSFORM(scoreText[i])->rotation = 0.06;
+        TRANSFORM(scoreText[i])->parent = scorePanel;
         ADD_COMPONENT(scoreText[i], TextRendering);
         TEXT_RENDERING(scoreText[i])->text = "";
-        TEXT_RENDERING(scoreText[i])->charHeight = 1;
+        TEXT_RENDERING(scoreText[i])->charHeight = 0.7;
+        TEXT_RENDERING(scoreText[i])->hide = false;
         // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
-        TEXT_RENDERING(scoreText[i])->color = Color(1 - i, i, 1);
+        TEXT_RENDERING(scoreText[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
     }
 #ifdef SAC_NETWORK
     networkUL = theEntityManager.CreateEntity();
@@ -637,7 +650,7 @@ static GameState updatePlaying(float dt) {
 
     for (unsigned i=0; i<gameTempVars.players.size(); i++) {
         std::stringstream a;
-        a << "  " << PLAYER(gameTempVars.players[i])->score << " pts";
+        a << "  " << PLAYER(gameTempVars.players[i])->score;
         TEXT_RENDERING(scoreText[i])->text = a.str();
     }
     
@@ -764,8 +777,8 @@ static void createCoins(int count) {
                 -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
                 LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
             MathUtil::RandomFloatInRange(
-                -0.4 * PlacementHelper::ScreenHeight,
-                -0.2 * PlacementHelper::ScreenHeight));
+                -0.35 * PlacementHelper::ScreenHeight,
+                -0.1 * PlacementHelper::ScreenHeight));
         TRANSFORM(e)->rotation = MathUtil::RandomFloat() * 6.28;
         TRANSFORM(e)->z = 0.5;
         ADD_COMPONENT(e, Rendering);
@@ -886,7 +899,7 @@ static void setupCamera(CameraMode mode) {
             theRenderingSystem.cameras[1].screenSize.Y = 1;
             theRenderingSystem.cameras[1].screenPosition.Y  = 0;
             theRenderingSystem.cameras[1].mirrorY = false;
-            TRANSFORM(scoreText[0])->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
+            // TRANSFORM(scoreText[0])->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
             TEXT_RENDERING(scoreText[0])->hide = false;
             TEXT_RENDERING(scoreText[0])->positioning = TextRenderingComponent::CENTER;
             TEXT_RENDERING(scoreText[1])->hide = true;
