@@ -203,7 +203,7 @@ static void updateAndRenderLoop() {
 		time = TimeUtil::getTime();
 		while (dtAccumuled >= DT){
 			dtAccumuled -= DT;
-			game->tick(DT);
+			game->tick(DT * 1);
 			running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 			bool focus = glfwGetWindowParam(GLFW_ACTIVE);
 			if (focus) {
