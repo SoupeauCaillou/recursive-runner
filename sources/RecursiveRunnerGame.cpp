@@ -125,7 +125,7 @@ const float playerSpeed = 6;
 extern float MaxJumpDuration;
 
 
-RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad, ExitAPI* exAPI) : Game() {
+RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
 	assetAPI = ast;
 	storageAPI = storage;
 	exitAPI = exAPI;
@@ -160,7 +160,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     loadFont(assetAPI, "typo");
 }
 
-void RecursiveRunnerGame::init(const uint8_t* in, int size) {
+void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
     PlayerSystem::CreateInstance();
@@ -304,7 +304,7 @@ void RecursiveRunnerGame::backPressed() {
     Game::backPressed();
 }
 
-void RecursiveRunnerGame::togglePause(bool activate) {
+void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 
 }
 
@@ -376,7 +376,7 @@ void RecursiveRunnerGame::tick(float dt) {
     updateFps(dt);
 }
 
-static GameState updateMenu(float dt) {
+static GameState updateMenu(float dt __attribute__((unused))) {
     if (BUTTON(startSingleButton)->clicked) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
@@ -414,7 +414,7 @@ static void transitionMenuWaitingPlayers() {
 #endif
 }
 
-static GameState updateWaitingPlayers(float dt) {
+static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
 #ifdef SAC_NETWORK
     if (theNetworkSystem.networkAPI) {
         if (theNetworkSystem.networkAPI->isConnectedToAnotherPlayer()) {
@@ -437,9 +437,8 @@ static GameState updateWaitingPlayers(float dt) {
                 #ifdef SAC_NETWORK
                 ADD_COMPONENT(e, Network);
                 NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0.1;
-                #endif
+
                 Entity run = addRunnerToPlayer(e, PLAYER(e), i);
-                #ifdef SAC_NETWORK
                 if (i != gameTempVars.playerIndex()) {
                     NETWORK(run)->newOwnerShipRequest = 1;
                 }
@@ -671,6 +670,7 @@ static void transitionPlayingMenu() {
     for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
         theRenderingSystem.cameras[i].worldPosition = Vector2::Zero;
     }
+
     // Show menu UI
     TEXT_RENDERING(startSingleButton)->hide = false;
     CONTAINER(startSingleButton)->enable = true;

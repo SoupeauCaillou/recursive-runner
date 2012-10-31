@@ -127,7 +127,7 @@ void RunnerSystem::DoUpdate(float dt) {
             }
         }
         
-        if (!rc->jumpTimes.empty() && rc->currentJump < rc->jumpTimes.size()) {
+        if (!rc->jumpTimes.empty() && rc->currentJump < (int)rc->jumpTimes.size()) {
             if ((rc->elapsed - rc->startTime)>= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {           
                 // std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
                 Vector2 force = Vector2(0, 900);

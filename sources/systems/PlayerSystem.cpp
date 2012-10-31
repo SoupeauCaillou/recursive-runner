@@ -29,10 +29,10 @@ PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
     componentSerializer.add(new Property(OFFSET(ready, tc), sizeof(bool)));
 }
 
-void PlayerSystem::DoUpdate(float dt) {
+void PlayerSystem::DoUpdate(float dt __attribute__((unused))) {
     std::vector<Entity> runners = theRunnerSystem.RetrieveAllEntityWithComponent();
     FOR_EACH_ENTITY_COMPONENT(Player, a, rc)
-        for(int i=0; i<runners.size(); i++) {
+        for(unsigned i = 0; i < runners.size(); i++) {
             if (RUNNER(runners[i])->playerOwner == a) {
                 rc->runners.insert(runners[i]);
             }

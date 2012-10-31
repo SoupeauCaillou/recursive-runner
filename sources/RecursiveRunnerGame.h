@@ -26,10 +26,8 @@
 
 #include "systems/RenderingSystem.h"
 
-#include "api/LocalizeAPI.h"
 #include "api/AdAPI.h"
 #include "api/ExitAPI.h"
-#include "api/NameInputAPI.h"
 #include "api/StorageAPI.h"
 
 class RecursiveRunnerGame : public Game {
