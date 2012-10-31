@@ -6,7 +6,7 @@ link_directories (${PROJECT_BINARY_DIR}/sac)
 file(
         GLOB
         source_files
-        *.cpp *.h systems/*cpp systems/*.h menus/*.cpp menus/*.h
+        *.cpp *.h api/linux/*.cpp systems/*.cpp systems/*.h menus/*.cpp menus/*.h
 )
 
 add_library(recursiveRunnercommon ${source_files})

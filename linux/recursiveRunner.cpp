@@ -51,6 +51,7 @@
 #include "api/linux/NameInputAPILinuxImpl.h"
 #include "api/linux/ExitAPILinuxImpl.h"
 #include "api/linux/NetworkAPILinuxImpl.h"
+#include "api/linux/StorageAPILinuxImpl.h"
 
 #include "systems/TextRenderingSystem.h"
 #include "systems/ButtonSystem.h"
@@ -336,7 +337,10 @@ int main(int argc, char** argv) {
 
 	nameInput = new NameInputAPILinuxImpl();
 
-	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), nameInput, loc, new AdAPI(), new ExitAPILinuxImpl());
+	StorageAPILinuxImpl* storage = new StorageAPILinuxImpl();
+	storage->init();
+	
+	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), storage, new AdAPI(), new ExitAPILinuxImpl());
 
 	theSoundSystem.init();
 	theTouchInputManager.setNativeTouchStatePtr(new MouseNativeTouchState());

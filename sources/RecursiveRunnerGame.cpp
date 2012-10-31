@@ -47,6 +47,7 @@
 #ifdef SAC_NETWORK
 #include "systems/NetworkSystem.h"
 #include "api/linux/NetworkAPILinuxImpl.h"
+#include "api/linux/StorageAPILinuxImpl.h"
 #endif
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -124,8 +125,9 @@ const float playerSpeed = 6;
 extern float MaxJumpDuration;
 
 
-RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, NameInputAPI* inputUI, LocalizeAPI* lAPI, AdAPI* ad, ExitAPI* exAPI) : Game() {
-	asset = ast;
+RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad, ExitAPI* exAPI) : Game() {
+	assetAPI = ast;
+	storageAPI = storage;
 	exitAPI = exAPI;
 }
 
@@ -155,7 +157,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     
 
     // init font
-    loadFont(asset, "typo");
+    loadFont(assetAPI, "typo");
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in, int size) {
