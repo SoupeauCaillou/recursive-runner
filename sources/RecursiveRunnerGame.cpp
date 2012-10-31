@@ -137,20 +137,21 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theRenderingSystem.loadAtlas("decor", false);
     
     // register 4 animations
-    std::string runL2R[] = { "obj_Run000", "obj_Run001", "obj_Run002", "obj_Run003", "obj_Run004", "obj_Run005", "obj_Run006", "obj_Run007" }; 
-    std::string runR2L[] = { "obj_Run100", "obj_Run101", "obj_Run102", "obj_Run103", "obj_Run104", "obj_Run105", "obj_Run106", "obj_Run107" }; 
-    std::string jumpL2R[] = { "obj_Run004" };
-    std::string jumpR2L[] = { "obj_Run104" };
-    std::string flyL2R[] = { "obj_Flying000", "obj_Flying001" };
-    std::string flyR2L[] = { "obj_Flying100", "obj_Flying101" };
+    std::string runL2R[] = { "run_l2r_0002",
+        "run_l2r_0003", "run_l2r_0004", "run_l2r_0005",
+        "run_l2r_0006", "run_l2r_0007", "run_l2r_0008",
+        "run_l2r_0009", "run_l2r_0010", "run_l2r_0011", "run_l2r_0000", "run_l2r_0001"};
+    std::string jumpL2R[] = { "jump_l2r_0004", "jump_l2r_0005",
+        "jump_l2r_0006", "jump_l2r_0007", "jump_l2r_0008",
+        "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
+    std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015"};
 
-    theAnimationSystem.registerAnim("runL2R", runL2R, 8, 16);
-    theAnimationSystem.registerAnim("runR2L", runR2L, 8, 16);
-    theAnimationSystem.registerAnim("jumpL2R", jumpL2R, 1, 0);
-    theAnimationSystem.registerAnim("jumpR2L", jumpR2L, 1, 0);
-    theAnimationSystem.registerAnim("flyL2R", flyL2R, 2, 3);
-    theAnimationSystem.registerAnim("flyR2L", flyR2L, 2, 3);
+    theAnimationSystem.registerAnim("runL2R", runL2R, 12, 20, true);
+    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 20, false);
+    theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 20, false);
+    theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 40, false, "runL2R");
     
+
     // init font
     loadFont(asset, "typo");
 }
@@ -551,7 +552,9 @@ static GameState updatePlaying(float dt) {
                         continue;
                     if (rc->elapsed < 0.25)
                         continue;
-                    if (IntersectionUtil::rectangleRectangle(ghostTc, actives[k])) {
+                    const Vector2 pos = actives[k]->position + actives[k]->size * Vector2(0, 0.2);
+                    const Vector2 size = actives[k]->size * Vector2(0.25, 0.6);
+                    if (IntersectionUtil::rectangleRectangle(pos, size, 0, ghostTc->position, ghostTc->size * Vector2(0.25, 0.6), 0)) {
                         rc->killed = true;
                         break;
                     }
@@ -577,16 +580,19 @@ static GameState updatePlaying(float dt) {
                     pc->gravity.Y = 0;
                     pc->linearVelocity = Vector2::Zero;
                     tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
-                    ANIMATION(e)->name = (rc->speed > 0) ? "runL2R" : "runR2L";
+                    ANIMATION(e)->name = "jumptorunL2R";
+                    RENDERING(e)->mirrorH = (rc->speed < 0);
                 }
             }
+            const Vector2 pos = tc->position + tc->size * Vector2(0, 0.2);
+            const Vector2 size = tc->size * Vector2(0.25, 0.6);
             // check coins
             int end = gameTempVars.coins.size();
             Entity prev = 0;
             for(int idx=0; idx<end; idx++) {
                 Entity coin = rc->speed > 0 ? gameTempVars.coins[idx] : gameTempVars.coins[end - idx - 1];
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
-                    if (IntersectionUtil::rectangleRectangle(tc, TRANSFORM(coin))) {
+                    if (IntersectionUtil::rectangleRectangle(pos, size, 0, TRANSFORM(coin)->position, TRANSFORM(coin)->size, 0)) {
                         if (!rc->coins.empty()) {
                             if (rc->coins.back() == prev) {
                                 rc->coinSequenceBonus++;
@@ -797,7 +803,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.85,1);//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->size = Vector2(0.85, 1) * 3;//0.4,1);//0.572173, 0.815538);
     std::cout << PlacementHelper::ScreenHeight << std::endl;
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
@@ -819,7 +825,8 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
     ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = (direction > 0) ? "runL2R" : "runR2L";
+    ANIMATION(e)->name = "runL2R";
+    RENDERING(e)->mirrorH = (direction < 0);
 #ifdef SAC_NETWORK
     ADD_COMPONENT(e, Network);
     NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0.116;

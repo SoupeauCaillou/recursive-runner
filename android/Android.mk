@@ -11,7 +11,7 @@ LOCAL_CFLAGS := -DANDROID_NDK \
 				-I$(LOCAL_PATH)/..
 
 LOCAL_CXXFLAGS := -DANDROID_NDK -DDEBUG -DENABLE_PROFILING \
-                -DDISABLE_IMPORTGL \
+                -DDISABLE_IMPORTGL  -fvisibility=hidden \
             -I$(LOCAL_PATH)/../sources \
 				-I$(LOCAL_PATH)/.. \
 				-I$(LOCAL_PATH)/../sac/ \

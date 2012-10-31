@@ -1,6 +1,8 @@
 #!/bin/sh
 
-for i in `ls *.png`
+for i in `ls jump*.png`
 do
-	convert -crop 144x169+56+87 $i $i
+	convert -crop 120x135+0+0 $i $i
 done
+
+

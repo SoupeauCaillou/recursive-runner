@@ -121,18 +121,23 @@ void RunnerSystem::DoUpdate(float dt) {
                 pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), 0.016));
                 rc->jumpingSince = 0.001;
                 
-                ANIMATION(a)->name = (rc->speed > 0) ? "jumpL2R" : "jumpR2L";
+                ANIMATION(a)->name = "jumpL2R_up";
+                RENDERING(a)->mirrorH = (rc->speed < 0);
             } else {
                 if (rc->jumpingSince > 0) {
                     rc->jumpingSince += dt;
                     if (rc->jumpingSince > rc->jumpDurations[rc->currentJump] && rc->jumpingSince >= MinJumpDuration) {
-                        
+                        // ANIMATION(a)->name = (rc->speed > 0) ? "jumpL2R_down" : "jumpR2L_down";
                         pc->gravity.Y = -100;
                         rc->jumpingSince = 0;
                         rc->currentJump++;
                     }
                 }
             }
+        }
+        if (pc->gravity.Y < 0 && pc->linearVelocity.Y < -10) {
+            ANIMATION(a)->name = "jumpL2R_down";
+            RENDERING(a)->mirrorH = (rc->speed < 0);
         }
     }
 
