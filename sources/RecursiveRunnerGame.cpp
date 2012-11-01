@@ -150,10 +150,10 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
         "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015"};
 
-    theAnimationSystem.registerAnim("runL2R", runL2R, 12, 20, true);
-    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 20, false);
-    theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 20, false);
-    theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 40, false, "runL2R");
+    theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, true);
+    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 15, false);
+    theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, false);
+    theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 30, false, "runL2R");
     
 
     // init font
@@ -767,19 +767,31 @@ int GameTempVar::playerIndex() {
 }
 
 static void createCoins(int count) {
+    std::vector<Entity> coins;
     float min = LEVEL_SIZE * PlacementHelper::ScreenWidth;
     for (int i=0; i<count; i++) {
         Entity e = theEntityManager.CreateEntity();
         ADD_COMPONENT(e, Transformation);
         TRANSFORM(e)->size = Vector2(0.3, 0.3) * 5;
-        TRANSFORM(e)->position = Vector2(
-            MathUtil::RandomFloatInRange(
-                -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
-                LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
-            MathUtil::RandomFloatInRange(
-                -0.35 * PlacementHelper::ScreenHeight,
-                -0.1 * PlacementHelper::ScreenHeight));
-        TRANSFORM(e)->rotation = -MathUtil::PiOver2 * 0.7 + MathUtil::RandomFloat() * MathUtil::Pi * 0.7;
+        Vector2 p;
+        bool notFarEnough = true;
+        do {
+            p = Vector2(
+                MathUtil::RandomFloatInRange(
+                    -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
+                    LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
+                MathUtil::RandomFloatInRange(
+                    -0.35 * PlacementHelper::ScreenHeight,
+                    -0.1 * PlacementHelper::ScreenHeight));
+           notFarEnough = false;
+           for (int j=0; j<coins.size() && !notFarEnough; j++) {
+                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 2) {
+                    notFarEnough = true;
+                }
+           }
+        } while (notFarEnough);
+        TRANSFORM(e)->position = p;
+        TRANSFORM(e)->rotation = -MathUtil::PiOver2 * 0.5 + MathUtil::RandomFloat() * MathUtil::Pi * 0.5;
         TRANSFORM(e)->z = 0.5;
         ADD_COMPONENT(e, Rendering);
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
@@ -794,6 +806,7 @@ static void createCoins(int count) {
         NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
         NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
         #endif
+        coins.push_back(e);
     }
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
@@ -848,7 +861,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.85, 1) * 2.5;//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;//0.4,1);//0.572173, 0.815538);
     std::cout << PlacementHelper::ScreenHeight << std::endl;
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
@@ -861,7 +874,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->speed = direction * playerSpeed * (1 + 0.05 * p->runnersCount);
+    RUNNER(e)->speed = direction * playerSpeed * (0.7 + 0.1 * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, CameraTarget);
@@ -871,6 +884,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     PHYSICS(e)->mass = 1;
     ADD_COMPONENT(e, Animation);
     ANIMATION(e)->name = "runL2R";
+    ANIMATION(e)->playbackSpeed = 1 + 0.08 * p->runnersCount;
     RENDERING(e)->mirrorH = (direction < 0);
     
     Entity collisionZone = theEntityManager.CreateEntity();
