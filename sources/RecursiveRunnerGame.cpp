@@ -450,8 +450,10 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
                 #ifdef SAC_NETWORK
                 ADD_COMPONENT(e, Network);
                 NETWORK(e)->systemUpdatePeriod[thePlayerSystem.getName()] = 0.1;
-
-                Entity run = addRunnerToPlayer(e, PLAYER(e), i);
+					 Entity run =
+					 #endif
+                addRunnerToPlayer(e, PLAYER(e), i);
+                #ifdef SAC_NETWORK
                 if (i != gameTempVars.playerIndex()) {
                     NETWORK(run)->newOwnerShipRequest = 1;
                 }
@@ -784,7 +786,7 @@ static void createCoins(int count) {
                     -0.35 * PlacementHelper::ScreenHeight,
                     -0.1 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
-           for (int j=0; j<coins.size() && !notFarEnough; j++) {
+           for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
                 if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 2) {
                     notFarEnough = true;
                 }
