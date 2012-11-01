@@ -72,7 +72,7 @@ enum CameraMode {
 };
     
 
-static void spawnGainEntity(int gain, const Vector2& pos);
+static void spawnGainEntity(int gain, Entity t);
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex);
 static void updateFps(float dt);
 static void setupCamera(CameraMode mode);
@@ -640,7 +640,7 @@ static GameState updatePlaying(float dt) {
                         rc->coins.push_back(coin);
                         int gain = ((coin == goldCoin) ? 30 : 10) * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
-                        spawnGainEntity(gain, TRANSFORM(coin)->position);
+                        spawnGainEntity(gain, coin);
                     }
                 }
                 prev = coin;
@@ -755,7 +755,7 @@ void GameTempVar::syncCoins() {
     for (unsigned i=0; i<t.size(); i++) {
         //...
         float x = TRANSFORM(t[i])->size.X;
-        if (MathUtil::Abs(x - 0.3) < 0.01) {
+        if (MathUtil::Abs(x - 0.3 * 5) < 0.01) {
             coins.push_back(t[i]);
         }
     }
@@ -771,7 +771,7 @@ static void createCoins(int count) {
     for (int i=0; i<count; i++) {
         Entity e = theEntityManager.CreateEntity();
         ADD_COMPONENT(e, Transformation);
-        TRANSFORM(e)->size = Vector2(0.3, 0.3);
+        TRANSFORM(e)->size = Vector2(0.3, 0.3) * 5;
         TRANSFORM(e)->position = Vector2(
             MathUtil::RandomFloatInRange(
                 -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
@@ -779,10 +779,10 @@ static void createCoins(int count) {
             MathUtil::RandomFloatInRange(
                 -0.35 * PlacementHelper::ScreenHeight,
                 -0.1 * PlacementHelper::ScreenHeight));
-        TRANSFORM(e)->rotation = MathUtil::RandomFloat() * 6.28;
+        TRANSFORM(e)->rotation = -MathUtil::PiOver2 * 0.7 + MathUtil::RandomFloat() * MathUtil::Pi * 0.7;
         TRANSFORM(e)->z = 0.5;
         ADD_COMPONENT(e, Rendering);
-        RENDERING(e)->color = Color(1, 1, 0);
+        RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
         RENDERING(e)->cameraBitMask = (0x3 << 1);
         RENDERING(e)->hide = false;        
         if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
@@ -813,11 +813,17 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain, const Vector2& pos) {
+static void spawnGainEntity(int gain, Entity parent) {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = pos;
-    TRANSFORM(e)->z = 0.7;
+    TRANSFORM(e)->parent = parent;
+    TRANSFORM(e)->size = Vector2(0.3, 0.3) * 5;
+    TRANSFORM(e)->z = 0.1;
+    ADD_COMPONENT(e, Rendering);
+    RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
+    RENDERING(e)->color = Color::random();
+    RENDERING(e)->hide = false;
+#if 0
     ADD_COMPONENT(e, TextRendering);
     std::stringstream a;
     a << gain;
@@ -829,11 +835,12 @@ static void spawnGainEntity(int gain, const Vector2& pos) {
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
     PHYSICS(e)->gravity = Vector2(0, 6);
+#endif
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.value = 1;
-    AUTO_DESTROY(e)->params.lifetime.map2AlphaTextRendering = true;
-    AUTO_DESTROY(e)->hasTextRendering = true;
+    AUTO_DESTROY(e)->params.lifetime.value = 3;
+    AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
+    // AUTO_DESTROY(e)->hasTextRendering = true;
 }
 
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex) {
@@ -841,7 +848,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.85, 1) * 3;//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->size = Vector2(0.85, 1) * 2.5;//0.4,1);//0.572173, 0.815538);
     std::cout << PlacementHelper::ScreenHeight << std::endl;
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
