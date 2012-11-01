@@ -76,7 +76,7 @@ Entity globalFTW = 0;
 
 class MouseNativeTouchState: public NativeTouchState {
 	public:
-		bool isTouching(int index, Vector2* windowCoords) const {
+		bool isTouching(int index __attribute__((unused)), Vector2* windowCoords) const {
 			#ifdef EMSCRIPTEN
 			 static bool down = false;
 			 static Vector2 position;

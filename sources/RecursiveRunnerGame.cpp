@@ -813,7 +813,7 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain, Entity parent) {
+static void spawnGainEntity(int gain __attribute__((unused)), Entity parent) {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->parent = parent;
