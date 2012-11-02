@@ -8,6 +8,8 @@ class StorageAPI {
 		struct Score {
 			int points;
 			std::string name;
+			
+			Score(int inPts = 0, std::string inName = "") : points(inPts), name(inName) { }
 		};
 
 		virtual void submitScore(Score inScore) = 0;
