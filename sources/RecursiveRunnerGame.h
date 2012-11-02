@@ -34,12 +34,12 @@ class RecursiveRunnerGame : public Game {
 	public:
 		RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad, ExitAPI* exAPI);
 
-        void sacInit(int windowW, int windowH);
-        void init(const uint8_t* in = 0, int size = 0);
+		void sacInit(int windowW, int windowH);
+		void init(const uint8_t* in = 0, int size = 0);
 		void tick(float dt);
 		void togglePause(bool activate);
 		void backPressed();
-        
+
 	private:
 		AssetAPI* assetAPI;
 		StorageAPI* storageAPI;

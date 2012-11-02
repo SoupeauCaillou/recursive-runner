@@ -88,6 +88,7 @@ Entity networkUL, networkDL;
 #endif
 Entity scoreText[2], goldCoin, scorePanel;
 
+StorageAPI* tmpStorageAPI;
 
 enum GameState {
     Menu,
@@ -128,6 +129,7 @@ extern float MaxJumpDuration;
 RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
 	assetAPI = ast;
 	storageAPI = storage;
+    tmpStorageAPI = storage;
 	exitAPI = exAPI;
 }
 
@@ -685,7 +687,12 @@ static void transitionPlayingMenu() {
     for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
         theRenderingSystem.cameras[i].worldPosition = Vector2::Zero;
     }
-
+    // Save score and coins earned
+    if (gameTempVars.players.size()) {
+        float score = PLAYER(gameTempVars.players[0])->score;
+        tmpStorageAPI->submitScore(StorageAPI::Score("", score));
+    }
+    
     // Show menu UI
     TEXT_RENDERING(startSingleButton)->hide = false;
     CONTAINER(startSingleButton)->enable = true;
@@ -828,8 +835,8 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain __attribute__((unused)), Entity parent) {
-    Entity e = theEntityManager.CreateEntity();
+static void spawnGainEntity(int gain __attribute__((unused)), Entity parent __attribute__((unused))) {
+    /*Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->parent = parent;
     TRANSFORM(e)->size = Vector2(0.3, 0.3) * 5;
@@ -856,6 +863,7 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent) {
     AUTO_DESTROY(e)->params.lifetime.value = 3;
     AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
     // AUTO_DESTROY(e)->hasTextRendering = true;
+    */
 }
 
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex) {
