@@ -17,6 +17,7 @@
 	along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "RecursiveRunnerGame.h"
+
 #include <sstream>
 
 #include <base/Log.h>
@@ -658,6 +659,7 @@ static GameState updatePlaying(float dt) {
                         rc->coins.push_back(coin);
                         int gain = ((coin == goldCoin) ? 30 : 10) * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
+                        player->coins++;
                         spawnGainEntity(gain, coin);
                     }
                 }
@@ -705,7 +707,9 @@ static void transitionPlayingMenu() {
     // Save score and coins earned
     if (gameTempVars.players.size()) {
         float score = PLAYER(gameTempVars.players[0])->score;
-        tmpStorageAPI->submitScore(StorageAPI::Score(score, ""));
+        float coins = PLAYER(gameTempVars.players[0])->coins;
+        tmpStorageAPI->submitScore(StorageAPI::Score(score, coins, ""));
+        std::cout << "coins: " << tmpStorageAPI->getCoinsCount() << std::endl;
     }
     
     // Show menu UI
@@ -839,7 +843,7 @@ static void createCoins(int count) {
     std::sort(coins.begin(), coins.end(), sortLeftToRight);
     const Vector2 offset = Vector2(PlacementHelper::GimpWidthToScreen(7), PlacementHelper::GimpHeightToScreen(44));
     Vector2 previous = Vector2(-LEVEL_SIZE * PlacementHelper::ScreenWidth * 0.5, 0);
-    for (int i=0; i<=coins.size(); i++) {
+    for (unsigned i = 0; i <= coins.size(); i++) {
     	Vector2 topI;
     	if (i < coins.size()) topI = TRANSFORM(coins[i])->position + Vector2::Rotate(offset, TRANSFORM(coins[i])->rotation);
     	else
@@ -889,7 +893,7 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain, Entity parent) {
+static void spawnGainEntity(int gain __attribute__((unused)), Entity parent) {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = TRANSFORM(parent)->position;

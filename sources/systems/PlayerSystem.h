@@ -22,9 +22,9 @@
 #include <set>
 
 struct PlayerComponent {
-    PlayerComponent() : name("dummy"), score(0), runnersCount(0), ready(true) {}
+    PlayerComponent() : name("dummy"), score(0), coins(0), runnersCount(0), ready(true) {}
     std::string name;
-    int score;
+    int score, coins;
     int runnersCount;
     bool ready;
     std::set<Entity> runners;
