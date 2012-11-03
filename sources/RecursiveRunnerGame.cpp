@@ -18,6 +18,8 @@
 */
 #include "RecursiveRunnerGame.h"
 
+#include "Parameters.h"
+
 #include <sstream>
 
 #include <base/Log.h>
@@ -521,7 +523,7 @@ static GameState updatePlaying(float dt) {
                 NETWORK(gameTempVars.currentRunner[i])->newOwnerShipRequest = 0;
             }
             #endif
-            if (PLAYER(gameTempVars.players[i])->runnersCount == 10) {
+            if (PLAYER(gameTempVars.players[i])->runnersCount == param::runner) {
                 theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
@@ -942,7 +944,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->speed = direction * playerSpeed * (0.7 + 0.1 * p->runnersCount);
+    RUNNER(e)->speed = direction * playerSpeed * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, CameraTarget);
