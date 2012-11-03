@@ -105,8 +105,7 @@ struct GameTempVar {
     unsigned numPlayers;
     bool isGameMaster;
     Entity currentRunner[2];
-    std::vector<Entity> runners[2], coins, players; 
- 
+    std::vector<Entity> runners[2], coins, players, links; 
 } gameTempVars;
 
 static GameState updateMenu(float dt);
@@ -634,8 +633,24 @@ static GameState updatePlaying(float dt) {
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
                     if (IntersectionUtil::rectangleRectangle(collisionZone, TRANSFORM(coin))) {
                         if (!rc->coins.empty()) {
+                        	int linkIdx = (rc->speed > 0) ? idx : end - idx;
                             if (rc->coins.back() == prev) {
                                 rc->coinSequenceBonus++;
+                                if (rc->speed > 0) {
+                                	for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                		float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                		std::cout << "adding: " << t;
+                                		PARTICULE(gameTempVars.links[linkIdx - j + 1])->duration += t;
+                                		std::cout << " -> " << PARTICULE(gameTempVars.links[linkIdx - j + 1])->duration << std::endl;
+                                			
+                                	}
+                                } else {
+                                	for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                		PARTICULE(gameTempVars.links[linkIdx + j - 1])->duration += 
+                                			1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                	}
+                                }
+                                
                             } else {
                                 rc->coinSequenceBonus = 1;
                             }
@@ -690,7 +705,7 @@ static void transitionPlayingMenu() {
     // Save score and coins earned
     if (gameTempVars.players.size()) {
         float score = PLAYER(gameTempVars.players[0])->score;
-        tmpStorageAPI->submitScore(StorageAPI::Score("", score));
+        tmpStorageAPI->submitScore(StorageAPI::Score(score, ""));
     }
     
     // Show menu UI
@@ -775,6 +790,10 @@ int GameTempVar::playerIndex() {
     return (isGameMaster ? 0 : 1);
 }
 
+static bool sortLeftToRight(Entity e, Entity f) {
+	return TRANSFORM(e)->position.X < TRANSFORM(f)->position.X;
+}
+
 static void createCoins(int count) {
     std::vector<Entity> coins;
     float min = LEVEL_SIZE * PlacementHelper::ScreenWidth;
@@ -800,7 +819,7 @@ static void createCoins(int count) {
            }
         } while (notFarEnough);
         TRANSFORM(e)->position = p;
-        TRANSFORM(e)->rotation = -MathUtil::PiOver2 * 0.5 + MathUtil::RandomFloat() * MathUtil::Pi * 0.5;
+        TRANSFORM(e)->rotation = -0.1 + MathUtil::RandomFloat() * 0.2;
         TRANSFORM(e)->z = 0.5;
         ADD_COMPONENT(e, Rendering);
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
@@ -816,6 +835,41 @@ static void createCoins(int count) {
         NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
         #endif
         coins.push_back(e);
+    }
+    std::sort(coins.begin(), coins.end(), sortLeftToRight);
+    const Vector2 offset = Vector2(PlacementHelper::GimpWidthToScreen(7), PlacementHelper::GimpHeightToScreen(44));
+    Vector2 previous = Vector2(-LEVEL_SIZE * PlacementHelper::ScreenWidth * 0.5, 0);
+    for (int i=0; i<=coins.size(); i++) {
+    	Vector2 topI;
+    	if (i < coins.size()) topI = TRANSFORM(coins[i])->position + Vector2::Rotate(offset, TRANSFORM(coins[i])->rotation);
+    	else
+    		topI = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth * 0.5, 0);
+    	Entity link = theEntityManager.CreateEntity();
+    	ADD_COMPONENT(link, Transformation);
+    	TRANSFORM(link)->position = (topI + previous) * 0.5;
+    	TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(18));
+    	TRANSFORM(link)->z = 0.4;
+    	TRANSFORM(link)->rotation = MathUtil::AngleFromVector(topI - previous);
+    	ADD_COMPONENT(link, Rendering);
+    	RENDERING(link)->texture = (MathUtil::RandomInt(2)) ? theRenderingSystem.loadTextureFile("link"):theRenderingSystem.loadTextureFile("link2");
+    	RENDERING(link)->hide = false;
+    	ADD_COMPONENT(link, Particule);
+    	PARTICULE(link)->emissionRate = 300 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
+    	std::cout << PARTICULE(link)->emissionRate << std::endl;
+    	PARTICULE(link)->duration = 0;
+    	PARTICULE(link)->lifetime = 0.1;
+    	PARTICULE(link)->texture = InvalidTextureRef;
+    	PARTICULE(link)->initialColor = Interval<Color>(Color(1, 1, 0, 1), Color(1, 0.8, 0, 1));
+    	PARTICULE(link)->finalColor = PARTICULE(link)->initialColor;
+    	PARTICULE(link)->initialSize = Interval<float>(0.05, 0.1);
+    	PARTICULE(link)->finalSize = Interval<float>(0.05, 0.1);
+    	PARTICULE(link)->forceDirection = Interval<float> (0, 6.28);
+    	PARTICULE(link)->forceAmplitude = Interval<float>(5, 10);
+    	PARTICULE(link)->moment = Interval<float>(-5, 5);
+    	PARTICULE(link)->mass = 0.1;
+    
+    	previous = topI;
+    	gameTempVars.links.push_back(link);
     }
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
@@ -835,12 +889,13 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain __attribute__((unused)), Entity parent __attribute__((unused))) {
-    /*Entity e = theEntityManager.CreateEntity();
+static void spawnGainEntity(int gain, Entity parent) {
+    Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->parent = parent;
+    TRANSFORM(e)->position = TRANSFORM(parent)->position;
+    TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
     TRANSFORM(e)->size = Vector2(0.3, 0.3) * 5;
-    TRANSFORM(e)->z = 0.1;
+    TRANSFORM(e)->z = TRANSFORM(parent)->z + 0.1;
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
     RENDERING(e)->color = Color::random();
@@ -863,7 +918,6 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent __at
     AUTO_DESTROY(e)->params.lifetime.value = 3;
     AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
     // AUTO_DESTROY(e)->hasTextRendering = true;
-    */
 }
 
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex) {
