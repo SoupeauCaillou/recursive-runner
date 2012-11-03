@@ -46,6 +46,7 @@ GameHolder* GameHolder::build() {
 	
 	hld->game = new RecursiveRunnerGame(&hld->renderThreadJNICtx.asset,
 		&jniCtx->storage,
+		&hld->gameThreadJNICtx->nameInput,
 		&hld->gameThreadJNICtx->ad,
 		&hld->gameThreadJNICtx->exitAPI);
 	return hld;
