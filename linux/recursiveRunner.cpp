@@ -311,7 +311,7 @@ int main(int argc, char** argv) {
 		return 1;
 	glfwSetWindowTitle("RecursiveRunner");
 	glewInit();
-	__log_enabled = (argc > 1 && !strcmp(argv[1], "--verbose"));
+	__log_enabled = (argc > 1 && (!strcmp(argv[1], "--verbose") || !strcmp(argv[1], "-v")));
 #endif
 
 	// pose de l'origine du temps ici t = 0
