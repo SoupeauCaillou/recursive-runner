@@ -51,6 +51,7 @@
 #include "systems/NetworkSystem.h"
 #include "api/linux/NetworkAPILinuxImpl.h"
 #include "api/linux/StorageAPILinuxImpl.h"
+#include "api/linux/NameAPILinuxImpl.h"
 #endif
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -92,6 +93,16 @@ Entity networkUL, networkDL;
 Entity scoreText[2], goldCoin, scorePanel;
 
 StorageAPI* tmpStorageAPI;
+NameInputAPI* tmpNameInputAPI;
+
+std::string playerName;
+
+enum GameOverState {
+    NoGame,
+    GameEnded,
+    AskingPlayerName
+} gameOverState;
+        
 
 enum GameState {
     Menu,
@@ -128,11 +139,15 @@ const float playerSpeed = 6;
 extern float MaxJumpDuration;
 
 
-RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
+RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
 	assetAPI = ast;
 	storageAPI = storage;
-    tmpStorageAPI = storage;
+    nameInputAPI = nameInput;
 	exitAPI = exAPI;
+
+    //to remove...
+    tmpStorageAPI = storage;
+    tmpNameInputAPI = nameInput;
 }
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
@@ -394,6 +409,39 @@ void RecursiveRunnerGame::tick(float dt) {
 }
 
 static GameState updateMenu(float dt __attribute__((unused))) {
+    switch (gameOverState) {
+        case NoGame: {
+			break;
+        }
+        case GameEnded: {
+            //should test if its a good score
+            if (1) {
+                tmpNameInputAPI->show();
+				gameOverState = AskingPlayerName;
+            } else {
+				gameOverState = NoGame;
+                tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, "rzehtrtyBg"));
+                // Cleanup previous game variables
+                gameTempVars.cleanup();
+            }
+        }
+        case AskingPlayerName: {
+            if (tmpNameInputAPI->done(playerName)) {
+                tmpNameInputAPI->hide();
+                
+                tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, playerName));
+                gameOverState = NoGame;
+                
+                // Cleanup previous game variables
+                gameTempVars.cleanup();
+            } else {
+                return Menu;
+            }
+            break;
+        }
+    }
+    
+    
     if (BUTTON(startSingleButton)->clicked) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
@@ -708,10 +756,7 @@ static void transitionPlayingMenu() {
     }
     // Save score and coins earned
     if (gameTempVars.players.size()) {
-        float score = PLAYER(gameTempVars.players[0])->score;
-        float coins = PLAYER(gameTempVars.players[0])->coins;
-        tmpStorageAPI->submitScore(StorageAPI::Score(score, coins, ""));
-        std::cout << "coins: " << tmpStorageAPI->getCoinsCount() << std::endl;
+        gameOverState = GameEnded;
     }
     
     // Show menu UI
@@ -731,10 +776,7 @@ static void transitionPlayingMenu() {
     TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
 #endif
     // TEXT_RENDERING(scoreText)->hide = false;
-    // Cleanup previous game variables
-    gameTempVars.cleanup();
 }
-
 
 void GameTempVar::cleanup() {
     for (unsigned i=0; i<coins.size(); i++) {
