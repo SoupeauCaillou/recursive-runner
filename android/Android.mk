@@ -24,6 +24,7 @@ LOCAL_SRC_FILES := \
     ../sources/systems/RunnerSystem.cpp \
     ../sources/systems/PlayerSystem.cpp \
     ../sources/systems/CameraTargetSystem.cpp \
+    ../sources/api/android/StorageAPIAndroidImpl.cpp \
     ../sac/android/sacjnilib.cpp
 
 LOCAL_STATIC_LIBRARIES := sac png tremor jsoncpp

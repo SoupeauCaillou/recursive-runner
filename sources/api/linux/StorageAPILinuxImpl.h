@@ -7,7 +7,7 @@ class StorageAPILinuxImpl : public StorageAPI {
 		void init();
 
 		void submitScore(Score inScore);
-		std::vector<Score> savedScores(float& outAverage);
+		std::vector<Score> getScores(float& outAverage);
 
 		int getCoinsCount();
 			

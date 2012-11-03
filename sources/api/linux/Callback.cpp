@@ -17,7 +17,7 @@
 int callback(void *save, int argc, char **argv, char **azColName __attribute__((unused))){
 	std::string *sav = static_cast<std::string*>(save);
 
-	unsigned i = 0;
+	int i = 0;
 	for (; i < argc - 1; i++) {
 		(*sav) += argv[i];
 		(*sav) += ", ";

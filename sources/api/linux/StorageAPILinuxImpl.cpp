@@ -120,7 +120,7 @@ void StorageAPILinuxImpl::submitScore(Score inScr) {
 	#endif
 }
 
-std::vector<StorageAPI::Score> StorageAPILinuxImpl::savedScores(float& outAvg) {
+std::vector<StorageAPI::Score> StorageAPILinuxImpl::getScores(float& outAvg) {
 	std::vector<StorageAPI::Score> result;
 	
 	#ifndef EMSCRIPTEN
