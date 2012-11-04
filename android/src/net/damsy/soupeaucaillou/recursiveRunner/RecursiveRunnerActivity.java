@@ -19,13 +19,12 @@
 package net.damsy.soupeaucaillou.recursiveRunner;
 
 import net.damsy.soupeaucaillou.SacActivity;
-import net.damsy.soupeaucaillou.recursiveRunner.api.NameInputAPI;
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -99,12 +98,9 @@ public class RecursiveRunnerActivity extends SacActivity {
 	static public RecursiveRunnerStorage.OptionsOpenHelper optionsOpenHelper;
 	static public RecursiveRunnerStorage.ScoreOpenHelper scoreOpenHelper;
 	
-	static public View playerNameInputView;
-	static public EditText nameEdit;
-	static public String playerName;
+	View playerNameInputView;
 
 	public SharedPreferences preferences;
-	static public Button[] oldName;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,48 +109,49 @@ public class RecursiveRunnerActivity extends SacActivity {
 
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
         playerNameInputView = findViewById(R.id.enter_name);
-        nameEdit = (EditText) findViewById(R.id.player_name_input);
         rl.bringChildToFront(playerNameInputView);
         playerNameInputView.setVisibility(View.GONE);
 
-        Button b = (Button) findViewById(R.id.name_save);
-        b.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				playerName = filterPlayerName(nameEdit.getText().toString());
-
-				//NOLOGLog.i(RecursiveRunnerActivity.Tag, "Player name: '" + playerName + "'");
-				if (playerName != null && playerName.length() > 0) {
-					playerNameInputView.setVisibility(View.GONE);
-					NameInputAPI.nameReady = true;
-					// hide keyboard
-					InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					mgr.hideSoftInputFromWindow(nameEdit.getWindowToken(), 0);
-				}
-			}
-		});
-        oldName = new Button[3];
-        oldName[0] = (Button)findViewById(R.id.reuse_name_1);
-        oldName[1] = (Button)findViewById(R.id.reuse_name_2);
-        oldName[2] = (Button)findViewById(R.id.reuse_name_3);
-        for (int i=0 ;i<3; i++) {
-        	oldName[i].setOnClickListener( new View.OnClickListener() {
-				public void onClick(View v) {
-	        		playerName = ((Button)v).getText().toString();
-	        		playerNameInputView.setVisibility(View.GONE);
-	        		NameInputAPI.nameReady = true;
-					// hide keyboard
-					InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					mgr.hideSoftInputFromWindow(nameEdit.getWindowToken(), 0);
-	        	}
-        	});
-        }
         RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
 
 	}
 	
-    private String filterPlayerName(String name) {
-    	String n = name.trim();
-    	return n.replaceAll("[^a-zA-Z0-9 ]"," ").substring(0, Math.min(11, n.length()));
-    }
+	public void preNameInputViewShow() {
+		SQLiteDatabase db = scoreOpenHelper.getReadableDatabase();
+		Cursor cursor = db
+				.rawQuery(
+						"select distinct name from score order by rowid desc limit 4",
+						null);
+		Button[] oldName = new Button[3];
+        oldName[0] = (Button)findViewById(R.id.reuse_name_1);
+        oldName[1] = (Button)findViewById(R.id.reuse_name_2);
+        oldName[2] = (Button)findViewById(R.id.reuse_name_3);
+		try {
+			int i = 0;
+			if (cursor.moveToFirst()) {
+				do {
+					String n = cursor.getString(0);
+
+					if (!n.equals("rzehtrtyBg") && n.length() > 0) {
+						oldName[i].setText(n);
+						oldName[i].setVisibility(View.VISIBLE);
+						i++;
+					}
+				} while (i < 3 && cursor.moveToNext());
+			}
+			if (i > 0) {
+				playerNameInputView.findViewById(
+						R.id.reuse).setVisibility(View.VISIBLE);
+			} else {
+				playerNameInputView.findViewById(
+						R.id.reuse).setVisibility(View.GONE);
+			}
+			for (; i < 3; i++) {
+				oldName[i].setVisibility(View.GONE);
+			}
+		} finally {
+			cursor.close();
+		}
+	}
 }
