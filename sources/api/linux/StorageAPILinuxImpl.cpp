@@ -90,7 +90,7 @@ void StorageAPILinuxImpl::init() {
 	#endif
 }
 
-void StorageAPILinuxImpl::submitScore(const Score& inScr) {
+void StorageAPILinuxImpl::submitScore(Score inScr) {
 	#ifndef EMSCRIPTEN
 	std::stringstream tmp;
 	
@@ -112,7 +112,7 @@ void StorageAPILinuxImpl::submitScore(const Score& inScr) {
 	#endif
 }
 
-std::vector<StorageAPI::Score> StorageAPILinuxImpl::savedScores() {
+std::vector<StorageAPI::Score> StorageAPILinuxImpl::savedScores(float& outAvg) {
 	std::vector<StorageAPI::Score> result;
 	
 	#ifndef EMSCRIPTEN
@@ -127,6 +127,8 @@ std::vector<StorageAPI::Score> StorageAPILinuxImpl::savedScores() {
 		}
 	}
 	#endif
+	
+	outAvg = -1;
 	return result;
 }
 

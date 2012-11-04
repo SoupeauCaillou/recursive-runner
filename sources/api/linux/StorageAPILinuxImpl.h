@@ -6,8 +6,8 @@ class StorageAPILinuxImpl : public StorageAPI {
 	public:
 		void init();
 
-		 void submitScore(const Score& inScore);
-		 std::vector<Score> savedScores();
+		 void submitScore(Score inScore);
+		 std::vector<Score> savedScores(float& outAverage);
 		 int getGameCountBeforeNextAd();
 		 void setGameCountBeforeNextAd(int inCount);
 		

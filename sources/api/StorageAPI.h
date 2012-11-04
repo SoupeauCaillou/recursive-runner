@@ -9,11 +9,11 @@ class StorageAPI {
 			int points;
 			std::string name;
 			
-			Score(int inPts = 0, const std::string& inName = "") : points(inPts), name(inName) { }
+			Score(int inPts = 0, std::string inName = "") : points(inPts), name(inName) { }
 		};
 
-		virtual void submitScore(const Score& inScore) = 0;
-		virtual std::vector<Score> savedScores() = 0;
+		virtual void submitScore(Score inScore) = 0;
+		virtual std::vector<Score> savedScores(float& outAverage) = 0;
 		virtual int getGameCountBeforeNextAd() = 0;
 		virtual void setGameCountBeforeNextAd(int inCount) = 0;
 };

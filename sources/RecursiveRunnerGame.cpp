@@ -139,7 +139,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
     theRenderingSystem.loadAtlas("alphabet", true);
     theRenderingSystem.loadAtlas("dummy", false);
-    // theRenderingSystem.loadAtlas("decor", false);
+    theRenderingSystem.loadAtlas("decor", false);
     
     // register 4 animations
     std::string runL2R[] = { "run_l2r_0002",
@@ -727,12 +727,6 @@ static void transitionPlayingMenu() {
     // TEXT_RENDERING(scoreText)->hide = false;
     // Cleanup previous game variables
     gameTempVars.cleanup();
-    
-    LOGI("Score table: ");
-    std::vector<StorageAPI::Score> scores = tmpStorageAPI->savedScores();
-    for (unsigned i=0; i<scores.size(); i++) {
-    	LOGI("#%d : %d", i+1, scores[i].points);
-    }
 }
 
 

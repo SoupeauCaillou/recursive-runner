@@ -17,7 +17,7 @@
 	along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
 package net.damsy.soupeaucaillou.recursiveRunner;
- 
+
 import net.damsy.soupeaucaillou.SacActivity;
 import net.damsy.soupeaucaillou.heriswap.api.NameInputAPI;
 import android.content.Context;
@@ -38,19 +38,19 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public boolean canShowAppRater() {
 		return false;
 	}   
-	@Override 
+	@Override
 	public int[] getSwarmBoards() {
-		return RecursiveRunnerSecret.boardsSwarm;
+		return null;
 	}
 
-	@Override 
+	@Override
 	public int getSwarmGameID() {
-		return RecursiveRunnerSecret.Swarm_gameID;
+		return 0;
 	}
 
 	@Override  
 	public String getSwarmGameKey() {
-		return RecursiveRunnerSecret.Swarm_gameKey;
+		return null;
 	}
 	
 	@Override
@@ -79,9 +79,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	
 	static public final String Tag = "HeriswapJ";
 	static final String TILEMATCH_BUNDLE_KEY = "plop";
-	static public final String RR_SHARED_PREF = "RecursiveRunnerPref";
-	static public RecursiveRunnerStorage.OptionsOpenHelper optionsOpenHelper;
-	static public RecursiveRunnerStorage.ScoreOpenHelper scoreOpenHelper;
+	static public final String HERISWAP_SHARED_PREF = "HeriswapPref";
 	
 	byte[] renderingSystemState;
 	
@@ -104,7 +102,7 @@ public class RecursiveRunnerActivity extends SacActivity {
         playerNameInputView.setVisibility(View.GONE);
 
         Button b = (Button) findViewById(R.id.name_save);
-        b.setOnClickListener(new View.OnClickListener()  {
+        b.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				playerName = filterPlayerName(nameEdit.getText().toString());
 
@@ -134,8 +132,6 @@ public class RecursiveRunnerActivity extends SacActivity {
 	        	}
         	});
         }
-        RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
-        RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
     }
 	
     private String filterPlayerName(String name) {

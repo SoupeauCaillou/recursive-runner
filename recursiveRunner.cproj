@@ -37,7 +37,6 @@
     <Compile Include="sources\systems\PlayerSystem.cpp" />
     <Compile Include="sources\api\linux\Callback.cpp" />
     <Compile Include="sources\api\linux\StorageAPILinuxImpl.cpp" />
-    <Compile Include="sources\api\android\StorageAPIAndroidImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -57,7 +56,5 @@
     <None Include="sources\systems\PlayerSystem.h" />
     <None Include="sources\api\linux\Callback.h" />
     <None Include="sources\api\linux\StorageAPILinuxImpl.h" />
-    <None Include="sources\api\android\StorageAPIAndroidImpl.h" />
-    <None Include="sources\api\StorageAPI.h" />
   </ItemGroup>
 </Project>
