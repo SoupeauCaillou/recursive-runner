@@ -9,8 +9,12 @@ class StorageAPIAndroidImpl : public StorageAPI {
 		~StorageAPIAndroidImpl();
 		void init(JNIEnv* env);
 		void uninit();
+		
 		void submitScore(Score inScr);
-		std::vector<Score> savedScores(float& outAverage);
+		std::vector<Score> getScores(float& outAverage);
+		
+		int getCoinsCount();
+
 		int getGameCountBeforeNextAd();
 		void setGameCountBeforeNextAd(int inCount);
 

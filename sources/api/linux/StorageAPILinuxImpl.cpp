@@ -22,7 +22,7 @@ static bool request(const std::string& dbPath, std::string s, void* res, int (*c
 	
 	int rc = sqlite3_open(dbPath.c_str(), &db);
 	if( rc ){
-		LOGI("Can't open database %s: %s\n", dbPath.c_str(), sqlite3_errmsg(db));
+		LOGE("Can't open database %s: %s\n", dbPath.c_str(), sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return false;
 	}
@@ -36,7 +36,7 @@ static bool request(const std::string& dbPath, std::string s, void* res, int (*c
 	}
 	
 	if( rc!=SQLITE_OK ){
-		LOGI("SQL error: %s (asked = %s)\n", zErrMsg, s.c_str());
+		LOGE("SQL error: %s (asked = %s)\n", zErrMsg, s.c_str());
 		sqlite3_free(zErrMsg);
 	}
 	
@@ -64,7 +64,7 @@ void StorageAPILinuxImpl::init() {
 	int st = stat(dbPath.c_str(), &statFolder);
 	if (st || (statFolder.st_mode & S_IFMT) != S_IFDIR) {
 		if (mkdir(dbPath.c_str(), S_IRWXU | S_IWGRP | S_IROTH)) {
-			std::cerr << "Failed to create : '%s'" <<  dbPath << std::endl;
+			LOGE("Failed to create : '%s'", dbPath.c_str());
 			return;
 		}
 	}
@@ -75,7 +75,7 @@ void StorageAPILinuxImpl::init() {
 	
 	if (r) {
 		LOGI("initializing database...");
-		request(dbPath, "create table score(name varchar2(11) default 'Anonymous', points number(7) default '0')", 0, 0);
+		request(dbPath, "create table score(points number(7) default '0', coins number(7) default '0', name varchar2(11) default 'Anonymous')", 0, 0);
 		request(dbPath, "create table info(opt varchar2(8), value varchar2(11), constraint f1 primary key(opt,value))", 0, 0);
 		std::string s;
 
@@ -92,9 +92,17 @@ void StorageAPILinuxImpl::init() {
 
 void StorageAPILinuxImpl::submitScore(Score inScr) {
 	#ifndef EMSCRIPTEN
+	
+	//check that the player isn't cheating (adding himself coins) (max is number of coints * runnerCount * runnerghost)
+	if (inScr.coins > 20*10) {
+		LOGE("you're cheating! %d coins really ?", inScr.coins);
+		return;
+	}
+	
+	
 	std::stringstream tmp;
 	
-	tmp << "INSERT INTO score VALUES ('" << inScr.name << "'," << inScr.points << ")";
+	tmp << "INSERT INTO score VALUES (" << inScr.points << "," << 2 * inScr.coins + 1 << ",'" << inScr.name << "')";
 	request(dbPath, tmp.str().c_str(), 0, 0);
 	
 	#else
@@ -112,7 +120,7 @@ void StorageAPILinuxImpl::submitScore(Score inScr) {
 	#endif
 }
 
-std::vector<StorageAPI::Score> StorageAPILinuxImpl::savedScores(float& outAvg) {
+std::vector<StorageAPI::Score> StorageAPILinuxImpl::getScores(float& outAvg) {
 	std::vector<StorageAPI::Score> result;
 	
 	#ifndef EMSCRIPTEN
@@ -132,6 +140,20 @@ std::vector<StorageAPI::Score> StorageAPILinuxImpl::savedScores(float& outAvg) {
 	return result;
 }
 
+int StorageAPILinuxImpl::getCoinsCount() {
+	#ifndef EMSCRIPTEN
+	std::string s;
+	request(dbPath, "select sum(coins), count(coins) from score", &s, 0);
+	
+	int coins, scoreCount;
+	sscanf(s.c_str(), "%d, %d", &coins, &scoreCount);
+		
+	return ((coins - scoreCount) / 2.);
+	#else
+	return 0;
+	#endif
+}
+
 int StorageAPILinuxImpl::getGameCountBeforeNextAd() {
 	#ifndef EMSCRIPTEN
 	std::string s;
@@ -139,7 +161,7 @@ int StorageAPILinuxImpl::getGameCountBeforeNextAd() {
 	return std::atoi(s.c_str());
 	#else
 	return 0;
-   	#endif
+	#endif
 }
 
 void StorageAPILinuxImpl::setGameCountBeforeNextAd(int inCount) {

@@ -17,6 +17,9 @@
 	along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "RecursiveRunnerGame.h"
+
+#include "Parameters.h"
+
 #include <sstream>
 
 #include <base/Log.h>
@@ -48,6 +51,7 @@
 #include "systems/NetworkSystem.h"
 #include "api/linux/NetworkAPILinuxImpl.h"
 #include "api/linux/StorageAPILinuxImpl.h"
+#include "api/linux/NameAPILinuxImpl.h"
 #endif
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -89,6 +93,16 @@ Entity networkUL, networkDL;
 Entity scoreText[2], goldCoin, scorePanel;
 
 StorageAPI* tmpStorageAPI;
+NameInputAPI* tmpNameInputAPI;
+
+std::string playerName;
+
+enum GameOverState {
+    NoGame,
+    GameEnded,
+    AskingPlayerName
+} gameOverState;
+        
 
 enum GameState {
     Menu,
@@ -125,11 +139,15 @@ const float playerSpeed = 6;
 extern float MaxJumpDuration;
 
 
-RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
+RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
 	assetAPI = ast;
 	storageAPI = storage;
-    tmpStorageAPI = storage;
+    nameInputAPI = nameInput;
 	exitAPI = exAPI;
+
+    //to remove...
+    tmpStorageAPI = storage;
+    tmpNameInputAPI = nameInput;
 }
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
@@ -391,6 +409,39 @@ void RecursiveRunnerGame::tick(float dt) {
 }
 
 static GameState updateMenu(float dt __attribute__((unused))) {
+    switch (gameOverState) {
+        case NoGame: {
+			break;
+        }
+        case GameEnded: {
+            //should test if its a good score
+            if (1) {
+                tmpNameInputAPI->show();
+				gameOverState = AskingPlayerName;
+            } else {
+				gameOverState = NoGame;
+                tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, "rzehtrtyBg"));
+                // Cleanup previous game variables
+                gameTempVars.cleanup();
+            }
+        }
+        case AskingPlayerName: {
+            if (tmpNameInputAPI->done(playerName)) {
+                tmpNameInputAPI->hide();
+                
+                tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, playerName));
+                gameOverState = NoGame;
+                
+                // Cleanup previous game variables
+                gameTempVars.cleanup();
+            } else {
+                return Menu;
+            }
+            break;
+        }
+    }
+    
+    
     if (BUTTON(startSingleButton)->clicked) {
         gameTempVars.numPlayers = 1;
         gameTempVars.isGameMaster = true;
@@ -520,7 +571,7 @@ static GameState updatePlaying(float dt) {
                 NETWORK(gameTempVars.currentRunner[i])->newOwnerShipRequest = 0;
             }
             #endif
-            if (PLAYER(gameTempVars.players[i])->runnersCount == 10) {
+            if (PLAYER(gameTempVars.players[i])->runnersCount == param::runner) {
                 theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
@@ -658,6 +709,11 @@ static GameState updatePlaying(float dt) {
                         rc->coins.push_back(coin);
                         int gain = ((coin == goldCoin) ? 30 : 10) * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
+                        
+                        //coins++ only for player, not his ghosts
+                        if (j == gameTempVars.runners[i].size() - 1)
+                            player->coins++;
+                        
                         spawnGainEntity(gain, coin);
                     }
                 }
@@ -704,8 +760,7 @@ static void transitionPlayingMenu() {
     }
     // Save score and coins earned
     if (gameTempVars.players.size()) {
-        float score = PLAYER(gameTempVars.players[0])->score;
-        tmpStorageAPI->submitScore(StorageAPI::Score(score, ""));
+        gameOverState = GameEnded;
     }
     
     // Show menu UI
@@ -725,10 +780,7 @@ static void transitionPlayingMenu() {
     TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
 #endif
     // TEXT_RENDERING(scoreText)->hide = false;
-    // Cleanup previous game variables
-    gameTempVars.cleanup();
 }
-
 
 void GameTempVar::cleanup() {
     for (unsigned i=0; i<coins.size(); i++) {
@@ -839,7 +891,7 @@ static void createCoins(int count) {
     std::sort(coins.begin(), coins.end(), sortLeftToRight);
     const Vector2 offset = Vector2(PlacementHelper::GimpWidthToScreen(7), PlacementHelper::GimpHeightToScreen(44));
     Vector2 previous = Vector2(-LEVEL_SIZE * PlacementHelper::ScreenWidth * 0.5, 0);
-    for (int i=0; i<=coins.size(); i++) {
+    for (unsigned i = 0; i <= coins.size(); i++) {
     	Vector2 topI;
     	if (i < coins.size()) topI = TRANSFORM(coins[i])->position + Vector2::Rotate(offset, TRANSFORM(coins[i])->rotation);
     	else
@@ -889,7 +941,7 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain, Entity parent) {
+static void spawnGainEntity(int gain __attribute__((unused)), Entity parent) {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = TRANSFORM(parent)->position;
@@ -938,7 +990,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->speed = direction * playerSpeed * (0.7 + 0.1 * p->runnersCount);
+    RUNNER(e)->speed = direction * playerSpeed * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, CameraTarget);

@@ -12,10 +12,13 @@ static jmethodID jniMethodLookup(JNIEnv* env, jclass c, const std::string& name,
 struct StorageAPIAndroidImpl::StorageAPIAndroidImplDatas {
 	jclass cls;
 
-	jmethodID getGameCountBeforeNextAd;
-	jmethodID setGameCountBeforeNextAd;
 	jmethodID submitScore;
 	jmethodID getScores;
+
+	jmethodID getCoinsCount;
+
+	jmethodID getGameCountBeforeNextAd;
+	jmethodID setGameCountBeforeNextAd;
 
 	bool initialized;
 };
@@ -39,10 +42,13 @@ void StorageAPIAndroidImpl::init(JNIEnv* pEnv) {
 	env = pEnv;
 
 	datas->cls = (jclass)env->NewGlobalRef(env->FindClass("net/damsy/soupeaucaillou/heriswap/api/StorageAPI"));
+	datas->submitScore = jniMethodLookup(env, datas->cls, "submitScore", "(IILjava/lang/String;)V");
+	datas->getScores = jniMethodLookup(env, datas->cls, "getScores", "(II[I[I[F[Ljava/lang/String;)I");
+
+	datas->getCoinsCount = jniMethodLookup(env, datas->cls, "getCoinsCount", "()I");
+
 	datas->getGameCountBeforeNextAd = jniMethodLookup(env, datas->cls, "getGameCountBeforeNextAd", "()I");
 	datas->setGameCountBeforeNextAd = jniMethodLookup(env, datas->cls, "setGameCountBeforeNextAd", "(I)V");
-	datas->submitScore = jniMethodLookup(env, datas->cls, "submitScore", "(IIIIFLjava/lang/String;)V");
-	datas->getScores = jniMethodLookup(env, datas->cls, "getScores", "(II[I[I[F[Ljava/lang/String;)I");
 
 	datas->initialized = true;
 }
@@ -56,20 +62,16 @@ void StorageAPIAndroidImpl::uninit() {
 
 void StorageAPIAndroidImpl::submitScore(Score inScr) {
 	jstring name = env->NewStringUTF(inScr.name.c_str());
-	/*todo*/
-	env->CallStaticVoidMethod(datas->cls, datas->submitScore, inScr.points, name);
+	
+	env->CallStaticVoidMethod(datas->cls, datas->submitScore, inScr.points, inScr.coins, name);
 }
 
-std::vector<StorageAPI::Score> StorageAPIAndroidImpl::savedScores(float& outAverage) {
-	/* to do 
-	
-	
+std::vector<StorageAPI::Score> StorageAPIAndroidImpl::getScores(float& outAverage) {
 	std::vector<StorageAPI::Score> sav;
-
+	
 	// build arrays params
 	jintArray points = env->NewIntArray(5);
-	jintArray levels = env->NewIntArray(5);
-	jfloatArray times = env->NewFloatArray(6);
+	jintArray coins = env->NewIntArray(5);
 	jobjectArray names = env->NewObjectArray(5, env->FindClass("java/lang/String"), env->NewStringUTF(""));
 
 	jint idummy[5];
@@ -79,15 +81,13 @@ std::vector<StorageAPI::Score> StorageAPIAndroidImpl::savedScores(float& outAver
 		fdummy[i] = 2.0 * i;
 	}
 	env->SetIntArrayRegion(points, 0, 5, idummy);
-	env->SetIntArrayRegion(levels, 0, 5, idummy);
-	env->SetFloatArrayRegion(times, 0, 5, fdummy);
-	int count = env->CallStaticIntMethod(datas->cls, datas->getScores, (int)mode, (int)difficulty, points, levels, times, names);
+	env->SetIntArrayRegion(coins, 0, 5, idummy);
+	int count = env->CallStaticIntMethod(datas->cls, datas->getScores, points, coins, names);
 
 	for (int i=0; i<count; i++) {
 		StorageAPI::Score s;
 		env->GetIntArrayRegion(points, i, 1, &s.points);
-		env->GetIntArrayRegion(levels, i, 1, &s.level);
-		env->GetFloatArrayRegion(times, i, 1, &s.time);
+		env->GetIntArrayRegion(coins, i, 1, &s.coins);
 		jstring n = (jstring)env->GetObjectArrayElement(names, i);
 		if (n) {
 			const char *mfile = env->GetStringUTFChars(n, 0);
@@ -99,9 +99,12 @@ std::vector<StorageAPI::Score> StorageAPIAndroidImpl::savedScores(float& outAver
 		sav.push_back(s);
 	}
 	
-	env->GetFloatArrayRegion(times, 5, 1, &average);
-	*/
+	// *** env->GetIntArrayRegion(points, 5, 1, &outAverage);
 	return sav;
+}
+
+int StorageAPIAndroidImpl::getCoinsCount() {
+	return env->CallStaticIntMethod(datas->cls, datas->getCoinsCount);
 }
 
 int StorageAPIAndroidImpl::getGameCountBeforeNextAd() {

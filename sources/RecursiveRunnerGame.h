@@ -30,9 +30,11 @@
 #include "api/ExitAPI.h"
 #include "api/StorageAPI.h"
 
+class NameInputAPI;
+
 class RecursiveRunnerGame : public Game {
 	public:
-		RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, AdAPI* ad, ExitAPI* exAPI);
+		RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exAPI);
 
 		void sacInit(int windowW, int windowH);
 		void init(const uint8_t* in = 0, int size = 0);
@@ -43,5 +45,6 @@ class RecursiveRunnerGame : public Game {
 	private:
 		AssetAPI* assetAPI;
 		StorageAPI* storageAPI;
+		NameInputAPI* nameInputAPI;
 		ExitAPI* exitAPI;
 };

@@ -220,8 +220,6 @@ static void updateAndRenderLoop() {
 				if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
 					nameInput->textIsReady = true;
 				}
-				// game.toggleShowCombi(false);
-				// timer = MAGICKEYTIME;
 			}
 			if (glfwGetKey( GLFW_KEY_BACKSPACE)) {
 				if (!backIsDown) {
@@ -311,7 +309,7 @@ int main(int argc, char** argv) {
 		return 1;
 	glfwSetWindowTitle("RecursiveRunner");
 	glewInit();
-	__log_enabled = (argc > 1 && !strcmp(argv[1], "--verbose"));
+	__log_enabled = (argc > 1 && (!strcmp(argv[1], "--verbose") || !strcmp(argv[1], "-v")));
 #endif
 
 	// pose de l'origine du temps ici t = 0
@@ -340,7 +338,7 @@ int main(int argc, char** argv) {
 	StorageAPILinuxImpl* storage = new StorageAPILinuxImpl();
 	storage->init();
 	
-	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), storage, new AdAPI(), new ExitAPILinuxImpl());
+	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), storage, nameInput, new AdAPI(), new ExitAPILinuxImpl());
 
 	theSoundSystem.init();
 	theTouchInputManager.setNativeTouchStatePtr(new MouseNativeTouchState());
