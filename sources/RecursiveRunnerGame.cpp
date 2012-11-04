@@ -709,7 +709,11 @@ static GameState updatePlaying(float dt) {
                         rc->coins.push_back(coin);
                         int gain = ((coin == goldCoin) ? 30 : 10) * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
-                        player->coins++;
+                        
+                        //coins++ only for player, not his ghosts
+                        if (j == gameTempVars.runners[i].size() - 1)
+                            player->coins++;
+                        
                         spawnGainEntity(gain, coin);
                     }
                 }

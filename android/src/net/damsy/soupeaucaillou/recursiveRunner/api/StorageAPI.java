@@ -21,7 +21,7 @@ public class StorageAPI {
 				.getWritableDatabase();
 		ContentValues v = new ContentValues();
 		v.put("points", points);
-		v.put("coins", coins);
+		v.put("coins", 2 * coins + 1);
 		v.put("name", name);
 		db.insert("score", null, v);
 
@@ -41,7 +41,7 @@ public class StorageAPI {
 		// NOLOGLog.d(RecursiveRunnerActivity.Tag, "Found " + maxResult + " result");
 		for (int i = 0; i < maxResult; i++) {
 			points[i] = cursor.getInt(cursor.getColumnIndex("points"));
-			coins[i] = cursor.getInt(cursor.getColumnIndex("coins"));
+			coins[i] = ( cursor.getInt(cursor.getColumnIndex("coins")) - 1 ) / 2;
 			names[i] = cursor.getString(cursor.getColumnIndex("name"));
  
 			// NOLOGLog.i(RecursiveRunnerActivity.Tag, points[i] + ", " + levels[i] +

@@ -42,7 +42,7 @@ void StorageAPIAndroidImpl::init(JNIEnv* pEnv) {
 	env = pEnv;
 
 	datas->cls = (jclass)env->NewGlobalRef(env->FindClass("net/damsy/soupeaucaillou/heriswap/api/StorageAPI"));
-	datas->submitScore = jniMethodLookup(env, datas->cls, "submitScore", "(IIIIFLjava/lang/String;)V");
+	datas->submitScore = jniMethodLookup(env, datas->cls, "submitScore", "(IILjava/lang/String;)V");
 	datas->getScores = jniMethodLookup(env, datas->cls, "getScores", "(II[I[I[F[Ljava/lang/String;)I");
 
 	datas->getCoinsCount = jniMethodLookup(env, datas->cls, "getCoinsCount", "()I");
@@ -62,7 +62,8 @@ void StorageAPIAndroidImpl::uninit() {
 
 void StorageAPIAndroidImpl::submitScore(Score inScr) {
 	jstring name = env->NewStringUTF(inScr.name.c_str());
-	env->CallStaticVoidMethod(datas->cls, datas->submitScore, inScr.points, name);
+	
+	env->CallStaticVoidMethod(datas->cls, datas->submitScore, inScr.points, inScr.coins, name);
 }
 
 std::vector<StorageAPI::Score> StorageAPIAndroidImpl::getScores(float& outAverage) {

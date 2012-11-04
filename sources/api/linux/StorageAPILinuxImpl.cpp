@@ -93,9 +93,9 @@ void StorageAPILinuxImpl::init() {
 void StorageAPILinuxImpl::submitScore(Score inScr) {
 	#ifndef EMSCRIPTEN
 	
-	//check that the player isn't cheating (adding himself coins)
-	if (inScr.coins > 100) {
-		LOGE("you're cheating!");
+	//check that the player isn't cheating (adding himself coins) (max is number of coints * runnerCount * runnerghost)
+	if (inScr.coins > 20*10) {
+		LOGE("you're cheating! %d coins really ?", inScr.coins);
 		return;
 	}
 	
