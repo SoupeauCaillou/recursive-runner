@@ -33,24 +33,24 @@ import android.widget.RelativeLayout;
 public class RecursiveRunnerActivity extends SacActivity {
 	static {
         System.loadLibrary("recursiveRunner");
-    }
+    } 
 	@Override
 	public boolean canShowAppRater() {
 		return false;
 	}   
 	@Override
 	public int[] getSwarmBoards() {
-		return null;
+		return RecursiveRunnerSecret.boardsSwarm;
 	}
 
 	@Override
 	public int getSwarmGameID() {
-		return 0;
+		return RecursiveRunnerSecret.Swarm_gameID; 
 	}
 
 	@Override  
 	public String getSwarmGameKey() {
-		return null;
+		return RecursiveRunnerSecret.Swarm_gameKey;
 	}
 	
 	@Override
@@ -62,11 +62,11 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public int getGLViewId() {
 		return R.id.surfaceviewclass;
 	}
-	
+
 	@Override
 	public int getLayoutId() {
 		return R.layout.main;
-	}
+	} 
 	
 	@Override
 	public String getCharboostAppId() {
@@ -75,6 +75,19 @@ public class RecursiveRunnerActivity extends SacActivity {
 	@Override
 	public String getCharboostAppSignature() {
 		return null;
+	}
+	
+	@Override
+	public Button getNameInputButton() {
+		return (Button)findViewById(R.id.name_save);
+	}
+	@Override
+	public EditText getNameInputEdit() {
+		return (EditText)findViewById(R.id.player_name_input);
+	}
+	@Override
+	public View getNameInputView() {
+		return findViewById(R.id.enter_name);
 	}
 	
 	static public final String Tag = "RecursiveRunnerJ";

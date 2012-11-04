@@ -59,5 +59,6 @@
     <None Include="sources\api\linux\StorageAPILinuxImpl.h" />
     <None Include="sources\api\StorageAPI.h" />
     <None Include="sources\api\android\StorageAPIAndroidImpl.h" />
+    <None Include="sources\Parameters.h" />
   </ItemGroup>
 </Project>
