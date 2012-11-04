@@ -41,9 +41,9 @@ void StorageAPIAndroidImpl::init(JNIEnv* pEnv) {
 	}
 	env = pEnv;
 
-	datas->cls = (jclass)env->NewGlobalRef(env->FindClass("net/damsy/soupeaucaillou/heriswap/api/StorageAPI"));
+	datas->cls = (jclass)env->NewGlobalRef(env->FindClass("net/damsy/soupeaucaillou/recursiveRunner/api/StorageAPI"));
 	datas->submitScore = jniMethodLookup(env, datas->cls, "submitScore", "(IILjava/lang/String;)V");
-	datas->getScores = jniMethodLookup(env, datas->cls, "getScores", "(II[I[I[F[Ljava/lang/String;)I");
+	datas->getScores = jniMethodLookup(env, datas->cls, "getScores", "([I[I[Ljava/lang/String;)I");
 
 	datas->getCoinsCount = jniMethodLookup(env, datas->cls, "getCoinsCount", "()I");
 
