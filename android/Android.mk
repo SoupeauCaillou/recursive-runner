@@ -6,11 +6,11 @@ APP_DIR := $(LOCAL_PATH)
 
 LOCAL_MODULE := recursiveRunner
 
-LOCAL_CFLAGS := -DANDROID_NDK \
+LOCAL_CFLAGS := -DANDROID_NDK -DENABLE_PROFILING -DENABLE_LOG \
                 -DDISABLE_IMPORTGL \
 				-I$(LOCAL_PATH)/..
 
-LOCAL_CXXFLAGS := -DANDROID_NDK -DDEBUG -DENABLE_PROFILING \
+LOCAL_CXXFLAGS := -DANDROID_NDK -DDEBUG -DENABLE_PROFILING -DENABLE_LOG \
                 -DDISABLE_IMPORTGL  -fvisibility=hidden \
             -I$(LOCAL_PATH)/../sources \
 				-I$(LOCAL_PATH)/.. \
@@ -24,6 +24,7 @@ LOCAL_SRC_FILES := \
     ../sources/systems/RunnerSystem.cpp \
     ../sources/systems/PlayerSystem.cpp \
     ../sources/systems/CameraTargetSystem.cpp \
+    ../sources/api/android/StorageAPIAndroidImpl.cpp \
     ../sac/android/sacjnilib.cpp
 
 LOCAL_STATIC_LIBRARIES := sac png tremor jsoncpp

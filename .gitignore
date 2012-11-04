@@ -12,6 +12,6 @@ cars_tests
 scores.txt
 tilematch.pidb
 tilematch.userprefs
-HeriswapSecret.java
+*Secret.java
 *.jar
 *.o
