@@ -35,6 +35,8 @@
     <Compile Include="sources\systems\CameraTargetSystem.cpp" />
     <Compile Include="android\recursiveRunner.cpp" />
     <Compile Include="sources\systems\PlayerSystem.cpp" />
+    <Compile Include="sources\api\linux\Callback.cpp" />
+    <Compile Include="sources\api\linux\StorageAPILinuxImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -52,5 +54,7 @@
     <None Include="android\Android.mk" />
     <None Include="android\Application.mk" />
     <None Include="sources\systems\PlayerSystem.h" />
+    <None Include="sources\api\linux\Callback.h" />
+    <None Include="sources\api\linux\StorageAPILinuxImpl.h" />
   </ItemGroup>
 </Project>
