@@ -157,6 +157,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theRenderingSystem.loadAtlas("alphabet", true);
     theRenderingSystem.loadAtlas("dummy", false);
     theRenderingSystem.loadAtlas("decor", false);
+    theRenderingSystem.loadAtlas("arbre", false);
     
     // register 4 animations
     std::string runL2R[] = { "run_l2r_0002",
@@ -180,7 +181,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 }
 
 Entity silhouette, route;
-std::vector<Entity> building;
+std::vector<Entity> decorEntities;
 void decor() {
 	silhouette = theEntityManager.CreateEntity();
     ADD_COMPONENT(silhouette, Transformation);
@@ -207,27 +208,42 @@ void decor() {
     PlacementHelper::ScreenWidth *= 3;
     PlacementHelper::GimpWidth = 1280 * 3;
     PlacementHelper::GimpHeight = 800;
-    int count = 7;
-    struct Building {
+    int count = 20;
+    struct Decor {
     	float x, y, z;
     	TransformationSystem::PositionReference ref;
     	std::string texture;
     	bool mirrorUV;
-    	Building(float _x=0, float _y=0, float _z=0, TransformationSystem::PositionReference _ref=TransformationSystem::C, const std::string& _texture="", bool _mirrorUV=false) :
+    	Decor(float _x=0, float _y=0, float _z=0, TransformationSystem::PositionReference _ref=TransformationSystem::C, const std::string& _texture="", bool _mirrorUV=false) :
     		x(_x), y(_y), z(_z), ref(_ref), texture(_texture), mirrorUV(_mirrorUV) {}
    	};
    	
-	Building def[] = {
-		Building(554, 149, 0.2, TransformationSystem::NE, "immeuble"),
-		Building(1690, 149, 0.2, TransformationSystem::NE, "immeuble"),
-		Building(3173, 139, 0.2, TransformationSystem::NW, "immeuble"),
-		Building(358, 404, 0.3, TransformationSystem::NW, "maison", true),
-		Building(2097, 400, 0.3, TransformationSystem::NE, "maison"),
-		Building(2053, 244, 0.4, TransformationSystem::NW, "usine_desaf"),
-		Building(3180, 298, 0.35, TransformationSystem::NE, "usine2", true),
+	Decor def[] = {
+		// buildings
+		Decor(554, 149, 0.2, TransformationSystem::NE, "immeuble"),
+		Decor(1690, 149, 0.2, TransformationSystem::NE, "immeuble"),
+		Decor(3173, 139, 0.2, TransformationSystem::NW, "immeuble"),
+		Decor(358, 404, 0.3, TransformationSystem::NW, "maison", true),
+		Decor(2097, 400, 0.3, TransformationSystem::NE, "maison"),
+		Decor(2053, 244, 0.4, TransformationSystem::NW, "usine_desaf"),
+		Decor(3185, 298, 0.25, TransformationSystem::NE, "usine2", true),
+		// trees
+		Decor(152, 780, 0.5, TransformationSystem::S, "arbre3"),
+		Decor(522, 780, 0.5, TransformationSystem::S, "arbre2"),
+		Decor(812, 774, 0.45, TransformationSystem::S, "arbre5"),
+		Decor(1162, 792, 0.5, TransformationSystem::S, "arbre4"),
+		Decor(1418, 790, 0.45, TransformationSystem::S, "arbre2"),
+		Decor(1600, 768, 0.42, TransformationSystem::S, "arbre1"),
+		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4"),
+		Decor(2396, 774, 0.44, TransformationSystem::S, "arbre5"),
+		Decor(2684, 784, 0.45, TransformationSystem::S, "arbre3"),
+		Decor(3022, 764, 0.42, TransformationSystem::S, "arbre1"),
+		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1"),
+		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2"),
+		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4"),
     };
     for (int i=0; i<count; i++) {
-    	const Building& bdef = def[i];
+    	const Decor& bdef = def[i];
 	    Entity b = theEntityManager.CreateEntity();
 	    ADD_COMPONENT(b, Transformation);
 	    TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
@@ -237,7 +253,7 @@ void decor() {
 	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
 	    RENDERING(b)->hide = false;
 	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
-	    building.push_back(b);
+	    decorEntities.push_back(b);
 	}
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
