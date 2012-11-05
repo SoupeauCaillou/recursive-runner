@@ -151,10 +151,9 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
 }
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
-    PlacementHelper::GimpWidth = 1280;
-    PlacementHelper::GimpHeight = 800;
-
     Game::sacInit(windowW, windowH);
+	PlacementHelper::GimpWidth = 1280;
+    PlacementHelper::GimpHeight = 800;
     theRenderingSystem.loadAtlas("alphabet", true);
     theRenderingSystem.loadAtlas("dummy", false);
     theRenderingSystem.loadAtlas("decor", false);
@@ -174,16 +173,84 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, false);
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 30, false, "runL2R");
     
+    glClearColor(139.0/255, 139.0/255, 139.0/255, 1.0);
 
     // init font
     loadFont(assetAPI, "typo");
+}
+
+Entity silhouette, route;
+std::vector<Entity> building;
+void decor() {
+	silhouette = theEntityManager.CreateEntity();
+    ADD_COMPONENT(silhouette, Transformation);
+    TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville"));
+    theTransformationSystem.setPosition(TRANSFORM(silhouette), Vector2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
+    TRANSFORM(silhouette)->z = 0.1;
+    ADD_COMPONENT(silhouette, Rendering);
+    RENDERING(silhouette)->texture = theRenderingSystem.loadTextureFile("silhouette_ville");
+    RENDERING(silhouette)->hide = false;
+    // RENDERING(silhouette)->opaqueType = RenderingComponent::FULL_OPAQUE;
+    // RENDERING(silhouette)->cameraBitMask = (0x3 << 1);
+
+	route = theEntityManager.CreateEntity();
+    ADD_COMPONENT(route, Transformation);
+    TRANSFORM(route)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::GimpHeightToScreen(109));
+    theTransformationSystem.setPosition(TRANSFORM(route), Vector2(0, PlacementHelper::GimpYToScreen(800)), TransformationSystem::S);
+    TRANSFORM(route)->z = 0.1;
+    ADD_COMPONENT(route, Rendering);
+    RENDERING(route)->color = Color(114.0/255, 114.0/255, 114.0/255, 1.0);
+    RENDERING(route)->hide = false;
+    RENDERING(route)->opaqueType = RenderingComponent::FULL_OPAQUE;
+    // RENDERING(route)->cameraBitMask = (0x3 << 1);
+    
+    PlacementHelper::ScreenWidth *= 3;
+    PlacementHelper::GimpWidth = 1280 * 3;
+    PlacementHelper::GimpHeight = 800;
+    int count = 7;
+    struct Building {
+    	float x, y, z;
+    	TransformationSystem::PositionReference ref;
+    	std::string texture;
+    	bool mirrorUV;
+    	Building(float _x=0, float _y=0, float _z=0, TransformationSystem::PositionReference _ref=TransformationSystem::C, const std::string& _texture="", bool _mirrorUV=false) :
+    		x(_x), y(_y), z(_z), ref(_ref), texture(_texture), mirrorUV(_mirrorUV) {}
+   	};
+   	
+	Building def[] = {
+		Building(554, 149, 0.2, TransformationSystem::NE, "immeuble"),
+		Building(1690, 149, 0.2, TransformationSystem::NE, "immeuble"),
+		Building(3173, 139, 0.2, TransformationSystem::NW, "immeuble"),
+		Building(358, 404, 0.3, TransformationSystem::NW, "maison", true),
+		Building(2097, 400, 0.3, TransformationSystem::NE, "maison"),
+		Building(2053, 244, 0.4, TransformationSystem::NW, "usine_desaf"),
+		Building(3180, 298, 0.35, TransformationSystem::NE, "usine2", true),
+    };
+    for (int i=0; i<count; i++) {
+    	const Building& bdef = def[i];
+	    Entity b = theEntityManager.CreateEntity();
+	    ADD_COMPONENT(b, Transformation);
+	    TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
+	    theTransformationSystem.setPosition(TRANSFORM(b), Vector2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
+	    TRANSFORM(b)->z = bdef.z;
+	    ADD_COMPONENT(b, Rendering);
+	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
+	    RENDERING(b)->hide = false;
+	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
+	    building.push_back(b);
+	}
+	PlacementHelper::GimpWidth = 1280;
+    PlacementHelper::GimpHeight = 800;
+    PlacementHelper::ScreenWidth /= 3;
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
     PlayerSystem::CreateInstance();
-
+    
+    decor();
+#if 0
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
     TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
@@ -195,6 +262,7 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
     RENDERING(background)->hide = false;
     RENDERING(background)->opaqueType = RenderingComponent::FULL_OPAQUE;
     RENDERING(background)->cameraBitMask = (0x3 << 1);
+    #endif
 
     startSingleButton = theEntityManager.CreateEntity();
     ADD_COMPONENT(startSingleButton, Transformation);
@@ -375,7 +443,7 @@ void RecursiveRunnerGame::tick(float dt) {
     }
 
     // limit cam pos
-    for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
+    for (unsigned i=1; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
         float& camPosX = theRenderingSystem.cameras[i].worldPosition.X;
 
         if (camPosX < - PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
@@ -383,6 +451,7 @@ void RecursiveRunnerGame::tick(float dt) {
         } else if (camPosX > PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
             camPosX = PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
         }
+        TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
     }
     
 
