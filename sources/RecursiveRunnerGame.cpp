@@ -208,7 +208,7 @@ void decor() {
     PlacementHelper::ScreenWidth *= 3;
     PlacementHelper::GimpWidth = 1280 * 3;
     PlacementHelper::GimpHeight = 800;
-    int count = 20;
+    int count = 26;
     struct Decor {
     	float x, y, z;
     	TransformationSystem::PositionReference ref;
@@ -223,10 +223,10 @@ void decor() {
 		Decor(554, 149, 0.2, TransformationSystem::NE, "immeuble"),
 		Decor(1690, 149, 0.2, TransformationSystem::NE, "immeuble"),
 		Decor(3173, 139, 0.2, TransformationSystem::NW, "immeuble"),
-		Decor(358, 404, 0.3, TransformationSystem::NW, "maison", true),
-		Decor(2097, 400, 0.3, TransformationSystem::NE, "maison"),
-		Decor(2053, 244, 0.4, TransformationSystem::NW, "usine_desaf"),
-		Decor(3185, 298, 0.25, TransformationSystem::NE, "usine2", true),
+		Decor(358, 404, 0.25, TransformationSystem::NW, "maison", true),
+		Decor(2097, 400, 0.25, TransformationSystem::NE, "maison"),
+		Decor(2053, 244, 0.3, TransformationSystem::NW, "usine_desaf"),
+		Decor(3185, 298, 0.22, TransformationSystem::NE, "usine2", true),
 		// trees
 		Decor(152, 780, 0.5, TransformationSystem::S, "arbre3"),
 		Decor(522, 780, 0.5, TransformationSystem::S, "arbre2"),
@@ -241,6 +241,13 @@ void decor() {
 		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1"),
 		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2"),
 		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4"),
+		// benchs
+		Decor(672, 768, 0.3, TransformationSystem::S, "bench_cat"),
+		Decor(1090, 764, 0.3, TransformationSystem::S, "bench"),
+		Decor(2082, 760, 0.3, TransformationSystem::S, "bench", true),
+		Decor(2526, 762, 0.3, TransformationSystem::S, "bench"),
+		Decor(3464, 758, 0.3, TransformationSystem::S, "bench_cat"),
+		Decor(3612, 762, 0.6, TransformationSystem::S, "bench"),
     };
     for (int i=0; i<count; i++) {
     	const Decor& bdef = def[i];
@@ -252,6 +259,7 @@ void decor() {
 	    ADD_COMPONENT(b, Rendering);
 	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
 	    RENDERING(b)->hide = false;
+	    RENDERING(b)->mirrorH = bdef.mirrorUV;
 	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
 	    decorEntities.push_back(b);
 	}
@@ -772,6 +780,7 @@ static GameState updatePlaying(float dt) {
                         	int linkIdx = (rc->speed > 0) ? idx : end - idx;
                             if (rc->coins.back() == prev) {
                                 rc->coinSequenceBonus++;
+                                #if 0
                                 if (rc->speed > 0) {
                                 	for (int j=1; j<rc->coinSequenceBonus; j++) {
                                 		float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
@@ -786,6 +795,7 @@ static GameState updatePlaying(float dt) {
                                 			1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
                                 	}
                                 }
+                                #endif
                                 
                             } else {
                                 rc->coinSequenceBonus = 1;
@@ -957,7 +967,7 @@ static void createCoins(int count) {
         } while (notFarEnough);
         TRANSFORM(e)->position = p;
         TRANSFORM(e)->rotation = -0.1 + MathUtil::RandomFloat() * 0.2;
-        TRANSFORM(e)->z = 0.5;
+        TRANSFORM(e)->z = 0.75;
         ADD_COMPONENT(e, Rendering);
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
         RENDERING(e)->cameraBitMask = (0x3 << 1);
@@ -973,6 +983,7 @@ static void createCoins(int count) {
         #endif
         coins.push_back(e);
     }
+    #if 0
     std::sort(coins.begin(), coins.end(), sortLeftToRight);
     const Vector2 offset = Vector2(PlacementHelper::GimpWidthToScreen(7), PlacementHelper::GimpHeightToScreen(44));
     Vector2 previous = Vector2(-LEVEL_SIZE * PlacementHelper::ScreenWidth * 0.5, 0);
@@ -1008,6 +1019,7 @@ static void createCoins(int count) {
     	previous = topI;
     	gameTempVars.links.push_back(link);
     }
+    #endif
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
 }
@@ -1067,7 +1079,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
+    // RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
     RENDERING(e)->hide = false;
     RENDERING(e)->cameraBitMask = (0x3 << 1);
     ADD_COMPONENT(e, Runner);
