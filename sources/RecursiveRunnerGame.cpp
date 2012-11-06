@@ -996,8 +996,8 @@ static void createCoins(int count) {
                     -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
                     LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
                 MathUtil::RandomFloatInRange(
-                    -0.35 * PlacementHelper::ScreenHeight,
-                    -0.1 * PlacementHelper::ScreenHeight));
+                    -0.3 * PlacementHelper::ScreenHeight,
+                    -0. * PlacementHelper::ScreenHeight));
            notFarEnough = false;
            for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
                 if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 2) {
@@ -1041,9 +1041,7 @@ static void createCoins(int count) {
     	ADD_COMPONENT(link, Rendering);
     	RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
     	RENDERING(link)->hide = false;
-    	ADD_COMPONENT(link, Particule);
-    	PARTICULE(link)->emissionRate = 300 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
-     
+
         Entity link2 = theEntityManager.CreateEntity();
          ADD_COMPONENT(link2, Transformation);
          TRANSFORM(link2)->parent = link;
@@ -1054,9 +1052,9 @@ static void createCoins(int count) {
          RENDERING(link2)->color.a = 0.2;
          RENDERING(link2)->hide = false;
 
-
-
-    	std::cout << PARTICULE(link)->emissionRate << std::endl;
+#if 0
+        ADD_COMPONENT(link, Particule);
+        PARTICULE(link)->emissionRate = 300 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
     	PARTICULE(link)->duration = 0;
     	PARTICULE(link)->lifetime = 0.1;
     	PARTICULE(link)->texture = InvalidTextureRef;
@@ -1068,9 +1066,10 @@ static void createCoins(int count) {
     	PARTICULE(link)->forceAmplitude = Interval<float>(5, 10);
     	PARTICULE(link)->moment = Interval<float>(-5, 5);
     	PARTICULE(link)->mass = 0.1;
-    
+#endif
     	previous = topI;
     	gameTempVars.links.push_back(link);
+        gameTempVars.links.push_back(link2);
     }
     #endif
     
