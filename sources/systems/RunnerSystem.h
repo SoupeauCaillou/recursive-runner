@@ -20,6 +20,7 @@
 
 #include "systems/System.h"
 #include "base/Vector2.h"
+#include "base/Color.h"
 
 struct CollisionZone {
     CollisionZone(float x=0,float y=0,float w=0, float h=0, float r=0) {
@@ -36,6 +37,7 @@ struct RunnerComponent {
     RunnerComponent() : finished(false), ghost(false), killed(false), startTime(0), elapsed(0), jumpingSince(0), currentJump(0), oldNessBonus(0), coinSequenceBonus(1) { }
     Entity playerOwner, collisionZone;
     Vector2 startPoint, endPoint;
+    Color color;
     float speed;
     bool finished, ghost, killed;
     float startTime, elapsed, jumpingSince;

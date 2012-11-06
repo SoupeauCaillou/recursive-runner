@@ -77,7 +77,7 @@ enum CameraMode {
 };
     
 
-static void spawnGainEntity(int gain, Entity t);
+static void spawnGainEntity(int gain, Entity t, const Color& c);
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex);
 static void updateFps(float dt);
 static void setupCamera(CameraMode mode);
@@ -188,7 +188,7 @@ void decor() {
 	silhouette = theEntityManager.CreateEntity();
     ADD_COMPONENT(silhouette, Transformation);
     TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville"));
-    TRANSFORM(silhouette)->size.X *= 1.6;
+    // TRANSFORM(silhouette)->size.X *= 1.6;
     theTransformationSystem.setPosition(TRANSFORM(silhouette), Vector2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
     TRANSFORM(silhouette)->z = 0.1;
     ADD_COMPONENT(silhouette, Rendering);
@@ -288,14 +288,15 @@ void decor() {
     RANGE_FOLLOWER(route)->parent = cameraEntity;
     
     ADD_COMPONENT(silhouette, RangeFollower);
-    RANGE_FOLLOWER(silhouette)->range = Interval<float>(
-        -PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.4 - 0.5), PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.4 - 0.5));
+    RANGE_FOLLOWER(silhouette)->range = Interval<float>(-6, 6);
+    /*RANGE_FOLLOWER(silhouette)->range = Interval<float>(
+        -PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.45 - 0.5), PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.45 - 0.5));*/
     RANGE_FOLLOWER(silhouette)->parent = cameraEntity;
 
     ADD_COMPONENT(buildings, RangeFollower);
-    RANGE_FOLLOWER(buildings)->range = Interval<float>(-5, 5);
+    RANGE_FOLLOWER(buildings)->range = Interval<float>(-2, 2);
     RANGE_FOLLOWER(buildings)->parent = cameraEntity;
-
+return;
     ADD_COMPONENT(trees, RangeFollower);
     RANGE_FOLLOWER(trees)->range = Interval<float>(-3,3);
     RANGE_FOLLOWER(trees)->parent = cameraEntity;
@@ -804,14 +805,17 @@ static GameState updatePlaying(float dt) {
                     RENDERING(e)->mirrorH = (rc->speed < 0);
                 }
             }
-            TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
+            const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
             // check coins
             int end = gameTempVars.coins.size();
             Entity prev = 0;
             for(int idx=0; idx<end; idx++) {
                 Entity coin = rc->speed > 0 ? gameTempVars.coins[idx] : gameTempVars.coins[end - idx - 1];
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
-                    if (IntersectionUtil::rectangleRectangle(collisionZone, TRANSFORM(coin))) {
+                    const TransformationComponent* tCoin = TRANSFORM(coin);
+                    if (IntersectionUtil::rectangleRectangle(
+                        collisionZone->worldPosition, collisionZone->size, collisionZone->worldRotation,
+                        tCoin->worldPosition, tCoin->size * Vector2(0.5, 0.6), tCoin->worldRotation)) {
                         if (!rc->coins.empty()) {
                         	int linkIdx = (rc->speed > 0) ? idx : end - idx;
                             if (rc->coins.back() == prev) {
@@ -845,7 +849,7 @@ static GameState updatePlaying(float dt) {
                         if (j == gameTempVars.runners[i].size() - 1)
                             player->coins++;
                         
-                        spawnGainEntity(gain, coin);
+                        spawnGainEntity(gain, coin, rc->color);
                     }
                 }
                 prev = coin;
@@ -956,13 +960,13 @@ void GameTempVar::syncRunners() {
 static bool sortFromLeftToRight(Entity c1, Entity c2) {
     return TRANSFORM(c1)->position.X < TRANSFORM(c2)->position.X;
 }
-
+#define COIN_SCALE 3
 void GameTempVar::syncCoins() {
     std::vector<Entity> t = theTransformationSystem.RetrieveAllEntityWithComponent();
     for (unsigned i=0; i<t.size(); i++) {
         //...
         float x = TRANSFORM(t[i])->size.X;
-        if (MathUtil::Abs(x - 0.3 * 5) < 0.01) {
+        if (MathUtil::Abs(x - 0.3 * COIN_SCALE) < 0.01) {
             coins.push_back(t[i]);
         }
     }
@@ -983,7 +987,7 @@ static void createCoins(int count) {
     for (int i=0; i<count; i++) {
         Entity e = theEntityManager.CreateEntity();
         ADD_COMPONENT(e, Transformation);
-        TRANSFORM(e)->size = Vector2(0.3, 0.3) * 5;
+        TRANSFORM(e)->size = Vector2(0.3, 0.3) * COIN_SCALE;
         Vector2 p;
         bool notFarEnough = true;
         do {
@@ -1031,11 +1035,11 @@ static void createCoins(int count) {
     	Entity link = theEntityManager.CreateEntity();
     	ADD_COMPONENT(link, Transformation);
     	TRANSFORM(link)->position = (topI + previous) * 0.5;
-    	TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(18));
+    	TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(10));
     	TRANSFORM(link)->z = 0.4;
     	TRANSFORM(link)->rotation = MathUtil::AngleFromVector(topI - previous);
     	ADD_COMPONENT(link, Rendering);
-    	RENDERING(link)->texture = (MathUtil::RandomInt(2)) ? theRenderingSystem.loadTextureFile("link"):theRenderingSystem.loadTextureFile("link2");
+    	RENDERING(link)->texture = (!MathUtil::RandomInt(1)) ? theRenderingSystem.loadTextureFile("link"):theRenderingSystem.loadTextureFile("link2");
     	RENDERING(link)->hide = false;
     	ADD_COMPONENT(link, Particule);
     	PARTICULE(link)->emissionRate = 300 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
@@ -1074,16 +1078,16 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain __attribute__((unused)), Entity parent) {
+static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, const Color& color) {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = TRANSFORM(parent)->position;
     TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
-    TRANSFORM(e)->size = Vector2(0.3, 0.3) * 5;
+    TRANSFORM(e)->size = TRANSFORM(parent)->size;
     TRANSFORM(e)->z = TRANSFORM(parent)->z + 0.1;
     ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
-    RENDERING(e)->color = Color::random();
+    RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
+    RENDERING(e)->color = color;
     RENDERING(e)->hide = false;
 #if 0
     ADD_COMPONENT(e, TextRendering);
@@ -1110,8 +1114,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;//0.4,1);//0.572173, 0.815538);
-    std::cout << PlacementHelper::ScreenHeight << std::endl;
+    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 3;//0.4,1);//0.572173, 0.815538);
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);
@@ -1126,6 +1129,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RUNNER(e)->speed = direction * playerSpeed * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
+    RUNNER(e)->color = Color::random();
     ADD_COMPONENT(e, CameraTarget);
     CAM_TARGET(e)->cameraIndex = 1 + playerIndex;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
