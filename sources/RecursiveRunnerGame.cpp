@@ -187,7 +187,7 @@ std::vector<Entity> decorEntities;
 void decor() {
 	silhouette = theEntityManager.CreateEntity();
     ADD_COMPONENT(silhouette, Transformation);
-    TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville"));
+    TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville")) * 4;
     // TRANSFORM(silhouette)->size.X *= 1.6;
     theTransformationSystem.setPosition(TRANSFORM(silhouette), Vector2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
     TRANSFORM(silhouette)->z = 0.1;
