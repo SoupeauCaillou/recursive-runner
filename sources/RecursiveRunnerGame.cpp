@@ -997,7 +997,7 @@ static void createCoins(int count) {
                     LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
                 MathUtil::RandomFloatInRange(
                     -0.3 * PlacementHelper::ScreenHeight,
-                    -0. * PlacementHelper::ScreenHeight));
+                    -0.05 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
            for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
                 if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 2) {
