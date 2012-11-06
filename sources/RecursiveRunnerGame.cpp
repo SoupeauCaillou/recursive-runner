@@ -194,7 +194,7 @@ void decor() {
     ADD_COMPONENT(silhouette, Rendering);
     RENDERING(silhouette)->texture = theRenderingSystem.loadTextureFile("silhouette_ville");
     RENDERING(silhouette)->hide = false;
-    // RENDERING(silhouette)->opaqueType = RenderingComponent::FULL_OPAQUE;
+    RENDERING(silhouette)->opaqueType = RenderingComponent::FULL_OPAQUE;
     // RENDERING(silhouette)->cameraBitMask = (0x3 << 1);
 
 	route = theEntityManager.CreateEntity();
