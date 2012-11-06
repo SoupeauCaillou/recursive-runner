@@ -56,6 +56,7 @@
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
 #include "systems/PlayerSystem.h"
+#include "systems/RangeFollowerSystem.h"
 
 #include <cmath>
 #include <vector>
@@ -180,12 +181,14 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     loadFont(assetAPI, "typo");
 }
 
-Entity silhouette, route;
+Entity silhouette, route, cameraEntity;
 std::vector<Entity> decorEntities;
+
 void decor() {
 	silhouette = theEntityManager.CreateEntity();
     ADD_COMPONENT(silhouette, Transformation);
     TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville"));
+    TRANSFORM(silhouette)->size.X *= 1.6;
     theTransformationSystem.setPosition(TRANSFORM(silhouette), Vector2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
     TRANSFORM(silhouette)->z = 0.1;
     ADD_COMPONENT(silhouette, Rendering);
@@ -205,6 +208,11 @@ void decor() {
     RENDERING(route)->opaqueType = RenderingComponent::FULL_OPAQUE;
     // RENDERING(route)->cameraBitMask = (0x3 << 1);
     
+    Entity buildings = theEntityManager.CreateEntity();
+    ADD_COMPONENT(buildings, Transformation);
+    Entity trees = theEntityManager.CreateEntity();
+    ADD_COMPONENT(trees, Transformation);
+    
     PlacementHelper::ScreenWidth *= 3;
     PlacementHelper::GimpWidth = 1280 * 3;
     PlacementHelper::GimpHeight = 800;
@@ -214,40 +222,41 @@ void decor() {
     	TransformationSystem::PositionReference ref;
     	std::string texture;
     	bool mirrorUV;
-    	Decor(float _x=0, float _y=0, float _z=0, TransformationSystem::PositionReference _ref=TransformationSystem::C, const std::string& _texture="", bool _mirrorUV=false) :
-    		x(_x), y(_y), z(_z), ref(_ref), texture(_texture), mirrorUV(_mirrorUV) {}
+        Entity parent;
+    	Decor(float _x=0, float _y=0, float _z=0, TransformationSystem::PositionReference _ref=TransformationSystem::C, const std::string& _texture="", bool _mirrorUV=false, Entity _parent=0) :
+    		x(_x), y(_y), z(_z), ref(_ref), texture(_texture), mirrorUV(_mirrorUV), parent(_parent) {}
    	};
    	
 	Decor def[] = {
 		// buildings
-		Decor(554, 149, 0.2, TransformationSystem::NE, "immeuble"),
-		Decor(1690, 149, 0.2, TransformationSystem::NE, "immeuble"),
-		Decor(3173, 139, 0.2, TransformationSystem::NW, "immeuble"),
-		Decor(358, 404, 0.25, TransformationSystem::NW, "maison", true),
-		Decor(2097, 400, 0.25, TransformationSystem::NE, "maison"),
-		Decor(2053, 244, 0.3, TransformationSystem::NW, "usine_desaf"),
-		Decor(3185, 298, 0.22, TransformationSystem::NE, "usine2", true),
+		Decor(554, 149, 0.2, TransformationSystem::NE, "immeuble", false, buildings),
+		Decor(1690, 149, 0.2, TransformationSystem::NE, "immeuble", false, buildings),
+		Decor(3173, 139, 0.2, TransformationSystem::NW, "immeuble", false, buildings),
+		Decor(358, 404, 0.25, TransformationSystem::NW, "maison", true, buildings),
+		Decor(2097, 400, 0.25, TransformationSystem::NE, "maison", false, buildings),
+		Decor(2053, 244, 0.3, TransformationSystem::NW, "usine_desaf", false, buildings),
+		Decor(3185, 298, 0.22, TransformationSystem::NE, "usine2", true, buildings),
 		// trees
-		Decor(152, 780, 0.5, TransformationSystem::S, "arbre3"),
-		Decor(522, 780, 0.5, TransformationSystem::S, "arbre2"),
-		Decor(812, 774, 0.45, TransformationSystem::S, "arbre5"),
-		Decor(1162, 792, 0.5, TransformationSystem::S, "arbre4"),
-		Decor(1418, 790, 0.45, TransformationSystem::S, "arbre2"),
-		Decor(1600, 768, 0.42, TransformationSystem::S, "arbre1"),
-		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4"),
-		Decor(2396, 774, 0.44, TransformationSystem::S, "arbre5"),
-		Decor(2684, 784, 0.45, TransformationSystem::S, "arbre3"),
-		Decor(3022, 764, 0.42, TransformationSystem::S, "arbre1"),
-		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1"),
-		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2"),
-		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4"),
+		Decor(152, 780, 0.5, TransformationSystem::S, "arbre3", false, trees),
+		Decor(522, 780, 0.5, TransformationSystem::S, "arbre2", false, trees),
+		Decor(812, 774, 0.45, TransformationSystem::S, "arbre5", false, trees),
+		Decor(1162, 792, 0.5, TransformationSystem::S, "arbre4", false, trees),
+		Decor(1418, 790, 0.45, TransformationSystem::S, "arbre2", false, trees),
+		Decor(1600, 768, 0.42, TransformationSystem::S, "arbre1", false, trees),
+		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4", false, trees),
+		Decor(2396, 774, 0.44, TransformationSystem::S, "arbre5", false, trees),
+		Decor(2684, 784, 0.45, TransformationSystem::S, "arbre3", false, trees),
+		Decor(3022, 764, 0.42, TransformationSystem::S, "arbre1", false, trees),
+		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1", false, trees),
+		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2", false, trees),
+		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4", false, trees),
 		// benchs
-		Decor(672, 768, 0.3, TransformationSystem::S, "bench_cat"),
-		Decor(1090, 764, 0.3, TransformationSystem::S, "bench"),
-		Decor(2082, 760, 0.3, TransformationSystem::S, "bench", true),
-		Decor(2526, 762, 0.3, TransformationSystem::S, "bench"),
-		Decor(3464, 758, 0.3, TransformationSystem::S, "bench_cat"),
-		Decor(3612, 762, 0.6, TransformationSystem::S, "bench"),
+		Decor(672, 768, 0.3, TransformationSystem::S, "bench_cat", false, trees),
+		Decor(1090, 764, 0.3, TransformationSystem::S, "bench", false, trees),
+		Decor(2082, 760, 0.3, TransformationSystem::S, "bench", true, trees),
+		Decor(2526, 762, 0.3, TransformationSystem::S, "bench", false, trees),
+		Decor(3464, 758, 0.3, TransformationSystem::S, "bench_cat", false, trees),
+		Decor(3612, 762, 0.6, TransformationSystem::S, "bench", false, trees),
     };
     for (int i=0; i<count; i++) {
     	const Decor& bdef = def[i];
@@ -256,6 +265,7 @@ void decor() {
 	    TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
 	    theTransformationSystem.setPosition(TRANSFORM(b), Vector2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
 	    TRANSFORM(b)->z = bdef.z;
+        TRANSFORM(b)->parent = bdef.parent;
 	    ADD_COMPONENT(b, Rendering);
 	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
 	    RENDERING(b)->hide = false;
@@ -266,13 +276,37 @@ void decor() {
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
     PlacementHelper::ScreenWidth /= 3;
+
+    cameraEntity = theEntityManager.CreateEntity();
+    ADD_COMPONENT(cameraEntity, Transformation);
+    ADD_COMPONENT(cameraEntity, RangeFollower);
+    RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
+        -PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5), PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5));
+    
+    ADD_COMPONENT(route, RangeFollower);
+    RANGE_FOLLOWER(route)->range = RANGE_FOLLOWER(cameraEntity)->range;
+    RANGE_FOLLOWER(route)->parent = cameraEntity;
+    
+    ADD_COMPONENT(silhouette, RangeFollower);
+    RANGE_FOLLOWER(silhouette)->range = Interval<float>(
+        -PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.4 - 0.5), PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.4 - 0.5));
+    RANGE_FOLLOWER(silhouette)->parent = cameraEntity;
+
+    ADD_COMPONENT(buildings, RangeFollower);
+    RANGE_FOLLOWER(buildings)->range = Interval<float>(-5, 5);
+    RANGE_FOLLOWER(buildings)->parent = cameraEntity;
+
+    ADD_COMPONENT(trees, RangeFollower);
+    RANGE_FOLLOWER(trees)->range = Interval<float>(-3,3);
+    RANGE_FOLLOWER(trees)->parent = cameraEntity;
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
     RunnerSystem::CreateInstance();
     CameraTargetSystem::CreateInstance();
     PlayerSystem::CreateInstance();
-    
+    RangeFollowerSystem::CreateInstance();
+
     decor();
 #if 0
     background = theEntityManager.CreateEntity();
@@ -475,10 +509,12 @@ void RecursiveRunnerGame::tick(float dt) {
         } else if (camPosX > PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5)) {
             camPosX = PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5);
         }
-        TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
+        // TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
+        TRANSFORM(cameraEntity)->position.X = camPosX;
+        
     }
-    
 
+    theRangeFollowerSystem.Update(dt);
     // systems update
 #ifdef SAC_NETWORK
     theNetworkSystem.Update(dt);
