@@ -234,7 +234,7 @@ void decor() {
 		Decor(3173, 139, 0.2, TransformationSystem::NW, "immeuble", false, buildings),
 		Decor(358, 404, 0.25, TransformationSystem::NW, "maison", true, buildings),
 		Decor(2097, 400, 0.25, TransformationSystem::NE, "maison", false, buildings),
-		Decor(2053, 244, 0.3, TransformationSystem::NW, "usine_desaf", false, buildings),
+		Decor(2053, 244, 0.29, TransformationSystem::NW, "usine_desaf", false, buildings),
 		Decor(3185, 298, 0.22, TransformationSystem::NE, "usine2", true, buildings),
 		// trees
 		Decor(152, 780, 0.5, TransformationSystem::S, "arbre3", false, trees),
@@ -1023,10 +1023,10 @@ static void createCoins(int count) {
         #endif
         coins.push_back(e);
     }
-    #if 0
+    #if 1
     std::sort(coins.begin(), coins.end(), sortLeftToRight);
-    const Vector2 offset = Vector2(PlacementHelper::GimpWidthToScreen(7), PlacementHelper::GimpHeightToScreen(44));
-    Vector2 previous = Vector2(-LEVEL_SIZE * PlacementHelper::ScreenWidth * 0.5, 0);
+    const Vector2 offset = Vector2(0, PlacementHelper::GimpHeightToScreen(14));
+    Vector2 previous = Vector2(-LEVEL_SIZE * PlacementHelper::ScreenWidth * 0.5, -PlacementHelper::ScreenHeight * 0.2);
     for (unsigned i = 0; i <= coins.size(); i++) {
     	Vector2 topI;
     	if (i < coins.size()) topI = TRANSFORM(coins[i])->position + Vector2::Rotate(offset, TRANSFORM(coins[i])->rotation);
@@ -1035,14 +1035,27 @@ static void createCoins(int count) {
     	Entity link = theEntityManager.CreateEntity();
     	ADD_COMPONENT(link, Transformation);
     	TRANSFORM(link)->position = (topI + previous) * 0.5;
-    	TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(10));
+    	TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(54));
     	TRANSFORM(link)->z = 0.4;
     	TRANSFORM(link)->rotation = MathUtil::AngleFromVector(topI - previous);
     	ADD_COMPONENT(link, Rendering);
-    	RENDERING(link)->texture = (!MathUtil::RandomInt(1)) ? theRenderingSystem.loadTextureFile("link"):theRenderingSystem.loadTextureFile("link2");
+    	RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
     	RENDERING(link)->hide = false;
     	ADD_COMPONENT(link, Particule);
     	PARTICULE(link)->emissionRate = 300 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
+     
+        Entity link2 = theEntityManager.CreateEntity();
+         ADD_COMPONENT(link2, Transformation);
+         TRANSFORM(link2)->parent = link;
+         TRANSFORM(link2)->size = TRANSFORM(link)->size;
+         TRANSFORM(link2)->z = 0.2;
+         ADD_COMPONENT(link2, Rendering);
+         RENDERING(link2)->texture = theRenderingSystem.loadTextureFile("link");
+         RENDERING(link2)->color.a = 0.2;
+         RENDERING(link2)->hide = false;
+
+
+
     	std::cout << PARTICULE(link)->emissionRate << std::endl;
     	PARTICULE(link)->duration = 0;
     	PARTICULE(link)->lifetime = 0.1;
@@ -1129,7 +1142,14 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RUNNER(e)->speed = direction * playerSpeed * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
-    RUNNER(e)->color = Color::random();
+    do {
+        Color c = Color::random();
+        float sum = c.r + c.b + c.g;
+        if (sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) {
+            RUNNER(e)->color = c;
+            break;
+        }
+    } while (true);
     ADD_COMPONENT(e, CameraTarget);
     CAM_TARGET(e)->cameraIndex = 1 + playerIndex;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
