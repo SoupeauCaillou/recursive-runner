@@ -92,6 +92,7 @@ Entity startMultiButton;
 Entity networkUL, networkDL;
 #endif
 Entity scoreText[2], goldCoin, scorePanel, bestScore;
+Entity titleGroup, title, subtitle;
 
 StorageAPI* tmpStorageAPI;
 NameInputAPI* tmpNameInputAPI;
@@ -297,6 +298,35 @@ void decor() {
     // TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::IsANumberBit;
     TEXT_RENDERING(bestScore)->hide = false;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
+
+
+    titleGroup  = theEntityManager.CreateEntity();
+    ADD_COMPONENT(titleGroup, Transformation);
+    TRANSFORM(titleGroup)->z = 0.7;
+    TRANSFORM(titleGroup)->rotation = 0.05;
+    TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), PlacementHelper::GimpYToScreen(90));
+
+    title = theEntityManager.CreateEntity();
+    ADD_COMPONENT(title, Transformation);
+    TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre"));
+    TRANSFORM(title)->parent = titleGroup;
+    TRANSFORM(title)->position = Vector2::Zero;
+    TRANSFORM(title)->z = 0.15;
+    ADD_COMPONENT(title, Rendering);
+    RENDERING(title)->texture = theRenderingSystem.loadTextureFile("titre");
+    RENDERING(title)->hide = false;
+    RENDERING(title)->cameraBitMask = 0x1;
+
+    subtitle = theEntityManager.CreateEntity();
+    ADD_COMPONENT(subtitle, Transformation);
+    TRANSFORM(subtitle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
+    TRANSFORM(subtitle)->parent = titleGroup;
+    TRANSFORM(subtitle)->position = Vector2(-PlacementHelper::GimpHeightToScreen(10), -PlacementHelper::GimpHeightToScreen(150));
+    TRANSFORM(subtitle)->z = 0.1;
+    ADD_COMPONENT(subtitle, Rendering);
+    RENDERING(subtitle)->texture = theRenderingSystem.loadTextureFile("taptostart");
+    RENDERING(subtitle)->hide = false;
+    RENDERING(subtitle)->cameraBitMask = 0x1;
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
