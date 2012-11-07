@@ -366,7 +366,7 @@ int main(int argc, char** argv) {
 	// name input entities
 	nameInput->title = theEntityManager.CreateEntity();
 	ADD_COMPONENT(nameInput->title, Transformation);
-	TRANSFORM(nameInput->title)->position = Vector2(0, PlacementHelper::GimpYToScreen(275));
+	TRANSFORM(nameInput->title)->position = Vector2(theRenderingSystem.cameras[0].worldPosition.X, PlacementHelper::GimpYToScreen(275));
 	TRANSFORM(nameInput->title)->z = DL_HelpText;
 	ADD_COMPONENT(nameInput->title, TextRendering);
 	TEXT_RENDERING(nameInput->title)->text = loc->text("enter_name", "Enter your name:");
@@ -378,7 +378,7 @@ int main(int argc, char** argv) {
 
 	globalFTW = nameInput->nameEdit = theEntityManager.CreateEntity();
 	ADD_COMPONENT(nameInput->nameEdit, Transformation);
-	TRANSFORM(nameInput->nameEdit)->position = Vector2(0, PlacementHelper::GimpYToScreen(390));
+	TRANSFORM(nameInput->nameEdit)->position = Vector2(theRenderingSystem.cameras[0].worldPosition.X, PlacementHelper::GimpYToScreen(390));
 	TRANSFORM(nameInput->nameEdit)->z = DL_HelpText;
 	ADD_COMPONENT(nameInput->nameEdit, TextRendering);
 	TEXT_RENDERING(nameInput->nameEdit)->fontName = "typo";
@@ -391,7 +391,7 @@ int main(int argc, char** argv) {
 	nameInput->background = theEntityManager.CreateEntity();
 	ADD_COMPONENT(nameInput->background, Transformation);
 	TRANSFORM(nameInput->background)->size = Vector2(PlacementHelper::GimpWidthToScreen(708), PlacementHelper::GimpHeightToScreen(256));
-	TRANSFORM(nameInput->background)->position = Vector2(0, PlacementHelper::GimpYToScreen(320));
+	TRANSFORM(nameInput->background)->position = Vector2(theRenderingSystem.cameras[0].worldPosition.X, PlacementHelper::GimpYToScreen(320));
 	TRANSFORM(nameInput->background)->z = DL_HelpTextBg;
 	ADD_COMPONENT(nameInput->background, Rendering);
 	RENDERING(nameInput->background)->hide = true;
