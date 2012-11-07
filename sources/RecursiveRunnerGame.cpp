@@ -91,11 +91,11 @@ Entity background, startSingleButton, startSplitButton;
 Entity startMultiButton;
 Entity networkUL, networkDL;
 #endif
-Entity scoreText[2], goldCoin, scorePanel;
+Entity scoreText[2], goldCoin, scorePanel, bestScore;
 
 StorageAPI* tmpStorageAPI;
 NameInputAPI* tmpNameInputAPI;
-
+Vector2 leftMostCameraPos;
 std::string playerName;
 
 enum GameOverState {
@@ -274,15 +274,43 @@ void decor() {
 	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
 	    decorEntities.push_back(b);
 	}
+
+    Entity banderolle = theEntityManager.CreateEntity();
+    ADD_COMPONENT(banderolle, Transformation);
+    TRANSFORM(banderolle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("banderolle"));
+    TRANSFORM(banderolle)->position = Vector2(PlacementHelper::GimpXToScreen(772), PlacementHelper::GimpYToScreen(415));
+    TRANSFORM(banderolle)->z = 0.45;
+    TRANSFORM(banderolle)->rotation = 0.1;
+    ADD_COMPONENT(banderolle, Rendering);
+    RENDERING(banderolle)->texture = theRenderingSystem.loadTextureFile("banderolle");
+    RENDERING(banderolle)->hide = false;
+    
+    bestScore = theEntityManager.CreateEntity();
+    bestScore = theEntityManager.CreateEntity();
+    ADD_COMPONENT(bestScore, Transformation);
+    TRANSFORM(bestScore)->parent = banderolle;
+    TRANSFORM(bestScore)->z = 0.01;
+    TRANSFORM(bestScore)->position = Vector2(0, -0.25);
+    ADD_COMPONENT(bestScore, TextRendering);
+    TEXT_RENDERING(bestScore)->text = "bla";
+    TEXT_RENDERING(bestScore)->charHeight = 0.7;
+    // TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::IsANumberBit;
+    TEXT_RENDERING(bestScore)->hide = false;
+    TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
+
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
     PlacementHelper::ScreenWidth /= 3;
+    
+    leftMostCameraPos = 
+        Vector2(-PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5),
+        baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
 
     cameraEntity = theEntityManager.CreateEntity();
     ADD_COMPONENT(cameraEntity, Transformation);
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
-        -PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5), PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.5 - 0.5));
+        leftMostCameraPos.X, -leftMostCameraPos.X);
     
     ADD_COMPONENT(route, RangeFollower);
     RANGE_FOLLOWER(route)->range = RANGE_FOLLOWER(cameraEntity)->range;
@@ -297,10 +325,6 @@ void decor() {
     ADD_COMPONENT(buildings, RangeFollower);
     RANGE_FOLLOWER(buildings)->range = Interval<float>(-2, 2);
     RANGE_FOLLOWER(buildings)->parent = cameraEntity;
-return;
-    ADD_COMPONENT(trees, RangeFollower);
-    RANGE_FOLLOWER(trees)->range = Interval<float>(-3,3);
-    RANGE_FOLLOWER(trees)->parent = cameraEntity;
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
@@ -309,9 +333,9 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
     PlayerSystem::CreateInstance();
     RangeFollowerSystem::CreateInstance();
 
-    decor();
-    
     baseLine = PlacementHelper::GimpYToScreen(800);
+    decor();
+
 #if 0
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
@@ -398,6 +422,7 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
         TEXT_RENDERING(scoreText[i])->hide = false;
         // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
         TEXT_RENDERING(scoreText[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
+        TEXT_RENDERING(scoreText[i])->flags |= TextRenderingComponent::IsANumberBit;
     }
 #ifdef SAC_NETWORK
     networkUL = theEntityManager.CreateEntity();
@@ -543,6 +568,18 @@ void RecursiveRunnerGame::tick(float dt) {
     updateFps(dt);
 }
 
+static void updateBestScore() {
+    float f;
+    std::vector<StorageAPI::Score> scores = tmpStorageAPI->getScores(f);
+    if (!scores.empty()) {
+        std::stringstream best;
+        best << scores[0].points;
+        TEXT_RENDERING(bestScore)->text = best.str();
+    } else {
+        LOGW("No best score found (?!)");
+        TEXT_RENDERING(bestScore)->text = "";
+    }
+}
 static GameState updateMenu(float dt __attribute__((unused))) {
     switch (gameOverState) {
         case NoGame: {
@@ -567,6 +604,8 @@ static GameState updateMenu(float dt __attribute__((unused))) {
                 tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, playerName));
                 gameOverState = NoGame;
                 
+                updateBestScore();
+    
                 // Cleanup previous game variables
                 gameTempVars.cleanup();
             } else {
@@ -896,7 +935,7 @@ static void transitionPlayingMenu() {
     setupCamera(CameraModeMenu);
     // Restore camera position
     for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
-        theRenderingSystem.cameras[i].worldPosition = Vector2::Zero;
+        theRenderingSystem.cameras[i].worldPosition = leftMostCameraPos;
     }
     // Save score and coins earned
     if (gameTempVars.players.size()) {
@@ -920,6 +959,7 @@ static void transitionPlayingMenu() {
     TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
 #endif
     // TEXT_RENDERING(scoreText)->hide = false;
+    updateBestScore();
 }
 
 void GameTempVar::cleanup() {
