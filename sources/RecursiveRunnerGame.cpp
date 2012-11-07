@@ -179,8 +179,8 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     std::string fumeeLoop[] = {"fumee5b", "fumee5c", "fumee5" };
     std::string fumeeEnd[] = {"fumee6", "fumee7", "fumee8", "fumee9" };
     theAnimationSystem.registerAnim("fumee_start", fumeeStart, 6, 8, Interval<int>(0, 0), "fumee_loop");
-    theAnimationSystem.registerAnim("fumee_loop", fumeeLoop, 3, 8, Interval<int>(2, 4), "fumee_end");
-    theAnimationSystem.registerAnim("fumee_end", fumeeEnd, 4, 8, Interval<int>(0, 0), "fumee_start", Interval<float>(0.5, 3));
+    theAnimationSystem.registerAnim("fumee_loop", fumeeLoop, 3, 8, Interval<int>(2, 5), "fumee_end");
+    theAnimationSystem.registerAnim("fumee_end", fumeeEnd, 4, 8, Interval<int>(0, 0), "fumee_start", Interval<float>(2, 10));
     
     glClearColor(148.0/255, 148.0/255, 148.0/255, 1.0);
 
@@ -191,19 +191,42 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 Entity silhouette, route, cameraEntity;
 std::vector<Entity> decorEntities;
 
-void fumee() {
-    Entity fumee = theEntityManager.CreateEntity();
-    ADD_COMPONENT(fumee, Transformation);
-    TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0"));
-    theTransformationSystem.setPosition(TRANSFORM(fumee), Vector2(PlacementHelper::GimpXToScreen(15), PlacementHelper::GimpYToScreen(188)), TransformationSystem::S);
-    TRANSFORM(fumee)->z = 0.8;
-    ADD_COMPONENT(fumee, Rendering);
-    RENDERING(fumee)->hide = false;
-    RENDERING(fumee)->color = Color(1,1,1,1);
-    RENDERING(fumee)->opaqueType = RenderingComponent::NON_OPAQUE;
-    ADD_COMPONENT(fumee, Animation);
-    ANIMATION(fumee)->name = "fumee_start";
-    ANIMATION(fumee)->loopCount = 2;
+void fumee(Entity building) {
+    const Vector2 possible[] = {
+        Vector2(-445 / 942.0, 292 / 594.0),
+        Vector2(-310 / 942.0, 260 / 594.0),
+        Vector2(-52 / 942.0, 255 / 594.0),
+        Vector2(147 / 942.0, 239 / 594.0),
+        Vector2(269 / 942.0, 218 / 594.0),
+        Vector2(442 / 942.0, 239 / 594.0)
+    };
+
+    unsigned count = 6;//MathUtil::RandomIntInRange(1, 4);
+    std::vector<int> indexes;
+    do {
+        int idx = MathUtil::RandomIntInRange(0, 6);
+        if (std::find(indexes.begin(), indexes.end(), idx) == indexes.end()) {
+            indexes.push_back(idx);
+        }
+    } while (indexes.size() != count);
+
+    for (unsigned i=0; i<indexes.size(); i++) {
+        int idx = indexes[i];
+        Entity fumee = theEntityManager.CreateEntity();
+        ADD_COMPONENT(fumee, Transformation);
+        TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * (0.8 - MathUtil::RandomFloat() * 0.3);
+        TRANSFORM(fumee)->parent = building;
+        TRANSFORM(fumee)->position = possible[idx] * TRANSFORM(building)->size + Vector2(0, TRANSFORM(fumee)->size.Y * 0.5);
+        if (RENDERING(building)->mirrorH) TRANSFORM(fumee)->position.X = -TRANSFORM(fumee)->position.X;
+        TRANSFORM(fumee)->z = 0.1;
+        ADD_COMPONENT(fumee, Rendering);
+        RENDERING(fumee)->hide = true;
+        RENDERING(fumee)->color = Color(1,1,1,1);
+        RENDERING(fumee)->opaqueType = RenderingComponent::NON_OPAQUE;
+        ADD_COMPONENT(fumee, Animation);
+        ANIMATION(fumee)->name = "fumee_start";
+        ANIMATION(fumee)->waitAccum = MathUtil::RandomFloat() * 10;
+    }
 }
 
 void decor() {
@@ -294,9 +317,11 @@ void decor() {
 	    RENDERING(b)->mirrorH = bdef.mirrorUV;
 	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
 	    decorEntities.push_back(b);
+     
+        if (i < 3) {
+            fumee(b);
+        }
 	}
- 
-    fumee();
 
     Entity banderolle = theEntityManager.CreateEntity();
     ADD_COMPONENT(banderolle, Transformation);
@@ -1021,7 +1046,7 @@ static void createCoins(int count) {
                     LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
                 MathUtil::RandomFloatInRange(
                     PlacementHelper::GimpYToScreen(650),
-                    PlacementHelper::GimpYToScreen(512)));
+                    PlacementHelper::GimpYToScreen(450)));
                     //-0.3 * PlacementHelper::ScreenHeight,
                     // -0.05 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
