@@ -62,8 +62,8 @@ static void killRunner(Entity runner) {
     RENDERING(e)->color = RENDERING(runner)->color;
     RENDERING(e)->texture = RENDERING(runner)->texture;
     RENDERING(e)->cameraBitMask = (0x3 << 1);
-    // ADD_COMPONENT(e, Animation);
-    // ANIMATION(e)->name = (dir > 0) ? "flyL2R" : "flyR2L";
+    ADD_COMPONENT(e, Animation);
+    ANIMATION(e)->name = "runL2R";
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
     PHYSICS(e)->gravity.Y = -10;
@@ -71,7 +71,9 @@ static void killRunner(Entity runner) {
     Force(Vector2::Rotate(Vector2(MathUtil::RandomIntInRange(500, 700), 0), dir > 0 ? MathUtil::RandomFloatInRange(0.25, 1.5) : MathUtil::RandomFloatInRange(1.5, 3.14-0.25)),
         Vector2::Rotate(TRANSFORM(e)->size * 0.2, MathUtil::RandomFloat(6.28))), 0.016));
     ADD_COMPONENT(e, AutoDestroy);
-    AUTO_DESTROY(e)->type = AutoDestroyComponent::OUT_OF_SCREEN;
+    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
+    AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
+    AUTO_DESTROY(e)->params.lifetime.value = 0.5;
 }
 
 void RunnerSystem::DoUpdate(float dt) {
