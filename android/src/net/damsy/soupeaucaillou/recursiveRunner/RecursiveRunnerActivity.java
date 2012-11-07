@@ -58,8 +58,8 @@ public class RecursiveRunnerActivity extends SacActivity {
 	}
 	
 	@Override
-	public int getGLViewId() {
-		return R.id.surfaceviewclass;
+	public int getParentViewId() {
+		return R.id.parent_frame;
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	static public RecursiveRunnerStorage.ScoreOpenHelper scoreOpenHelper;
 	
 	View playerNameInputView;
-
+  
 	public SharedPreferences preferences;
 
 	@Override
@@ -107,10 +107,10 @@ public class RecursiveRunnerActivity extends SacActivity {
 		Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
 
-        /*RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
+        RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
         playerNameInputView = findViewById(R.id.enter_name);
         rl.bringChildToFront(playerNameInputView);
-        playerNameInputView.setVisibility(View.GONE);*/
+        playerNameInputView.setVisibility(View.GONE);
 
         RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);

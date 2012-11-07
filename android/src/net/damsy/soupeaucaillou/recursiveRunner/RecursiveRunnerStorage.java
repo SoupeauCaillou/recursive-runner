@@ -26,7 +26,8 @@ public class RecursiveRunnerStorage {
 	static public class ScoreOpenHelper extends SQLiteOpenHelper {
 
         private static final int DATABASE_VERSION = 2;
-        private static final String SCORE_TABLE_CREATE = "create table score(rowid integer primary key autoincrement , name char2(25) default 'Anonymous', mode number(1) default '0', difficulty number(1) default '1', points number(12) default '0', time number(5) default '0', level number(6) default '1')";
+        private static final String SCORE_TABLE_CREATE = 
+        		"create table score(rowid integer primary key autoincrement , points number(7) default '0', coins number(7) default '0', name char2(25) default 'Anonymous')";
 
         ScoreOpenHelper(Context context) {
             super(context, "score", null, DATABASE_VERSION);

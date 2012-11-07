@@ -5,10 +5,6 @@
   android:id="@+id/parent_frame"
   android:layout_height="fill_parent" android:layout_width="fill_parent">
 
-    <android.opengl.GLSurfaceView android:id="@+id/surfaceviewclass"
-android:layout_width="match_parent"
-android:layout_height="match_parent"/>
-
     <LinearLayout
         android:id="@+id/enter_name"
         android:layout_width="250dp"

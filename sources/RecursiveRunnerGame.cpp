@@ -155,10 +155,10 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
     theRenderingSystem.loadAtlas("alphabet", true);
-    theRenderingSystem.loadAtlas("dummy", false);
-    theRenderingSystem.loadAtlas("decor", false);
-    theRenderingSystem.loadAtlas("arbre", false);
-    theRenderingSystem.loadAtlas("fumee", false);
+    theRenderingSystem.loadAtlas("dummy", true);
+    theRenderingSystem.loadAtlas("decor", true);
+    theRenderingSystem.loadAtlas("arbre", true);
+    theRenderingSystem.loadAtlas("fumee", true);
     
     // register 4 animations
     std::string runL2R[] = { "run_l2r_0002",
