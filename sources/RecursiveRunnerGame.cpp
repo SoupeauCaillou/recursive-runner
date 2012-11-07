@@ -326,14 +326,17 @@ void decor() {
     ADD_COMPONENT(titleGroup, Transformation);
     TRANSFORM(titleGroup)->z = 0.7;
     TRANSFORM(titleGroup)->rotation = 0.05;
-    TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), PlacementHelper::ScreenHeight + PlacementHelper::GimpYToScreen(400));
     ADD_COMPONENT(titleGroup, ADSR);
     ADSR(titleGroup)->idleValue = PlacementHelper::ScreenHeight + PlacementHelper::GimpYToScreen(400);
-    ADSR(titleGroup)->attackValue = PlacementHelper::GimpYToScreen(90);
+    ADSR(titleGroup)->sustainValue = 
+        baseLine + 
+        PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).Y * 0.5
+        + PlacementHelper::GimpHeightToScreen(20);
+    ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
     ADSR(titleGroup)->attackTiming = 2;
-    ADSR(titleGroup)->sustainValue = PlacementHelper::GimpYToScreen(85);
     ADSR(titleGroup)->decayTiming = 0.2;
     ADSR(titleGroup)->releaseTiming = 1.5;
+    TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), ADSR(titleGroup)->idleValue);
 
     title = theEntityManager.CreateEntity();
     ADD_COMPONENT(title, Transformation);
@@ -411,8 +414,8 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
 
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);
-    TRANSFORM(scorePanel)->size = Vector2(PlacementHelper::GimpWidthToScreen(591), PlacementHelper::GimpWidthToScreen(166));
-    theTransformationSystem.setPosition(TRANSFORM(scorePanel), Vector2(0, PlacementHelper::ScreenHeight * 0.5), TransformationSystem::N);
+    TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
+    theTransformationSystem.setPosition(TRANSFORM(scorePanel), Vector2(0, baseLine + PlacementHelper::ScreenHeight), TransformationSystem::N);
     TRANSFORM(scorePanel)->z = 0.8;
     ADD_COMPONENT(scorePanel, Rendering);
     RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
