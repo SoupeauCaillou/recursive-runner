@@ -182,7 +182,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.registerAnim("fumee_loop", fumeeLoop, 3, 8, Interval<int>(2, 4), "fumee_end");
     theAnimationSystem.registerAnim("fumee_end", fumeeEnd, 4, 8, Interval<int>(0, 0), "fumee_start", Interval<float>(0.5, 3));
     
-    glClearColor(139.0/255, 139.0/255, 139.0/255, 1.0);
+    glClearColor(148.0/255, 148.0/255, 148.0/255, 1.0);
 
     // init font
     loadFont(assetAPI, "typo");

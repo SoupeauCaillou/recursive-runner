@@ -290,7 +290,7 @@ static void updateAndRender() {
 extern bool __log_enabled;
 int main(int argc, char** argv) {
 	Vector2 reso16_9(394, 700);
-	Vector2 reso16_10(1000, 625);
+	Vector2 reso16_10(1000, 800);//625);
 	Vector2* reso = &reso16_10;
 
 #ifdef EMSCRIPTEN
