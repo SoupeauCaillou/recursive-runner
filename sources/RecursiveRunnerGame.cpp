@@ -385,13 +385,13 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
     for (int i=0; i<2; i++) {
         scoreText[i] = theEntityManager.CreateEntity();
         ADD_COMPONENT(scoreText[i], Transformation);
-        TRANSFORM(scoreText[i])->position = Vector2(0, -0.14);
+        TRANSFORM(scoreText[i])->position = Vector2(-0.05, -0.3);
         TRANSFORM(scoreText[i])->z = 0.13;
         TRANSFORM(scoreText[i])->rotation = 0.06;
         TRANSFORM(scoreText[i])->parent = scorePanel;
         ADD_COMPONENT(scoreText[i], TextRendering);
-        TEXT_RENDERING(scoreText[i])->text = "";
-        TEXT_RENDERING(scoreText[i])->charHeight = 0.7;
+        TEXT_RENDERING(scoreText[i])->text = "12345";
+        TEXT_RENDERING(scoreText[i])->charHeight = 1.5;
         TEXT_RENDERING(scoreText[i])->hide = false;
         // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
         TEXT_RENDERING(scoreText[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
@@ -859,7 +859,7 @@ static GameState updatePlaying(float dt) {
 
     for (unsigned i=0; i<gameTempVars.players.size(); i++) {
         std::stringstream a;
-        a << "  " << PLAYER(gameTempVars.players[i])->score;
+        a << PLAYER(gameTempVars.players[i])->score;
         TEXT_RENDERING(scoreText[i])->text = a.str();
     }
     
@@ -926,6 +926,10 @@ void GameTempVar::cleanup() {
     for (unsigned j=0; j<r.size(); j++) {
         theEntityManager.DeleteEntity(RUNNER(r[j])->collisionZone);
         theEntityManager.DeleteEntity(r[j]);
+    }
+    while (!links.empty()) {
+        theEntityManager.DeleteEntity(links.back());
+        links.pop_back();
     }
 
     for (unsigned i=0; i<players.size(); i++) {
