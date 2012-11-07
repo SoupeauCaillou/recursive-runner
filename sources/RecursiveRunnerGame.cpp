@@ -85,10 +85,7 @@ static void setupCamera(CameraMode mode);
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 
-// PURE LOCAL VARS
-Entity background, startSingleButton, startSplitButton;
 #ifdef SAC_NETWORK
-Entity startMultiButton;
 Entity networkUL, networkDL;
 #endif
 Entity scoreText[2], goldCoin, scorePanel, bestScore;
@@ -304,7 +301,14 @@ void decor() {
     ADD_COMPONENT(titleGroup, Transformation);
     TRANSFORM(titleGroup)->z = 0.7;
     TRANSFORM(titleGroup)->rotation = 0.05;
-    TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), PlacementHelper::GimpYToScreen(90));
+    TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), PlacementHelper::ScreenHeight + PlacementHelper::GimpYToScreen(400));
+    ADD_COMPONENT(titleGroup, ADSR);
+    ADSR(titleGroup)->idleValue = PlacementHelper::ScreenHeight + PlacementHelper::GimpYToScreen(400);
+    ADSR(titleGroup)->attackValue = PlacementHelper::GimpYToScreen(90);
+    ADSR(titleGroup)->attackTiming = 2;
+    ADSR(titleGroup)->sustainValue = PlacementHelper::GimpYToScreen(85);
+    ADSR(titleGroup)->decayTiming = 0.2;
+    ADSR(titleGroup)->releaseTiming = 1.5;
 
     title = theEntityManager.CreateEntity();
     ADD_COMPONENT(title, Transformation);
@@ -380,55 +384,6 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
     RENDERING(background)->cameraBitMask = (0x3 << 1);
     #endif
 
-    startSingleButton = theEntityManager.CreateEntity();
-    ADD_COMPONENT(startSingleButton, Transformation);
-    TRANSFORM(startSingleButton)->position = Vector2(-PlacementHelper::ScreenWidth /6, 0);
-    TRANSFORM(startSingleButton)->z = 0.9;
-    ADD_COMPONENT(startSingleButton, TextRendering);
-    TEXT_RENDERING(startSingleButton)->text = "Jouer solo";
-    TEXT_RENDERING(startSingleButton)->charHeight = 1;
-    TEXT_RENDERING(startSingleButton)->cameraBitMask = 0x1;
-    ADD_COMPONENT(startSingleButton, Container);
-    CONTAINER(startSingleButton)->entities.push_back(startSingleButton);
-    CONTAINER(startSingleButton)->includeChildren = true;
-    ADD_COMPONENT(startSingleButton, Rendering);
-    RENDERING(startSingleButton)->color = Color(0.8, 0.8, 0.2, 0.5);
-    RENDERING(startSingleButton)->cameraBitMask = 0x1;
-    ADD_COMPONENT(startSingleButton, Button);
-    BUTTON(startSingleButton)->overSize = 2;
-
-    startSplitButton = theEntityManager.CreateEntity();
-    ADD_COMPONENT(startSplitButton, Transformation);
-    TRANSFORM(startSplitButton)->position = Vector2(PlacementHelper::ScreenWidth /6, 0);
-    TRANSFORM(startSplitButton)->z = 0.9;
-    ADD_COMPONENT(startSplitButton, TextRendering);
-    TEXT_RENDERING(startSplitButton)->text = "Splitscreen";
-    TEXT_RENDERING(startSplitButton)->charHeight = 1;
-    TEXT_RENDERING(startSplitButton)->cameraBitMask = 0x1;
-    ADD_COMPONENT(startSplitButton, Container);
-    CONTAINER(startSplitButton)->entities.push_back(startSplitButton);
-    CONTAINER(startSplitButton)->includeChildren = true;
-    ADD_COMPONENT(startSplitButton, Rendering);
-    RENDERING(startSplitButton)->color = Color(0.8, 0.8, 0.2, 0.5);
-    RENDERING(startSplitButton)->cameraBitMask = 0x1;
-    ADD_COMPONENT(startSplitButton, Button);
-    BUTTON(startSplitButton)->overSize = 2;
-
-#ifdef SAC_NETWORK
-    startMultiButton = theEntityManager.CreateEntity();
-    ADD_COMPONENT(startMultiButton, Transformation);
-    TRANSFORM(startMultiButton)->position = Vector2(PlacementHelper::ScreenWidth /6, 0);
-    TRANSFORM(startMultiButton)->z = 0.9;
-    ADD_COMPONENT(startMultiButton, TextRendering);
-    TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
-    TEXT_RENDERING(startMultiButton)->charHeight = 1;
-    ADD_COMPONENT(startMultiButton, Container);
-    CONTAINER(startMultiButton)->entities.push_back(startMultiButton);
-    CONTAINER(startMultiButton)->includeChildren = true;
-    ADD_COMPONENT(startMultiButton, Rendering);
-    RENDERING(startMultiButton)->color = Color(0.2, 0.2, 0.2, 0.5);
-    ADD_COMPONENT(startMultiButton, Button);
-#endif
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);
     TRANSFORM(scorePanel)->size = Vector2(PlacementHelper::GimpWidthToScreen(591), PlacementHelper::GimpWidthToScreen(166));
@@ -527,7 +482,7 @@ void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 
 void RecursiveRunnerGame::tick(float dt) {
 	theTouchInputManager.Update(dt);
- 
+    TRANSFORM(titleGroup)->position.Y = ADSR(titleGroup)->value;
     GameState next;
     switch(gameState) {
         case Menu:
@@ -645,40 +600,20 @@ static GameState updateMenu(float dt __attribute__((unused))) {
         }
     }
     
-    
-    if (BUTTON(startSingleButton)->clicked) {
-        gameTempVars.numPlayers = 1;
-        gameTempVars.isGameMaster = true;
-        setupCamera(CameraModeSingle);
-        return WaitingPlayers;
-    } else if (BUTTON(startSplitButton)->clicked) {
-        setupCamera(CameraModeSplit);
-        gameTempVars.numPlayers = 2;
-        gameTempVars.isGameMaster = true;
-        return WaitingPlayers;
+    if (ADSR(titleGroup)->value == ADSR(titleGroup)->sustainValue) {
+        if (theTouchInputManager.isTouched(0)) {
+            gameTempVars.numPlayers = 1;
+            gameTempVars.isGameMaster = true;
+            ADSR(titleGroup)->active = false;
+            return WaitingPlayers;
+        }
     }
-#ifdef SAC_NETWORK
-    else if (BUTTON(startMultiButton)->clicked) {
-        TEXT_RENDERING(startMultiButton)->text = "Finding opp.";
-        TEXT_RENDERING(networkUL)->hide = false;
-        TEXT_RENDERING(networkDL)->hide = false;
-        NetworkAPILinuxImpl* net = new NetworkAPILinuxImpl();
-        net->connectToLobby("my_name", "127.0.0.1"); //66.228.34.226");//127.0.0.1");
-        theNetworkSystem.networkAPI = net;
-        gameTempVars.numPlayers = 2;
-        gameTempVars.isGameMaster = false;
-        return WaitingPlayers;
-    }
-#endif
     return Menu;
 }
 
 static void transitionMenuWaitingPlayers() {
     LOGI("Change state");
-    BUTTON(startSingleButton)->enabled = false;
-    BUTTON(startSplitButton)->enabled = false;
 #ifdef SAC_NETWORK
-    BUTTON(startMultiButton)->enabled = false;
     theNetworkSystem.deleteAllNonLocalEntities();
 #endif
 }
@@ -726,6 +661,10 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
             return WaitingPlayers;
         }
     }
+    if (ADSR(titleGroup)->value < ADSR(titleGroup)->idleValue)
+        return WaitingPlayers;
+
+    setupCamera(CameraModeSingle);
     return Playing;
 }
 
@@ -734,14 +673,7 @@ static void transitionWaitingPlayersPlaying() {
     // store a few entities to avoid permanent lookups
     gameTempVars.syncCoins();
     gameTempVars.syncRunners();
-
-    //TEXT_RENDERING(scoreText)->hide = true;
-    TEXT_RENDERING(startSingleButton)->hide = true;
-    TEXT_RENDERING(startSplitButton)->hide = true;
-    RENDERING(startSingleButton)->hide = true;
-    RENDERING(startSplitButton)->hide = true;
 #ifdef SAC_NETWORK
-    TEXT_RENDERING(startMultiButton)->hide = true;
     RENDERING(startMultiButton)->hide = true;
 #endif
     for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
@@ -971,25 +903,10 @@ static void transitionPlayingMenu() {
     if (gameTempVars.players.size()) {
         gameOverState = GameEnded;
     }
-    
-    // Show menu UI
-    TEXT_RENDERING(startSingleButton)->hide = false;
-    CONTAINER(startSingleButton)->enable = true;
-    RENDERING(startSingleButton)->hide = false;
-    BUTTON(startSingleButton)->enabled = true;
-    TEXT_RENDERING(startSplitButton)->hide = false;
-    CONTAINER(startSplitButton)->enable = true;
-    RENDERING(startSplitButton)->hide = false;
-    BUTTON(startSplitButton)->enabled = true;
-#ifdef SAC_NETWORK
-    TEXT_RENDERING(startMultiButton)->hide = false;
-    CONTAINER(startMultiButton)->enable = true;
-    RENDERING(startMultiButton)->hide = false;
-    BUTTON(startMultiButton)->enabled = true;
-    TEXT_RENDERING(startMultiButton)->text = "Jouer multi";
-#endif
+
     // TEXT_RENDERING(scoreText)->hide = false;
     updateBestScore();
+    ADSR(titleGroup)->active = true;
 }
 
 void GameTempVar::cleanup() {
@@ -1091,8 +1008,8 @@ static void createCoins(int count) {
         TRANSFORM(e)->z = 0.75;
         ADD_COMPONENT(e, Rendering);
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
-        RENDERING(e)->cameraBitMask = (0x3 << 1);
-        RENDERING(e)->hide = false;        
+        // RENDERING(e)->cameraBitMask = (0x3 << 1);
+        RENDERING(e)->hide = false;
         if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
             goldCoin = e;
             min = MathUtil::Abs(TRANSFORM(e)->position.X);
