@@ -138,6 +138,7 @@ const float playerSpeed = 6;
 
 #define LEVEL_SIZE 3
 extern float MaxJumpDuration;
+float baseLine;
 
 
 RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
@@ -309,6 +310,8 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
     RangeFollowerSystem::CreateInstance();
 
     decor();
+    
+    baseLine = PlacementHelper::GimpYToScreen(800);
 #if 0
     background = theEntityManager.CreateEntity();
     ADD_COMPONENT(background, Transformation);
@@ -512,6 +515,8 @@ void RecursiveRunnerGame::tick(float dt) {
         }
         // TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
         TRANSFORM(cameraEntity)->position.X = camPosX;
+        theRenderingSystem.cameras[i].worldPosition.Y = baseLine + theRenderingSystem.cameras[i].worldSize.Y * 0.5;
+
         
     }
 
@@ -797,10 +802,10 @@ static GameState updatePlaying(float dt) {
             // check jumps
             if (pc->gravity.Y < 0) {
                 TransformationComponent* tc = TRANSFORM(e);
-                if ((tc->position.Y - tc->size.Y * 0.5) <= -PlacementHelper::ScreenHeight * 0.5) {
+                if ((tc->position.Y - tc->size.Y * 0.5) <= baseLine) {
                     pc->gravity.Y = 0;
                     pc->linearVelocity = Vector2::Zero;
-                    tc->position.Y = -PlacementHelper::ScreenHeight * 0.5 + tc->size.Y * 0.5;
+                    tc->position.Y = baseLine + tc->size.Y * 0.5;
                     ANIMATION(e)->name = "jumptorunL2R";
                     RENDERING(e)->mirrorH = (rc->speed < 0);
                 }
@@ -1000,8 +1005,10 @@ static void createCoins(int count) {
                     -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
                     LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
                 MathUtil::RandomFloatInRange(
-                    -0.3 * PlacementHelper::ScreenHeight,
-                    -0.05 * PlacementHelper::ScreenHeight));
+                    PlacementHelper::GimpYToScreen(650),
+                    PlacementHelper::GimpYToScreen(512)));
+                    //-0.3 * PlacementHelper::ScreenHeight,
+                    // -0.05 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
            for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
                 if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 2) {
@@ -1138,9 +1145,12 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RENDERING(e)->hide = false;
     RENDERING(e)->cameraBitMask = (0x3 << 1);
     ADD_COMPONENT(e, Runner);
-    TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
+    /*TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
-        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);
+        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);*/
+    theTransformationSystem.setPosition(TRANSFORM(e), 
+        Vector2(direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth, baseLine), TransformationSystem::S);
+    RUNNER(e)->startPoint = TRANSFORM(e)->position;
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
     RUNNER(e)->speed = direction * playerSpeed * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
