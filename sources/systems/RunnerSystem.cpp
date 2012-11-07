@@ -116,9 +116,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 rc->coinSequenceBonus = 1;
                 rc->ghost = true;
                 rc->startTime = MathUtil::RandomFloatInRange(0, 2.0f);
-                RENDERING(a)->color.r *= 0.9;
-                RENDERING(a)->color.g *= 0.9;
-                RENDERING(a)->color.a = 0.6;
+                RENDERING(a)->color = Color(27.0/255, 2.0/255, 2.0/255, 0.8);
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
                 rc->currentJump = 0;

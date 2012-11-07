@@ -158,6 +158,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theRenderingSystem.loadAtlas("dummy", false);
     theRenderingSystem.loadAtlas("decor", false);
     theRenderingSystem.loadAtlas("arbre", false);
+    theRenderingSystem.loadAtlas("fumee", false);
     
     // register 4 animations
     std::string runL2R[] = { "run_l2r_0002",
@@ -169,10 +170,17 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
         "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015"};
 
-    theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, true);
-    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 15, false);
-    theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, false);
-    theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 30, false, "runL2R");
+    theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, Interval<int>(-1, -1));
+    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 15, Interval<int>(0, 0));
+    theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, Interval<int>(0, 0));
+    theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 30, Interval<int>(0, 0), "runL2R");
+
+    std::string fumeeStart[] = {"fumee0", "fumee1", "fumee2", "fumee3", "fumee4", "fumee5" };
+    std::string fumeeLoop[] = {"fumee5b", "fumee5c", "fumee5" };
+    std::string fumeeEnd[] = {"fumee6", "fumee7", "fumee8", "fumee9" };
+    theAnimationSystem.registerAnim("fumee_start", fumeeStart, 6, 8, Interval<int>(0, 0), "fumee_loop");
+    theAnimationSystem.registerAnim("fumee_loop", fumeeLoop, 3, 8, Interval<int>(2, 4), "fumee_end");
+    theAnimationSystem.registerAnim("fumee_end", fumeeEnd, 4, 8, Interval<int>(0, 0), "fumee_start", Interval<float>(0.5, 3));
     
     glClearColor(139.0/255, 139.0/255, 139.0/255, 1.0);
 
@@ -182,6 +190,21 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 
 Entity silhouette, route, cameraEntity;
 std::vector<Entity> decorEntities;
+
+void fumee() {
+    Entity fumee = theEntityManager.CreateEntity();
+    ADD_COMPONENT(fumee, Transformation);
+    TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0"));
+    theTransformationSystem.setPosition(TRANSFORM(fumee), Vector2(PlacementHelper::GimpXToScreen(15), PlacementHelper::GimpYToScreen(188)), TransformationSystem::S);
+    TRANSFORM(fumee)->z = 0.8;
+    ADD_COMPONENT(fumee, Rendering);
+    RENDERING(fumee)->hide = false;
+    RENDERING(fumee)->color = Color(1,1,1,1);
+    RENDERING(fumee)->opaqueType = RenderingComponent::NON_OPAQUE;
+    ADD_COMPONENT(fumee, Animation);
+    ANIMATION(fumee)->name = "fumee_start";
+    ANIMATION(fumee)->loopCount = 2;
+}
 
 void decor() {
 	silhouette = theEntityManager.CreateEntity();
@@ -272,6 +295,8 @@ void decor() {
 	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
 	    decorEntities.push_back(b);
 	}
+ 
+    fumee();
 
     Entity banderolle = theEntityManager.CreateEntity();
     ADD_COMPONENT(banderolle, Transformation);
@@ -1131,6 +1156,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     // RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
     RENDERING(e)->hide = false;
     RENDERING(e)->cameraBitMask = (0x3 << 1);
+    RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
     ADD_COMPONENT(e, Runner);
     /*TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
