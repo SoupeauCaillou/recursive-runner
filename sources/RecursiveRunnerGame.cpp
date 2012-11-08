@@ -218,7 +218,7 @@ void fumee(Entity building) {
         TRANSFORM(fumee)->parent = building;
         TRANSFORM(fumee)->position = possible[idx] * TRANSFORM(building)->size + Vector2(0, TRANSFORM(fumee)->size.Y * 0.5);
         if (RENDERING(building)->mirrorH) TRANSFORM(fumee)->position.X = -TRANSFORM(fumee)->position.X;
-        TRANSFORM(fumee)->z = 0.1;
+        TRANSFORM(fumee)->z = -0.1;
         ADD_COMPONENT(fumee, Rendering);
         RENDERING(fumee)->hide = true;
         RENDERING(fumee)->color = Color(1,1,1,1);
@@ -248,7 +248,7 @@ void decor() {
     theTransformationSystem.setPosition(TRANSFORM(route), Vector2(0, PlacementHelper::GimpYToScreen(800)), TransformationSystem::S);
     TRANSFORM(route)->z = 0.1;
     ADD_COMPONENT(route, Rendering);
-    RENDERING(route)->color = Color(114.0/255, 114.0/255, 114.0/255, 1.0);
+    RENDERING(route)->texture = theRenderingSystem.loadTextureFile("route");
     RENDERING(route)->hide = false;
     RENDERING(route)->opaqueType = RenderingComponent::FULL_OPAQUE;
     // RENDERING(route)->cameraBitMask = (0x3 << 1);
@@ -296,11 +296,11 @@ void decor() {
 		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2", false, trees),
 		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4", false, trees),
 		// benchs
-		Decor(672, 768, 0.3, TransformationSystem::S, "bench_cat", false, trees),
-		Decor(1090, 764, 0.3, TransformationSystem::S, "bench", false, trees),
-		Decor(2082, 760, 0.3, TransformationSystem::S, "bench", true, trees),
-		Decor(2526, 762, 0.3, TransformationSystem::S, "bench", false, trees),
-		Decor(3464, 758, 0.3, TransformationSystem::S, "bench_cat", false, trees),
+		Decor(672, 768, 0.35, TransformationSystem::S, "bench_cat", false, trees),
+		Decor(1090, 764, 0.35, TransformationSystem::S, "bench", false, trees),
+		Decor(2082, 760, 0.35, TransformationSystem::S, "bench", true, trees),
+		Decor(2526, 762, 0.35, TransformationSystem::S, "bench", false, trees),
+		Decor(3464, 758, 0.35, TransformationSystem::S, "bench_cat", false, trees),
 		Decor(3612, 762, 0.6, TransformationSystem::S, "bench", false, trees),
     };
     for (int i=0; i<count; i++) {
@@ -327,7 +327,7 @@ void decor() {
     ADD_COMPONENT(banderolle, Transformation);
     TRANSFORM(banderolle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("banderolle"));
     TRANSFORM(banderolle)->position = Vector2(PlacementHelper::GimpXToScreen(772), PlacementHelper::GimpYToScreen(415));
-    TRANSFORM(banderolle)->z = 0.45;
+    TRANSFORM(banderolle)->z = 0.31;
     TRANSFORM(banderolle)->rotation = 0.1;
     ADD_COMPONENT(banderolle, Rendering);
     RENDERING(banderolle)->texture = theRenderingSystem.loadTextureFile("banderolle");
@@ -337,7 +337,7 @@ void decor() {
     bestScore = theEntityManager.CreateEntity();
     ADD_COMPONENT(bestScore, Transformation);
     TRANSFORM(bestScore)->parent = banderolle;
-    TRANSFORM(bestScore)->z = 0.01;
+    TRANSFORM(bestScore)->z = 0.001;
     TRANSFORM(bestScore)->position = Vector2(0, -0.25);
     ADD_COMPONENT(bestScore, TextRendering);
     TEXT_RENDERING(bestScore)->text = "bla";
