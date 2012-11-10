@@ -677,6 +677,21 @@ static void updateBestScore() {
     }
 }
 static GameState updateMenu(float dt __attribute__((unused))) {
+    if (!gameTempVars.coins.empty()) {
+        float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
+            (ADSR(titleGroup)->idleValue - ADSR(titleGroup)->attackValue);
+        progress = 2 * MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
+        for (unsigned i=0; i<gameTempVars.coins.size(); i++) {
+            RENDERING(gameTempVars.coins[i])->color.a = progress;
+        }
+        for (unsigned i=0; i<gameTempVars.links.size(); i++) {
+            if (i % 2)
+                RENDERING(gameTempVars.links[i])->color.a = progress * 0.2;
+            else
+                RENDERING(gameTempVars.links[i])->color.a = progress;
+        }
+    }
+    
     switch (gameOverState) {
         case NoGame: {
 			break;
@@ -689,8 +704,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
             } else {
 				gameOverState = NoGame;
                 tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, "rzehtrtyBg"));
-                // Cleanup previous game variables
-                gameTempVars.cleanup();
+                
             }
         }
         case AskingPlayerName: {
@@ -712,6 +726,8 @@ static GameState updateMenu(float dt __attribute__((unused))) {
     }
 
     if (ADSR(titleGroup)->value == ADSR(titleGroup)->sustainValue) {
+        // Cleanup previous game variables
+        gameTempVars.cleanup();
         if (theTouchInputManager.isTouched(0)) {
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
@@ -763,9 +779,25 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
             }
             // Create coins for next game
             createCoins(20);
+            gameTempVars.syncCoins();
         }
         return WaitingPlayers;
     }
+    {
+        float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
+            (ADSR(titleGroup)->idleValue - ADSR(titleGroup)->attackValue);
+        progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
+        for (unsigned i=0; i<gameTempVars.coins.size(); i++) {
+            RENDERING(gameTempVars.coins[i])->color.a = progress;
+        }
+        for (unsigned i=0; i<gameTempVars.links.size(); i++) {
+            if (i % 2)
+                RENDERING(gameTempVars.links[i])->color.a = progress * 0.2;
+            else
+                RENDERING(gameTempVars.links[i])->color.a = progress;
+        }
+    }
+    
     PLAYER(gameTempVars.players[gameTempVars.isGameMaster ? 0 : 1])->ready = true;
     for (std::vector<Entity>::iterator it=gameTempVars.players.begin(); it!=gameTempVars.players.end(); ++it) {
         if (!PLAYER(*it)->ready) {
@@ -1124,6 +1156,7 @@ static void createCoins(int count) {
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
         // RENDERING(e)->cameraBitMask = (0x3 << 1);
         RENDERING(e)->hide = false;
+        RENDERING(e)->color.a = 0;
         if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
             goldCoin = e;
             min = MathUtil::Abs(TRANSFORM(e)->position.X);
@@ -1153,6 +1186,7 @@ static void createCoins(int count) {
     	ADD_COMPONENT(link, Rendering);
     	RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
     	RENDERING(link)->hide = false;
+        RENDERING(link)->color.a = 0;
 
         Entity link2 = theEntityManager.CreateEntity();
          ADD_COMPONENT(link2, Transformation);
@@ -1161,7 +1195,7 @@ static void createCoins(int count) {
          TRANSFORM(link2)->z = 0.2;
          ADD_COMPONENT(link2, Rendering);
          RENDERING(link2)->texture = theRenderingSystem.loadTextureFile("link");
-         RENDERING(link2)->color.a = 0.2;
+         RENDERING(link2)->color.a = 0;
          RENDERING(link2)->hide = false;
 
 #if 0
