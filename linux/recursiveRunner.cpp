@@ -62,6 +62,8 @@
 #include "RecursiveRunnerGame.h"
 #include "base/Profiler.h"
 
+#include "../sac/util/Recorder.h"
+
 #ifndef EMSCRIPTEN
 #include <locale.h>
 #include <libintl.h>
@@ -73,6 +75,8 @@
 RecursiveRunnerGame* game;
 NameInputAPILinuxImpl* nameInput;
 Entity globalFTW = 0;
+
+Recorder *record;
 
 class MouseNativeTouchState: public NativeTouchState {
 	public:
@@ -215,6 +219,14 @@ static void updateAndRenderLoop() {
 			if (glfwGetKey( GLFW_KEY_SPACE )) {// || !focus) {
 				game->togglePause(true);
 			}
+			// recording
+			if (glfwGetKey( GLFW_KEY_F10) && timer<=0){
+				record->stop();
+				
+			}
+			if (glfwGetKey( GLFW_KEY_F9) && timer<=0){
+				record->start();
+			}
 			//user entered his name?
 			if ((glfwGetKey( GLFW_KEY_ENTER ) || glfwGetKey( GLFW_KEY_KP_ENTER) ) && timer<=0) {
 				if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
@@ -262,6 +274,8 @@ static void updateAndRenderLoop() {
 
 		theRenderingSystem.render();
 		glfwSwapBuffers();
+		// 
+		record->record();
 	}
 	glfwTerminate();
 }
@@ -413,6 +427,7 @@ int main(int argc, char** argv) {
 #endif
 
 #ifndef EMSCRIPTEN
+	record = new Recorder(reso->X, reso->Y);
 	updateAndRenderLoop();
 #else
 	emscripten_set_main_loop(updateAndRender, 60);
