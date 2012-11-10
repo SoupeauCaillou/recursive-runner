@@ -171,7 +171,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015"};
 
     theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, Interval<int>(-1, -1));
-    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 15, Interval<int>(0, 0));
+    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 20, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 30, Interval<int>(0, 0), "runL2R");
 
@@ -680,7 +680,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
     if (!gameTempVars.coins.empty()) {
         float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
             (ADSR(titleGroup)->idleValue - ADSR(titleGroup)->attackValue);
-        progress = 2 * MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
+        progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
         for (unsigned i=0; i<gameTempVars.coins.size(); i++) {
             RENDERING(gameTempVars.coins[i])->color.a = progress;
         }
@@ -1144,7 +1144,7 @@ static void createCoins(int count) {
                     // -0.05 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
            for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
-                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 2) {
+                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 0.5) {
                     notFarEnough = true;
                 }
            }
