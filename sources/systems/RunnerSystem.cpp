@@ -141,7 +141,7 @@ void RunnerSystem::DoUpdate(float dt) {
                     rc->jumpingSince += dt;
                     if (rc->jumpingSince > rc->jumpDurations[rc->currentJump] && rc->jumpingSince >= MinJumpDuration) {
                         // ANIMATION(a)->name = (rc->speed > 0) ? "jumpL2R_down" : "jumpR2L_down";
-                        pc->gravity.Y = -100;
+                        pc->gravity.Y = -120;
                         rc->jumpingSince = 0;
                         rc->currentJump++;
                     }

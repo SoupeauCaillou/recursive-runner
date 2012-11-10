@@ -171,7 +171,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015"};
 
     theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, Interval<int>(-1, -1));
-    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 15, Interval<int>(0, 0));
+    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 20, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 30, Interval<int>(0, 0), "runL2R");
 
@@ -677,20 +677,34 @@ static void updateBestScore() {
     }
 }
 static GameState updateMenu(float dt __attribute__((unused))) {
+    if (!gameTempVars.coins.empty()) {
+        float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
+            (ADSR(titleGroup)->idleValue - ADSR(titleGroup)->attackValue);
+        progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
+        for (unsigned i=0; i<gameTempVars.coins.size(); i++) {
+            RENDERING(gameTempVars.coins[i])->color.a = progress;
+        }
+        for (unsigned i=0; i<gameTempVars.links.size(); i++) {
+            if (i % 2)
+                RENDERING(gameTempVars.links[i])->color.a = progress * 0.2;
+            else
+                RENDERING(gameTempVars.links[i])->color.a = progress;
+        }
+    }
+    
     switch (gameOverState) {
         case NoGame: {
 			break;
         }
         case GameEnded: {
             //should test if its a good score
-            if (1) {
+            if (0) {
                 tmpNameInputAPI->show();
 				gameOverState = AskingPlayerName;
             } else {
 				gameOverState = NoGame;
                 tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, "rzehtrtyBg"));
-                // Cleanup previous game variables
-                gameTempVars.cleanup();
+                
             }
         }
         case AskingPlayerName: {
@@ -712,6 +726,8 @@ static GameState updateMenu(float dt __attribute__((unused))) {
     }
 
     if (ADSR(titleGroup)->value == ADSR(titleGroup)->sustainValue) {
+        // Cleanup previous game variables
+        gameTempVars.cleanup();
         if (theTouchInputManager.isTouched(0)) {
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
@@ -723,7 +739,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
 }
 
 static void transitionMenuWaitingPlayers() {
-    LOGI("Change state");
+    LOGI("Change state: Menu -> WaitingPlayers");
 #ifdef SAC_NETWORK
     theNetworkSystem.deleteAllNonLocalEntities();
 #endif
@@ -763,9 +779,25 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
             }
             // Create coins for next game
             createCoins(20);
+            gameTempVars.syncCoins();
         }
         return WaitingPlayers;
     }
+    {
+        float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
+            (ADSR(titleGroup)->idleValue - ADSR(titleGroup)->attackValue);
+        progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
+        for (unsigned i=0; i<gameTempVars.coins.size(); i++) {
+            RENDERING(gameTempVars.coins[i])->color.a = progress;
+        }
+        for (unsigned i=0; i<gameTempVars.links.size(); i++) {
+            if (i % 2)
+                RENDERING(gameTempVars.links[i])->color.a = progress * 0.2;
+            else
+                RENDERING(gameTempVars.links[i])->color.a = progress;
+        }
+    }
+    
     PLAYER(gameTempVars.players[gameTempVars.isGameMaster ? 0 : 1])->ready = true;
     for (std::vector<Entity>::iterator it=gameTempVars.players.begin(); it!=gameTempVars.players.end(); ++it) {
         if (!PLAYER(*it)->ready) {
@@ -780,7 +812,7 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
 }
 
 static void transitionWaitingPlayersPlaying() {
-    LOGI("Change state");
+    LOGI("Change state : WaitingPlayers -> Playing");
     // store a few entities to avoid permanent lookups
     gameTempVars.syncCoins();
     gameTempVars.syncRunners();
@@ -809,7 +841,7 @@ static GameState updatePlaying(float dt) {
         
         // If current runner has reached the edge of the screen
         if (RUNNER(gameTempVars.currentRunner[i])->finished) {
-            std::cout << gameTempVars.currentRunner[i] << " finished, add runner or end game" << std::endl;
+            LOGI("%lu finished, add runner or end game", gameTempVars.currentRunner[i]);
             CAM_TARGET(gameTempVars.currentRunner[i])->enabled = false;
             // return Runner control to master
             #ifdef SAC_NETWORK
@@ -824,7 +856,7 @@ static GameState updatePlaying(float dt) {
                 // resetGame();
                 return Menu;
             } else {
-                std::cout << "Create runner" << std::endl;
+                LOGI("Create runner");
                 // add a new one
                 gameTempVars.currentRunner[i] = addRunnerToPlayer(gameTempVars.players[i], PLAYER(gameTempVars.players[i]), i);
             }
@@ -1004,7 +1036,7 @@ static GameState updatePlaying(float dt) {
 }
 
 static void transitionPlayingMenu() {
-    LOGI("Change state");
+    LOGI("Change state : Playing -> Menu");
     setupCamera(CameraModeMenu);
     // Restore camera position
     for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
@@ -1021,6 +1053,7 @@ static void transitionPlayingMenu() {
 }
 
 void GameTempVar::cleanup() {
+    LOGI("Cleanup game vars begin");
     for (unsigned i=0; i<coins.size(); i++) {
         theEntityManager.DeleteEntity(coins[i]);
     }
@@ -1039,6 +1072,7 @@ void GameTempVar::cleanup() {
         runners[i].clear();
         theEntityManager.DeleteEntity(players[i]);
     }
+    LOGI("Cleanup game vars done");
 }
 
 void GameTempVar::syncRunners() {
@@ -1089,6 +1123,7 @@ static bool sortLeftToRight(Entity e, Entity f) {
 }
 
 static void createCoins(int count) {
+    LOGI("Coins creation started");
     std::vector<Entity> coins;
     float min = LEVEL_SIZE * PlacementHelper::ScreenWidth;
     for (int i=0; i<count; i++) {
@@ -1109,7 +1144,7 @@ static void createCoins(int count) {
                     // -0.05 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
            for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
-                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 2) {
+                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 0.5) {
                     notFarEnough = true;
                 }
            }
@@ -1121,6 +1156,7 @@ static void createCoins(int count) {
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
         // RENDERING(e)->cameraBitMask = (0x3 << 1);
         RENDERING(e)->hide = false;
+        RENDERING(e)->color.a = 0;
         if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
             goldCoin = e;
             min = MathUtil::Abs(TRANSFORM(e)->position.X);
@@ -1150,6 +1186,7 @@ static void createCoins(int count) {
     	ADD_COMPONENT(link, Rendering);
     	RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
     	RENDERING(link)->hide = false;
+        RENDERING(link)->color.a = 0;
 
         Entity link2 = theEntityManager.CreateEntity();
          ADD_COMPONENT(link2, Transformation);
@@ -1158,7 +1195,7 @@ static void createCoins(int count) {
          TRANSFORM(link2)->z = 0.2;
          ADD_COMPONENT(link2, Rendering);
          RENDERING(link2)->texture = theRenderingSystem.loadTextureFile("link");
-         RENDERING(link2)->color.a = 0.2;
+         RENDERING(link2)->color.a = 0;
          RENDERING(link2)->hide = false;
 
 #if 0
@@ -1183,6 +1220,7 @@ static void createCoins(int count) {
     #endif
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
+    LOGI("Coins creation finished");
 }
 
 static void updateFps(float dt) {
