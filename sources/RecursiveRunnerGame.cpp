@@ -229,13 +229,67 @@ void fumee(Entity building) {
     }
 }
 
+
+struct MultiPartTree {
+    Vector2 fullSize;
+    std::vector<Vector2> parts;
+
+    Vector2 partPosition(int partIndex) const {
+        Vector2 v = -Vector2(fullSize.X * 0.5, fullSize.Y) + parts[2*partIndex] + parts[2*partIndex + 1] * 0.5;
+        v.Y = -v.Y;
+        v.X /= fullSize.X; v.Y /= fullSize.Y;
+        return PlacementHelper::GimpSizeToScreen(fullSize) * v;
+    }
+    MultiPartTree(const Vector2& fs = Vector2::Zero) : fullSize(fs) {}
+};
+
+std::map<std::string, MultiPartTree> treeDefinition;
+
+void multipartTree(const std::string& baseName, const Vector2& pos, float z, Entity parent) {
+    const MultiPartTree& mpt = treeDefinition[baseName];
+    const Vector2 basePos(PlacementHelper::GimpXToScreen(pos.X), PlacementHelper::GimpYToScreen(pos.Y));
+    for (int i=0; i<mpt.parts.size() / 2; i++) {
+        std::stringstream name;
+        name << baseName << "_" << i;
+        Entity part = theEntityManager.CreateEntity();
+        ADD_COMPONENT(part, Transformation);
+        TRANSFORM(part)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(name.str()));
+        TRANSFORM(part)->position = basePos + mpt.partPosition(i);
+        TRANSFORM(part)->z = z;
+        TRANSFORM(part)->parent = parent;
+        ADD_COMPONENT(part, Rendering);
+        RENDERING(part)->texture = theRenderingSystem.loadTextureFile(name.str());
+        RENDERING(part)->hide = false;
+    }
+}
+
 void decor() {
+    treeDefinition["arbre5"] = MultiPartTree(Vector2(363, 351));
+    Vector2 v5[] = {Vector2(115, 326), Vector2(127, 25), Vector2(167, 249), Vector2(18, 77), Vector2::Zero, Vector2(363, 249)};
+    treeDefinition["arbre5"].parts.insert(treeDefinition["arbre5"].parts.end(), v5, v5 + 6);
+
+    treeDefinition["arbre4"] = MultiPartTree(Vector2(506,610));
+    Vector2 v4[] = {Vector2(143,579), Vector2(193,31), Vector2(217, 507), Vector2(42, 72),Vector2(183, 457),Vector2(167, 50), Vector2::Zero, Vector2(507, 457)};
+    treeDefinition["arbre4"].parts.insert(treeDefinition["arbre4"].parts.end(), v4, v4 + 8);
+
+    treeDefinition["arbre3"] = MultiPartTree(Vector2(450, 616));
+    Vector2 v3[] = {Vector2(125, 584), Vector2(193, 32), Vector2(191, 0), Vector2(43, 584),Vector2::Zero,Vector2(191,496), Vector2(234, 0), Vector2(216, 508)};
+    treeDefinition["arbre3"].parts.insert(treeDefinition["arbre3"].parts.end(), v3, v3 + 8);
+
+    treeDefinition["arbre2"] = MultiPartTree(Vector2(224, 431));
+    Vector2 v2[] = {Vector2(0, 401), Vector2(224, 30), Vector2(108, 243), Vector2(27, 158),Vector2(31, 0), Vector2(193, 243)};
+    treeDefinition["arbre2"].parts.insert(treeDefinition["arbre2"].parts.end(), v2, v2 + 6);
+
+    treeDefinition["arbre1"] = MultiPartTree(Vector2(371, 616));
+    Vector2 v1[] = {Vector2(109, 575), Vector2(181, 36), Vector2(181, 504), Vector2(33, 71),Vector2(0, 0), Vector2(371, 504)};
+    treeDefinition["arbre1"].parts.insert(treeDefinition["arbre1"].parts.end(), v1, v1 + 6);
+    
 	silhouette = theEntityManager.CreateEntity();
     ADD_COMPONENT(silhouette, Transformation);
     TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville")) * 4;
     // TRANSFORM(silhouette)->size.X *= 1.6;
     theTransformationSystem.setPosition(TRANSFORM(silhouette), Vector2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
-    TRANSFORM(silhouette)->z = 0.1;
+    TRANSFORM(silhouette)->z = 0.01;
     ADD_COMPONENT(silhouette, Rendering);
     RENDERING(silhouette)->texture = theRenderingSystem.loadTextureFile("silhouette_ville");
     RENDERING(silhouette)->hide = false;
@@ -305,21 +359,25 @@ void decor() {
     };
     for (int i=0; i<count; i++) {
     	const Decor& bdef = def[i];
-	    Entity b = theEntityManager.CreateEntity();
-	    ADD_COMPONENT(b, Transformation);
-	    TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
-	    theTransformationSystem.setPosition(TRANSFORM(b), Vector2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
-	    TRANSFORM(b)->z = bdef.z;
-        TRANSFORM(b)->parent = bdef.parent;
-	    ADD_COMPONENT(b, Rendering);
-	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
-	    RENDERING(b)->hide = false;
-	    RENDERING(b)->mirrorH = bdef.mirrorUV;
-	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
-	    decorEntities.push_back(b);
-     
-        if (i < 3) {
-            fumee(b);
+        if (0 && bdef.texture.find("arbre") == 0) {
+            multipartTree(bdef.texture, Vector2(bdef.x, bdef.y), bdef.z, bdef.parent);
+        } else {
+    	    Entity b = theEntityManager.CreateEntity();
+    	    ADD_COMPONENT(b, Transformation);
+    	    TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
+    	    theTransformationSystem.setPosition(TRANSFORM(b), Vector2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
+    	    TRANSFORM(b)->z = bdef.z;
+            TRANSFORM(b)->parent = bdef.parent;
+    	    ADD_COMPONENT(b, Rendering);
+    	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
+    	    RENDERING(b)->hide = false;
+    	    RENDERING(b)->mirrorH = bdef.mirrorUV;
+    	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
+    	    decorEntities.push_back(b);
+         
+            if (i < 3) {
+                fumee(b);
+            }
         }
 	}
 
@@ -652,7 +710,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
             break;
         }
     }
-    
+
     if (ADSR(titleGroup)->value == ADSR(titleGroup)->sustainValue) {
         if (theTouchInputManager.isTouched(0)) {
             gameTempVars.numPlayers = 1;

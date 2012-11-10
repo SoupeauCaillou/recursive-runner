@@ -106,7 +106,7 @@ public class RecursiveRunnerActivity extends SacActivity {
     protected void onCreate(Bundle savedInstanceState) {
 		Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
-
+ 
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
         playerNameInputView = findViewById(R.id.enter_name);
         rl.bringChildToFront(playerNameInputView);
@@ -116,7 +116,7 @@ public class RecursiveRunnerActivity extends SacActivity {
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
 
 	}
-	
+
 	public void preNameInputViewShow() {
 		SQLiteDatabase db = scoreOpenHelper.getReadableDatabase();
 		Cursor cursor = db
