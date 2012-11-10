@@ -723,7 +723,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
 }
 
 static void transitionMenuWaitingPlayers() {
-    LOGI("Change state");
+    LOGI("Change state: Menu -> WaitingPlayers");
 #ifdef SAC_NETWORK
     theNetworkSystem.deleteAllNonLocalEntities();
 #endif
@@ -780,7 +780,7 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
 }
 
 static void transitionWaitingPlayersPlaying() {
-    LOGI("Change state");
+    LOGI("Change state : WaitingPlayers -> Playing");
     // store a few entities to avoid permanent lookups
     gameTempVars.syncCoins();
     gameTempVars.syncRunners();
@@ -809,7 +809,7 @@ static GameState updatePlaying(float dt) {
         
         // If current runner has reached the edge of the screen
         if (RUNNER(gameTempVars.currentRunner[i])->finished) {
-            std::cout << gameTempVars.currentRunner[i] << " finished, add runner or end game" << std::endl;
+            LOGI("%lu finished, add runner or end game", gameTempVars.currentRunner[i]);
             CAM_TARGET(gameTempVars.currentRunner[i])->enabled = false;
             // return Runner control to master
             #ifdef SAC_NETWORK
@@ -824,7 +824,7 @@ static GameState updatePlaying(float dt) {
                 // resetGame();
                 return Menu;
             } else {
-                std::cout << "Create runner" << std::endl;
+                LOGI("Create runner");
                 // add a new one
                 gameTempVars.currentRunner[i] = addRunnerToPlayer(gameTempVars.players[i], PLAYER(gameTempVars.players[i]), i);
             }
@@ -1004,7 +1004,7 @@ static GameState updatePlaying(float dt) {
 }
 
 static void transitionPlayingMenu() {
-    LOGI("Change state");
+    LOGI("Change state : Playing -> Menu");
     setupCamera(CameraModeMenu);
     // Restore camera position
     for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
@@ -1021,6 +1021,7 @@ static void transitionPlayingMenu() {
 }
 
 void GameTempVar::cleanup() {
+    LOGI("Cleanup game vars begin");
     for (unsigned i=0; i<coins.size(); i++) {
         theEntityManager.DeleteEntity(coins[i]);
     }
@@ -1039,6 +1040,7 @@ void GameTempVar::cleanup() {
         runners[i].clear();
         theEntityManager.DeleteEntity(players[i]);
     }
+    LOGI("Cleanup game vars done");
 }
 
 void GameTempVar::syncRunners() {
@@ -1089,6 +1091,7 @@ static bool sortLeftToRight(Entity e, Entity f) {
 }
 
 static void createCoins(int count) {
+    LOGI("Coins creation started");
     std::vector<Entity> coins;
     float min = LEVEL_SIZE * PlacementHelper::ScreenWidth;
     for (int i=0; i<count; i++) {
@@ -1183,6 +1186,7 @@ static void createCoins(int count) {
     #endif
     
     RENDERING(goldCoin)->color = Color(0, 1, 0);
+    LOGI("Coins creation finished");
 }
 
 static void updateFps(float dt) {

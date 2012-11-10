@@ -36,7 +36,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	@Override
 	public boolean canShowAppRater() {
 		return false;
-	}   
+	}
 	@Override
 	public int[] getSwarmBoards() {
 		return RecursiveRunnerSecret.boardsSwarm;
@@ -101,7 +101,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	View playerNameInputView;
   
 	public SharedPreferences preferences;
-
+ 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
@@ -114,10 +114,11 @@ public class RecursiveRunnerActivity extends SacActivity {
 
         RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
-
+  
 	}
-
+ 
 	public void preNameInputViewShow() {
+		if (true) return;// à faire dans le UI thread
 		SQLiteDatabase db = scoreOpenHelper.getReadableDatabase();
 		Cursor cursor = db
 				.rawQuery(
