@@ -683,7 +683,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
         }
         case GameEnded: {
             //should test if its a good score
-            if (1) {
+            if (0) {
                 tmpNameInputAPI->show();
 				gameOverState = AskingPlayerName;
             } else {
