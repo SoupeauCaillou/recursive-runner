@@ -101,7 +101,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	View playerNameInputView;
   
 	public SharedPreferences preferences;
- 
+  
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);

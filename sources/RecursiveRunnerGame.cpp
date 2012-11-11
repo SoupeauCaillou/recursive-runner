@@ -171,8 +171,8 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015"};
 
     theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, Interval<int>(-1, -1));
-    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 20, Interval<int>(0, 0));
-    theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, Interval<int>(0, 0));
+    // theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 6, 20, Interval<int>(0, 0));
+    // theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[6], 2, 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 3, 30, Interval<int>(0, 0), "runL2R");
 
     std::string fumeeStart[] = {"fumee0", "fumee1", "fumee2", "fumee3", "fumee4", "fumee5" };
@@ -829,6 +829,7 @@ static void transitionWaitingPlayersMenu() {
     // bah
 }
 
+float yDownStart;
 static GameState updatePlaying(float dt) {
     gameTempVars.syncRunners();
 
@@ -863,7 +864,40 @@ static GameState updatePlaying(float dt) {
         }
 
         // Input (jump) handling
-        for (int j=0; j<2; j++) {
+        for (int j=0; j<1; j++) {
+            #if 0
+            PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
+            if (pc->gravity.Y >= 0) {
+                RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+                if (!theTouchInputManager.wasTouched(j)) {
+                    if (theTouchInputManager.isTouched(j) ) {
+                        //  && (rc->jumpingSince <= 0)
+                        yDownStart = theTouchInputManager.getTouchLastPosition(j).Y;
+                        rc->jumpTimes.push_back(rc->elapsed);
+                        rc->jumpDurations.push_back(0.016);
+                    }
+               } else {
+                    
+                    if (!theTouchInputManager.isTouched(j)) {
+                        float& ddd = *(rc->jumpDurations.rbegin());
+                        float yEnd = theTouchInputManager.getTouchLastPosition(j).Y;
+                        if (yEnd > yDownStart) {
+                            float d = 0.7 * (yEnd - yDownStart) / (PlacementHelper::ScreenHeight);
+                            d = MathUtil::Min(1.0f, d);
+                            std::cout << "Diff : " << d << std::endl;
+                            // rc->jumpTimes.push_back(rc->elapsed);
+                            ddd = MathUtil::Max(d * 
+                                (RunnerSystem::MaxJumpDuration - RunnerSystem::MinJumpDuration) +
+                                RunnerSystem::MinJumpDuration, ddd);
+                        }
+                    } else {
+                        float& d = *(rc->jumpDurations.rbegin());
+                        //d += dt;
+                        d = MathUtil::Min(d, RunnerSystem::MaxJumpDuration);
+                    }
+                }
+            }
+            #else
             if (theTouchInputManager.isTouched(j)) {
                 if (gameTempVars.numPlayers == 2) {
                     const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
@@ -883,13 +917,12 @@ static GameState updatePlaying(float dt) {
                         }
                     } else if (!rc->jumpTimes.empty()) {
                         float& d = *(rc->jumpDurations.rbegin());
-                        if (d < MaxJumpDuration) {
-                            d += dt;
-                        }
+                        d = MathUtil::Min(d + dt, RunnerSystem::MaxJumpDuration);
                     }
                 }
                 break;
             }
+            #endif
         }
 
         TransformationComponent* tc = TRANSFORM(gameTempVars.currentRunner[i]);
@@ -1138,7 +1171,7 @@ static void createCoins(int count) {
                     -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
                     LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth),
                 MathUtil::RandomFloatInRange(
-                    PlacementHelper::GimpYToScreen(650),
+                    PlacementHelper::GimpYToScreen(700),
                     PlacementHelper::GimpYToScreen(450)));
                     //-0.3 * PlacementHelper::ScreenHeight,
                     // -0.05 * PlacementHelper::ScreenHeight));
@@ -1273,7 +1306,8 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = Vector2(-9, 2);
-    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 3;//0.4,1);//0.572173, 0.815538);
+    // TRANSFORM(e)->size = Vector2(0.85, 2 * 0.85) * .8;//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;//0.4,1);//0.572173, 0.815538);
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);

@@ -51,4 +51,7 @@ struct RunnerComponent {
 #define RUNNER(e) theRunnerSystem.Get(e)
 
 UPDATABLE_SYSTEM(Runner)
+public:
+    static float MinJumpDuration;
+    static float MaxJumpDuration;
 };
