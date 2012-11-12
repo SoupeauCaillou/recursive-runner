@@ -88,7 +88,7 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 #ifdef SAC_NETWORK
 Entity networkUL, networkDL;
 #endif
-Entity scoreText[2], goldCoin, scorePanel, bestScore;
+Entity scoreText[2], scorePanel, bestScore;
 Entity titleGroup, title, subtitle;
 
 StorageAPI* tmpStorageAPI;
@@ -118,7 +118,7 @@ struct GameTempVar {
     unsigned numPlayers;
     bool isGameMaster;
     Entity currentRunner[2];
-    std::vector<Entity> runners[2], coins, players, links; 
+    std::vector<Entity> runners[2], coins, players, links, sparkling; 
 } gameTempVars;
 
 static GameState updateMenu(float dt);
@@ -1015,20 +1015,23 @@ static GameState updatePlaying(float dt) {
                         	int linkIdx = (rc->speed > 0) ? idx : end - idx;
                             if (rc->coins.back() == prev) {
                                 rc->coinSequenceBonus++;
-                                #if 0
+                                #if 1
                                 if (rc->speed > 0) {
                                 	for (int j=1; j<rc->coinSequenceBonus; j++) {
                                 		float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                		std::cout << "adding: " << t;
-                                		PARTICULE(gameTempVars.links[linkIdx - j + 1])->duration += t;
-                                		std::cout << " -> " << PARTICULE(gameTempVars.links[linkIdx - j + 1])->duration << std::endl;
-                                			
+                                		PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->duration += t;
+                                	    PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->initialColor = 
+                                        PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->finalColor =
+                                            Interval<Color>(rc->color, rc->color);
                                 	}
                                 } else {
                                 	for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                		PARTICULE(gameTempVars.links[linkIdx + j - 1])->duration += 
+                                		PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->duration += 
                                 			1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                	}
+                                	    PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->initialColor =
+                                        PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->finalColor =
+                                            Interval<Color>(rc->color, rc->color);
+                                    }
                                 }
                                 #endif
                                 
@@ -1037,7 +1040,7 @@ static GameState updatePlaying(float dt) {
                             }
                         }
                         rc->coins.push_back(coin);
-                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
+                        int gain = 10 * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
                         
                         //coins++ only for player, not his ghosts
@@ -1113,6 +1116,10 @@ void GameTempVar::cleanup() {
         theEntityManager.DeleteEntity(links.back());
         links.pop_back();
     }
+    while (!sparkling.empty()) {
+        theEntityManager.DeleteEntity(sparkling.back());
+        sparkling.pop_back();
+    }
 
     for (unsigned i=0; i<players.size(); i++) {
         runners[i].clear();
@@ -1149,6 +1156,7 @@ static bool sortFromLeftToRight(Entity c1, Entity c2) {
 }
 #define COIN_SCALE 3
 void GameTempVar::syncCoins() {
+    coins.clear();
     std::vector<Entity> t = theTransformationSystem.RetrieveAllEntityWithComponent();
     for (unsigned i=0; i<t.size(); i++) {
         //...
@@ -1171,7 +1179,6 @@ static bool sortLeftToRight(Entity e, Entity f) {
 static void createCoins(int count) {
     LOGI("Coins creation started");
     std::vector<Entity> coins;
-    float min = LEVEL_SIZE * PlacementHelper::ScreenWidth;
     for (int i=0; i<count; i++) {
         Entity e = theEntityManager.CreateEntity();
         ADD_COMPONENT(e, Transformation);
@@ -1203,15 +1210,24 @@ static void createCoins(int count) {
         // RENDERING(e)->cameraBitMask = (0x3 << 1);
         RENDERING(e)->hide = false;
         RENDERING(e)->color.a = 0;
-        if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
-            goldCoin = e;
-            min = MathUtil::Abs(TRANSFORM(e)->position.X);
-        }
         #ifdef SAC_NETWORK
         ADD_COMPONENT(e, Network);
         NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
         NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
         #endif
+        ADD_COMPONENT(e, Particule);
+        PARTICULE(e)->emissionRate = 150;
+         PARTICULE(e)->duration = 0.5;
+         PARTICULE(e)->lifetime = 0.1 * 1;
+         PARTICULE(e)->texture = InvalidTextureRef;
+         PARTICULE(e)->initialColor = Interval<Color>(Color(1, 1, 0, 1), Color(1, 0.8, 0, 1));
+         PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
+         PARTICULE(e)->initialSize = Interval<float>(0.1, 0.2);
+         PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
+         PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
+         PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
+         PARTICULE(e)->moment = Interval<float>(-5, 5);
+         PARTICULE(e)->mass = 0.1;
         coins.push_back(e);
     }
     #if 1
@@ -1244,28 +1260,40 @@ static void createCoins(int count) {
          RENDERING(link2)->color.a = 0;
          RENDERING(link2)->hide = false;
 
-#if 0
-        ADD_COMPONENT(link, Particule);
-        PARTICULE(link)->emissionRate = 300 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
-    	PARTICULE(link)->duration = 0;
-    	PARTICULE(link)->lifetime = 0.1;
-    	PARTICULE(link)->texture = InvalidTextureRef;
-    	PARTICULE(link)->initialColor = Interval<Color>(Color(1, 1, 0, 1), Color(1, 0.8, 0, 1));
-    	PARTICULE(link)->finalColor = PARTICULE(link)->initialColor;
-    	PARTICULE(link)->initialSize = Interval<float>(0.05, 0.1);
-    	PARTICULE(link)->finalSize = Interval<float>(0.05, 0.1);
-    	PARTICULE(link)->forceDirection = Interval<float> (0, 6.28);
-    	PARTICULE(link)->forceAmplitude = Interval<float>(5, 10);
-    	PARTICULE(link)->moment = Interval<float>(-5, 5);
-    	PARTICULE(link)->mass = 0.1;
+#if 1
+        Entity link3 = theEntityManager.CreateEntity();
+        ADD_COMPONENT(link3, Transformation);
+        TRANSFORM(link3)->parent = link;
+        TRANSFORM(link3)->position = Vector2(0, TRANSFORM(link)->size.Y * 0.4);
+        TRANSFORM(link3)->size = TRANSFORM(link)->size * Vector2(1, 0.1);
+        TRANSFORM(link3)->z = 0.2;
+        /*ADD_COMPONENT(link3, ADSR);
+        ADSR(link3)->idleValue = 0;
+        ADSR(link3)->attackValue = TRANSFORM(link3)->size.X;
+        ADSR(link3)->attackTiming = 0.5 * TRANSFORM(link3)->size.X;
+        ADSR(link3)->sustainValue = ADSR(link3)->attackValue;
+        ADSR(link3)->decayTiming = 0;
+        ADSR(link3)->releaseTiming = 0.1;*/
+        ADD_COMPONENT(link3, Particule);
+        PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
+    	PARTICULE(link3)->duration = 0;
+    	PARTICULE(link3)->lifetime = 0.1 * 1;
+    	PARTICULE(link3)->texture = InvalidTextureRef;
+    	PARTICULE(link3)->initialColor = Interval<Color>(Color(1, 1, 0, 1), Color(1, 0.8, 0, 1));
+    	PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
+    	PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
+    	PARTICULE(link3)->finalSize = Interval<float>(0.05, 0.1);
+    	PARTICULE(link3)->forceDirection = Interval<float> (0, 6.28);
+    	PARTICULE(link3)->forceAmplitude = Interval<float>(5 / 10, 10 / 10);
+    	PARTICULE(link3)->moment = Interval<float>(-5, 5);
+    	PARTICULE(link3)->mass = 0.01;
+        gameTempVars.sparkling.push_back(link3);
 #endif
     	previous = topI;
     	gameTempVars.links.push_back(link);
         gameTempVars.links.push_back(link2);
     }
     #endif
-    
-    RENDERING(goldCoin)->color = Color(0, 1, 0);
     LOGI("Coins creation finished");
 }
 
@@ -1294,6 +1322,9 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, con
     RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
     RENDERING(e)->color = color;
     RENDERING(e)->hide = false;
+    
+    PARTICULE(parent)->duration = 0.1;
+    PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
 #if 0
     ADD_COMPONENT(e, TextRendering);
     std::stringstream a;
