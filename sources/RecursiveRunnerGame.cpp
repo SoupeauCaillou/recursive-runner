@@ -375,6 +375,19 @@ void decor() {
     	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
     	    decorEntities.push_back(b);
          
+            if (bdef.texture.find("arbre1") == 0) {
+                 b = theEntityManager.CreateEntity();
+                 ADD_COMPONENT(b, Transformation);
+                 TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
+                 theTransformationSystem.setPosition(TRANSFORM(b), Vector2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
+                 TRANSFORM(b)->z = bdef.z - 0.01;
+                 TRANSFORM(b)->parent = bdef.parent;
+                 ADD_COMPONENT(b, Rendering);
+                 RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture + "_opaque");
+                 RENDERING(b)->hide = false;
+                 RENDERING(b)->mirrorH = bdef.mirrorUV;
+            }
+         
             if (i < 3) {
                 fumee(b);
             }
@@ -907,11 +920,11 @@ static GameState updatePlaying(float dt) {
                         continue;
                 }
                 PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-                if (pc->gravity.Y >= 0) {
+                if (true || pc->gravity.Y >= 0) {
                     RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
                     
                     if (!theTouchInputManager.wasTouched(j)) {
-                        if (rc->jumpingSince <= 0) {
+                        if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
                             rc->jumpTimes.push_back(rc->elapsed);
                             rc->jumpDurations.push_back(0.001);
                         }
@@ -1177,7 +1190,7 @@ static void createCoins(int count) {
                     // -0.05 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
            for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
-                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 0.5) {
+                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 1) {
                     notFarEnough = true;
                 }
            }

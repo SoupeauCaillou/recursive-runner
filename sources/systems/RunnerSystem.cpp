@@ -29,7 +29,7 @@ std::map<TextureRef, CollisionZone> texture2Collision;
 
 INSTANCE_IMPL(RunnerSystem);
  
-float RunnerSystem::MinJumpDuration = 0.001;
+float RunnerSystem::MinJumpDuration = 0.005;
 float RunnerSystem::MaxJumpDuration = 0.2;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") { 
@@ -130,10 +130,10 @@ void RunnerSystem::DoUpdate(float dt) {
         if (!rc->jumpTimes.empty() && rc->currentJump < (int)rc->jumpTimes.size()) {
             if ((rc->elapsed - rc->startTime)>= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {           
                 // std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
-                Vector2 force = Vector2(0, 1800);
-                pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), 0.008));
+                Vector2 force = Vector2(0, 1800 * 1.5);
+                pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), RunnerSystem::MinJumpDuration));
                 rc->jumpingSince = 0.001;
-                //pc->gravity.Y = -50;
+                pc->gravity.Y = -50;
                 ANIMATION(a)->name = "jumpL2R_up";
                 RENDERING(a)->mirrorH = (rc->speed < 0);
             } else {
@@ -144,9 +144,9 @@ void RunnerSystem::DoUpdate(float dt) {
                         pc->gravity.Y = -150;
                         rc->jumpingSince = 0;
                         rc->currentJump++;
-                    } else {
-                        Vector2 force = Vector2(0, 50);
-                        pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), 0.008));
+                        } else {
+                        Vector2 force = Vector2(0, 100 * 1);
+                        pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), dt));
                     }
                 }
             }
