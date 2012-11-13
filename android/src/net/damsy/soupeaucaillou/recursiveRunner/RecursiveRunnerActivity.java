@@ -116,7 +116,6 @@ public class RecursiveRunnerActivity extends SacActivity {
 
         RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
-  
 	}
  
 	public void preNameInputViewShow() {

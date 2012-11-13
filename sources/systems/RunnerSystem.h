@@ -24,10 +24,10 @@
 
 struct CollisionZone {
     CollisionZone(float x=0,float y=0,float w=0, float h=0, float r=0) {
-        size.X = w / 120.0; size.Y = h / 135.0;
-        position.X = x / 120.0 - 0.5 + size.X * 0.5;
-        position.Y = 0.5 - y / 135.0 - size.Y * 0.5;
-        rotation =r;
+        size.X = w / 200.0; size.Y = h / 210.0;
+        position.X = x / 200.0 - 0.5;// + size.X * 0.5;
+        position.Y = 0.5 - y / 210.0;// - size.Y * 0.5;
+        rotation = r;
     }
     Vector2 position, size;
     float rotation;

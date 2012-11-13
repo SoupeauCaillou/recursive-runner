@@ -167,18 +167,31 @@ class MouseNativeTouchState: public NativeTouchState {
 };
 
 #ifndef EMSCRIPTEN
+float gameSpeedFactor = 1.0;
 void GLFWCALL myCharCallback( int c, int action ) {
-	if (globalFTW == 0)
-		return;
+	if (globalFTW == 0) {
+     
+    } else {
+    	if (!TEXT_RENDERING(globalFTW)->hide) {
+    		if (action == GLFW_PRESS && (isalnum(c) || c == ' ')) {
+    			if (TEXT_RENDERING(globalFTW)->text.length() > 10)
+    				return;
+    			// filter out all unsupported keystrokes
+    			TEXT_RENDERING(globalFTW)->text.push_back((char)c);
+    		}
+    	}
+    }
+}
 
-	if (!TEXT_RENDERING(globalFTW)->hide) {
-		if (action == GLFW_PRESS && (isalnum(c) || c == ' ')) {
-			if (TEXT_RENDERING(globalFTW)->text.length() > 10)
-				return;
-			// filter out all unsupported keystrokes
-			TEXT_RENDERING(globalFTW)->text.push_back((char)c);
-		}
-	}
+void GLFWCALL myKeyCallback( int key, int action ) {
+    if (action == GLFW_RELEASE && key == GLFW_KEY_F6) {
+        gameSpeedFactor = MathUtil::Min(gameSpeedFactor + 0.1f, 3.0f);
+        std::cout << "Game speed: " << gameSpeedFactor << std::endl;
+    }
+    else if (action == GLFW_RELEASE && key == GLFW_KEY_F5) {
+        gameSpeedFactor = MathUtil::Max(gameSpeedFactor - 0.1f, 0.0f);
+        std::cout << "Game speed: " << gameSpeedFactor << std::endl;
+    }
 }
 
 static void updateAndRenderLoop() {
@@ -209,7 +222,7 @@ static void updateAndRenderLoop() {
 		time = TimeUtil::getTime();
 		while (dtAccumuled >= DT){
 			dtAccumuled -= DT;
-			game->tick(DT * 1);
+			game->tick(DT * gameSpeedFactor);
 			running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 			bool focus = glfwGetWindowParam(GLFW_ACTIVE);
 			if (focus) {
@@ -381,6 +394,7 @@ int main(int argc, char** argv) {
     setlocale( LC_ALL, "" );
 	loc->init();
 	glfwSetCharCallback(myCharCallback);
+    glfwSetKeyCallback(myKeyCallback);
 #endif
 
 	Color green = Color(3.0/255.0, 99.0/255, 71.0/255);
