@@ -342,11 +342,11 @@ void decor() {
 		Decor(1162, 792, 0.5, TransformationSystem::S, "arbre4", false, trees),
 		Decor(1418, 790, 0.45, TransformationSystem::S, "arbre2", false, trees),
 		Decor(1600, 768, 0.42, TransformationSystem::S, "arbre1", false, trees),
-		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4", false, trees),
+		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4", true, trees),
 		Decor(2396, 774, 0.44, TransformationSystem::S, "arbre5", false, trees),
 		Decor(2684, 784, 0.45, TransformationSystem::S, "arbre3", false, trees),
 		Decor(3022, 764, 0.42, TransformationSystem::S, "arbre1", false, trees),
-		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1", false, trees),
+		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1", true, trees),
 		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2", false, trees),
 		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4", false, trees),
 		// benchs
@@ -1005,21 +1005,23 @@ static GameState updatePlaying(float dt) {
                             if (rc->coins.back() == prev) {
                                 rc->coinSequenceBonus++;
                                 #if 1
-                                if (rc->speed > 0) {
-                                	for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                		float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                		PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->duration += t;
-                                	    PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->initialColor = 
-                                        PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->finalColor =
-                                            Interval<Color>(rc->color, rc->color);
-                                	}
-                                } else {
-                                	for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                		PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->duration += 
-                                			1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                	    PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->initialColor =
-                                        PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->finalColor =
-                                            Interval<Color>(rc->color, rc->color);
+                                if (!rc->ghost) {
+                                    if (rc->speed > 0) {
+                                    	for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                    		float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                    		PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->duration += t;
+                                    	    /*PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->initialColor = 
+                                            PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->finalColor =
+                                                Interval<Color>(rc->color, rc->color);*/
+                                    	}
+                                    } else {
+                                    	for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                    		PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->duration += 
+                                    			1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                    	    /*PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->initialColor =
+                                            PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->finalColor =
+                                                Interval<Color>(rc->color, rc->color);*/
+                                        }
                                     }
                                 }
                                 #endif
@@ -1204,10 +1206,10 @@ static void createCoins(int count) {
         #endif
         ADD_COMPONENT(e, Particule);
         PARTICULE(e)->emissionRate = 150;
-         PARTICULE(e)->duration = 0.5;
+         PARTICULE(e)->duration = 0;
          PARTICULE(e)->lifetime = 0.1 * 1;
          PARTICULE(e)->texture = InvalidTextureRef;
-         PARTICULE(e)->initialColor = Interval<Color>(Color(1, 1, 0, 1), Color(1, 0.8, 0, 1));
+         PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
          PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
          PARTICULE(e)->initialSize = Interval<float>(0.1, 0.2);
          PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
@@ -1266,7 +1268,7 @@ static void createCoins(int count) {
     	PARTICULE(link3)->duration = 0;
     	PARTICULE(link3)->lifetime = 0.1 * 1;
     	PARTICULE(link3)->texture = InvalidTextureRef;
-    	PARTICULE(link3)->initialColor = Interval<Color>(Color(1, 1, 0, 1), Color(1, 0.8, 0, 1));
+    	PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
     	PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
     	PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
     	PARTICULE(link3)->finalSize = Interval<float>(0.01, 0.03);
