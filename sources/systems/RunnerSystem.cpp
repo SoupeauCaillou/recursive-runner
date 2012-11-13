@@ -139,9 +139,10 @@ void RunnerSystem::DoUpdate(float dt) {
             } else {
                 if (rc->jumpingSince > 0) {
                     rc->jumpingSince += dt;
-                    if (rc->jumpingSince > rc->jumpDurations[rc->currentJump] && rc->jumpingSince >= MinJumpDuration) {
-                        // ANIMATION(a)->name = (rc->speed > 0) ? "jumpL2R_down" : "jumpR2L_down";
-                        pc->gravity.Y = -150;
+                    if (rc->jumpingSince > rc->jumpDurations[rc->currentJump]) {// && rc->jumpingSince >= MinJumpDuration) {
+                        if (!rc->ghost) std::cout << "Jump finished (" << rc->jumpDurations[rc->currentJump] << ")" << std::endl;
+                        // NIMATION(a)->name = (rc->speed > 0) ? "jumpL2R_down" : "jumpR2L_down";
+                        pc->gravity.Y = -250;
                         rc->jumpingSince = 0;
                         rc->currentJump++;
                         } else {
