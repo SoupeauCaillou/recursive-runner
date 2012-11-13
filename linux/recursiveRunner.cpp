@@ -189,7 +189,7 @@ void GLFWCALL myKeyCallback( int key, int action ) {
         std::cout << "Game speed: " << gameSpeedFactor << std::endl;
     }
     else if (action == GLFW_RELEASE && key == GLFW_KEY_F5) {
-        gameSpeedFactor = MathUtil::Max(gameSpeedFactor - 0.1f, 0.1f);
+        gameSpeedFactor = MathUtil::Max(gameSpeedFactor - 0.1f, 0.0f);
         std::cout << "Game speed: " << gameSpeedFactor << std::endl;
     }
 }
