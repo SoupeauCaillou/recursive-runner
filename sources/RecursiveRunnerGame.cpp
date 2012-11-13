@@ -88,8 +88,8 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 #ifdef SAC_NETWORK
 Entity networkUL, networkDL;
 #endif
-Entity scoreText[2], goldCoin, scorePanel, bestScore;
-Entity titleGroup, title, subtitle;
+Entity scoreText[2], scorePanel, bestScore;
+Entity titleGroup, title, subtitle, subtitleText;
 
 StorageAPI* tmpStorageAPI;
 NameInputAPI* tmpNameInputAPI;
@@ -118,7 +118,7 @@ struct GameTempVar {
     unsigned numPlayers;
     bool isGameMaster;
     Entity currentRunner[2];
-    std::vector<Entity> runners[2], coins, players, links; 
+    std::vector<Entity> runners[2], coins, players, links, sparkling; 
 } gameTempVars;
 
 static GameState updateMenu(float dt);
@@ -342,11 +342,11 @@ void decor() {
 		Decor(1162, 792, 0.5, TransformationSystem::S, "arbre4", false, trees),
 		Decor(1418, 790, 0.45, TransformationSystem::S, "arbre2", false, trees),
 		Decor(1600, 768, 0.42, TransformationSystem::S, "arbre1", false, trees),
-		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4", false, trees),
+		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4", true, trees),
 		Decor(2396, 774, 0.44, TransformationSystem::S, "arbre5", false, trees),
 		Decor(2684, 784, 0.45, TransformationSystem::S, "arbre3", false, trees),
 		Decor(3022, 764, 0.42, TransformationSystem::S, "arbre1", false, trees),
-		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1", false, trees),
+		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1", true, trees),
 		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2", false, trees),
 		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4", false, trees),
 		// benchs
@@ -372,10 +372,11 @@ void decor() {
     	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
     	    RENDERING(b)->hide = false;
     	    RENDERING(b)->mirrorH = bdef.mirrorUV;
+         
     	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
     	    decorEntities.push_back(b);
          
-            if (bdef.texture.find("arbre1") == 0) {
+            if (0 && bdef.texture.find("arbre1") == 0) {
                  b = theEntityManager.CreateEntity();
                  ADD_COMPONENT(b, Transformation);
                  TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
@@ -449,12 +450,29 @@ void decor() {
     ADD_COMPONENT(subtitle, Transformation);
     TRANSFORM(subtitle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
     TRANSFORM(subtitle)->parent = titleGroup;
-    TRANSFORM(subtitle)->position = Vector2(-PlacementHelper::GimpHeightToScreen(10), -PlacementHelper::GimpHeightToScreen(150));
-    TRANSFORM(subtitle)->z = 0.1;
+    TRANSFORM(subtitle)->position = Vector2(-PlacementHelper::GimpWidthToScreen(0), -PlacementHelper::GimpHeightToScreen(150));
+    TRANSFORM(subtitle)->z = -0.1;
     ADD_COMPONENT(subtitle, Rendering);
     RENDERING(subtitle)->texture = theRenderingSystem.loadTextureFile("taptostart");
     RENDERING(subtitle)->hide = false;
     RENDERING(subtitle)->cameraBitMask = 0x1;
+    ADD_COMPONENT(subtitle, ADSR);
+    ADSR(subtitle)->idleValue = 0;
+    ADSR(subtitle)->sustainValue = -PlacementHelper::GimpHeightToScreen(150);
+    ADSR(subtitle)->attackValue = -PlacementHelper::GimpHeightToScreen(150);
+    ADSR(subtitle)->attackTiming = 2;
+    ADSR(subtitle)->decayTiming = 0.1;
+    ADSR(subtitle)->releaseTiming = 1;
+    subtitleText = theEntityManager.CreateEntity();
+    ADD_COMPONENT(subtitleText, Transformation);
+    TRANSFORM(subtitleText)->parent = subtitle;
+    TRANSFORM(subtitleText)->position = Vector2(0, -PlacementHelper::GimpHeightToScreen(25));
+    ADD_COMPONENT(subtitleText, TextRendering);
+    TEXT_RENDERING(subtitleText)->text = "Tap screen to start";
+    TEXT_RENDERING(subtitleText)->charHeight = PlacementHelper::GimpHeightToScreen(45);
+    TEXT_RENDERING(subtitleText)->hide = false;
+    TEXT_RENDERING(subtitleText)->cameraBitMask = 0x1;
+    TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
@@ -607,6 +625,7 @@ void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 void RecursiveRunnerGame::tick(float dt) {
 	theTouchInputManager.Update(dt);
     TRANSFORM(titleGroup)->position.Y = ADSR(titleGroup)->value;
+    TRANSFORM(subtitle)->position.Y = ADSR(subtitle)->value;
     GameState next;
     switch(gameState) {
         case Menu:
@@ -682,7 +701,7 @@ static void updateBestScore() {
     std::vector<StorageAPI::Score> scores = tmpStorageAPI->getScores(f);
     if (!scores.empty()) {
         std::stringstream best;
-        best << scores[0].points;
+        best << "Best: " << scores[0].points;
         TEXT_RENDERING(bestScore)->text = best.str();
     } else {
         LOGW("No best score found (?!)");
@@ -715,9 +734,12 @@ static GameState updateMenu(float dt __attribute__((unused))) {
                 tmpNameInputAPI->show();
 				gameOverState = AskingPlayerName;
             } else {
+                std::stringstream a;
+                a << PLAYER(gameTempVars.players[0])->score << " points - tap screen to restart";
+                TEXT_RENDERING(subtitleText)->text = a.str();
 				gameOverState = NoGame;
                 tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, "rzehtrtyBg"));
-                
+                updateBestScore();
             }
         }
         case AskingPlayerName: {
@@ -744,7 +766,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
         if (theTouchInputManager.isTouched(0)) {
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
-            ADSR(titleGroup)->active = false;
+            ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
             return WaitingPlayers;
         }
     }
@@ -880,33 +902,24 @@ static GameState updatePlaying(float dt) {
         for (int j=0; j<1; j++) {
             #if 0
             PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-            if (pc->gravity.Y >= 0) {
-                RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
-                if (!theTouchInputManager.wasTouched(j)) {
-                    if (theTouchInputManager.isTouched(j) ) {
-                        //  && (rc->jumpingSince <= 0)
-                        yDownStart = theTouchInputManager.getTouchLastPosition(j).Y;
-                        rc->jumpTimes.push_back(rc->elapsed);
-                        rc->jumpDurations.push_back(0.016);
-                    }
-               } else {
-                    
-                    if (!theTouchInputManager.isTouched(j)) {
-                        float& ddd = *(rc->jumpDurations.rbegin());
-                        float yEnd = theTouchInputManager.getTouchLastPosition(j).Y;
-                        if (yEnd > yDownStart) {
-                            float d = 0.7 * (yEnd - yDownStart) / (PlacementHelper::ScreenHeight);
-                            d = MathUtil::Min(1.0f, d);
-                            std::cout << "Diff : " << d << std::endl;
-                            // rc->jumpTimes.push_back(rc->elapsed);
-                            ddd = MathUtil::Max(d * 
-                                (RunnerSystem::MaxJumpDuration - RunnerSystem::MinJumpDuration) +
-                                RunnerSystem::MinJumpDuration, ddd);
-                        }
+            RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+            if (!theTouchInputManager.wasTouched(j)) {
+                if (theTouchInputManager.isTouched(j) && pc->linearVelocity.Y == 0) {
+                    std::cout << "Start jump" << std::endl;
+                    yDownStart = theTouchInputManager.getTouchLastPosition(j).Y;
+                    rc->jumpTimes.push_back(rc->elapsed);
+                    rc->jumpDurations.push_back(dt + 0.001);
+                }
+           } else {
+                if (theTouchInputManager.isTouched(j) && pc->linearVelocity.Y > 0) {
+                    float& ddd = *(rc->jumpDurations.rbegin());
+                    float yEnd = theTouchInputManager.getTouchLastPosition(j).Y;
+                    if (yEnd > yDownStart) {
+                        float t = MathUtil::Min(1.5f * (yEnd - yDownStart) / (PlacementHelper::ScreenHeight * 0.5f), 1.0f);
+                        ddd = (RunnerSystem::MaxJumpDuration - RunnerSystem::MinJumpDuration) * t + RunnerSystem::MinJumpDuration;
+                        std::cout << "add time : " << ddd << "( " << t << ")" << std::endl;
                     } else {
-                        float& d = *(rc->jumpDurations.rbegin());
-                        //d += dt;
-                        d = MathUtil::Min(d, RunnerSystem::MaxJumpDuration);
+                        std::cout << "no diff" << std::endl;
                     }
                 }
             }
@@ -920,18 +933,15 @@ static GameState updatePlaying(float dt) {
                         continue;
                 }
                 PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-                if (true || pc->gravity.Y >= 0) {
-                    RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
-                    
-                    if (!theTouchInputManager.wasTouched(j)) {
-                        if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
-                            rc->jumpTimes.push_back(rc->elapsed);
-                            rc->jumpDurations.push_back(0.001);
-                        }
-                    } else if (!rc->jumpTimes.empty()) {
-                        float& d = *(rc->jumpDurations.rbegin());
-                        d = MathUtil::Min(d + dt, RunnerSystem::MaxJumpDuration);
+                RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+                if (!theTouchInputManager.wasTouched(j)) {
+                    if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
+                        rc->jumpTimes.push_back(rc->elapsed);
+                        rc->jumpDurations.push_back(0.001);
                     }
+                } else if (!rc->jumpTimes.empty()) {
+                    float& d = *(rc->jumpDurations.rbegin());
+                    d = MathUtil::Min(d + dt, RunnerSystem::MaxJumpDuration);
                 }
                 break;
             }
@@ -1015,20 +1025,25 @@ static GameState updatePlaying(float dt) {
                         	int linkIdx = (rc->speed > 0) ? idx : end - idx;
                             if (rc->coins.back() == prev) {
                                 rc->coinSequenceBonus++;
-                                #if 0
-                                if (rc->speed > 0) {
-                                	for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                		float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                		std::cout << "adding: " << t;
-                                		PARTICULE(gameTempVars.links[linkIdx - j + 1])->duration += t;
-                                		std::cout << " -> " << PARTICULE(gameTempVars.links[linkIdx - j + 1])->duration << std::endl;
-                                			
-                                	}
-                                } else {
-                                	for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                		PARTICULE(gameTempVars.links[linkIdx + j - 1])->duration += 
-                                			1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                	}
+                                #if 1
+                                if (!rc->ghost) {
+                                    if (rc->speed > 0) {
+                                    	for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                    		float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                    		PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->duration += t;
+                                    	    /*PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->initialColor = 
+                                            PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->finalColor =
+                                                Interval<Color>(rc->color, rc->color);*/
+                                    	}
+                                    } else {
+                                    	for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                    		PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->duration += 
+                                    			1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                    	    /*PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->initialColor =
+                                            PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->finalColor =
+                                                Interval<Color>(rc->color, rc->color);*/
+                                        }
+                                    }
                                 }
                                 #endif
                                 
@@ -1037,7 +1052,7 @@ static GameState updatePlaying(float dt) {
                             }
                         }
                         rc->coins.push_back(coin);
-                        int gain = ((coin == goldCoin) ? 30 : 10) * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
+                        int gain = 10 * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
                         
                         //coins++ only for player, not his ghosts
@@ -1095,11 +1110,10 @@ static void transitionPlayingMenu() {
 
     // TEXT_RENDERING(scoreText)->hide = false;
     updateBestScore();
-    ADSR(titleGroup)->active = true;
+    ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
 }
 
 void GameTempVar::cleanup() {
-    LOGI("Cleanup game vars begin");
     for (unsigned i=0; i<coins.size(); i++) {
         theEntityManager.DeleteEntity(coins[i]);
     }
@@ -1113,12 +1127,15 @@ void GameTempVar::cleanup() {
         theEntityManager.DeleteEntity(links.back());
         links.pop_back();
     }
+    while (!sparkling.empty()) {
+        theEntityManager.DeleteEntity(sparkling.back());
+        sparkling.pop_back();
+    }
 
     for (unsigned i=0; i<players.size(); i++) {
         runners[i].clear();
         theEntityManager.DeleteEntity(players[i]);
     }
-    LOGI("Cleanup game vars done");
 }
 
 void GameTempVar::syncRunners() {
@@ -1149,6 +1166,7 @@ static bool sortFromLeftToRight(Entity c1, Entity c2) {
 }
 #define COIN_SCALE 3
 void GameTempVar::syncCoins() {
+    coins.clear();
     std::vector<Entity> t = theTransformationSystem.RetrieveAllEntityWithComponent();
     for (unsigned i=0; i<t.size(); i++) {
         //...
@@ -1171,7 +1189,6 @@ static bool sortLeftToRight(Entity e, Entity f) {
 static void createCoins(int count) {
     LOGI("Coins creation started");
     std::vector<Entity> coins;
-    float min = LEVEL_SIZE * PlacementHelper::ScreenWidth;
     for (int i=0; i<count; i++) {
         Entity e = theEntityManager.CreateEntity();
         ADD_COMPONENT(e, Transformation);
@@ -1203,15 +1220,24 @@ static void createCoins(int count) {
         // RENDERING(e)->cameraBitMask = (0x3 << 1);
         RENDERING(e)->hide = false;
         RENDERING(e)->color.a = 0;
-        if (MathUtil::Abs(TRANSFORM(e)->position.X) < min) {
-            goldCoin = e;
-            min = MathUtil::Abs(TRANSFORM(e)->position.X);
-        }
         #ifdef SAC_NETWORK
         ADD_COMPONENT(e, Network);
         NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
         NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
         #endif
+        ADD_COMPONENT(e, Particule);
+        PARTICULE(e)->emissionRate = 150;
+         PARTICULE(e)->duration = 0;
+         PARTICULE(e)->lifetime = 0.1 * 1;
+         PARTICULE(e)->texture = InvalidTextureRef;
+         PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
+         PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
+         PARTICULE(e)->initialSize = Interval<float>(0.1, 0.2);
+         PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
+         PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
+         PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
+         PARTICULE(e)->moment = Interval<float>(-5, 5);
+         PARTICULE(e)->mass = 0.1;
         coins.push_back(e);
     }
     #if 1
@@ -1244,28 +1270,33 @@ static void createCoins(int count) {
          RENDERING(link2)->color.a = 0;
          RENDERING(link2)->hide = false;
 
-#if 0
-        ADD_COMPONENT(link, Particule);
-        PARTICULE(link)->emissionRate = 300 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
-    	PARTICULE(link)->duration = 0;
-    	PARTICULE(link)->lifetime = 0.1;
-    	PARTICULE(link)->texture = InvalidTextureRef;
-    	PARTICULE(link)->initialColor = Interval<Color>(Color(1, 1, 0, 1), Color(1, 0.8, 0, 1));
-    	PARTICULE(link)->finalColor = PARTICULE(link)->initialColor;
-    	PARTICULE(link)->initialSize = Interval<float>(0.05, 0.1);
-    	PARTICULE(link)->finalSize = Interval<float>(0.05, 0.1);
-    	PARTICULE(link)->forceDirection = Interval<float> (0, 6.28);
-    	PARTICULE(link)->forceAmplitude = Interval<float>(5, 10);
-    	PARTICULE(link)->moment = Interval<float>(-5, 5);
-    	PARTICULE(link)->mass = 0.1;
+#if 1
+        Entity link3 = theEntityManager.CreateEntity();
+        ADD_COMPONENT(link3, Transformation);
+        TRANSFORM(link3)->parent = link;
+        TRANSFORM(link3)->position = Vector2(0, TRANSFORM(link)->size.Y * 0.4);
+        TRANSFORM(link3)->size = TRANSFORM(link)->size * Vector2(1, 0.1);
+        TRANSFORM(link3)->z = 0.2;
+        ADD_COMPONENT(link3, Particule);
+        PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
+    	PARTICULE(link3)->duration = 0;
+    	PARTICULE(link3)->lifetime = 0.1 * 1;
+    	PARTICULE(link3)->texture = InvalidTextureRef;
+    	PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
+    	PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
+    	PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
+    	PARTICULE(link3)->finalSize = Interval<float>(0.01, 0.03);
+    	PARTICULE(link3)->forceDirection = Interval<float> (0, 6.28);
+    	PARTICULE(link3)->forceAmplitude = Interval<float>(5 / 10, 10 / 10);
+    	PARTICULE(link3)->moment = Interval<float>(-5, 5);
+    	PARTICULE(link3)->mass = 0.01;
+        gameTempVars.sparkling.push_back(link3);
 #endif
     	previous = topI;
     	gameTempVars.links.push_back(link);
         gameTempVars.links.push_back(link2);
     }
     #endif
-    
-    RENDERING(goldCoin)->color = Color(0, 1, 0);
     LOGI("Coins creation finished");
 }
 
@@ -1294,6 +1325,9 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, con
     RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
     RENDERING(e)->color = color;
     RENDERING(e)->hide = false;
+    
+    PARTICULE(parent)->duration = 0.1;
+    PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
 #if 0
     ADD_COMPONENT(e, TextRendering);
     std::stringstream a;
@@ -1341,6 +1375,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RUNNER(e)->playerOwner = player;
     do {
         Color c = Color::random();
+        c.a = 1;
         float sum = c.r + c.b + c.g;
         if (sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) {
             RUNNER(e)->color = c;

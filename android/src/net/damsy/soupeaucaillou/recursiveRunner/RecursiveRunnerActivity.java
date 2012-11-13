@@ -18,6 +18,8 @@
 */
 package net.damsy.soupeaucaillou.recursiveRunner;
 
+import com.swarmconnect.Swarm;
+
 import net.damsy.soupeaucaillou.SacActivity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -28,7 +30,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-
+ 
 public class RecursiveRunnerActivity extends SacActivity {
 	static {
         System.loadLibrary("recursiveRunner");
@@ -80,7 +82,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public Button getNameInputButton() {
 		return (Button)findViewById(R.id.name_save);
 	}
-	@Override
+	@Override 
 	public EditText getNameInputEdit() {
 		return (EditText)findViewById(R.id.player_name_input);
 	}
@@ -101,7 +103,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	View playerNameInputView;
   
 	public SharedPreferences preferences;
-  
+   
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);

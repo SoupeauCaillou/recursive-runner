@@ -2,13 +2,15 @@ package net.damsy.soupeaucaillou.recursiveRunner.api;
 
 import net.damsy.soupeaucaillou.SacJNILib;
 import net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity;
-
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.swarmconnect.Swarm;
+import com.swarmconnect.SwarmLeaderboard;
 
 public class StorageAPI {
 	// -------------------------------------------------------------------------
@@ -27,6 +29,29 @@ public class StorageAPI {
 
 		Log.i("Sac", "Submitted score: " + points + ", coins: " + coins);
 		// db.close();
+		// submit to Swarm
+		if (Swarm.isEnabled() && Swarm.isInitialized() && Swarm.isOnline()) {
+			SwarmLeaderboard.GotLeaderboardCB callback = new SwarmLeaderboard.GotLeaderboardCB() {
+				@Override
+				public void gotLeaderboard(final SwarmLeaderboard leaderboard) {
+					if (leaderboard != null) {
+						Log.i("Sac", "Got leaderboard");
+						Log.i("Sac", "Submit: " + points + " to ldb '" + leaderboard.name + "'");
+						leaderboard.submitScore(points, null, new SwarmLeaderboard.SubmitScoreCB() {
+							@Override
+							public void scoreSubmitted(int arg0) {
+								Log.i("Sac", "Score submitted result : " + arg0);
+							}
+						});
+					}
+				}
+			};
+			SwarmLeaderboard.getLeaderboardById(SacJNILib.activity.getSwarmBoards()[0], callback);
+		} else {
+			Log.i("sac", "Swarm is enabled: " + Swarm.isEnabled());
+			Log.i("sac", "Swarm is initialized: " + Swarm.isInitialized());
+			Log.i("sac", "Swarm is online: " + Swarm.isOnline());
+		}
 	} 
 
 	static public int getScores(int[] points,

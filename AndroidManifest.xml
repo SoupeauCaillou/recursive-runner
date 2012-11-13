@@ -29,11 +29,11 @@
             </intent-filter>
         </activity>
 
-		<activity android:name="com.swarmconnect.SwarmMainActivity"
-				android:configChanges="orientation|keyboardHidden"
-				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-				android:windowSoftInputMode="stateHidden" />
-		<service android:name="com.swarmconnect.NotificationService" android:process=":swarm"/>
+<activity android:name="com.swarmconnect.SwarmMainActivity"
+    android:configChanges="orientation|keyboardHidden"
+    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+    android:windowSoftInputMode="stateHidden" />
+<service android:name="com.swarmconnect.NotificationService" android:process=":swarm"/>
 
 		<activity android:name="com.chartboost.sdk.CBDialogActivity"
 				android:configChanges="orientation|keyboard|keyboardHidden"

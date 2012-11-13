@@ -110,7 +110,7 @@ void RunnerSystem::DoUpdate(float dt) {
 
             if ((tc->position.X > rc->endPoint.X && rc->speed > 0) || 
                 (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
-                 std::cout << a << " finished! (" << rc->coins.size() << ")" << std::endl;
+                // std::cout << a << " finished! (" << rc->coins.size() << ")" << std::endl;
                 rc->finished = true;
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
@@ -139,9 +139,9 @@ void RunnerSystem::DoUpdate(float dt) {
             } else {
                 if (rc->jumpingSince > 0) {
                     rc->jumpingSince += dt;
-                    if (rc->jumpingSince > rc->jumpDurations[rc->currentJump] && rc->jumpingSince >= MinJumpDuration) {
-                        // ANIMATION(a)->name = (rc->speed > 0) ? "jumpL2R_down" : "jumpR2L_down";
-                        pc->gravity.Y = -150;
+                    if (rc->jumpingSince > rc->jumpDurations[rc->currentJump]) {// && rc->jumpingSince >= MinJumpDuration) {
+                        // NIMATION(a)->name = (rc->speed > 0) ? "jumpL2R_down" : "jumpR2L_down";
+                        pc->gravity.Y = -250;
                         rc->jumpingSince = 0;
                         rc->currentJump++;
                         } else {
@@ -167,7 +167,6 @@ void RunnerSystem::DoUpdate(float dt) {
                 if (b == a)
                     continue;
                 if (bonus < rc->oldNessBonus) {
-                    std::cout << rc->oldNessBonus << " - " << killedRunners.size() << std::endl;
                     rc->oldNessBonus--;
                     assert(rc->oldNessBonus >= 0);
                 }
