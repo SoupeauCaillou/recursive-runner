@@ -63,6 +63,8 @@
 #include "base/Profiler.h"
 
 #include "../sac/util/Recorder.h"
+#include <pthread.h>
+#include <signal.h>
 
 #ifndef EMSCRIPTEN
 #include <locale.h>
@@ -272,12 +274,17 @@ static void updateAndRenderLoop() {
 			}
 		}
 
-		theRenderingSystem.render();
-		glfwSwapBuffers();
+		//theRenderingSystem.render();
+		//glfwSwapBuffers();
 		// 
-		record->record();
+		//record->record();
 	}
 	glfwTerminate();
+}
+
+static void* callback_thread(void *obj){
+	updateAndRenderLoop();
+	pthread_exit (0);	
 }
 
 #else
@@ -428,7 +435,14 @@ int main(int argc, char** argv) {
 
 #ifndef EMSCRIPTEN
 	record = new Recorder(reso->X, reso->Y);
-	updateAndRenderLoop();
+	pthread_t th1;
+	pthread_create (&th1, NULL, callback_thread, NULL);
+	while (pthread_kill(th1, 0) == 0)
+	{
+		theRenderingSystem.render();
+		glfwSwapBuffers();
+		record->record();
+	}
 #else
 	emscripten_set_main_loop(updateAndRender, 60);
 #endif
