@@ -2,7 +2,7 @@
 
 namespace param {
 	//nombre d'aller-retour (defaut = 10)
-	const int runner = 10; 
+	const int runner = 2; 
 	
 	//vitesse de base (defaut = 0.7)
 	const float speedConst = 1.1; //0.8;

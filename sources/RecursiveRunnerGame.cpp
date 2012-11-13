@@ -89,7 +89,7 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 Entity networkUL, networkDL;
 #endif
 Entity scoreText[2], scorePanel, bestScore;
-Entity titleGroup, title, subtitle;
+Entity titleGroup, title, subtitle, subtitleText;
 
 StorageAPI* tmpStorageAPI;
 NameInputAPI* tmpNameInputAPI;
@@ -450,12 +450,29 @@ void decor() {
     ADD_COMPONENT(subtitle, Transformation);
     TRANSFORM(subtitle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
     TRANSFORM(subtitle)->parent = titleGroup;
-    TRANSFORM(subtitle)->position = Vector2(-PlacementHelper::GimpHeightToScreen(10), -PlacementHelper::GimpHeightToScreen(150));
-    TRANSFORM(subtitle)->z = 0.1;
+    TRANSFORM(subtitle)->position = Vector2(-PlacementHelper::GimpWidthToScreen(0), -PlacementHelper::GimpHeightToScreen(150));
+    TRANSFORM(subtitle)->z = -0.1;
     ADD_COMPONENT(subtitle, Rendering);
     RENDERING(subtitle)->texture = theRenderingSystem.loadTextureFile("taptostart");
     RENDERING(subtitle)->hide = false;
     RENDERING(subtitle)->cameraBitMask = 0x1;
+    ADD_COMPONENT(subtitle, ADSR);
+    ADSR(subtitle)->idleValue = 0;
+    ADSR(subtitle)->sustainValue = -PlacementHelper::GimpHeightToScreen(150);
+    ADSR(subtitle)->attackValue = -PlacementHelper::GimpHeightToScreen(150);
+    ADSR(subtitle)->attackTiming = 2;
+    ADSR(subtitle)->decayTiming = 0.1;
+    ADSR(subtitle)->releaseTiming = 1;
+    subtitleText = theEntityManager.CreateEntity();
+    ADD_COMPONENT(subtitleText, Transformation);
+    TRANSFORM(subtitleText)->parent = subtitle;
+    TRANSFORM(subtitleText)->position = Vector2(0, -PlacementHelper::GimpHeightToScreen(25));
+    ADD_COMPONENT(subtitleText, TextRendering);
+    TEXT_RENDERING(subtitleText)->text = "Tap screen to start";
+    TEXT_RENDERING(subtitleText)->charHeight = PlacementHelper::GimpHeightToScreen(45);
+    TEXT_RENDERING(subtitleText)->hide = false;
+    TEXT_RENDERING(subtitleText)->cameraBitMask = 0x1;
+    TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
@@ -608,6 +625,7 @@ void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 void RecursiveRunnerGame::tick(float dt) {
 	theTouchInputManager.Update(dt);
     TRANSFORM(titleGroup)->position.Y = ADSR(titleGroup)->value;
+    TRANSFORM(subtitle)->position.Y = ADSR(subtitle)->value;
     GameState next;
     switch(gameState) {
         case Menu:
@@ -683,7 +701,7 @@ static void updateBestScore() {
     std::vector<StorageAPI::Score> scores = tmpStorageAPI->getScores(f);
     if (!scores.empty()) {
         std::stringstream best;
-        best << scores[0].points;
+        best << "Best: " << scores[0].points;
         TEXT_RENDERING(bestScore)->text = best.str();
     } else {
         LOGW("No best score found (?!)");
@@ -716,9 +734,12 @@ static GameState updateMenu(float dt __attribute__((unused))) {
                 tmpNameInputAPI->show();
 				gameOverState = AskingPlayerName;
             } else {
+                std::stringstream a;
+                a << PLAYER(gameTempVars.players[0])->score << " points - tap screen to restart";
+                TEXT_RENDERING(subtitleText)->text = a.str();
 				gameOverState = NoGame;
                 tmpStorageAPI->submitScore(StorageAPI::Score(PLAYER(gameTempVars.players[0])->score, PLAYER(gameTempVars.players[0])->coins, "rzehtrtyBg"));
-                
+                updateBestScore();
             }
         }
         case AskingPlayerName: {
@@ -745,7 +766,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
         if (theTouchInputManager.isTouched(0)) {
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
-            ADSR(titleGroup)->active = false;
+            ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
             return WaitingPlayers;
         }
     }
@@ -1089,7 +1110,7 @@ static void transitionPlayingMenu() {
 
     // TEXT_RENDERING(scoreText)->hide = false;
     updateBestScore();
-    ADSR(titleGroup)->active = true;
+    ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
 }
 
 void GameTempVar::cleanup() {
@@ -1256,13 +1277,6 @@ static void createCoins(int count) {
         TRANSFORM(link3)->position = Vector2(0, TRANSFORM(link)->size.Y * 0.4);
         TRANSFORM(link3)->size = TRANSFORM(link)->size * Vector2(1, 0.1);
         TRANSFORM(link3)->z = 0.2;
-        /*ADD_COMPONENT(link3, ADSR);
-        ADSR(link3)->idleValue = 0;
-        ADSR(link3)->attackValue = TRANSFORM(link3)->size.X;
-        ADSR(link3)->attackTiming = 0.5 * TRANSFORM(link3)->size.X;
-        ADSR(link3)->sustainValue = ADSR(link3)->attackValue;
-        ADSR(link3)->decayTiming = 0;
-        ADSR(link3)->releaseTiming = 0.1;*/
         ADD_COMPONENT(link3, Particule);
         PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
     	PARTICULE(link3)->duration = 0;
