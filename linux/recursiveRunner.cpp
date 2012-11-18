@@ -184,13 +184,26 @@ void GLFWCALL myCharCallback( int c, int action ) {
 }
 
 void GLFWCALL myKeyCallback( int key, int action ) {
-    if (action == GLFW_RELEASE && key == GLFW_KEY_F6) {
+    if (action != GLFW_RELEASE)
+        return;
+
+    if (key == GLFW_KEY_F6) {
         gameSpeedFactor = MathUtil::Min(gameSpeedFactor + 0.1f, 3.0f);
         std::cout << "Game speed: " << gameSpeedFactor << std::endl;
     }
-    else if (action == GLFW_RELEASE && key == GLFW_KEY_F5) {
+    else if (key == GLFW_KEY_F5) {
         gameSpeedFactor = MathUtil::Max(gameSpeedFactor - 0.1f, 0.0f);
         std::cout << "Game speed: " << gameSpeedFactor << std::endl;
+    }
+    else if (key == GLFW_KEY_BACKSPACE) {
+        if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
+            std::string& text = TEXT_RENDERING(nameInput->nameEdit)->text;
+            if (text.length() > 0) {
+                text.resize(text.length() - 1);
+            }
+        } else {
+            game->backPressed();
+        }
     }
 }
 
@@ -201,97 +214,37 @@ static void updateAndRenderLoop() {
 
 	time = TimeUtil::getTime();
 
-	bool backIsDown = false;
 	int frames = 0;
 	float nextfps = time + 5;
 	while(running) {
-		do {
-			dt = TimeUtil::getTime() - time;
-			if (dt < DT) {
-				struct timespec ts;
-				ts.tv_sec = 0;
-				ts.tv_nsec = (DT - dt) * 1000000000LL;
-				nanosleep(&ts, 0);
-			}
-		} while (dt < DT);
+        game->step();
+        
+        running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
-		if (dt > 1./20) {
-			dt = 1./20.;
-		}
-		dtAccumuled += dt;
-		time = TimeUtil::getTime();
-		while (dtAccumuled >= DT){
-			dtAccumuled -= DT;
-			game->tick(DT * gameSpeedFactor);
-			running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
-			bool focus = glfwGetWindowParam(GLFW_ACTIVE);
-			if (focus) {
-				theMusicSystem.toggleMute(theSoundSystem.mute);
-			} else {
-				// theMusicSystem.toggleMute(true);
-			}
-			//pause ?
-			if (glfwGetKey( GLFW_KEY_SPACE )) {// || !focus) {
-				game->togglePause(true);
-			}
-			// recording
-			if (glfwGetKey( GLFW_KEY_F10) && timer<=0){
-				record->stop();
-				
-			}
-			if (glfwGetKey( GLFW_KEY_F9) && timer<=0){
-				record->start();
-			}
-			//user entered his name?
-			if ((glfwGetKey( GLFW_KEY_ENTER ) || glfwGetKey( GLFW_KEY_KP_ENTER) ) && timer<=0) {
-				if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
-					nameInput->textIsReady = true;
-				}
-			}
-			if (glfwGetKey( GLFW_KEY_BACKSPACE)) {
-				if (!backIsDown) {
-					backIsDown = true;
-					// game.backPressed();
-					if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
-						std::string& text = TEXT_RENDERING(nameInput->nameEdit)->text;
-						if (text.length() > 0) {
-							text.resize(text.length() - 1);
-						}
-					} else {
-						game->backPressed();
-					}
-				}
-			} else {
-				backIsDown = false;
-			}
-         #if 0
-			if (glfwGetKey( GLFW_KEY_LSHIFT)) {
-				uint8_t* state = 0;
-				int size = game->saveState(&state);
-				if (size) {
-					LOGI("ptr: %p %d", state, size);
-					FILE* file = fopen("dump.bin", "w+b");
-					fwrite(state, size, 1, file);
-					fclose(file);
-				}
-				running = false;
-				break;
-			}
-         #endif
-			timer -= DT;
-			frames++;
-			if (time > nextfps) {
-				//std::cout << "FPS: " << (frames / 5) << std::endl;
-				nextfps = time + 5;
-				frames = 0;
-			}
-		}
-
-		//theRenderingSystem.render();
-		//glfwSwapBuffers();
-		// 
-		//record->record();
-	}
+        bool focus = glfwGetWindowParam(GLFW_ACTIVE);
+        if (focus) {
+            theMusicSystem.toggleMute(theSoundSystem.mute);
+        } else {
+            // theMusicSystem.toggleMute(true);
+        }
+        //pause ?
+        if (glfwGetKey( GLFW_KEY_SPACE )) {// || !focus) {
+            game->togglePause(true);
+        }
+        // recording
+        if (glfwGetKey( GLFW_KEY_F10) && timer<=0){
+            record->stop();
+        }
+        if (glfwGetKey( GLFW_KEY_F9) && timer<=0){
+            record->start();
+        }
+        //user entered his name?
+        if ((glfwGetKey( GLFW_KEY_ENTER ) || glfwGetKey( GLFW_KEY_KP_ENTER) ) && timer<=0) {
+            if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
+                nameInput->textIsReady = true;
+            }
+        }
+    }
 	glfwTerminate();
 }
 
@@ -453,7 +406,7 @@ int main(int argc, char** argv) {
 	pthread_create (&th1, NULL, callback_thread, NULL);
 	while (pthread_kill(th1, 0) == 0)
 	{
-		theRenderingSystem.render();
+		game->render();
 		glfwSwapBuffers();
 		record->record();
 	}

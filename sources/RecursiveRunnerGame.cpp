@@ -691,7 +691,7 @@ void RecursiveRunnerGame::tick(float dt) {
     theTransformationSystem.Update(dt);
     theContainerSystem.Update(dt);
     theAutoDestroySystem.Update(dt);
-    theRenderingSystem.Update(dt);
+    //theRenderingSystem.Update(dt);
 
     updateFps(dt);
 }
@@ -923,7 +923,7 @@ static GameState updatePlaying(float dt) {
                     }
                 }
             }
-            #elif 0
+            #elif 1
             if (theTouchInputManager.isTouched(j)) {
                 if (gameTempVars.numPlayers == 2) {
                     const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
