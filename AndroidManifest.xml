@@ -17,7 +17,9 @@
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="9"/>
     <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
 
-    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication">
+    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication"
+android:debuggable="true"
+    			 android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
 
         <!-- Our activity is the built-in NativeActivity framework class.
              This will take care of integrating with our NDK code. -->

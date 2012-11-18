@@ -691,7 +691,7 @@ void RecursiveRunnerGame::tick(float dt) {
     theTransformationSystem.Update(dt);
     theContainerSystem.Update(dt);
     theAutoDestroySystem.Update(dt);
-    theRenderingSystem.Update(dt);
+    //theRenderingSystem.Update(dt);
 
     updateFps(dt);
 }
@@ -923,7 +923,7 @@ static GameState updatePlaying(float dt) {
                     }
                 }
             }
-            #else
+            #elif 1
             if (theTouchInputManager.isTouched(j)) {
                 if (gameTempVars.numPlayers == 2) {
                     const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
@@ -942,6 +942,34 @@ static GameState updatePlaying(float dt) {
                 } else if (!rc->jumpTimes.empty()) {
                     float& d = *(rc->jumpDurations.rbegin());
                     d = MathUtil::Min(d + dt, RunnerSystem::MaxJumpDuration);
+                }
+                break;
+            }
+            #else
+            if (theTouchInputManager.isTouched(j)) {
+                if (gameTempVars.numPlayers == 2) {
+                    const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
+                    if (i == 0 && ppp.Y < 0)
+                        continue;
+                    if (i == 1 && ppp.Y > 0)
+                        continue;
+                }
+                PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
+                RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+                if (!theTouchInputManager.wasTouched(j)) {
+                    if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
+                        float s = (theTouchInputManager.getTouchLastPosition(j).Y + PlacementHelper::ScreenHeight * .5) / PlacementHelper::ScreenHeight;
+                        float d = 0;
+                        if (s <= 0.1)
+                            d = RunnerSystem::MinJumpDuration;
+                        else if (s >= 0.8)
+                            d = RunnerSystem::MaxJumpDuration;
+                        else
+                            d = MathUtil::Lerp(RunnerSystem::MinJumpDuration, RunnerSystem::MaxJumpDuration, MathUtil::Min(1.0f, (s - 0.1f) / 0.8f));
+                        rc->jumpTimes.push_back(rc->elapsed);
+                        rc->jumpDurations.push_back(d);
+                        // std::cout << s << " -> " << d << std::endl;
+                    }
                 }
                 break;
             }

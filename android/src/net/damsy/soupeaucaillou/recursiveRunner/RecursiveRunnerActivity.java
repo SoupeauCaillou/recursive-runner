@@ -99,7 +99,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	
 	static public RecursiveRunnerStorage.OptionsOpenHelper optionsOpenHelper;
 	static public RecursiveRunnerStorage.ScoreOpenHelper scoreOpenHelper;
-	
+	 
 	View playerNameInputView;
   
 	public SharedPreferences preferences;
