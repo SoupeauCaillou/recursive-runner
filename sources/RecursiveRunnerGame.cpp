@@ -148,6 +148,18 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
     //to remove...
     tmpStorageAPI = storage;
     tmpNameInputAPI = nameInput;
+
+    RunnerSystem::CreateInstance();
+    CameraTargetSystem::CreateInstance();
+    PlayerSystem::CreateInstance();
+    RangeFollowerSystem::CreateInstance();
+}
+
+RecursiveRunnerGame::~RecursiveRunnerGame() {
+    RunnerSystem::DestroyInstance();
+    CameraTargetSystem::DestroyInstance();
+    PlayerSystem::DestroyInstance();
+    RangeFollowerSystem::DestroyInstance();
 }
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
@@ -504,11 +516,6 @@ void decor() {
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
-    RunnerSystem::CreateInstance();
-    CameraTargetSystem::CreateInstance();
-    PlayerSystem::CreateInstance();
-    RangeFollowerSystem::CreateInstance();
-
     baseLine = PlacementHelper::GimpYToScreen(800);
     decor();
 
