@@ -630,7 +630,6 @@ void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
-	theTouchInputManager.Update(dt);
     TRANSFORM(titleGroup)->position.Y = ADSR(titleGroup)->value;
     TRANSFORM(subtitle)->position.Y = ADSR(subtitle)->value;
     GameState next;
@@ -681,24 +680,6 @@ void RecursiveRunnerGame::tick(float dt) {
     }
 
     theRangeFollowerSystem.Update(dt);
-    // systems update
-#ifdef SAC_NETWORK
-    theNetworkSystem.Update(dt);
-#endif
-	theADSRSystem.Update(dt);
-    theAnimationSystem.Update(dt);
-	theButtonSystem.Update(dt);
-    theParticuleSystem.Update(dt);
-	theMorphingSystem.Update(dt);
-	thePhysicsSystem.Update(dt);
-	theScrollingSystem.Update(dt);
-    theTextRenderingSystem.Update(dt);
-	theSoundSystem.Update(dt);
-    theMusicSystem.Update(dt);
-    theTransformationSystem.Update(dt);
-    theContainerSystem.Update(dt);
-    theAutoDestroySystem.Update(dt);
-    //theRenderingSystem.Update(dt);
 
     updateFps(dt);
 }
