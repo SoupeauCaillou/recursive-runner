@@ -1383,7 +1383,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);*/
     theTransformationSystem.setPosition(TRANSFORM(e), 
-        Vector2(direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth, baseLine), TransformationSystem::S);
+        Vector2(direction * -(LEVEL_SIZE * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, baseLine), TransformationSystem::S);
     RUNNER(e)->startPoint = TRANSFORM(e)->position;
     RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
     RUNNER(e)->speed = direction * playerSpeed * (param::speedConst + param::speedCoeff * p->runnersCount);
