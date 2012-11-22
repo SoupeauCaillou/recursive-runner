@@ -446,6 +446,10 @@ void decor() {
     ADSR(titleGroup)->decayTiming = 0.2;
     ADSR(titleGroup)->releaseTiming = 1.5;
     TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), ADSR(titleGroup)->idleValue);
+    ADD_COMPONENT(titleGroup, Music);
+    MUSIC(titleGroup)->loopAt = 60;
+    MUSIC(titleGroup)->fadeOut = 2;
+    MUSIC(titleGroup)->fadeIn = 1;
 
     title = theEntityManager.CreateEntity();
     ADD_COMPONENT(title, Transformation);
@@ -481,7 +485,7 @@ void decor() {
     TRANSFORM(subtitleText)->position = Vector2(0, -PlacementHelper::GimpHeightToScreen(25));
     ADD_COMPONENT(subtitleText, TextRendering);
     TEXT_RENDERING(subtitleText)->text = "Tap screen to start";
-    /*TEXT_RENDERING(subtitleText)->blink.onDuration = 1;
+    /*aptitudTEXT_RENDERING(subtitleText)->blink.onDuration = 1;
     TEXT_RENDERING(subtitleText)->blink.offDuration = 1;*/
     TEXT_RENDERING(subtitleText)->charHeight = PlacementHelper::GimpHeightToScreen(45);
     TEXT_RENDERING(subtitleText)->hide = false;
@@ -757,6 +761,8 @@ static GameState updateMenu(float dt __attribute__((unused))) {
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
+            MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
+            MUSIC(titleGroup)->control = MusicComponent::Start;
             return WaitingPlayers;
         }
     }
@@ -857,6 +863,10 @@ static void transitionWaitingPlayersMenu() {
 float yDownStart;
 static GameState updatePlaying(float dt) {
     gameTempVars.syncRunners();
+    
+    if (MUSIC(titleGroup)->loopNext == InvalidMusicRef) {
+        MUSIC(titleGroup)->loopNext = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
+    }
 
     // Manage player's current runner
     for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
@@ -1129,6 +1139,7 @@ static void transitionPlayingMenu() {
     // TEXT_RENDERING(scoreText)->hide = false;
     updateBestScore();
     ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
+    MUSIC(titleGroup)->control = MusicComponent::Stop;
 }
 
 void GameTempVar::cleanup() {

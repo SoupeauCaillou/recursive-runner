@@ -336,7 +336,7 @@ int main(int argc, char** argv) {
     SoundAPILinuxOpenALImpl* soundAPI = new SoundAPILinuxOpenALImpl();
     theSoundSystem.soundAPI = soundAPI;
     LOGE("Remove music init");
-    // openal->init();
+    openal->init();
     theMusicSystem.init();
     // soundAPI->init();
 
