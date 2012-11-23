@@ -77,7 +77,7 @@ enum CameraMode {
 };
     
 
-static void spawnGainEntity(int gain, Entity t, const Color& c);
+static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex);
 static void updateFps(float dt);
 static void setupCamera(CameraMode mode);
@@ -1088,7 +1088,7 @@ static GameState updatePlaying(float dt) {
                         if (j == gameTempVars.runners[i].size() - 1)
                             player->coins++;
                         
-                        spawnGainEntity(gain, coin, rc->color);
+                        spawnGainEntity(gain, coin, rc->color, rc->ghost);
                     }
                 }
                 prev = coin;
@@ -1345,13 +1345,13 @@ static void updateFps(float dt) {
      }
 }
 
-static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, const Color& color) {
+static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, const Color& color, bool isGhost) {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = TRANSFORM(parent)->position;
     TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
     TRANSFORM(e)->size = TRANSFORM(parent)->size;
-    TRANSFORM(e)->z = TRANSFORM(parent)->z + 0.1;
+    TRANSFORM(e)->z = TRANSFORM(parent)->z + (isGhost ? 0.1 : 0.11);
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
     RENDERING(e)->color = color;
@@ -1374,7 +1374,7 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, con
 #endif
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.value = 3;
+    AUTO_DESTROY(e)->params.lifetime.value = 5;
     AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
     // AUTO_DESTROY(e)->hasTextRendering = true;
 }
@@ -1405,11 +1405,13 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     do {
-        Color c = Color::random();
+        Color c(Color::random());
         c.a = 1;
         float sum = c.r + c.b + c.g;
-        if (sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) {
+        float maxDiff = MathUtil::Max(MathUtil::Max(MathUtil::Abs(c.r - c.g), MathUtil::Abs(c.r - c.b)), MathUtil::Abs(c.b - c.g));
+        if ((sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) && maxDiff > 0.5) {
             RUNNER(e)->color = c;
+            std::cout << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
             break;
         }
     } while (true);
