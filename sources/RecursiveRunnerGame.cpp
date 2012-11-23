@@ -815,8 +815,8 @@ static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) 
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
-            MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
-            MUSIC(titleGroup)->control = MusicComponent::Start;
+            // MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
+            // MUSIC(titleGroup)->control = MusicComponent::Start;
             return WaitingPlayers;
         }
     }
@@ -920,9 +920,9 @@ float yDownStart;
 static GameState updatePlaying(float dt, bool ignoreClick) {
     gameTempVars.syncRunners();
     
-    if (MUSIC(titleGroup)->loopNext == InvalidMusicRef) {
+    /*if (MUSIC(titleGroup)->loopNext == InvalidMusicRef) {
         MUSIC(titleGroup)->loopNext = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
-    }
+    }*/
 
     // Manage player's current runner
     for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
