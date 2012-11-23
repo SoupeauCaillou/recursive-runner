@@ -1411,7 +1411,6 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
         float maxDiff = MathUtil::Max(MathUtil::Max(MathUtil::Abs(c.r - c.g), MathUtil::Abs(c.r - c.b)), MathUtil::Abs(c.b - c.g));
         if ((sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) && maxDiff > 0.5) {
             RUNNER(e)->color = c;
-            std::cout << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
             break;
         }
     } while (true);
@@ -1422,7 +1421,7 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     PHYSICS(e)->mass = 1;
     ADD_COMPONENT(e, Animation);
     ANIMATION(e)->name = "runL2R";
-    ANIMATION(e)->playbackSpeed = 1 + 0.08 * p->runnersCount;
+    ANIMATION(e)->playbackSpeed = 1.1;
     RENDERING(e)->mirrorH = (direction < 0);
     
     Entity collisionZone = theEntityManager.CreateEntity();
