@@ -18,6 +18,9 @@ class StorageAPIAndroidImpl : public StorageAPI {
 		int getGameCountBeforeNextAd();
 		void setGameCountBeforeNextAd(int inCount);
 
+        bool isMuted() const;
+        void setMuted(bool b);
+
 	private:
 		class StorageAPIAndroidImplDatas;
 		StorageAPIAndroidImplDatas* datas;
