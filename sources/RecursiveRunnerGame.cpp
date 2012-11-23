@@ -176,7 +176,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     std::string runL2R[] = { "run_l2r_0002",
         "run_l2r_0003", "run_l2r_0004", "run_l2r_0005",
         "run_l2r_0006", "run_l2r_0007", "run_l2r_0008",
-        "run_l2r_0009", "run_l2r_0010", "run_l2r_0011", "run_l2r_0000", "run_l2r_0001"};
+        "run_l2r_0009", "run_l2r_0010", "run_l2r_0000", "run_l2r_0011", "run_l2r_0001"};
     std::string jumpL2R[] = { "jump_l2r_0004", "jump_l2r_0005",
         "jump_l2r_0006", "jump_l2r_0007", "jump_l2r_0008",
         "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
@@ -854,6 +854,7 @@ static void transitionWaitingPlayersPlaying() {
         theRenderingSystem.cameras[1 + i].worldPosition.X = 
             TRANSFORM(gameTempVars.currentRunner[i])->position.X + PlacementHelper::ScreenWidth * 0.5;
     }
+    std::cout << "transitionWaitingPlayersPlaying : " << TimeUtil::getTime() << std::endl;
 }
 
 static void transitionWaitingPlayersMenu() {
@@ -1125,6 +1126,7 @@ static GameState updatePlaying(float dt) {
 }
 
 static void transitionPlayingMenu() {
+std::cout << "transitionPlayingMenu : " << TimeUtil::getTime() << std::endl;
     LOGI("Change state : Playing -> Menu");
     setupCamera(CameraModeMenu);
     // Restore camera position
