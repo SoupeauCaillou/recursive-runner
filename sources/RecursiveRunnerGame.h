@@ -47,4 +47,5 @@ class RecursiveRunnerGame : public Game {
 		StorageAPI* storageAPI;
 		NameInputAPI* nameInputAPI;
 		ExitAPI* exitAPI;
+        bool ignoreClick;
 };

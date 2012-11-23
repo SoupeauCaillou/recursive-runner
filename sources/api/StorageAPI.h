@@ -18,6 +18,9 @@ class StorageAPI {
 					
 		virtual int getCoinsCount() = 0;
 
+        virtual bool isMuted() const = 0;
+        virtual void setMuted(bool b) = 0;
+
 		virtual int getGameCountBeforeNextAd() = 0;
 		virtual void setGameCountBeforeNextAd(int inCount) = 0;
 };

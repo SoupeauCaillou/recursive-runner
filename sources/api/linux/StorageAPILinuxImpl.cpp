@@ -171,3 +171,20 @@ void StorageAPILinuxImpl::setGameCountBeforeNextAd(int inCount) {
 	request(dbPath, s.str(),0, 0);
 	#endif
 }
+
+bool StorageAPILinuxImpl::isMuted() const {
+    #ifndef EMSCRIPTEN
+    std::string s;
+    request(dbPath, "select value from info where opt like 'sound'", &s, 0);
+    std::cout << "sound : '" << s << "'" << std::endl;
+    return (s == "off");
+    #else
+    return true;
+    #endif
+}
+
+void StorageAPILinuxImpl::setMuted(bool b) {
+    std::stringstream req;
+    req << "UPDATE info SET value='" << (b ? "off" : "on") << "' where opt='sound'";
+    request(dbPath, req.str(),0, 0);
+}

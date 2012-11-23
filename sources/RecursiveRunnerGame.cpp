@@ -90,6 +90,7 @@ Entity networkUL, networkDL;
 #endif
 Entity scoreText[2], scorePanel, bestScore;
 Entity titleGroup, title, subtitle, subtitleText;
+Entity muteBtn;
 
 StorageAPI* tmpStorageAPI;
 NameInputAPI* tmpNameInputAPI;
@@ -121,12 +122,12 @@ struct GameTempVar {
     std::vector<Entity> runners[2], coins, players, links, sparkling; 
 } gameTempVars;
 
-static GameState updateMenu(float dt);
+static GameState updateMenu(float dt, bool ignoreClick);
 static void transitionMenuWaitingPlayers();
 static GameState updateWaitingPlayers(float dt);
 static void transitionWaitingPlayersPlaying();
 static void transitionWaitingPlayersMenu();
-static GameState updatePlaying(float dt);
+static GameState updatePlaying(float dt, bool ignoreClick);
 static void transitionPlayingMenu();
 
 
@@ -275,7 +276,7 @@ void multipartTree(const std::string& baseName, const Vector2& pos, float z, Ent
     }
 }
 
-void decor() {
+void decor(StorageAPI* storageAPI) {
     treeDefinition["arbre5"] = MultiPartTree(Vector2(363, 351));
     Vector2 v5[] = {Vector2(115, 326), Vector2(127, 25), Vector2(167, 249), Vector2(18, 77), Vector2::Zero, Vector2(363, 249)};
     treeDefinition["arbre5"].parts.insert(treeDefinition["arbre5"].parts.end(), v5, v5 + 6);
@@ -519,11 +520,26 @@ void decor() {
     ADD_COMPONENT(buildings, RangeFollower);
     RANGE_FOLLOWER(buildings)->range = Interval<float>(-2, 2);
     RANGE_FOLLOWER(buildings)->parent = cameraEntity;
+
+    muteBtn = theEntityManager.CreateEntity();
+    ADD_COMPONENT(muteBtn, Transformation);
+    TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("mute"));
+    TRANSFORM(muteBtn)->parent = cameraEntity;
+    TRANSFORM(muteBtn)->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, PlacementHelper::ScreenHeight * 0.5)
+        + TRANSFORM(muteBtn)->size * Vector2(0.5, -0.5);
+    TRANSFORM(muteBtn)->z = 1;
+    ADD_COMPONENT(muteBtn, Rendering);
+    RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(storageAPI->isMuted() ? "unmute" : "mute");
+    RENDERING(muteBtn)->hide = false;
+    RENDERING(muteBtn)->cameraBitMask = 0x3;
+    ADD_COMPONENT(muteBtn, Button);
+    BUTTON(muteBtn)->enabled = true;
+    BUTTON(muteBtn)->overSize = 1.2;
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
     baseLine = PlacementHelper::GimpYToScreen(800);
-    decor();
+    decor(storageAPI);
 
 #if 0
     background = theEntityManager.CreateEntity();
@@ -638,16 +654,30 @@ void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 void RecursiveRunnerGame::tick(float dt) {
     TRANSFORM(titleGroup)->position.Y = ADSR(titleGroup)->value;
     TRANSFORM(subtitle)->position.Y = ADSR(subtitle)->value;
+
+    if (BUTTON(muteBtn)->clicked) {
+        std::cout << "mute clicked" << std::endl;
+        bool muted = !storageAPI->isMuted();
+        storageAPI->setMuted(muted);
+        RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "unmute" : "mute");
+        theSoundSystem.mute = muted;
+        theMusicSystem.toggleMute(muted);
+        ignoreClick = true;
+    } else {
+        ignoreClick = BUTTON(muteBtn)->mouseOver;
+    }
+    RENDERING(muteBtn)->color = (ignoreClick ? Color(1, 0, 0) : Color(1, 1, 1));
+
     GameState next;
     switch(gameState) {
         case Menu:
-            next = updateMenu(dt);
+            next = updateMenu(dt, ignoreClick);
             break;
         case WaitingPlayers:
             next = updateWaitingPlayers(dt);
             break;
         case Playing:
-            next = updatePlaying(dt);
+            next = updatePlaying(dt, ignoreClick);
             break;
     }
     
@@ -702,7 +732,7 @@ static void updateBestScore() {
         TEXT_RENDERING(bestScore)->text = "";
     }
 }
-static GameState updateMenu(float dt __attribute__((unused))) {
+static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) {
     if (!gameTempVars.coins.empty()) {
         float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
             (ADSR(titleGroup)->idleValue - ADSR(titleGroup)->attackValue);
@@ -757,7 +787,7 @@ static GameState updateMenu(float dt __attribute__((unused))) {
     if (ADSR(titleGroup)->value == ADSR(titleGroup)->sustainValue) {
         // Cleanup previous game variables
         gameTempVars.cleanup();
-        if (theTouchInputManager.isTouched(0)) {
+        if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !ignoreClick) {
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
@@ -862,7 +892,7 @@ static void transitionWaitingPlayersMenu() {
 }
 
 float yDownStart;
-static GameState updatePlaying(float dt) {
+static GameState updatePlaying(float dt, bool ignoreClick) {
     gameTempVars.syncRunners();
     
     if (MUSIC(titleGroup)->loopNext == InvalidMusicRef) {
@@ -898,83 +928,31 @@ static GameState updatePlaying(float dt) {
                 gameTempVars.currentRunner[i] = addRunnerToPlayer(gameTempVars.players[i], PLAYER(gameTempVars.players[i]), i);
             }
         }
-
-        // Input (jump) handling
-        for (int j=0; j<1; j++) {
-            #if 0
-            PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-            RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
-            if (!theTouchInputManager.wasTouched(j)) {
-                if (theTouchInputManager.isTouched(j) && pc->linearVelocity.Y == 0) {
-                    std::cout << "Start jump" << std::endl;
-                    yDownStart = theTouchInputManager.getTouchLastPosition(j).Y;
-                    rc->jumpTimes.push_back(rc->elapsed);
-                    rc->jumpDurations.push_back(dt + 0.001);
-                }
-           } else {
-                if (theTouchInputManager.isTouched(j) && pc->linearVelocity.Y > 0) {
-                    float& ddd = *(rc->jumpDurations.rbegin());
-                    float yEnd = theTouchInputManager.getTouchLastPosition(j).Y;
-                    if (yEnd > yDownStart) {
-                        float t = MathUtil::Min(1.5f * (yEnd - yDownStart) / (PlacementHelper::ScreenHeight * 0.5f), 1.0f);
-                        ddd = (RunnerSystem::MaxJumpDuration - RunnerSystem::MinJumpDuration) * t + RunnerSystem::MinJumpDuration;
-                        std::cout << "add time : " << ddd << "( " << t << ")" << std::endl;
-                    } else {
-                        std::cout << "no diff" << std::endl;
+        if (!ignoreClick) {
+            // Input (jump) handling
+            for (int j=0; j<1; j++) {
+                if (theTouchInputManager.isTouched(j)) {
+                    if (gameTempVars.numPlayers == 2) {
+                        const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
+                        if (i == 0 && ppp.Y < 0)
+                            continue;
+                        if (i == 1 && ppp.Y > 0)
+                            continue;
                     }
+                    PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
+                    RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+                    if (!theTouchInputManager.wasTouched(j)) {
+                        if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
+                            rc->jumpTimes.push_back(rc->elapsed);
+                            rc->jumpDurations.push_back(0.001);
+                        }
+                    } else if (!rc->jumpTimes.empty()) {
+                        float& d = *(rc->jumpDurations.rbegin());
+                        d = MathUtil::Min(d + dt, RunnerSystem::MaxJumpDuration);
+                    }
+                    break;
                 }
             }
-            #elif 1
-            if (theTouchInputManager.isTouched(j)) {
-                if (gameTempVars.numPlayers == 2) {
-                    const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
-                    if (i == 0 && ppp.Y < 0)
-                        continue;
-                    if (i == 1 && ppp.Y > 0)
-                        continue;
-                }
-                PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-                RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
-                if (!theTouchInputManager.wasTouched(j)) {
-                    if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
-                        rc->jumpTimes.push_back(rc->elapsed);
-                        rc->jumpDurations.push_back(0.001);
-                    }
-                } else if (!rc->jumpTimes.empty()) {
-                    float& d = *(rc->jumpDurations.rbegin());
-                    d = MathUtil::Min(d + dt, RunnerSystem::MaxJumpDuration);
-                }
-                break;
-            }
-            #else
-            if (theTouchInputManager.isTouched(j)) {
-                if (gameTempVars.numPlayers == 2) {
-                    const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
-                    if (i == 0 && ppp.Y < 0)
-                        continue;
-                    if (i == 1 && ppp.Y > 0)
-                        continue;
-                }
-                PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-                RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
-                if (!theTouchInputManager.wasTouched(j)) {
-                    if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
-                        float s = (theTouchInputManager.getTouchLastPosition(j).Y + PlacementHelper::ScreenHeight * .5) / PlacementHelper::ScreenHeight;
-                        float d = 0;
-                        if (s <= 0.1)
-                            d = RunnerSystem::MinJumpDuration;
-                        else if (s >= 0.8)
-                            d = RunnerSystem::MaxJumpDuration;
-                        else
-                            d = MathUtil::Lerp(RunnerSystem::MinJumpDuration, RunnerSystem::MaxJumpDuration, MathUtil::Min(1.0f, (s - 0.1f) / 0.8f));
-                        rc->jumpTimes.push_back(rc->elapsed);
-                        rc->jumpDurations.push_back(d);
-                        // std::cout << s << " -> " << d << std::endl;
-                    }
-                }
-                break;
-            }
-            #endif
         }
 
         TransformationComponent* tc = TRANSFORM(gameTempVars.currentRunner[i]);
