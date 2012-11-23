@@ -276,6 +276,15 @@ void multipartTree(const std::string& baseName, const Vector2& pos, float z, Ent
     }
 }
 
+static void startMenuMusic() {
+    MUSIC(title)->music = theMusicSystem.loadMusicFile("intro-menu.ogg");
+    MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
+    MUSIC(title)->loopAt = 4.54;
+    MUSIC(title)->fadeOut = 2;
+    MUSIC(title)->fadeIn = 1;
+    MUSIC(title)->control = MusicComponent::Start;
+}
+
 void decor(StorageAPI* storageAPI) {
     treeDefinition["arbre5"] = MultiPartTree(Vector2(363, 351));
     Vector2 v5[] = {Vector2(115, 326), Vector2(127, 25), Vector2(167, 249), Vector2(18, 77), Vector2::Zero, Vector2(363, 249)};
@@ -462,6 +471,8 @@ void decor(StorageAPI* storageAPI) {
     RENDERING(title)->texture = theRenderingSystem.loadTextureFile("titre");
     RENDERING(title)->hide = false;
     RENDERING(title)->cameraBitMask = 0x1;
+    ADD_COMPONENT(title, Music);
+    startMenuMusic();
 
     subtitle = theEntityManager.CreateEntity();
     ADD_COMPONENT(subtitle, Transformation);
@@ -656,17 +667,24 @@ void RecursiveRunnerGame::tick(float dt) {
     TRANSFORM(subtitle)->position.Y = ADSR(subtitle)->value;
 
     if (BUTTON(muteBtn)->clicked) {
-        std::cout << "mute clicked" << std::endl;
         bool muted = !storageAPI->isMuted();
         storageAPI->setMuted(muted);
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "unmute" : "mute");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
         ignoreClick = true;
+
+        if (!muted) {
+            switch (gameState) {
+                case Menu:
+                     startMenuMusic();
+                     break;
+            }
+        }
     } else {
         ignoreClick = BUTTON(muteBtn)->mouseOver;
     }
-    RENDERING(muteBtn)->color = (ignoreClick ? Color(1, 0, 0) : Color(1, 1, 1));
+    // RENDERING(muteBtn)->color = (ignoreClick ? Color(1, 0, 0) : Color(1, 1, 1));
 
     GameState next;
     switch(gameState) {
@@ -733,6 +751,12 @@ static void updateBestScore() {
     }
 }
 static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) {
+    if (!theMusicSystem.isMuted()) {
+        if (MUSIC(title)->loopNext == InvalidMusicRef) {
+            MUSIC(title)->loopAt = 21.34;
+            MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
+        }
+    }
     if (!gameTempVars.coins.empty()) {
         float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
             (ADSR(titleGroup)->idleValue - ADSR(titleGroup)->attackValue);
@@ -800,6 +824,7 @@ static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) 
 }
 
 static void transitionMenuWaitingPlayers() {
+    MUSIC(title)->control = MusicComponent::Stop;
     LOGI("Change state: Menu -> WaitingPlayers");
 #ifdef SAC_NETWORK
     theNetworkSystem.deleteAllNonLocalEntities();
