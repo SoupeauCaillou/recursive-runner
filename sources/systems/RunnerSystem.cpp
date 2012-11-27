@@ -107,9 +107,10 @@ void RunnerSystem::DoUpdate(float dt) {
         if (rc->elapsed >= rc->startTime) {
             tc->position.X += rc->speed * dt;
 
-            if (((tc->position.X - tc->size.X * 0.5) > rc->endPoint.X && rc->speed > 0) || 
-                ((tc->position.X + tc->size.X * 0.5) < rc->endPoint.X && rc->speed < 0)) {
-                // std::cout << a << " finished! (" << rc->coins.size() << ")" << std::endl;
+            if ((tc->position.X > rc->endPoint.X && rc->speed > 0) || 
+                (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
+                if (!rc->ghost)
+                    std::cout << a << " finished! (" << rc->coins.size() << ")" << TimeUtil::getTime() << " (pos=" << tc->position << ") "<< rc->endPoint.X << std::endl;
                 ANIMATION(a)->name = "runL2R";
                 rc->finished = true;
                 rc->oldNessBonus++;

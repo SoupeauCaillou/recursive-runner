@@ -133,8 +133,6 @@ static void transitionPlayingMenu();
 
 static void createCoins(int count);
 
-const float playerSpeed = 6;
-
 #define LEVEL_SIZE 3
 extern float MaxJumpDuration;
 float baseLine;
@@ -457,7 +455,6 @@ void decor(StorageAPI* storageAPI) {
     ADSR(titleGroup)->releaseTiming = 1.5;
     TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), ADSR(titleGroup)->idleValue);
     ADD_COMPONENT(titleGroup, Music);
-    MUSIC(titleGroup)->loopAt = 60;
     MUSIC(titleGroup)->fadeOut = 2;
     MUSIC(titleGroup)->fadeIn = 1;
 
@@ -472,7 +469,6 @@ void decor(StorageAPI* storageAPI) {
     RENDERING(title)->hide = false;
     RENDERING(title)->cameraBitMask = 0x1;
     ADD_COMPONENT(title, Music);
-    startMenuMusic();
 
     subtitle = theEntityManager.CreateEntity();
     ADD_COMPONENT(subtitle, Transformation);
@@ -752,10 +748,24 @@ static void updateBestScore() {
 }
 static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) {
     if (!theMusicSystem.isMuted()) {
-        if (MUSIC(title)->loopNext == InvalidMusicRef) {
-            MUSIC(title)->loopAt = 21.34;
-            MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
+        if (MUSIC(titleGroup)->control == MusicComponent::Start) {
+            if (MUSIC(titleGroup)->music == InvalidMusicRef) {
+                MUSIC(titleGroup)->control = MusicComponent::Stop;
+                startMenuMusic();
+                ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
+            }
+        } else {
+            if (!ADSR(titleGroup)->active) {
+                startMenuMusic();
+                ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
+            }
+            if (MUSIC(title)->loopNext == InvalidMusicRef) {
+                MUSIC(title)->loopAt = 21.34;
+                MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
+            }
         }
+    } else {
+        ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
     }
     if (!gameTempVars.coins.empty()) {
         float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
@@ -815,8 +825,7 @@ static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) 
             gameTempVars.numPlayers = 1;
             gameTempVars.isGameMaster = true;
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
-            // MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
-            // MUSIC(titleGroup)->control = MusicComponent::Start;
+            MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("jeu.ogg");
             return WaitingPlayers;
         }
     }
@@ -831,6 +840,7 @@ static void transitionMenuWaitingPlayers() {
 #endif
 }
 
+float minipause;
 static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
 #ifdef SAC_NETWORK
     if (theNetworkSystem.networkAPI) {
@@ -890,11 +900,18 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
             return WaitingPlayers;
         }
     }
-    if (ADSR(titleGroup)->value < ADSR(titleGroup)->idleValue)
+    if (ADSR(titleGroup)->value < ADSR(titleGroup)->idleValue) {
+        minipause = TimeUtil::getTime();
         return WaitingPlayers;
+    }
+    MUSIC(titleGroup)->control = MusicComponent::Start;
 
     setupCamera(CameraModeSingle);
-    return Playing;
+    if (TimeUtil::getTime() - minipause >= 1) {
+        return Playing;
+    } else {
+        return WaitingPlayers;
+    }
 }
 
 static void transitionWaitingPlayersPlaying() {
@@ -910,6 +927,7 @@ static void transitionWaitingPlayersPlaying() {
             TRANSFORM(gameTempVars.currentRunner[i])->position.X + PlacementHelper::ScreenWidth * 0.5;
     }
     std::cout << "transitionWaitingPlayersPlaying : " << TimeUtil::getTime() << std::endl;
+    
 }
 
 static void transitionWaitingPlayersMenu() {
@@ -1129,7 +1147,6 @@ static GameState updatePlaying(float dt, bool ignoreClick) {
 }
 
 static void transitionPlayingMenu() {
-std::cout << "transitionPlayingMenu : " << TimeUtil::getTime() << std::endl;
     LOGI("Change state : Playing -> Menu");
     setupCamera(CameraModeMenu);
     // Restore camera position
@@ -1143,8 +1160,6 @@ std::cout << "transitionPlayingMenu : " << TimeUtil::getTime() << std::endl;
 
     // TEXT_RENDERING(scoreText)->hide = false;
     updateBestScore();
-    ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
-    MUSIC(titleGroup)->control = MusicComponent::Stop;
 }
 
 void GameTempVar::cleanup() {
@@ -1383,10 +1398,11 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, con
 }
 
 static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerIndex) {
+
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = Vector2(-9, 2);
+    // TRANSFORM(e)->position = Vector2(-9, 2);
     // TRANSFORM(e)->size = Vector2(0.85, 2 * 0.85) * .8;//0.4,1);//0.572173, 0.815538);
     TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;//0.4,1);//0.572173, 0.815538);
     TRANSFORM(e)->rotation = 0;
@@ -1397,16 +1413,19 @@ static Entity addRunnerToPlayer(Entity player, PlayerComponent* p, int playerInd
     RENDERING(e)->cameraBitMask = (0x3 << 1);
     RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
     ADD_COMPONENT(e, Runner);
+
     /*TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);*/
     theTransformationSystem.setPosition(TRANSFORM(e), 
         Vector2(direction * -(LEVEL_SIZE * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, baseLine), TransformationSystem::S);
     RUNNER(e)->startPoint = TRANSFORM(e)->position;
-    RUNNER(e)->endPoint = RUNNER(e)->startPoint + Vector2(direction * LEVEL_SIZE * PlacementHelper::ScreenWidth, 0);
-    RUNNER(e)->speed = direction * playerSpeed * (param::speedConst + param::speedCoeff * p->runnersCount);
+    RUNNER(e)->endPoint = Vector2(direction * (LEVEL_SIZE * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, 0);
+    RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
+    
+std::cout <<" add runner: " << e << " - " << TimeUtil::getTime()  << "(pos: " << TRANSFORM(e)->position << ")" << RUNNER(e)->speed << std::endl;
     do {
         Color c(Color::random());
         c.a = 1;
