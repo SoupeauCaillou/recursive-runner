@@ -89,12 +89,12 @@ public class RecursiveRunnerActivity extends SacActivity {
 	@Override
 	public View getNameInputView() {
 		return findViewById(R.id.enter_name);
-	}
+	}   
 	
 	static public final String Tag = "RecursiveRunnerJ";
 	static final String TILEMATCH_BUNDLE_KEY = "plop";
 	static public final String HERISWAP_SHARED_PREF = "RecursiveRunnerPref";
-	
+     
 	byte[] renderingSystemState;
 	
 	static public RecursiveRunnerStorage.OptionsOpenHelper optionsOpenHelper;

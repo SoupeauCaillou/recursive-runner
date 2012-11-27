@@ -537,7 +537,8 @@ void decor(StorageAPI* storageAPI) {
         + TRANSFORM(muteBtn)->size * Vector2(0.5, -0.5);
     TRANSFORM(muteBtn)->z = 1;
     ADD_COMPONENT(muteBtn, Rendering);
-    RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(storageAPI->isMuted() ? "unmute" : "mute");
+    bool muted = storageAPI->isMuted();
+    RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "unmute" : "mute");
     RENDERING(muteBtn)->hide = false;
     RENDERING(muteBtn)->cameraBitMask = 0x3;
     RENDERING(muteBtn)->color = Color(119.0 / 255, 119.0 / 255, 119.0 / 255);
@@ -558,6 +559,9 @@ void decor(StorageAPI* storageAPI) {
     RENDERING(swarmBtn)->cameraBitMask = 0x1;
     ADD_COMPONENT(swarmBtn, Button);
     BUTTON(swarmBtn)->overSize = 1.2;
+
+    theSoundSystem.mute = muted;
+    theMusicSystem.toggleMute(muted);
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
@@ -774,6 +778,8 @@ static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick, 
             if (!ADSR(titleGroup)->active) {
                 startMenuMusic();
                 ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
+            } else if (MUSIC(title)->control == MusicComponent::Start && MUSIC(title)->music == InvalidMusicRef) {
+                startMenuMusic();
             }
             if (MUSIC(title)->loopNext == InvalidMusicRef) {
                 MUSIC(title)->loopAt = 21.34;
