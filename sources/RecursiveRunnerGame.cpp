@@ -540,6 +540,7 @@ void decor(StorageAPI* storageAPI) {
     RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(storageAPI->isMuted() ? "unmute" : "mute");
     RENDERING(muteBtn)->hide = false;
     RENDERING(muteBtn)->cameraBitMask = 0x3;
+    RENDERING(muteBtn)->color = Color(119.0 / 255, 119.0 / 255, 119.0 / 255);
     ADD_COMPONENT(muteBtn, Button);
     BUTTON(muteBtn)->enabled = true;
     BUTTON(muteBtn)->overSize = 1.2;
