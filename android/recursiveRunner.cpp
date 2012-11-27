@@ -48,6 +48,7 @@ GameHolder* GameHolder::build() {
 		&jniCtx->storage,
 		&hld->gameThreadJNICtx->nameInput,
 		&hld->gameThreadJNICtx->ad,
-		&hld->gameThreadJNICtx->exitAPI);
+		&hld->gameThreadJNICtx->exitAPI,
+        &hld->gameThreadJNICtx->communicationAPI);
 	return hld;
 };

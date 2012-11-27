@@ -90,7 +90,7 @@ Entity networkUL, networkDL;
 #endif
 Entity scoreText[2], scorePanel, bestScore;
 Entity titleGroup, title, subtitle, subtitleText;
-Entity muteBtn;
+Entity muteBtn, swarmBtn;
 
 StorageAPI* tmpStorageAPI;
 NameInputAPI* tmpNameInputAPI;
@@ -122,7 +122,7 @@ struct GameTempVar {
     std::vector<Entity> runners[2], coins, players, links, sparkling; 
 } gameTempVars;
 
-static GameState updateMenu(float dt, bool ignoreClick);
+static GameState updateMenu(float dt, bool ignoreClick, CommunicationAPI* communicationAPI);
 static void transitionMenuWaitingPlayers();
 static GameState updateWaitingPlayers(float dt);
 static void transitionWaitingPlayersPlaying();
@@ -138,11 +138,12 @@ extern float MaxJumpDuration;
 float baseLine;
 
 
-RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI) : Game() {
+RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI, CommunicationAPI* comAPI) : Game() {
 	assetAPI = ast;
 	storageAPI = storage;
     nameInputAPI = nameInput;
 	exitAPI = exAPI;
+    communicationAPI = comAPI;
 
     //to remove...
     tmpStorageAPI = storage;
@@ -542,6 +543,20 @@ void decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(muteBtn, Button);
     BUTTON(muteBtn)->enabled = true;
     BUTTON(muteBtn)->overSize = 1.2;
+
+    swarmBtn = theEntityManager.CreateEntity();
+    ADD_COMPONENT(swarmBtn, Transformation);
+    TRANSFORM(swarmBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm_icon"));
+    TRANSFORM(swarmBtn)->parent = cameraEntity;
+    TRANSFORM(swarmBtn)->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, -PlacementHelper::ScreenHeight * 0.5)
+        + TRANSFORM(swarmBtn)->size * Vector2(0.5, 0.5);
+    TRANSFORM(swarmBtn)->z = 1;
+    ADD_COMPONENT(swarmBtn, Rendering);
+    RENDERING(swarmBtn)->texture = theRenderingSystem.loadTextureFile("swarm_icon");
+    RENDERING(swarmBtn)->hide = false;
+    RENDERING(swarmBtn)->cameraBitMask = 0x1;
+    ADD_COMPONENT(swarmBtn, Button);
+    BUTTON(swarmBtn)->overSize = 1.2;
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
@@ -685,7 +700,7 @@ void RecursiveRunnerGame::tick(float dt) {
     GameState next;
     switch(gameState) {
         case Menu:
-            next = updateMenu(dt, ignoreClick);
+            next = updateMenu(dt, ignoreClick, communicationAPI);
             break;
         case WaitingPlayers:
             next = updateWaitingPlayers(dt);
@@ -746,7 +761,7 @@ static void updateBestScore() {
         TEXT_RENDERING(bestScore)->text = "";
     }
 }
-static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) {
+static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick, CommunicationAPI* communicationAPI) {
     if (!theMusicSystem.isMuted()) {
         if (MUSIC(titleGroup)->control == MusicComponent::Start) {
             if (MUSIC(titleGroup)->music == InvalidMusicRef) {
@@ -766,6 +781,12 @@ static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) 
         }
     } else {
         ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
+    }
+    if (!ignoreClick) {
+        if (BUTTON(swarmBtn)->clicked) {
+            communicationAPI->swarmRegistering(-1,-1);
+        }
+        ignoreClick = BUTTON(swarmBtn)->mouseOver;
     }
     if (!gameTempVars.coins.empty()) {
         float progress = (ADSR(titleGroup)->value - ADSR(titleGroup)->attackValue) /
@@ -834,6 +855,7 @@ static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick) 
 
 static void transitionMenuWaitingPlayers() {
     MUSIC(title)->control = MusicComponent::Stop;
+    BUTTON(swarmBtn)->enabled = false;
     LOGI("Change state: Menu -> WaitingPlayers");
 #ifdef SAC_NETWORK
     theNetworkSystem.deleteAllNonLocalEntities();
@@ -1158,6 +1180,7 @@ static void transitionPlayingMenu() {
         gameOverState = GameEnded;
     }
 
+    BUTTON(swarmBtn)->enabled = true;
     // TEXT_RENDERING(scoreText)->hide = false;
     updateBestScore();
 }
