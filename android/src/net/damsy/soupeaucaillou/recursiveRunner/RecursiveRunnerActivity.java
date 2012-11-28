@@ -78,15 +78,15 @@ public class RecursiveRunnerActivity extends SacActivity {
 	
 	@Override
 	public Button getNameInputButton() {
-		return (Button)findViewById(R.id.name_save);
+		return null;//(Button)findViewById(R.id.name_save);
 	}
 	@Override 
 	public EditText getNameInputEdit() {
-		return (EditText)findViewById(R.id.player_name_input);
+		return null;//(EditText)findViewById(R.id.player_name_input);
 	}
 	@Override
 	public View getNameInputView() {
-		return findViewById(R.id.enter_name);
+		return null;//findViewById(R.id.enter_name);
 	}
 	
 	static public final String Tag = "RecursiveRunnerJ";
@@ -107,51 +107,16 @@ public class RecursiveRunnerActivity extends SacActivity {
 		//Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
  
+        /*
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
         playerNameInputView = findViewById(R.id.enter_name);
         rl.bringChildToFront(playerNameInputView);
         playerNameInputView.setVisibility(View.GONE);
-
+		*/
         RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
 	}
  
 	public void preNameInputViewShow() {
-		if (true) return;// à faire dans le UI thread
-		SQLiteDatabase db = scoreOpenHelper.getReadableDatabase();
-		Cursor cursor = db
-				.rawQuery(
-						"select distinct name from score order by rowid desc limit 4",
-						null);
-		Button[] oldName = new Button[3];
-        oldName[0] = (Button)findViewById(R.id.reuse_name_1);
-        oldName[1] = (Button)findViewById(R.id.reuse_name_2);
-        oldName[2] = (Button)findViewById(R.id.reuse_name_3);
-		try {
-			int i = 0;
-			if (cursor.moveToFirst()) {
-				do {
-					String n = cursor.getString(0);
-
-					if (!n.equals("rzehtrtyBg") && n.length() > 0) {
-						oldName[i].setText(n);
-						oldName[i].setVisibility(View.VISIBLE);
-						i++;
-					}
-				} while (i < 3 && cursor.moveToNext());
-			}
-			if (i > 0) {
-				playerNameInputView.findViewById(
-						R.id.reuse).setVisibility(View.VISIBLE);
-			} else {
-				playerNameInputView.findViewById(
-						R.id.reuse).setVisibility(View.GONE);
-			}
-			for (; i < 3; i++) {
-				oldName[i].setVisibility(View.GONE);
-			}
-		} finally {
-			cursor.close();
-		}
 	}
 }
