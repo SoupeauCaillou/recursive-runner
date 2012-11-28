@@ -856,6 +856,13 @@ static GameState updateMenu(float dt __attribute__((unused)), bool ignoreClick, 
             break;
         }
     }
+    
+    if (theTouchInputManager.isTouched(0)) {
+        if (theMusicSystem.isMuted() != theSoundSystem.mute) {
+            theMusicSystem.toggleMute(theSoundSystem.mute);
+            ignoreClick = true;
+        }
+    }
 
     if (ADSR(titleGroup)->value == ADSR(titleGroup)->sustainValue) {
         // Cleanup previous game variables
