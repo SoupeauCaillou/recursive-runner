@@ -39,6 +39,7 @@
     <Compile Include="sources\api\linux\StorageAPILinuxImpl.cpp" />
     <Compile Include="sources\api\android\StorageAPIAndroidImpl.cpp" />
     <Compile Include="sources\systems\RangeFollowerSystem.cpp" />
+    <Compile Include="sources\LogoStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -62,5 +63,6 @@
     <None Include="sources\api\android\StorageAPIAndroidImpl.h" />
     <None Include="sources\Parameters.h" />
     <None Include="sources\systems\RangeFollowerSystem.h" />
+    <None Include="sources\LogoStateManager.h" />
   </ItemGroup>
 </Project>

@@ -18,8 +18,6 @@
 */
 package net.damsy.soupeaucaillou.recursiveRunner;
 
-import com.swarmconnect.Swarm;
-
 import net.damsy.soupeaucaillou.SacActivity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -71,11 +69,11 @@ public class RecursiveRunnerActivity extends SacActivity {
 	
 	@Override
 	public String getCharboostAppId() {
-		return null;
+		return RecursiveRunnerSecret.CB_appId;
 	}
 	@Override
 	public String getCharboostAppSignature() {
-		return null;
+		return RecursiveRunnerSecret.CB_AppSignature;
 	}
 	
 	@Override
@@ -89,7 +87,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	@Override
 	public View getNameInputView() {
 		return findViewById(R.id.enter_name);
-	}   
+	}
 	
 	static public final String Tag = "RecursiveRunnerJ";
 	static final String TILEMATCH_BUNDLE_KEY = "plop";

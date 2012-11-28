@@ -339,7 +339,7 @@ int main(int argc, char** argv) {
     LOGE("Remove music init");
     openal->init();
     theMusicSystem.init();
-    // soundAPI->init();
+    soundAPI->init();
 
 	game->sacInit(reso->X,reso->Y);
 	game->init(state, size);

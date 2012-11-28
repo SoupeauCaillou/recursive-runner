@@ -10,7 +10,7 @@ LOCAL_CFLAGS := -DANDROID_NDK \
                 -DDISABLE_IMPORTGL \
 				-I$(LOCAL_PATH)/..
 
-LOCAL_CXXFLAGS := -DANDROID_NDK -DENABLE_LOG -DENABLE_PROFILING \
+LOCAL_CXXFLAGS := -DANDROID_NDK \
                 -DDISABLE_IMPORTGL  -fvisibility=hidden \
             -I$(LOCAL_PATH)/../sources \
 				-I$(LOCAL_PATH)/.. \
@@ -21,6 +21,7 @@ LOCAL_CXXFLAGS := -DANDROID_NDK -DENABLE_LOG -DENABLE_PROFILING \
 LOCAL_SRC_FILES := \
     recursiveRunner.cpp \
     ../sources/RecursiveRunnerGame.cpp \
+    ../sources/LogoStateManager.cpp \
     ../sources/systems/RunnerSystem.cpp \
     ../sources/systems/PlayerSystem.cpp \
     ../sources/systems/CameraTargetSystem.cpp \

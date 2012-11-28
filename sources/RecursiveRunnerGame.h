@@ -30,6 +30,7 @@
 #include "api/ExitAPI.h"
 #include "api/StorageAPI.h"
 #include "api/CommunicationAPI.h"
+#include "LogoStateManager.h"
 
 class NameInputAPI;
 
@@ -50,4 +51,5 @@ class RecursiveRunnerGame : public Game {
 		ExitAPI* exitAPI;
         CommunicationAPI* communicationAPI;
         bool ignoreClick;
+        LogoStateManager* logoStateManager;
 };

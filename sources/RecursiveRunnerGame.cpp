@@ -167,10 +167,11 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
     theRenderingSystem.loadAtlas("alphabet", true);
-    theRenderingSystem.loadAtlas("dummy", true);
-    theRenderingSystem.loadAtlas("decor", true);
-    theRenderingSystem.loadAtlas("arbre", true);
-    theRenderingSystem.loadAtlas("fumee", true);
+    theRenderingSystem.loadAtlas("dummy", false);
+    theRenderingSystem.loadAtlas("decor", false);
+    theRenderingSystem.loadAtlas("arbre", false);
+    theRenderingSystem.loadAtlas("fumee", false);
+    theRenderingSystem.loadAtlas("logo", true);
     
     // register 4 animations
     std::string runL2R[] = { "run_l2r_0002",
@@ -533,8 +534,10 @@ void decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(muteBtn, Transformation);
     TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("mute"));
     TRANSFORM(muteBtn)->parent = cameraEntity;
-    TRANSFORM(muteBtn)->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, PlacementHelper::ScreenHeight * 0.5)
-        + TRANSFORM(muteBtn)->size * Vector2(0.5, -0.5);
+    TRANSFORM(muteBtn)->position = 
+        theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, 0.5)
+        + TRANSFORM(muteBtn)->size * Vector2(0.5, -0.5)
+        + Vector2(0, baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
     TRANSFORM(muteBtn)->z = 1;
     ADD_COMPONENT(muteBtn, Rendering);
     bool muted = storageAPI->isMuted();
@@ -550,8 +553,11 @@ void decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(swarmBtn, Transformation);
     TRANSFORM(swarmBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm_icon"));
     TRANSFORM(swarmBtn)->parent = cameraEntity;
-    TRANSFORM(swarmBtn)->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, -PlacementHelper::ScreenHeight * 0.5)
-        + TRANSFORM(swarmBtn)->size * Vector2(0.5, 0.5);
+    TRANSFORM(swarmBtn)->position =
+        theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, -0.5)
+        + TRANSFORM(swarmBtn)->size * Vector2(0.5, 0.5)
+        + Vector2(0, baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+        
     TRANSFORM(swarmBtn)->z = 1;
     ADD_COMPONENT(swarmBtn, Rendering);
     RENDERING(swarmBtn)->texture = theRenderingSystem.loadTextureFile("swarm_icon");
@@ -564,23 +570,9 @@ void decor(StorageAPI* storageAPI) {
     theMusicSystem.toggleMute(muted);
 }
 
-void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
-    baseLine = PlacementHelper::GimpYToScreen(800);
+static void initGame(StorageAPI* storageAPI) {
+baseLine = PlacementHelper::GimpYToScreen(800);
     decor(storageAPI);
-
-#if 0
-    background = theEntityManager.CreateEntity();
-    ADD_COMPONENT(background, Transformation);
-    TRANSFORM(background)->size = Vector2(LEVEL_SIZE * PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
-    TRANSFORM(background)->position.X = 0;
-    TRANSFORM(background)->position.Y = -(PlacementHelper::ScreenHeight - TRANSFORM(background)->size.Y)*0.5;
-    TRANSFORM(background)->z = 0.1;
-    ADD_COMPONENT(background, Rendering);
-    RENDERING(background)->texture = theRenderingSystem.loadTextureFile("decor-entier");
-    RENDERING(background)->hide = false;
-    RENDERING(background)->opaqueType = RenderingComponent::FULL_OPAQUE;
-    RENDERING(background)->cameraBitMask = (0x3 << 1);
-    #endif
 
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);
@@ -630,12 +622,6 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
 #endif
     transitionPlayingMenu();
 
-/*
-    theRenderingSystem.cameras[0].worldSize.Y *= 0.50;
-    theRenderingSystem.cameras[0].worldPosition.Y -= theRenderingSystem.cameras[0].worldSize.Y * 0.5;
-    theRenderingSystem.cameras[0].screenSize.Y *= 0.50;
-    theRenderingSystem.cameras[0].screenPosition.Y  = 0.25;
-*/
     // 3 cameras
     // Default camera (UI)
     RenderingSystem::Camera cam = theRenderingSystem.cameras[0];
@@ -669,6 +655,13 @@ void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int si
     }
 }
 
+void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
+    // initGame(storageAPI);
+    logoStateManager = new LogoStateManager;
+    logoStateManager->Setup();
+    logoStateManager->Enter();
+}
+
 
 void RecursiveRunnerGame::backPressed() {
     Game::backPressed();
@@ -679,6 +672,24 @@ void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
+    if (logoStateManager) {
+        switch (logoStateManager->Update(dt)) {
+            case 0:
+                // rien
+                break;
+            case 1:
+            
+                initGame(storageAPI);
+                // break;
+            case 2:
+                logoStateManager->Exit();
+                delete logoStateManager;
+                logoStateManager = 0;
+                break;
+        }
+        return;
+    }
+
     TRANSFORM(titleGroup)->position.Y = ADSR(titleGroup)->value;
     TRANSFORM(subtitle)->position.Y = ADSR(subtitle)->value;
 
