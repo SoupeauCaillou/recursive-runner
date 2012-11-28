@@ -933,7 +933,6 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
                 RENDERING(gameTempVars.links[i])->color.a = progress;
         }
     }
-    
     PLAYER(gameTempVars.players[gameTempVars.isGameMaster ? 0 : 1])->ready = true;
     for (std::vector<Entity>::iterator it=gameTempVars.players.begin(); it!=gameTempVars.players.end(); ++it) {
         if (!PLAYER(*it)->ready) {
@@ -945,7 +944,6 @@ static GameState updateWaitingPlayers(float dt __attribute__((unused))) {
         return WaitingPlayers;
     }
     MUSIC(titleGroup)->control = MusicComponent::Start;
-
     setupCamera(CameraModeSingle);
     if (TimeUtil::getTime() - minipause >= 1) {
         return Playing;
@@ -1257,13 +1255,16 @@ static bool sortFromLeftToRight(Entity c1, Entity c2) {
 #define COIN_SCALE 3
 void GameTempVar::syncCoins() {
     coins.clear();
-    std::vector<Entity> t = theTransformationSystem.RetrieveAllEntityWithComponent();
+    const std::vector<Entity> t = theRenderingSystem.RetrieveAllEntityWithComponent();
+    const TextureRef coinTexture = theRenderingSystem.loadTextureFile("ampoule");
     for (unsigned i=0; i<t.size(); i++) {
         //...
-        float x = TRANSFORM(t[i])->size.X;
-        if (MathUtil::Abs(x - 0.3 * COIN_SCALE) < 0.01) {
+        if (RENDERING(t[i])->texture == coinTexture) {
             coins.push_back(t[i]);
         }
+    }
+    if (coins.size() != 20) {
+        LOGE("Weird, we have %u coins...", coins.size());
     }
     std::sort(coins.begin(), coins.end(), sortFromLeftToRight);
 }
