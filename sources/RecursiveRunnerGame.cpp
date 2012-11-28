@@ -1547,8 +1547,9 @@ static void setupCamera(CameraMode mode) {
             break;
         case CameraModeMenu:
             theRenderingSystem.cameras[0].enable = true;
-            theRenderingSystem.cameras[1].enable = false;
-            theRenderingSystem.cameras[2].enable = false;
+            for (int i=1; i<theRenderingSystem.cameras.size(); i++) {
+                theRenderingSystem.cameras[i].enable = false;
+            }
             break;
     }
 }

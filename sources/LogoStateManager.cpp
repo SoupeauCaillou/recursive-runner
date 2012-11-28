@@ -33,6 +33,7 @@ LogoStateManager::LogoStateManager() {}
 void LogoStateManager::Setup() {
      logo = theEntityManager.CreateEntity();
      logobg = theEntityManager.CreateEntity();
+     logofade = theEntityManager.CreateEntity();
 
      ADD_COMPONENT(logo, Rendering);
      ADD_COMPONENT(logo, Transformation);
