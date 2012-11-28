@@ -23,7 +23,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -104,7 +104,7 @@ public class RecursiveRunnerActivity extends SacActivity {
    
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
-		Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
+		//Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
  
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
