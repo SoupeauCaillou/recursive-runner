@@ -19,9 +19,13 @@
 package net.damsy.soupeaucaillou.recursiveRunner;
 
 import net.damsy.soupeaucaillou.SacActivity;
+import net.damsy.soupeaucaillou.SacJNILib;
+import net.damsy.soupeaucaillou.api.MusicAPI;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioTrack;
 import android.os.Bundle;
 //import android.util.Log;
 import android.view.View;
@@ -80,7 +84,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public Button getNameInputButton() {
 		return null;//(Button)findViewById(R.id.name_save);
 	}
-	@Override 
+	@Override
 	public EditText getNameInputEdit() {
 		return null;//(EditText)findViewById(R.id.player_name_input);
 	}
@@ -88,13 +92,13 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public View getNameInputView() {
 		return null;//findViewById(R.id.enter_name);
 	}
-	
+
 	static public final String Tag = "RecursiveRunnerJ";
 	static final String TILEMATCH_BUNDLE_KEY = "plop";
 	static public final String HERISWAP_SHARED_PREF = "RecursiveRunnerPref";
      
 	byte[] renderingSystemState;
-	
+	 
 	static public RecursiveRunnerStorage.OptionsOpenHelper optionsOpenHelper;
 	static public RecursiveRunnerStorage.ScoreOpenHelper scoreOpenHelper;
 	 
@@ -102,12 +106,12 @@ public class RecursiveRunnerActivity extends SacActivity {
   
 	public SharedPreferences preferences;
    
-	@Override
+	@Override 
     protected void onCreate(Bundle savedInstanceState) {
-		//Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
+		android.util.Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
- 
-        /*
+   
+        /*        
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
         playerNameInputView = findViewById(R.id.enter_name);
         rl.bringChildToFront(playerNameInputView);
@@ -118,5 +122,24 @@ public class RecursiveRunnerActivity extends SacActivity {
 	}
  
 	public void preNameInputViewShow() {
+	}   
+
+	@Override
+	protected void onDestroy() {
+		RecursiveRunnerActivity.scoreOpenHelper.close();
+		RecursiveRunnerActivity.optionsOpenHelper.close();
+		if (isFinishing()) {
+			// MusicAPI.DumbAndroid.killAllMusic();
+			isRunning = false;
+			
+			synchronized (mutex) {
+			}
+			synchronized (renderer.gameThread) {
+				renderer.gameThread.notifyAll();
+			}
+			android.util.Log.i("sac", "pouet");
+		}
+		super.onDestroy();
 	}
+	
 }

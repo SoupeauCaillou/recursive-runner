@@ -156,6 +156,9 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
 }
 
 RecursiveRunnerGame::~RecursiveRunnerGame() {
+    LOGW("Delete game Ainstance %p %p", this, &theEntityManager);
+    theEntityManager.deleteAllEntities();
+    
     RunnerSystem::DestroyInstance();
     CameraTargetSystem::DestroyInstance();
     PlayerSystem::DestroyInstance();
