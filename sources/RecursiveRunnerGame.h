@@ -1,5 +1,5 @@
 /*
-	This file is part of Heriswap.
+	This file is part of Recursive Runner.
 
 	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
 	@author Soupe au Caillou - Gautier Pelloux-Prayer
@@ -20,6 +20,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "base/MathUtil.h"
 #include "base/Game.h"
@@ -30,9 +31,27 @@
 #include "api/ExitAPI.h"
 #include "api/StorageAPI.h"
 #include "api/CommunicationAPI.h"
-#include "LogoStateManager.h"
+#include "states/StateManager.h"
 
 class NameInputAPI;
+
+struct GameTempVar {
+    void syncRunners();
+    void syncCoins();
+    void cleanup();
+    int playerIndex();
+
+    unsigned numPlayers;
+    bool isGameMaster;
+    Entity currentRunner[2];
+    std::vector<Entity> runners[2], coins, players, links, sparkling; 
+};
+
+enum CameraMode {
+    CameraModeMenu,
+    CameraModeSingle,
+    CameraModeSplit
+};
 
 class RecursiveRunnerGame : public Game {
 	public:
@@ -43,13 +62,29 @@ class RecursiveRunnerGame : public Game {
 		void tick(float dt);
 		void togglePause(bool activate);
 		void backPressed();
+        void changeState(State::Enum newState);
 
+        void setupCamera(CameraMode mode);
 	private:
+        State::Enum currentState;
+        std::map<State::Enum, StateManager*> state2manager;
+
 		AssetAPI* assetAPI;
-		StorageAPI* storageAPI;
 		NameInputAPI* nameInputAPI;
 		ExitAPI* exitAPI;
-        CommunicationAPI* communicationAPI;
+
+        void decor(StorageAPI* storageAPI);
+        void initGame(StorageAPI* storageAPI);
+
+    public: // shared/global vars
+        float baseLine;
         bool ignoreClick;
-        LogoStateManager* logoStateManager;
+        Entity silhouette, route, cameraEntity, bestScore;
+        std::vector<Entity> decorEntities;
+        CommunicationAPI* communicationAPI;
+        StorageAPI* storageAPI;
+        GameTempVar gameTempVars;
+        Entity scoreText[2], scorePanel;
+        Entity muteBtn;
+        Vector2 leftMostCameraPos;
 };

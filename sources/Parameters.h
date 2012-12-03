@@ -3,6 +3,10 @@
 #define COMPUTE_SPEED_FROM_GAME_DURATION(sec) (runner * (20 * 3  + 0.85*2) / (sec))
 
 namespace param {
+    const int LevelSize = 3;
+
+    const int CoinScale = 3;
+
 	//nombre d'aller-retour (defaut = 10)
 	const int runner = 10; 
 	

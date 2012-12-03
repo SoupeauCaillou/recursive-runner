@@ -40,6 +40,11 @@
     <Compile Include="sources\api\android\StorageAPIAndroidImpl.cpp" />
     <Compile Include="sources\systems\RangeFollowerSystem.cpp" />
     <Compile Include="sources\LogoStateManager.cpp" />
+    <Compile Include="sources\states\MenuStateManager.cpp" />
+    <Compile Include="sources\states\PauseStateManager.cpp" />
+    <Compile Include="sources\states\GameStateManager.cpp" />
+    <Compile Include="sources\states\LogoStateManager.cpp" />
+    <Compile Include="sources\states\TransitionStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -50,6 +55,7 @@
     <Folder Include="linux\" />
     <Folder Include="sources\systems\" />
     <Folder Include="sources\menus\" />
+    <Folder Include="sources\states\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sources\systems\RunnerSystem.h" />
@@ -64,5 +70,6 @@
     <None Include="sources\Parameters.h" />
     <None Include="sources\systems\RangeFollowerSystem.h" />
     <None Include="sources\LogoStateManager.h" />
+    <None Include="sources\states\StateManager.h" />
   </ItemGroup>
 </Project>
