@@ -23,15 +23,18 @@ struct PauseStateManager::PauseStateManagerDatas {
 };
 
 PauseStateManager::PauseStateManager(RecursiveRunnerGame* game) : StateManager(State::Pause, game) {
-
+    datas = new PauseStateManagerDatas;
 }
 
 PauseStateManager::~PauseStateManager() {
-
+    delete datas;
 }
 
 void PauseStateManager::setup() {
 
+}
+
+void PauseStateManager::earlyEnter() {
 }
 
 void PauseStateManager::enter() {
@@ -48,6 +51,10 @@ void PauseStateManager::backgroundUpdate(float dt __attribute__((unused))) {
 
 void PauseStateManager::exit() {
  
+}
+
+void PauseStateManager::lateExit() {
+
 }
 
 bool PauseStateManager::transitionCanExit() {

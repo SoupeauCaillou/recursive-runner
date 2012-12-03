@@ -42,7 +42,6 @@ struct GameTempVar {
     int playerIndex();
 
     unsigned numPlayers;
-    bool isGameMaster;
     Entity currentRunner[2];
     std::vector<Entity> runners[2], coins, players, links, sparkling; 
 };
@@ -65,6 +64,7 @@ class RecursiveRunnerGame : public Game {
         void changeState(State::Enum newState);
 
         void setupCamera(CameraMode mode);
+        void updateBestScore();
 	private:
         State::Enum currentState;
         std::map<State::Enum, StateManager*> state2manager;

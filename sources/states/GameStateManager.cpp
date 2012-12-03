@@ -65,6 +65,7 @@ void GameTempVar::cleanup() {
         runners[i].clear();
         theEntityManager.DeleteEntity(players[i]);
     }
+    players.clear();
 }
 
 void GameTempVar::syncRunners() {
@@ -111,7 +112,7 @@ void GameTempVar::syncCoins() {
 }
 
 int GameTempVar::playerIndex() {
-    return (isGameMaster ? 0 : 1);
+    return 0;
 }
 
 
@@ -221,21 +222,26 @@ struct GameStateManager::GameStateManagerDatas {
 };
 
 GameStateManager::GameStateManager(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
-
+    datas = new GameStateManagerDatas();
 }
 
 GameStateManager::~GameStateManager() {
-
+    delete datas;
 }
 
 void GameStateManager::setup() {
 
 }
 
-void GameStateManager::enter() {
-    game->gameTempVars.syncCoins();
-    game->gameTempVars.syncRunners();
+void GameStateManager::earlyEnter() {
+}
 
+void GameStateManager::enter() {
+    for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
+        addRunnerToPlayer(game, game->gameTempVars.players[i], PLAYER(game->gameTempVars.players[i]), i);
+    }
+
+    game->gameTempVars.syncRunners();
     for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
         theRenderingSystem.cameras[1 + i].worldPosition.X = 
             TRANSFORM(game->gameTempVars.currentRunner[i])->position.X + PlacementHelper::ScreenWidth * 0.5;
@@ -263,17 +269,11 @@ State::Enum GameStateManager::update(float dt) {
             LOGI("%lu finished, add runner or end game", gameTempVars.currentRunner[i]);
             CAM_TARGET(gameTempVars.currentRunner[i])->enabled = false;
             // return Runner control to master
-            #ifdef SAC_NETWORK
-            if (!gameTempVars.isGameMaster) {
-                std::cout << "Give back ownership of " << gameTempVars.currentRunner[i] << " to server" << std::endl;
-                NETWORK(gameTempVars.currentRunner[i])->newOwnerShipRequest = 0;
-            }
-            #endif
             if (PLAYER(gameTempVars.players[i])->runnersCount == param::runner) {
                 theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
-                return State::Menu;
+                return State::Game2Menu;
             } else {
                 LOGI("Create runner");
                 // add a new one
@@ -311,7 +311,7 @@ State::Enum GameStateManager::update(float dt) {
         CAM_TARGET(gameTempVars.currentRunner[i])->offset.Y = 0 - tc->position.Y;
     }
 
-    if (gameTempVars.isGameMaster) { // maybe do it for non master too (but do not delete entities, maybe only hide ?)
+    { // maybe do it for non master too (but do not delete entities, maybe only hide ?)
         std::vector<TransformationComponent*> activesColl;
         std::vector<int> direction;
         // check for collisions for non-ghost runners
@@ -468,10 +468,14 @@ void GameStateManager::exit() {
     }
 }
 
-bool GameStateManager::transitionCanExit() {
+void GameStateManager::lateExit() {
+ 
+}
 
+bool GameStateManager::transitionCanExit() {
+    return true;
 }
 
 bool GameStateManager::transitionCanEnter() {
- 
+    return true;
 }

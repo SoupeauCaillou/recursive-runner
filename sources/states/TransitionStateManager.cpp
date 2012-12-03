@@ -39,17 +39,18 @@ void TransitionStateManager::setup() {
 }
 
 void TransitionStateManager::enter() {
-
+    datas->to->earlyEnter();
 }
 
 State::Enum TransitionStateManager::update(float dt) {
     if (datas->from->transitionCanExit() && 
-        datas->from->transitionCanEnter()) {
+        datas->to->transitionCanEnter()) {
         return datas->to->state;
     }
     return state;
 }
 
 void TransitionStateManager::exit() {
- 
+    datas->from->lateExit();
 }
+

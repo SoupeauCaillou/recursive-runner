@@ -69,6 +69,8 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
         new TransitionStateManager(State::Menu2Game, state2manager[State::Menu], state2manager[State::Game], this)));
     state2manager.insert(std::make_pair(State::Game2Menu,
         new TransitionStateManager(State::Game2Menu, state2manager[State::Game], state2manager[State::Menu], this)));
+    state2manager.insert(std::make_pair(State::Logo2Menu,
+        new TransitionStateManager(State::Logo2Menu, state2manager[State::Logo], state2manager[State::Menu], this)));
 }
 
 RecursiveRunnerGame::~RecursiveRunnerGame() {
@@ -250,14 +252,10 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
 	    RENDERING(b)->hide = false;
 	    RENDERING(b)->mirrorH = bdef.mirrorUV;
-     
+        RENDERING(b)->opaqueType = RenderingComponent::NON_OPAQUE;
 	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
 	    decorEntities.push_back(b);
-     
-        if (bdef.texture.find("arbre") == 0) {
-            RENDERING(b)->opaqueType = RenderingComponent::FULL_OPAQUE;
-         }
-     
+
         if (i < 3) {
             fumee(b);
         }
@@ -286,16 +284,9 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     TEXT_RENDERING(bestScore)->hide = false;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
 
-
-    
-
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
     PlacementHelper::ScreenWidth /= 3;
-    
-    leftMostCameraPos = 
-        Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
-        baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
 
     cameraEntity = theEntityManager.CreateEntity();
     ADD_COMPONENT(cameraEntity, Transformation);
@@ -325,7 +316,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, 0.5)
         + TRANSFORM(muteBtn)->size * Vector2(0.5, -0.5)
         + Vector2(0, baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
-    TRANSFORM(muteBtn)->z = 1;
+    TRANSFORM(muteBtn)->z = 0.95;
     ADD_COMPONENT(muteBtn, Rendering);
     bool muted = storageAPI->isMuted();
     RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "unmute" : "mute");
@@ -336,14 +327,15 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     BUTTON(muteBtn)->enabled = true;
     BUTTON(muteBtn)->overSize = 1.2;
 
-
-
     theSoundSystem.mute = muted;
     theMusicSystem.toggleMute(muted);
 }
 
 void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     baseLine = PlacementHelper::GimpYToScreen(800);
+    leftMostCameraPos = 
+        Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
+        baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
     decor(storageAPI);
 
     scorePanel = theEntityManager.CreateEntity();
@@ -406,11 +398,14 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
-    setupCamera(CameraModeSingle);
+    initGame(storageAPI);
+    updateBestScore();
+
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
         it->second->setup();
     }
-    changeState(State::Logo);
+    currentState = State::Logo;
+    state2manager[currentState]->enter();
 }
 
 void RecursiveRunnerGame::changeState(State::Enum newState) {
@@ -445,6 +440,10 @@ void RecursiveRunnerGame::tick(float dt) {
     }
 
     State::Enum newState = state2manager[currentState]->update(dt);
+    for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
+        it->second->backgroundUpdate(dt);
+    }
+    
     if (newState != currentState) {
         changeState(newState);
     }
@@ -496,7 +495,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode mode) {
             theRenderingSystem.cameras[1].screenSize.Y = 1;
             theRenderingSystem.cameras[1].screenPosition.Y  = 0;
             theRenderingSystem.cameras[1].mirrorY = false;
-            // TRANSFORM(scoreText[0])->position = Vector2(0, 0.35 * PlacementHelper::ScreenHeight);
+
             TEXT_RENDERING(scoreText[0])->hide = false;
             TEXT_RENDERING(scoreText[0])->positioning = TextRenderingComponent::CENTER;
             TEXT_RENDERING(scoreText[1])->hide = true;
@@ -523,9 +522,24 @@ void RecursiveRunnerGame::setupCamera(CameraMode mode) {
             break;
         case CameraModeMenu:
             theRenderingSystem.cameras[0].enable = true;
+            theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
             for (unsigned i=1; i<theRenderingSystem.cameras.size(); i++) {
                 theRenderingSystem.cameras[i].enable = false;
+                theRenderingSystem.cameras[i].worldPosition = leftMostCameraPos;
             }
             break;
+    }
+}
+
+void RecursiveRunnerGame::updateBestScore() {
+    float f;
+    std::vector<StorageAPI::Score> scores = storageAPI->getScores(f);
+    if (!scores.empty()) {
+        std::stringstream best;
+        best << "Best: " << scores[0].points;
+        TEXT_RENDERING(bestScore)->text = best.str();
+    } else {
+        LOGW("No best score found (?!)");
+        TEXT_RENDERING(bestScore)->text = "";
     }
 }

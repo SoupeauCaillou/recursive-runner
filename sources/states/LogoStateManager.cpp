@@ -80,6 +80,8 @@ void LogoStateManager::setup() {
     TRANSFORM(logofade)->z = 1;
 }
 
+void LogoStateManager::earlyEnter() {
+}
 #define FADE 0.5
 void LogoStateManager::enter() {
     datas->animLogo = theEntityManager.CreateEntity();
@@ -156,7 +158,7 @@ State::Enum LogoStateManager::update(float dt) {
                 theEntityManager.DeleteEntity(datas->logo);
                 theEntityManager.DeleteEntity(datas->logobg);
                 theEntityManager.DeleteEntity(datas->animLogo);
-                return State::Menu;
+                return State::Logo2Menu;
             }
     }
     return State::Logo;
@@ -169,6 +171,10 @@ void LogoStateManager::backgroundUpdate(float dt __attribute__((unused))) {
 void LogoStateManager::exit() {
     theRenderingSystem.unloadAtlas("logo");
     theEntityManager.DeleteEntity(datas->logofade);
+}
+
+void LogoStateManager::lateExit() {
+ 
 }
 
 bool LogoStateManager::transitionCanExit() {

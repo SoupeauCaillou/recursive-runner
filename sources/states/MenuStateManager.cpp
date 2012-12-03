@@ -35,7 +35,6 @@
 #include <sstream>
 #include <vector>
 
-static void updateBestScore(StorageAPI* storageAPI, Entity bestScore);
 static void createCoins(int count, GameTempVar& gameTempVars);
 
 static void startMenuMusic(Entity title) {
@@ -52,11 +51,11 @@ struct MenuStateManager::MenuStateManagerDatas {
 };
 
 MenuStateManager::MenuStateManager(RecursiveRunnerGame* game) : StateManager(State::Menu, game) {
-
+    datas = new MenuStateManagerDatas;
 }
 
 MenuStateManager::~MenuStateManager() {
-
+    delete datas;
 }
 
 void MenuStateManager::setup() {
@@ -74,7 +73,7 @@ void MenuStateManager::setup() {
     ADSR(titleGroup)->attackTiming = 2;
     ADSR(titleGroup)->decayTiming = 0.2;
     ADSR(titleGroup)->releaseTiming = 1.5;
-    TRANSFORM(titleGroup)->position = Vector2(PlacementHelper::GimpXToScreen(640), ADSR(titleGroup)->idleValue);
+    TRANSFORM(titleGroup)->position = Vector2(game->leftMostCameraPos.X + TRANSFORM(titleGroup)->size.X * 0.5, ADSR(titleGroup)->idleValue);
     ADD_COMPONENT(titleGroup, Music);
     MUSIC(titleGroup)->fadeOut = 2;
     MUSIC(titleGroup)->fadeIn = 1;
@@ -129,7 +128,7 @@ void MenuStateManager::setup() {
         + TRANSFORM(swarmBtn)->size * Vector2(0.5, 0.5)
         + Vector2(0, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
         
-    TRANSFORM(swarmBtn)->z = 1;
+    TRANSFORM(swarmBtn)->z = 0.95;
     ADD_COMPONENT(swarmBtn, Rendering);
     RENDERING(swarmBtn)->texture = theRenderingSystem.loadTextureFile("swarm_icon");
     RENDERING(swarmBtn)->hide = false;
@@ -138,15 +137,20 @@ void MenuStateManager::setup() {
     BUTTON(swarmBtn)->overSize = 1.2;
 }
 
-void MenuStateManager::enter() {
+void MenuStateManager::earlyEnter() {
+    game->setupCamera(CameraModeMenu);
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty()) {
         std::stringstream a;
         a << PLAYER(players[0])->score << " points - tap screen to restart";
         TEXT_RENDERING(datas->subtitleText)->text = a.str();
         game->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
-        updateBestScore(game->storageAPI, game->bestScore);
+        game->updateBestScore();
     }
+}
+
+void MenuStateManager::enter() {
+    game->gameTempVars.cleanup();
 }
 
 void MenuStateManager::backgroundUpdate(float dt) {
@@ -198,22 +202,30 @@ State::Enum MenuStateManager::update(float dt) {
     }
 
     // Start game ?
-    if (ADSR(titleGroup)->value == ADSR(titleGroup)->sustainValue) {
-        if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
-            ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
-            MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("jeu.ogg");
-            return State::Menu2Game;
-        }
+    if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
+        ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
+        MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("jeu.ogg");
+        return State::Menu2Game;
     }
     return State::Menu;
 }
 
 void MenuStateManager::exit() {
-    game->setupCamera(CameraModeSingle);
+    game->gameTempVars.numPlayers = 1;
+    if (game->gameTempVars.players.empty()) {
+        Entity e = theEntityManager.CreateEntity();
+        ADD_COMPONENT(e, Player);
+        game->gameTempVars.players.push_back(e);
+    }
     MUSIC(datas->title)->control = MusicComponent::Stop;
     BUTTON(datas->swarmBtn)->enabled = false;
 
     createCoins(20, game->gameTempVars);
+    game->gameTempVars.syncCoins();
+}
+
+void MenuStateManager::lateExit() {
+    game->setupCamera(CameraModeSingle);
 }
 
 float minipause;
@@ -233,7 +245,7 @@ bool MenuStateManager::transitionCanExit() {
                 RENDERING(game->gameTempVars.links[i])->color.a = progress;
         }
     }
-    PLAYER(game->gameTempVars.players[game->gameTempVars.isGameMaster ? 0 : 1])->ready = true;
+    PLAYER(game->gameTempVars.players[0])->ready = true;
     for (std::vector<Entity>::iterator it=game->gameTempVars.players.begin(); it!=game->gameTempVars.players.end(); ++it) {
         if (!PLAYER(*it)->ready) {
             return false;
@@ -253,20 +265,24 @@ bool MenuStateManager::transitionCanExit() {
 }
 
 bool MenuStateManager::transitionCanEnter() {
-    return true;
-}
-
-static void updateBestScore(StorageAPI* storageAPI, Entity bestScore) {
-    float f;
-    std::vector<StorageAPI::Score> scores = storageAPI->getScores(f);
-    if (!scores.empty()) {
-        std::stringstream best;
-        best << "Best: " << scores[0].points;
-        TEXT_RENDERING(bestScore)->text = best.str();
-    } else {
-        LOGW("No best score found (?!)");
-        TEXT_RENDERING(bestScore)->text = "";
+    ADSRComponent* adsr = ADSR(datas->titleGroup);
+    adsr->active = ADSR(datas->subtitle)->active = true;
+    {
+        float progress = (adsr->value - adsr->attackValue) /
+            (adsr->idleValue - adsr->attackValue);
+        progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
+        for (unsigned i=0; i<game->gameTempVars.coins.size(); i++) {
+            RENDERING(game->gameTempVars.coins[i])->color.a = progress;
+        }
+        for (unsigned i=0; i<game->gameTempVars.links.size(); i++) {
+            if (i % 2)
+                RENDERING(game->gameTempVars.links[i])->color.a = progress * 0.2;
+            else
+                RENDERING(game->gameTempVars.links[i])->color.a = progress;
+        }
     }
+    
+    return (ADSR(datas->titleGroup)->value == ADSR(datas->titleGroup)->sustainValue);
 }
 
 static bool sortLeftToRight(Entity e, Entity f) {
