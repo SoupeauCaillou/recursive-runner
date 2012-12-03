@@ -24,7 +24,6 @@
 
 #include <base/Log.h>
 #include <base/TouchInputManager.h>
-#include <base/MathUtil.h>
 #include <base/EntityManager.h>
 #include <base/TimeUtil.h>
 #include <base/PlacementHelper.h>
@@ -32,35 +31,17 @@
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/ButtonSystem.h"
-#include "systems/ADSRSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/SoundSystem.h"
 #include "systems/MusicSystem.h"
-#include "systems/ContainerSystem.h"
-#include "systems/PhysicsSystem.h"
-#include "systems/ParticuleSystem.h"
-#include "systems/MorphingSystem.h"
 #include "systems/AnimationSystem.h"
-#include "systems/AutoDestroySystem.h"
 
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
 #include "systems/PlayerSystem.h"
 #include "systems/RangeFollowerSystem.h"
 
-#include <cmath>
-#include <vector>
 #include <iomanip>
-
-
-#ifndef EMSCRIPTEN
-// #define IN_GAME_EDITOR 0
-#endif
-#if IN_GAME_EDITOR
-#include <GL/glfw.h>
-#endif
-
-
 
 static void updateFps(float dt);
 
