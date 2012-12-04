@@ -43,7 +43,7 @@ static void startMenuMusic(Entity title) {
     MUSIC(title)->loopAt = 4.54;
     MUSIC(title)->fadeOut = 2;
     MUSIC(title)->fadeIn = 1;
-    MUSIC(title)->control = MusicComponent::Start;
+    MUSIC(title)->control = MusicControl::Play;
 }
 
 struct MenuStateManager::MenuStateManagerDatas {
@@ -138,6 +138,10 @@ void MenuStateManager::setup() {
 }
 
 void MenuStateManager::earlyEnter() {
+    // Restore camera position
+    for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
+        theRenderingSystem.cameras[i].worldPosition = game->leftMostCameraPos;
+    }
     game->setupCamera(CameraModeMenu);
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty()) {
@@ -168,7 +172,7 @@ State::Enum MenuStateManager::update(float dt) {
 
     if (!theMusicSystem.isMuted()) {
         MusicComponent* music = MUSIC(title);
-        music->control = MusicComponent::Start;
+        music->control = MusicControl::Play;
 
         if (music->music == InvalidMusicRef) {
             startMenuMusic(title);
@@ -210,7 +214,7 @@ void MenuStateManager::exit() {
         ADD_COMPONENT(e, Player);
         game->gameTempVars.players.push_back(e);
     }
-    MUSIC(datas->title)->control = MusicComponent::Stop;
+    MUSIC(datas->title)->control = MusicControl::Stop;
     BUTTON(datas->swarmBtn)->enabled = false;
 
     createCoins(20, game->gameTempVars);
@@ -248,7 +252,7 @@ bool MenuStateManager::transitionCanExit() {
         minipause = TimeUtil::getTime();
         return false;
     }
-    MUSIC(datas->titleGroup)->control = MusicComponent::Start;
+    MUSIC(datas->titleGroup)->control = MusicControl::Play;
 
     if (TimeUtil::getTime() - minipause >= 1) {
         return true;

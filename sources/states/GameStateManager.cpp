@@ -115,110 +115,12 @@ int GameTempVar::playerIndex() {
     return 0;
 }
 
-
-
-
 static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
-static Entity addRunnerToPlayer(Game* game, Entity player, PlayerComponent* p, int playerIndex);
+static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex);
 
-static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, const Color& color, bool isGhost) {
-    Entity e = theEntityManager.CreateEntity();
-    ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->position = TRANSFORM(parent)->position;
-    TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
-    TRANSFORM(e)->size = TRANSFORM(parent)->size;
-    TRANSFORM(e)->z = TRANSFORM(parent)->z + (isGhost ? 0.1 : 0.11);
-    ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
-    RENDERING(e)->color = color;
-    RENDERING(e)->hide = false;
-    
-    PARTICULE(parent)->duration = 0.1;
-    PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
-#if 0
-    ADD_COMPONENT(e, TextRendering);
-    std::stringstream a;
-    a << gain;
-    TEXT_RENDERING(e)->text = a.str();
-    TEXT_RENDERING(e)->charHeight = 0.5;
-    TEXT_RENDERING(e)->color = Color(1, 1, 0);
-    TEXT_RENDERING(e)->hide = false;
-    TEXT_RENDERING(e)->cameraBitMask = (0x3 << 1);
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    PHYSICS(e)->gravity = Vector2(0, 6);
-#endif
-    ADD_COMPONENT(e, AutoDestroy);
-    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.value = 5;
-    AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
-    // AUTO_DESTROY(e)->hasTextRendering = true;
-}
 
-static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex) {
-    int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
-    Entity e = theEntityManager.CreateEntity();
-    ADD_COMPONENT(e, Transformation);
-    // TRANSFORM(e)->position = Vector2(-9, 2);
-    // TRANSFORM(e)->size = Vector2(0.85, 2 * 0.85) * .8;//0.4,1);//0.572173, 0.815538);
-    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;//0.4,1);//0.572173, 0.815538);
-    TRANSFORM(e)->rotation = 0;
-    TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
-    ADD_COMPONENT(e, Rendering);
-    // RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
-    RENDERING(e)->hide = false;
-    RENDERING(e)->cameraBitMask = (0x3 << 1);
-    RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
-    ADD_COMPONENT(e, Runner);
-
-    /*TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
-        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
-        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);*/
-    theTransformationSystem.setPosition(TRANSFORM(e), 
-        Vector2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, game->baseLine), TransformationSystem::S);
-    RUNNER(e)->startPoint = TRANSFORM(e)->position;
-    RUNNER(e)->endPoint = Vector2(direction * (param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, 0);
-    RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
-    RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
-    RUNNER(e)->playerOwner = player;
-    
-std::cout <<" add runner: " << e << " - " << TimeUtil::getTime()  << "(pos: " << TRANSFORM(e)->position << ")" << RUNNER(e)->speed << std::endl;
-    do {
-        Color c(Color::random());
-        c.a = 1;
-        float sum = c.r + c.b + c.g;
-        float maxDiff = MathUtil::Max(MathUtil::Max(MathUtil::Abs(c.r - c.g), MathUtil::Abs(c.r - c.b)), MathUtil::Abs(c.b - c.g));
-        if ((sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) && maxDiff > 0.5) {
-            RUNNER(e)->color = c;
-            break;
-        }
-    } while (true);
-    ADD_COMPONENT(e, CameraTarget);
-    CAM_TARGET(e)->cameraIndex = 1 + playerIndex;
-    CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = "runL2R";
-    ANIMATION(e)->playbackSpeed = 1.1;
-    RENDERING(e)->mirrorH = (direction < 0);
-    
-    Entity collisionZone = theEntityManager.CreateEntity();
-    ADD_COMPONENT(collisionZone, Transformation);
-    TRANSFORM(collisionZone)->parent = e;
-    TRANSFORM(collisionZone)->z = 0.01;
-    #if 0
-    ADD_COMPONENT(collisionZone, Rendering);
-    RENDERING(collisionZone)->hide = false;
-    RENDERING(collisionZone)->color = Color(1,0,0,1);
-    #endif
-    RUNNER(e)->collisionZone = collisionZone;
-
- LOGI("Add runner %lu at pos : {%.2f, %.2f}, speed: %.2f (player=%lu)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
-    return e;
-}
 struct GameStateManager::GameStateManagerDatas {
- 
+    Entity pauseButton;
 };
 
 GameStateManager::GameStateManager(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
@@ -230,29 +132,53 @@ GameStateManager::~GameStateManager() {
 }
 
 void GameStateManager::setup() {
-
+    Entity pauseButton = datas->pauseButton = theEntityManager.CreateEntity();
+    ADD_COMPONENT(pauseButton, Transformation);
+    TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("mute"));
+    TRANSFORM(pauseButton)->parent = game->cameraEntity;
+    TRANSFORM(pauseButton)->position = 
+        theRenderingSystem.cameras[0].worldSize * Vector2(0.5, 0.5)
+        + TRANSFORM(pauseButton)->size * Vector2(-0.5, -0.5)
+        + Vector2(0, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+    TRANSFORM(pauseButton)->z = 0.95;
+    ADD_COMPONENT(pauseButton, Rendering);
+    RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
+    RENDERING(pauseButton)->hide = true;
+    RENDERING(pauseButton)->cameraBitMask = 0x2;
+    RENDERING(pauseButton)->color = Color(119.0 / 255, 119.0 / 255, 119.0 / 255);
+    ADD_COMPONENT(pauseButton, Button);
+    BUTTON(pauseButton)->enabled = false;
+    BUTTON(pauseButton)->overSize = 1.2;
 }
 
 void GameStateManager::earlyEnter() {
 }
 
 void GameStateManager::enter() {
-    for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
-        addRunnerToPlayer(game, game->gameTempVars.players[i], PLAYER(game->gameTempVars.players[i]), i);
+    // only do this on first enter (ie: not when unpausing)
+    if (game->gameTempVars.runners[0].empty()) {
+        for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
+            addRunnerToPlayer(game, game->gameTempVars.players[i], PLAYER(game->gameTempVars.players[i]), i);
+        }
+    
+        game->gameTempVars.syncRunners();
+        for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
+            theRenderingSystem.cameras[1 + i].worldPosition.X = 
+                TRANSFORM(game->gameTempVars.currentRunner[i])->position.X + PlacementHelper::ScreenWidth * 0.5;
+        }
     }
-
-    game->gameTempVars.syncRunners();
-    for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
-        theRenderingSystem.cameras[1 + i].worldPosition.X = 
-            TRANSFORM(game->gameTempVars.currentRunner[i])->position.X + PlacementHelper::ScreenWidth * 0.5;
-    }
+    RENDERING(datas->pauseButton)->hide = false;
+    BUTTON(datas->pauseButton)->enabled = true;
 }
 
 State::Enum GameStateManager::update(float dt) {
     GameTempVar& gameTempVars = game->gameTempVars;
 
     gameTempVars.syncRunners();
-    
+
+    if (BUTTON(datas->pauseButton)->clicked) {
+        return State::Pause;
+    }
     /*if (MUSIC(titleGroup)->loopNext == InvalidMusicRef) {
         MUSIC(titleGroup)->loopNext = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
     }*/
@@ -460,16 +386,11 @@ void GameStateManager::backgroundUpdate(float dt __attribute__((unused))) {
 }
 
 void GameStateManager::exit() {
-     LOGI("Change state : Playing -> Menu");
-    game->setupCamera(CameraModeMenu);
-    // Restore camera position
-    for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
-        theRenderingSystem.cameras[i].worldPosition = game->leftMostCameraPos;
-    }
+    BUTTON(datas->pauseButton)->enabled = false;
 }
 
 void GameStateManager::lateExit() {
- 
+    RENDERING(datas->pauseButton)->hide = true;
 }
 
 bool GameStateManager::transitionCanExit() {
@@ -478,4 +399,101 @@ bool GameStateManager::transitionCanExit() {
 
 bool GameStateManager::transitionCanEnter() {
     return true;
+}
+
+static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, const Color& color, bool isGhost) {
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    TRANSFORM(e)->position = TRANSFORM(parent)->position;
+    TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
+    TRANSFORM(e)->size = TRANSFORM(parent)->size;
+    TRANSFORM(e)->z = TRANSFORM(parent)->z + (isGhost ? 0.1 : 0.11);
+    ADD_COMPONENT(e, Rendering);
+    RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
+    RENDERING(e)->color = color;
+    RENDERING(e)->hide = false;
+    
+    PARTICULE(parent)->duration = 0.1;
+    PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
+#if 0
+    ADD_COMPONENT(e, TextRendering);
+    std::stringstream a;
+    a << gain;
+    TEXT_RENDERING(e)->text = a.str();
+    TEXT_RENDERING(e)->charHeight = 0.5;
+    TEXT_RENDERING(e)->color = Color(1, 1, 0);
+    TEXT_RENDERING(e)->hide = false;
+    TEXT_RENDERING(e)->cameraBitMask = (0x3 << 1);
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    PHYSICS(e)->gravity = Vector2(0, 6);
+#endif
+    ADD_COMPONENT(e, AutoDestroy);
+    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
+    AUTO_DESTROY(e)->params.lifetime.value = 5;
+    AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
+    // AUTO_DESTROY(e)->hasTextRendering = true;
+}
+
+static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex) {
+    int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
+    Entity e = theEntityManager.CreateEntity();
+    ADD_COMPONENT(e, Transformation);
+    // TRANSFORM(e)->position = Vector2(-9, 2);
+    // TRANSFORM(e)->size = Vector2(0.85, 2 * 0.85) * .8;//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->rotation = 0;
+    TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
+    ADD_COMPONENT(e, Rendering);
+    // RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
+    RENDERING(e)->hide = false;
+    RENDERING(e)->cameraBitMask = (0x3 << 1);
+    RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
+    ADD_COMPONENT(e, Runner);
+
+    /*TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
+        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
+        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);*/
+    theTransformationSystem.setPosition(TRANSFORM(e), 
+        Vector2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, game->baseLine), TransformationSystem::S);
+    RUNNER(e)->startPoint = TRANSFORM(e)->position;
+    RUNNER(e)->endPoint = Vector2(direction * (param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, 0);
+    RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
+    RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
+    RUNNER(e)->playerOwner = player;
+
+    std::cout <<" add runner: " << e << " - " << TimeUtil::getTime()  << "(pos: " << TRANSFORM(e)->position << ")" << RUNNER(e)->speed << std::endl;
+    do {
+        Color c(Color::random());
+        c.a = 1;
+        float sum = c.r + c.b + c.g;
+        float maxDiff = MathUtil::Max(MathUtil::Max(MathUtil::Abs(c.r - c.g), MathUtil::Abs(c.r - c.b)), MathUtil::Abs(c.b - c.g));
+        if ((sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) && maxDiff > 0.5) {
+            RUNNER(e)->color = c;
+            break;
+        }
+    } while (true);
+    ADD_COMPONENT(e, CameraTarget);
+    CAM_TARGET(e)->cameraIndex = 1 + playerIndex;
+    CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
+    ADD_COMPONENT(e, Physics);
+    PHYSICS(e)->mass = 1;
+    ADD_COMPONENT(e, Animation);
+    ANIMATION(e)->name = "runL2R";
+    ANIMATION(e)->playbackSpeed = 1.1;
+    RENDERING(e)->mirrorH = (direction < 0);
+    
+    Entity collisionZone = theEntityManager.CreateEntity();
+    ADD_COMPONENT(collisionZone, Transformation);
+    TRANSFORM(collisionZone)->parent = e;
+    TRANSFORM(collisionZone)->z = 0.01;
+    #if 0
+    ADD_COMPONENT(collisionZone, Rendering);
+    RENDERING(collisionZone)->hide = false;
+    RENDERING(collisionZone)->color = Color(1,0,0,1);
+    #endif
+    RUNNER(e)->collisionZone = collisionZone;
+
+ LOGI("Add runner %lu at pos : {%.2f, %.2f}, speed: %.2f (player=%lu)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
+    return e;
 }

@@ -426,8 +426,6 @@ void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
-
-
     if (BUTTON(muteBtn)->clicked) {
         bool muted = !storageAPI->isMuted();
         storageAPI->setMuted(muted);
@@ -437,6 +435,10 @@ void RecursiveRunnerGame::tick(float dt) {
         ignoreClick = true;
     } else {
         ignoreClick = BUTTON(muteBtn)->mouseOver;
+    }
+    if (theTouchInputManager.isTouched(0)) {
+        ignoreClick |= theTouchInputManager.getTouchLastPosition(0).Y 
+            >= (TRANSFORM(muteBtn)->position.Y - TRANSFORM(muteBtn)->size.Y * BUTTON(muteBtn)->overSize * 0.5);
     }
 
     State::Enum newState = state2manager[currentState]->update(dt);
