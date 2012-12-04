@@ -23,7 +23,6 @@ INSTANCE_IMPL(PlayerSystem);
 
 PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") { 
     PlayerComponent tc;
-    componentSerializer.add(new StringProperty(OFFSET(name, tc)));
     componentSerializer.add(new Property(OFFSET(score, tc), sizeof(int)));
     componentSerializer.add(new Property(OFFSET(runnersCount, tc), sizeof(int)));
     componentSerializer.add(new Property(OFFSET(ready, tc), sizeof(bool)));
@@ -32,12 +31,12 @@ PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
 void PlayerSystem::DoUpdate(float dt __attribute__((unused))) {
     std::vector<Entity> runners = theRunnerSystem.RetrieveAllEntityWithComponent();
     FOR_EACH_ENTITY_COMPONENT(Player, a, rc)
+        rc->runnersCount = 0;
         for(unsigned i = 0; i < runners.size(); i++) {
             if (RUNNER(runners[i])->playerOwner == a) {
-                rc->runners.insert(runners[i]);
+                rc->runnersCount++;
             }
         }
-        rc->runnersCount = rc->runners.size();
     }
 }
 

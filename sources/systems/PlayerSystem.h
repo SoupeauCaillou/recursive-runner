@@ -22,12 +22,10 @@
 #include <set>
 
 struct PlayerComponent {
-    PlayerComponent() : name("dummy"), score(0), coins(0), runnersCount(0), ready(true) {}
-    std::string name;
+    PlayerComponent() : score(0), coins(0), runnersCount(0), ready(true) {}
     int score, coins;
     int runnersCount;
     bool ready;
-    std::set<Entity> runners;
 };
 
 #define thePlayerSystem PlayerSystem::GetInstance()

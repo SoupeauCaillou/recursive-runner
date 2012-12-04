@@ -84,7 +84,7 @@ void GameTempVar::syncRunners() {
             }
         }
     }
-    if (currentRunner == 0) {
+    if (currentRunner[0] == 0) {
         LOGE("No current runner => bug. Nb players=%lu, nb runners=%lu",players.size(), r.size());
         for (unsigned i=0; i<players.size(); i++)
             LOGE("    runners[%d] = %lu", i, runners[i].size());
