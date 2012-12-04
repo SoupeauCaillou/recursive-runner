@@ -230,7 +230,9 @@ static void updateAndRenderLoop() {
         }
         //pause ?
         if (glfwGetKey( GLFW_KEY_SPACE )) {// || !focus) {
-            game->togglePause(true);
+            if (game->willConsumeBackEvent()) {
+                game->backPressed();
+            }
         }
         // recording
         if (glfwGetKey( GLFW_KEY_F10) && timer<=0){

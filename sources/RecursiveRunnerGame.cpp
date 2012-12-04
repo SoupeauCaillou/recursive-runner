@@ -60,6 +60,7 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
     PlayerSystem::CreateInstance();
     RangeFollowerSystem::CreateInstance();
 
+    overrideNextState = State::Invalid;
     currentState = State::Logo;
     state2manager.insert(std::make_pair(State::Logo, new LogoStateManager(this)));
     state2manager.insert(std::make_pair(State::Menu, new MenuStateManager(this)));
@@ -416,13 +417,20 @@ void RecursiveRunnerGame::changeState(State::Enum newState) {
     state2manager[currentState]->enter();
 }
 
-
-void RecursiveRunnerGame::backPressed() {
-    Game::backPressed();
+bool RecursiveRunnerGame::willConsumeBackEvent() {
+    if (currentState == State::Game)
+        return true;
+    return false;
 }
 
-void RecursiveRunnerGame::togglePause(bool activate __attribute__((unused))) {
+void RecursiveRunnerGame::backPressed() {
+    overrideNextState = State::Pause;
+}
 
+void RecursiveRunnerGame::togglePause(bool pause) {
+    if (currentState == State::Game && pause) {
+        changeState(State::Pause);
+    }
 }
 
 void RecursiveRunnerGame::tick(float dt) {
@@ -441,11 +449,16 @@ void RecursiveRunnerGame::tick(float dt) {
             >= (TRANSFORM(muteBtn)->position.Y - TRANSFORM(muteBtn)->size.Y * BUTTON(muteBtn)->overSize * 0.5);
     }
 
+    if (overrideNextState != State::Invalid) {
+        changeState(overrideNextState);
+        overrideNextState = State::Invalid;
+    }
+
     State::Enum newState = state2manager[currentState]->update(dt);
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
         it->second->backgroundUpdate(dt);
     }
-    
+
     if (newState != currentState) {
         changeState(newState);
     }

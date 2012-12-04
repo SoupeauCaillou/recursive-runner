@@ -59,14 +59,15 @@ class RecursiveRunnerGame : public Game {
 		void sacInit(int windowW, int windowH);
 		void init(const uint8_t* in = 0, int size = 0);
 		void tick(float dt);
-		void togglePause(bool activate);
 		void backPressed();
         void changeState(State::Enum newState);
+        bool willConsumeBackEvent();
+        void togglePause(bool pause);
 
         void setupCamera(CameraMode mode);
         void updateBestScore();
 	private:
-        State::Enum currentState;
+        State::Enum currentState, overrideNextState;
         std::map<State::Enum, StateManager*> state2manager;
 
 		AssetAPI* assetAPI;

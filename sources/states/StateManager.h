@@ -22,6 +22,7 @@ class RecursiveRunnerGame;
 
 namespace State {
     enum Enum {
+        Invalid,
         Logo,
         Logo2Menu, // Transition
         Menu,
@@ -29,7 +30,6 @@ namespace State {
         Game,
         Game2Menu, // Transition
         Pause,
-        Count
     };
 }
 
