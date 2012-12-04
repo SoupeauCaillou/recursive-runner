@@ -39,7 +39,6 @@
     <Compile Include="sources\api\linux\StorageAPILinuxImpl.cpp" />
     <Compile Include="sources\api\android\StorageAPIAndroidImpl.cpp" />
     <Compile Include="sources\systems\RangeFollowerSystem.cpp" />
-    <Compile Include="sources\LogoStateManager.cpp" />
     <Compile Include="sources\states\MenuStateManager.cpp" />
     <Compile Include="sources\states\PauseStateManager.cpp" />
     <Compile Include="sources\states\GameStateManager.cpp" />
@@ -69,7 +68,6 @@
     <None Include="sources\api\android\StorageAPIAndroidImpl.h" />
     <None Include="sources\Parameters.h" />
     <None Include="sources\systems\RangeFollowerSystem.h" />
-    <None Include="sources\LogoStateManager.h" />
     <None Include="sources\states\StateManager.h" />
   </ItemGroup>
 </Project>

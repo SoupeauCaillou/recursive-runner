@@ -6,11 +6,11 @@ APP_DIR := $(LOCAL_PATH)
 
 LOCAL_MODULE := recursiveRunner
 
-LOCAL_CFLAGS := -DANDROID_NDK \
+LOCAL_CFLAGS := -DANDROID_NDK -DENABLE_LOG \
                 -DDISABLE_IMPORTGL \
 				-I$(LOCAL_PATH)/..
 
-LOCAL_CXXFLAGS := -DANDROID_NDK \
+LOCAL_CXXFLAGS := -DANDROID_NDK -DENABLE_LOG \
                 -DDISABLE_IMPORTGL  -fvisibility=hidden \
             -I$(LOCAL_PATH)/../sources \
 				-I$(LOCAL_PATH)/.. \
@@ -24,7 +24,11 @@ LOCAL_ARM_MODE := arm
 LOCAL_SRC_FILES := \
     recursiveRunner.cpp \
     ../sources/RecursiveRunnerGame.cpp \
-    ../sources/LogoStateManager.cpp \
+    ../sources/states/LogoStateManager.cpp \
+    ../sources/states/GameStateManager.cpp \
+    ../sources/states/MenuStateManager.cpp \
+    ../sources/states/PauseStateManager.cpp \
+    ../sources/states/TransitionStateManager.cpp \
     ../sources/systems/RunnerSystem.cpp \
     ../sources/systems/PlayerSystem.cpp \
     ../sources/systems/CameraTargetSystem.cpp \

@@ -372,7 +372,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     theRenderingSystem.cameras.push_back(cam);
     // 2nd player
     theRenderingSystem.cameras.push_back(cam);
-    
+
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0000")] =  CollisionZone(90,52,28,84,-0.1);
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0001")] =  CollisionZone(91,62,27,78,-0.1);
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0002")] =  CollisionZone(95,74,23,72, -0.1);
