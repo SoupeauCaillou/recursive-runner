@@ -147,6 +147,9 @@ void MenuStateManager::earlyEnter() {
         game->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
         game->updateBestScore();
     }
+    if (!theMusicSystem.isMuted()) {
+        startMenuMusic(datas->title);
+    }
 }
 
 void MenuStateManager::enter() {
@@ -162,29 +165,19 @@ State::Enum MenuStateManager::update(float dt) {
     const Entity titleGroup = datas->titleGroup;
     const Entity title = datas->title;
     const Entity subtitle = datas->subtitle;
-    
+
     if (!theMusicSystem.isMuted()) {
-        if (MUSIC(titleGroup)->control == MusicComponent::Start) {
-            if (MUSIC(titleGroup)->music == InvalidMusicRef) {
-                MUSIC(titleGroup)->control = MusicComponent::Stop;
-                startMenuMusic(title);
-                ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
-            }
-        } else {
-            if (!ADSR(titleGroup)->active) {
-                startMenuMusic(title);
-                ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
-            } else if (MUSIC(title)->control == MusicComponent::Start && MUSIC(title)->music == InvalidMusicRef) {
-                startMenuMusic(title);
-            }
-            if (MUSIC(title)->loopNext == InvalidMusicRef) {
-                MUSIC(title)->loopAt = 21.34;
-                MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
-            }
+        MusicComponent* music = MUSIC(title);
+        music->control = MusicComponent::Start;
+
+        if (music->music == InvalidMusicRef) {
+            startMenuMusic(title);
+        } else if (music->loopNext == InvalidMusicRef) {
+            music->loopAt = 21.34;
+            music->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
         }
-    } else {
-        ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
     }
+
     // Handle Swarm button
     if (!game->ignoreClick) {
         if (BUTTON(datas->swarmBtn)->clicked) {

@@ -240,7 +240,7 @@ static void updateAndRenderLoop() {
             record->start();
         }
         //user entered his name?
-        if ((glfwGetKey( GLFW_KEY_ENTER ) || glfwGetKey( GLFW_KEY_KP_ENTER) ) && timer<=0) {
+        if (glfwGetKey( GLFW_KEY_ENTER ) && timer<=0) {
             if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
                 nameInput->textIsReady = true;
             }
