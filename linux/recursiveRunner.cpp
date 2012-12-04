@@ -206,6 +206,17 @@ void GLFWCALL myKeyCallback( int key, int action ) {
             game->backPressed();
         }
     }
+    else if (key == GLFW_KEY_F12) {
+        game->togglePause(true);
+        uint8_t* out;
+        int size = game->saveState(&out);
+        if (size) {
+            std::ofstream file("/tmp/rr.bin", std::ios_base::binary);
+            file.write((const char*)out, size);
+            std::cout << "Save state: " << size << " bytes written" << std::endl;
+        }
+        exit(0);
+    }
 }
 
 static void updateAndRenderLoop() {
@@ -299,24 +310,29 @@ int main(int argc, char** argv) {
 		return 1;
 	glfwSetWindowTitle("RecursiveRunner");
 	glewInit();
-	__log_enabled = (argc > 1 && (!strcmp(argv[1], "--verbose") || !strcmp(argv[1], "-v")));
+    __log_enabled = false;
+    bool restore = false;
+    for (int i=1; i<argc; i++) {
+        __log_enabled |= (!strcmp(argv[i], "--verbose") || !strcmp(argv[i], "-v"));
+        restore |= !strcmp(argv[i], "-restore");
+    }
 #endif
 
 	// pose de l'origine du temps ici t = 0
 	TimeUtil::init();
 	uint8_t* state = 0;
 	int size = 0;
-	#if 0
-	if (argc > 1 && !strcmp(argv[1], "-restore")) {
-		FILE* file = fopen("dump.bin", "r+b");
+	#if 1
+	if (restore) {
+		FILE* file = fopen("/tmp/rr.bin", "r+b");
 		if (file) {
-			std::cout << "Restoring game state from file" << std::endl;
 			fseek(file, 0, SEEK_END);
 			size = ftell(file);
 			fseek(file, 0, SEEK_SET);
 			state = new uint8_t[size];
 			fread(state, size, 1, file);
 			fclose(file);
+            std::cout << "Restoring game state from file (size: " << size << ")" << std::endl;
 		}
 	}
 	#endif

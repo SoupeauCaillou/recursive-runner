@@ -34,9 +34,8 @@ float RunnerSystem::MaxJumpDuration = 0.2;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") { 
     RunnerComponent tc;
-#ifdef SAC_NETWORK
     componentSerializer.add(new EntityProperty(OFFSET(playerOwner, tc)));
-#endif
+    componentSerializer.add(new EntityProperty(OFFSET(collisionZone, tc)));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.X, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.Y, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.X, tc), 0.001));
@@ -46,6 +45,8 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     componentSerializer.add(new Property(OFFSET(ghost, tc), sizeof(bool)));
     componentSerializer.add(new Property(OFFSET(killed, tc), sizeof(bool)));
     componentSerializer.add(new Property(OFFSET(currentJump, tc), sizeof(bool)));
+    componentSerializer.add(new Property(OFFSET(oldNessBonus, tc), sizeof(int)));
+    componentSerializer.add(new Property(OFFSET(coinSequenceBonus, tc), sizeof(int)));
     componentSerializer.add(new VectorProperty<float>(OFFSET(jumpTimes, tc)));
     componentSerializer.add(new VectorProperty<float>(OFFSET(jumpDurations, tc)));
     componentSerializer.add(new VectorProperty<float>(OFFSET(coins, tc)));

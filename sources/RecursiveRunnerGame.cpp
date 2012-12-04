@@ -398,14 +398,33 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     }
 }
 
-void RecursiveRunnerGame::init(const uint8_t* in __attribute__((unused)), int size __attribute__((unused))) {
+void RecursiveRunnerGame::init(const uint8_t* in, int size) {
+    if (size > 0 && in) {
+        int eSize, sSize, index=0;
+        memcpy(&eSize, &in[index], sizeof(eSize));
+        index += sizeof(eSize);
+        memcpy(&sSize, &in[index], sizeof(sSize));
+        index += sizeof(sSize);
+        /* restore entities */
+        theEntityManager.deserialize(&in[index], eSize);
+        index += eSize;
+        /* restore systems */
+        theRenderingSystem.restoreInternalState(&in[index], sSize);
+        index += sSize;
+        std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
+    }
+
     initGame(storageAPI);
     updateBestScore();
 
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
         it->second->setup();
     }
-    currentState = State::Logo;
+    if (size > 0 && in) {
+        currentState = State::Pause;
+    } else {
+        currentState = State::Logo;
+    }
     state2manager[currentState]->enter();
 }
 
@@ -557,4 +576,29 @@ void RecursiveRunnerGame::updateBestScore() {
         LOGW("No best score found (?!)");
         TEXT_RENDERING(bestScore)->text = "";
     }
+}
+
+int RecursiveRunnerGame::saveState(uint8_t** out) {
+    if (currentState != State::Pause)
+        return 0;
+    /* save all entities/components */
+    uint8_t* entities = 0;
+    int eSize = theEntityManager.serialize(&entities);
+
+    if (eSize == 0)
+        return 0;
+
+    uint8_t* systems = 0;
+    int sSize = theRenderingSystem.saveInternalState(&systems);
+
+    int finalSize = eSize + sSize + 2 * sizeof(int);
+    uint8_t* ptr = *out = new uint8_t[finalSize + 2 * sizeof(int)];
+
+    /* save entity/system thingie */
+    ptr = (uint8_t*)mempcpy(ptr, &eSize, sizeof(eSize));
+    ptr = (uint8_t*)mempcpy(ptr, &sSize, sizeof(sSize));
+    ptr = (uint8_t*)mempcpy(ptr, entities, eSize);
+    ptr = (uint8_t*)mempcpy(ptr, systems, sSize);
+    std::cout << eSize << ", " << sSize << std::endl;
+    return finalSize;
 }

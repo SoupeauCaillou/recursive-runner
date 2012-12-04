@@ -437,7 +437,7 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, con
 
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex) {
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
-    Entity e = theEntityManager.CreateEntity();
+    Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
     ADD_COMPONENT(e, Transformation);
     // TRANSFORM(e)->position = Vector2(-9, 2);
     // TRANSFORM(e)->size = Vector2(0.85, 2 * 0.85) * .8;//0.4,1);//0.572173, 0.815538);

@@ -290,7 +290,7 @@ static void createCoins(int count, GameTempVar& gameTempVars) {
     LOGI("Coins creation started");
     std::vector<Entity> coins;
     for (int i=0; i<count; i++) {
-        Entity e = theEntityManager.CreateEntity();
+        Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
         ADD_COMPONENT(e, Transformation);
         TRANSFORM(e)->size = Vector2(0.3, 0.3) * param::CoinScale;
         Vector2 p;
@@ -349,7 +349,7 @@ static void createCoins(int count, GameTempVar& gameTempVars) {
      if (i < coins.size()) topI = TRANSFORM(coins[i])->position + Vector2::Rotate(offset, TRANSFORM(coins[i])->rotation);
      else
          topI = Vector2(param::LevelSize * PlacementHelper::ScreenWidth * 0.5, 0);
-     Entity link = theEntityManager.CreateEntity();
+     Entity link = theEntityManager.CreateEntity(EntityType::Persistent);
      ADD_COMPONENT(link, Transformation);
      TRANSFORM(link)->position = (topI + previous) * 0.5;
      TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(54));
@@ -360,7 +360,7 @@ static void createCoins(int count, GameTempVar& gameTempVars) {
      RENDERING(link)->hide = false;
         RENDERING(link)->color.a = 0;
 
-        Entity link2 = theEntityManager.CreateEntity();
+        Entity link2 = theEntityManager.CreateEntity(EntityType::Persistent);
          ADD_COMPONENT(link2, Transformation);
          TRANSFORM(link2)->parent = link;
          TRANSFORM(link2)->size = TRANSFORM(link)->size;
@@ -371,7 +371,7 @@ static void createCoins(int count, GameTempVar& gameTempVars) {
          RENDERING(link2)->hide = false;
 
 #if 1
-        Entity link3 = theEntityManager.CreateEntity();
+        Entity link3 = theEntityManager.CreateEntity(EntityType::Persistent);
         ADD_COMPONENT(link3, Transformation);
         TRANSFORM(link3)->parent = link;
         TRANSFORM(link3)->position = Vector2(0, TRANSFORM(link)->size.Y * 0.4);

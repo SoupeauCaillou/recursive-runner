@@ -64,6 +64,7 @@ class RecursiveRunnerGame : public Game {
         bool willConsumeBackEvent();
         void togglePause(bool pause);
 
+        int saveState(uint8_t** out);
         void setupCamera(CameraMode mode);
         void updateBestScore();
 	private:

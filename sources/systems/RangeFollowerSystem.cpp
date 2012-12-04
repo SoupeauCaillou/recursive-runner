@@ -22,6 +22,9 @@
 INSTANCE_IMPL(RangeFollowerSystem);
 
 RangeFollowerSystem::RangeFollowerSystem() : ComponentSystemImpl<RangeFollowerComponent>("RangeFollower") { 
+    RangeFollowerComponent tc;
+    componentSerializer.add(new EntityProperty(OFFSET(parent, tc)));
+    componentSerializer.add(new IntervalProperty<float>(OFFSET(range, tc)));
 }
 
 void RangeFollowerSystem::DoUpdate(float dt __attribute__((unused))) {
