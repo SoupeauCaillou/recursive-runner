@@ -43,81 +43,6 @@
 #include <cmath>
 #include <sstream>
 
-#if 0
-void GameTempVar::cleanup() {
-    for (unsigned i=0; i<coins.size(); i++) {
-        theEntityManager.DeleteEntity(coins[i]);
-    }
-    coins.clear();
-    std::vector<Entity> r = theRunnerSystem.RetrieveAllEntityWithComponent();
-    for (unsigned j=0; j<r.size(); j++) {
-        theEntityManager.DeleteEntity(RUNNER(r[j])->collisionZone);
-        theEntityManager.DeleteEntity(r[j]);
-    }
-    while (!links.empty()) {
-        theEntityManager.DeleteEntity(links.back());
-        links.pop_back();
-    }
-    while (!sparkling.empty()) {
-        theEntityManager.DeleteEntity(sparkling.back());
-        sparkling.pop_back();
-    }
-
-    for (unsigned i=0; i<players.size(); i++) {
-        runners[i].clear();
-        theEntityManager.DeleteEntity(players[i]);
-    }
-    players.clear();
-}
-
-void GameTempVar::syncRunners() {
-    std::vector<Entity> r = theRunnerSystem.RetrieveAllEntityWithComponent();
-    for (unsigned i=0; i<players.size(); i++) {
-        runners[i].clear();
-        for (unsigned j=0; j<r.size(); j++) {
-            RunnerComponent* rc = RUNNER(r[j]);
-            if (rc->killed)
-                continue;
-            if (rc->playerOwner == players[i]) {
-                runners[i].push_back(r[j]);
-                if (!rc->ghost) {
-                        currentRunner[i] = r[j];
-                }
-            }
-        }
-    }
-    if (currentRunner[0] == 0) {
-        LOGE("No current runner => bug. Nb players=%lu, nb runners=%lu",players.size(), r.size());
-        for (unsigned i=0; i<players.size(); i++)
-            LOGE("    runners[%d] = %lu", i, runners[i].size());
-    }
-}
-
-static bool sortFromLeftToRight(Entity c1, Entity c2) {
-    return TRANSFORM(c1)->position.X < TRANSFORM(c2)->position.X;
-}
-
-void GameTempVar::syncCoins() {
-    coins.clear();
-    const std::vector<Entity> t = theRenderingSystem.RetrieveAllEntityWithComponent();
-    const TextureRef coinTexture = theRenderingSystem.loadTextureFile("ampoule");
-    for (unsigned i=0; i<t.size(); i++) {
-        //...
-        if (RENDERING(t[i])->texture == coinTexture) {
-            coins.push_back(t[i]);
-        }
-    }
-    if (coins.size() != 20) {
-        LOGE("Weird, we have %lu coins...", coins.size());
-    }
-    std::sort(coins.begin(), coins.end(), sortFromLeftToRight);
-}
-
-int GameTempVar::playerIndex() {
-    return 0;
-}
-#endif
-
 static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex);
 
@@ -125,6 +50,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 struct GameStateManager::GameStateManagerDatas {
     Entity pauseButton;
     Entity session;
+    float minipause;
 };
 
 GameStateManager::GameStateManager(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
@@ -156,6 +82,7 @@ void GameStateManager::setup() {
 }
 
 void GameStateManager::earlyEnter() {
+    datas->minipause = TimeUtil::getTime();
 }
 
 void GameStateManager::enter() {
@@ -382,7 +309,12 @@ bool GameStateManager::transitionCanExit() {
 }
 
 bool GameStateManager::transitionCanEnter() {
-    return true;
+    MUSIC(game->route)->control = MusicControl::Play;
+    if (TimeUtil::getTime() - datas->minipause >= 1) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, const Color& color, bool isGhost) {

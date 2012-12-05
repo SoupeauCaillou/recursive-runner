@@ -302,6 +302,9 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(route, RangeFollower);
     RANGE_FOLLOWER(route)->range = RANGE_FOLLOWER(cameraEntity)->range;
     RANGE_FOLLOWER(route)->parent = cameraEntity;
+    ADD_COMPONENT(route, Music);
+    MUSIC(route)->fadeOut = 2;
+    MUSIC(route)->fadeIn = 1;
     
     ADD_COMPONENT(silhouette, RangeFollower);
     RANGE_FOLLOWER(silhouette)->range = Interval<float>(-6, 6);

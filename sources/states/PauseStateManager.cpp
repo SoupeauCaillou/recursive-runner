@@ -119,6 +119,7 @@ State::Enum PauseStateManager::update(float dt) {
     if (BUTTON(datas->continueButton)->clicked) {
         return State::Game;
     } else if (BUTTON(datas->restartButton)->clicked) {
+        // stop music :-[
         RecursiveRunnerGame::endGame();
         RecursiveRunnerGame::startGame(false);
         return State::Game;

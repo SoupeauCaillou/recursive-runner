@@ -74,9 +74,6 @@ void MenuStateManager::setup() {
     ADSR(titleGroup)->decayTiming = 0.2;
     ADSR(titleGroup)->releaseTiming = 1.5;
     TRANSFORM(titleGroup)->position = Vector2(game->leftMostCameraPos.X + TRANSFORM(titleGroup)->size.X * 0.5, ADSR(titleGroup)->idleValue);
-    ADD_COMPONENT(titleGroup, Music);
-    MUSIC(titleGroup)->fadeOut = 2;
-    MUSIC(titleGroup)->fadeIn = 1;
 
     Entity title = datas->title = theEntityManager.CreateEntity();
     ADD_COMPONENT(title, Transformation);
@@ -201,7 +198,7 @@ State::Enum MenuStateManager::update(float dt) {
     // Start game ?
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
         ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
-        MUSIC(titleGroup)->music = theMusicSystem.loadMusicFile("jeu.ogg");
+        MUSIC(game->route)->music = theMusicSystem.loadMusicFile("jeu.ogg");
         return State::Menu2Game;
     }
     return State::Menu;
@@ -218,7 +215,6 @@ void MenuStateManager::lateExit() {
     game->setupCamera(CameraModeSingle);
 }
 
-float minipause;
 bool MenuStateManager::transitionCanExit() {
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     const ADSRComponent* adsr = ADSR(datas->titleGroup);
@@ -238,16 +234,9 @@ bool MenuStateManager::transitionCanExit() {
     }
     PLAYER(session->players[0])->ready = true;
     if (adsr->value < adsr->idleValue) {
-        minipause = TimeUtil::getTime();
         return false;
     }
-    MUSIC(datas->titleGroup)->control = MusicControl::Play;
-
-    if (TimeUtil::getTime() - minipause >= 1) {
-        return true;
-    } else {
-        return false;
-    }
+    return true;
 }
 
 bool MenuStateManager::transitionCanEnter() {
