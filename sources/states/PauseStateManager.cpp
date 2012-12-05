@@ -27,6 +27,7 @@
 
 struct PauseStateManager::PauseStateManagerDatas {
     Entity pauseText;
+    Entity stopText;
     std::vector<Entity> pausedMusic;
 };
 
@@ -49,6 +50,17 @@ void PauseStateManager::setup() {
     TEXT_RENDERING(pauseText)->cameraBitMask = 0x2;
     TEXT_RENDERING(pauseText)->color = Color(13.0 / 255, 5.0/255, 42.0/255);
     TEXT_RENDERING(datas->pauseText)->hide = true;
+
+    Entity stopText = datas->stopText = theEntityManager.CreateEntity();
+    ADD_COMPONENT(stopText, Transformation);
+    TRANSFORM(stopText)->z = 0.9;
+    TRANSFORM(stopText)->rotation = 0.0;
+    ADD_COMPONENT(stopText, TextRendering);
+    TEXT_RENDERING(stopText)->text = "GO BACK";
+    TEXT_RENDERING(stopText)->charHeight = 1.;
+    TEXT_RENDERING(stopText)->cameraBitMask = 0x2;
+    TEXT_RENDERING(stopText)->color = Color(13.0 / 255, 5.0/255, 42.0/255);
+    TEXT_RENDERING(datas->stopText)->hide = true;
 }
 
 void PauseStateManager::earlyEnter() {
@@ -59,8 +71,15 @@ void PauseStateManager::enter() {
     for (unsigned i=0; i<game->gameTempVars.runners[0].size(); i++) {
         PHYSICS(game->gameTempVars.runners[0][i])->mass = 0;
     }
-    TRANSFORM(datas->pauseText)->position = theRenderingSystem.cameras[1].worldPosition;
+
+    //show centered texts
+    TRANSFORM(datas->pauseText)->position = theRenderingSystem.cameras[1].worldPosition + Vector2(0, 3);
     TEXT_RENDERING(datas->pauseText)->hide = false;
+
+    TRANSFORM(datas->stopText)->position = theRenderingSystem.cameras[1].worldPosition + Vector2(0, 1);
+    TEXT_RENDERING(datas->stopText)->hide = false;
+
+    //mute music
     if (!theMusicSystem.isMuted()) {
         std::vector<Entity> musics = theMusicSystem.RetrieveAllEntityWithComponent();
         for (unsigned i=0; i<musics.size(); i++) {
@@ -85,6 +104,7 @@ void PauseStateManager::backgroundUpdate(float dt __attribute__((unused))) {
 
 void PauseStateManager::exit() {
     TEXT_RENDERING(datas->pauseText)->hide = true;
+    TEXT_RENDERING(datas->stopText)->hide = true;
     // restore physics for runners
     for (unsigned i=0; i<game->gameTempVars.runners[0].size(); i++) {
         PHYSICS(game->gameTempVars.runners[0][i])->mass = 1;
