@@ -171,7 +171,7 @@ class MouseNativeTouchState: public NativeTouchState {
 float gameSpeedFactor = 1.0;
 void GLFWCALL myCharCallback( int c, int action ) {
 	if (globalFTW == 0) {
-     
+
     } else {
     	if (!TEXT_RENDERING(globalFTW)->hide) {
     		if (action == GLFW_PRESS && (isalnum(c) || c == ' ')) {
@@ -230,7 +230,7 @@ static void updateAndRenderLoop() {
 	float nextfps = time + 5;
 	while(running) {
         game->step();
-        
+
         running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
         bool focus = glfwGetWindowParam(GLFW_ACTIVE);
@@ -264,7 +264,7 @@ static void updateAndRenderLoop() {
 
 static void* callback_thread(void *obj){
 	updateAndRenderLoop();
-	pthread_exit (0);	
+	pthread_exit (0);
 }
 
 #else
@@ -343,7 +343,7 @@ int main(int argc, char** argv) {
 
 	StorageAPILinuxImpl* storage = new StorageAPILinuxImpl();
 	storage->init();
-	
+
 	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), storage, nameInput, new AdAPI(), new ExitAPILinuxImpl(), new CommunicationAPILinuxImpl());
 
 	theSoundSystem.init();
@@ -359,13 +359,13 @@ int main(int argc, char** argv) {
     theMusicSystem.init();
     soundAPI->init();
 
-	game->sacInit(reso->X,reso->Y);
-	game->init(state, size);
+    game->sacInit(reso->X,reso->Y);
+    game->init(state, size);
 
 #ifndef EMSCRIPTEN
     setlocale( LC_ALL, "" );
-	loc->init();
-	glfwSetCharCallback(myCharCallback);
+    loc->init();
+    glfwSetCharCallback(myCharCallback);
     glfwSetKeyCallback(myKeyCallback);
 #endif
 
@@ -376,7 +376,7 @@ int main(int argc, char** argv) {
 
     while (true) {
         std::cout << "Is connected ? " << net->isConnectedToAnotherPlayer() << std::endl;
-        
+
         struct timespec ts;
         ts.tv_sec = 1;
         ts.tv_nsec = 0;// 0.25 * 1000000000LL;
@@ -397,6 +397,6 @@ int main(int argc, char** argv) {
 #else
 	emscripten_set_main_loop(updateAndRender, 60);
 #endif
-
+	delete game;
 	return 0;
 }
