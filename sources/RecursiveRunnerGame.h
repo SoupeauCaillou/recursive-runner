@@ -55,6 +55,9 @@ enum CameraMode {
 };
 
 class RecursiveRunnerGame : public Game {
+    public:
+        static void startGame(bool transition);
+        static void endGame();
 	public:
 		RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exAPI, CommunicationAPI* comAPI);
         ~RecursiveRunnerGame();

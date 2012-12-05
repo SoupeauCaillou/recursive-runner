@@ -119,7 +119,9 @@ State::Enum PauseStateManager::update(float dt) {
     if (BUTTON(datas->continueButton)->clicked) {
         return State::Game;
     } else if (BUTTON(datas->restartButton)->clicked) {
-        return State::Menu2Game;
+        RecursiveRunnerGame::endGame();
+        RecursiveRunnerGame::startGame(false);
+        return State::Game;
     } else if (BUTTON(datas->stopButton)->clicked) {
         return State::Game2Menu;
     }

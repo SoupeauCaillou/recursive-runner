@@ -35,6 +35,7 @@
 #include "systems/SoundSystem.h"
 #include "systems/MusicSystem.h"
 #include "systems/AnimationSystem.h"
+#include "systems/ParticuleSystem.h"
 
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -609,4 +610,157 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
     ptr = (uint8_t*)mempcpy(ptr, systems, sSize);
     std::cout << eSize << ", " << sSize << std::endl;
     return finalSize;
+}
+
+static void createCoins(int count, SessionComponent* session, bool transition);
+
+void RecursiveRunnerGame::startGame(bool transition) {
+    assert(theSessionSystem.RetrieveAllEntityWithComponent().empty());
+    assert(thePlayerSystem.RetrieveAllEntityWithComponent().empty());
+
+    // Create session
+    Entity session = theEntityManager.CreateEntity(EntityType::Persistent);
+    ADD_COMPONENT(session, Session);
+    SessionComponent* sc = SESSION(session);
+    sc->numPlayers = 1;
+    // Create player
+    Entity player = theEntityManager.CreateEntity(EntityType::Persistent);
+    ADD_COMPONENT(player, Player);
+    sc->players.push_back(player);
+
+    createCoins(20, sc, transition);
+}
+
+void RecursiveRunnerGame::endGame() {
+    std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
+    if (!sessions.empty()) {
+        SessionComponent* sc = SESSION(sessions.front());
+        for(unsigned i=0; i<sc->runners.size(); i++)
+            theEntityManager.DeleteEntity(RUNNER(sc->runners[i])->collisionZone); 
+        std::for_each(sc->runners.begin(), sc->runners.end(), deleteEntityFunctor);
+        std::for_each(sc->coins.begin(), sc->coins.end(), deleteEntityFunctor);
+        std::for_each(sc->players.begin(), sc->players.end(), deleteEntityFunctor);
+        std::for_each(sc->links.begin(), sc->links.end(), deleteEntityFunctor);
+        std::for_each(sc->sparkling.begin(), sc->sparkling.end(), deleteEntityFunctor);
+        theEntityManager.DeleteEntity(sessions.front());
+    }
+}
+
+
+static bool sortLeftToRight(Entity e, Entity f) {
+    return TRANSFORM(e)->position.X < TRANSFORM(f)->position.X;
+}
+
+static void createCoins(int count, SessionComponent* session, bool transition) {
+    LOGI("Coins creation started");
+    std::vector<Entity>& coins = session->coins;
+    for (int i=0; i<count; i++) {
+        Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
+        ADD_COMPONENT(e, Transformation);
+        TRANSFORM(e)->size = Vector2(0.3, 0.3) * param::CoinScale;
+        Vector2 p;
+        bool notFarEnough = true;
+        do {
+            p = Vector2(
+                MathUtil::RandomFloatInRange(
+                    -param::LevelSize * 0.5 * PlacementHelper::ScreenWidth,
+                    param::LevelSize * 0.5 * PlacementHelper::ScreenWidth),
+                MathUtil::RandomFloatInRange(
+                    PlacementHelper::GimpYToScreen(700),
+                    PlacementHelper::GimpYToScreen(450)));
+                    //-0.3 * PlacementHelper::ScreenHeight,
+                    // -0.05 * PlacementHelper::ScreenHeight));
+           notFarEnough = false;
+           for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
+                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 1) {
+                    notFarEnough = true;
+                }
+           }
+        } while (notFarEnough);
+        TRANSFORM(e)->position = p;
+        TRANSFORM(e)->rotation = -0.1 + MathUtil::RandomFloat() * 0.2;
+        TRANSFORM(e)->z = 0.75;
+        ADD_COMPONENT(e, Rendering);
+        RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
+        // RENDERING(e)->cameraBitMask = (0x3 << 1);
+        RENDERING(e)->hide = false;
+        RENDERING(e)->color.a = (transition ? 0 : 1);
+        #ifdef SAC_NETWORK
+        ADD_COMPONENT(e, Network);
+        NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
+        NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
+        #endif
+        ADD_COMPONENT(e, Particule);
+        PARTICULE(e)->emissionRate = 150;
+         PARTICULE(e)->duration = 0;
+         PARTICULE(e)->lifetime = 0.1 * 1;
+         PARTICULE(e)->texture = InvalidTextureRef;
+         PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
+         PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
+         PARTICULE(e)->initialSize = Interval<float>(0.08, 0.16);
+         PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
+         PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
+         PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
+         PARTICULE(e)->moment = Interval<float>(-5, 5);
+         PARTICULE(e)->mass = 0.1;
+        coins.push_back(e);
+    }
+    #if 1
+    std::sort(coins.begin(), coins.end(), sortLeftToRight);
+    const Vector2 offset = Vector2(0, PlacementHelper::GimpHeightToScreen(14));
+    Vector2 previous = Vector2(-param::LevelSize * PlacementHelper::ScreenWidth * 0.5, -PlacementHelper::ScreenHeight * 0.2);
+    for (unsigned i = 0; i <= coins.size(); i++) {
+     Vector2 topI;
+     if (i < coins.size()) topI = TRANSFORM(coins[i])->position + Vector2::Rotate(offset, TRANSFORM(coins[i])->rotation);
+     else
+         topI = Vector2(param::LevelSize * PlacementHelper::ScreenWidth * 0.5, 0);
+     Entity link = theEntityManager.CreateEntity(EntityType::Persistent);
+     ADD_COMPONENT(link, Transformation);
+     TRANSFORM(link)->position = (topI + previous) * 0.5;
+     TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(54));
+     TRANSFORM(link)->z = 0.4;
+     TRANSFORM(link)->rotation = MathUtil::AngleFromVector(topI - previous);
+     ADD_COMPONENT(link, Rendering);
+     RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
+     RENDERING(link)->hide = false;
+        RENDERING(link)->color.a =  (transition ? 0 : 1);
+
+        Entity link2 = theEntityManager.CreateEntity(EntityType::Persistent);
+         ADD_COMPONENT(link2, Transformation);
+         TRANSFORM(link2)->parent = link;
+         TRANSFORM(link2)->size = TRANSFORM(link)->size;
+         TRANSFORM(link2)->z = 0.2;
+         ADD_COMPONENT(link2, Rendering);
+         RENDERING(link2)->texture = theRenderingSystem.loadTextureFile("link");
+         RENDERING(link2)->color.a = (transition ? 0 : 0.2);
+         RENDERING(link2)->hide = false;
+
+#if 1
+        Entity link3 = theEntityManager.CreateEntity(EntityType::Persistent);
+        ADD_COMPONENT(link3, Transformation);
+        TRANSFORM(link3)->parent = link;
+        TRANSFORM(link3)->position = Vector2(0, TRANSFORM(link)->size.Y * 0.4);
+        TRANSFORM(link3)->size = TRANSFORM(link)->size * Vector2(1, 0.1);
+        TRANSFORM(link3)->z = 0.2;
+        ADD_COMPONENT(link3, Particule);
+        PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
+     PARTICULE(link3)->duration = 0;
+     PARTICULE(link3)->lifetime = 0.1 * 1;
+     PARTICULE(link3)->texture = InvalidTextureRef;
+     PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
+     PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
+     PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
+     PARTICULE(link3)->finalSize = Interval<float>(0.01, 0.03);
+     PARTICULE(link3)->forceDirection = Interval<float> (0, 6.28);
+     PARTICULE(link3)->forceAmplitude = Interval<float>(5 / 10, 10 / 10);
+     PARTICULE(link3)->moment = Interval<float>(-5, 5);
+     PARTICULE(link3)->mass = 0.01;
+        session->sparkling.push_back(link3);
+#endif
+     previous = topI;
+     session->links.push_back(link);
+        session->links.push_back(link2);
+    }
+    #endif
+    LOGI("Coins creation finished");
 }
