@@ -88,7 +88,7 @@ class RecursiveRunnerGame : public Game {
         CommunicationAPI* communicationAPI;
         StorageAPI* storageAPI;
         // GameTempVar gameTempVars;
-        Entity scoreText[2], scorePanel;
+        Entity scoreText, scorePanel;
         Entity muteBtn;
         Vector2 leftMostCameraPos;
 };

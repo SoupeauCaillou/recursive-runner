@@ -33,6 +33,7 @@ LOCAL_SRC_FILES := \
     ../sources/systems/PlayerSystem.cpp \
     ../sources/systems/CameraTargetSystem.cpp \
     ../sources/systems/RangeFollowerSystem.cpp \
+    ../sources/systems/SessionSystem.cpp \
     ../sources/api/android/StorageAPIAndroidImpl.cpp \
     ../sac/android/sacjnilib.cpp
 

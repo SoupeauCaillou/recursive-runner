@@ -169,10 +169,10 @@ void GameStateManager::enter() {
             sc->runners.push_back(r);
             sc->currentRunner = r;
         }
-    }
-    for (unsigned i=0; i<sc->numPlayers; i++) {
-        theRenderingSystem.cameras[1 + i].worldPosition.X = 
-            TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
+        for (unsigned i=0; i<sc->numPlayers; i++) {
+            theRenderingSystem.cameras[1 + i].worldPosition.X = 
+                TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
+        }
     }
     RENDERING(datas->pauseButton)->hide = false;
     BUTTON(datas->pauseButton)->enabled = true;
@@ -354,7 +354,7 @@ State::Enum GameStateManager::update(float dt) {
     for (unsigned i=0; i<sc->players.size(); i++) {
         std::stringstream a;
         a << PLAYER(sc->players[i])->score;
-        TEXT_RENDERING(game->scoreText[i])->text = a.str();
+        TEXT_RENDERING(game->scoreText)->text = a.str();
     }
     
 
@@ -467,7 +467,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     ANIMATION(e)->playbackSpeed = 1.1;
     RENDERING(e)->mirrorH = (direction < 0);
     
-    Entity collisionZone = theEntityManager.CreateEntity();
+    Entity collisionZone = theEntityManager.CreateEntity(EntityType::Persistent);
     ADD_COMPONENT(collisionZone, Transformation);
     TRANSFORM(collisionZone)->parent = e;
     TRANSFORM(collisionZone)->z = 0.01;

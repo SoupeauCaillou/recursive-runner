@@ -33,17 +33,14 @@ CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetCompo
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(maxCameraSpeed, tc), 0.001));
     componentSerializer.add(new Property(OFFSET(enabled, tc), sizeof(bool)));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(cameraSpeed.X, tc), 0.001));
-   componentSerializer.add(new EpsilonProperty<float>(OFFSET(cameraSpeed.Y, tc), 0.001));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(cameraSpeed.Y, tc), 0.001));
 }
 
 void CameraTargetSystem::DoUpdate(float dt) {
     FOR_EACH_ENTITY_COMPONENT(CameraTarget, a, ctc)
         if (!ctc->enabled)
             continue;
-
         Vector2 target (TRANSFORM(a)->position + ctc->offset);
-
-
         Vector2 force = SteeringBehavior::arrive(
             theRenderingSystem.cameras[ctc->cameraIndex].worldPosition,
             ctc->cameraSpeed,

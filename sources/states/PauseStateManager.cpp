@@ -21,6 +21,8 @@
 #include "systems/TransformationSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/MusicSystem.h"
+#include "systems/AnimationSystem.h"
+#include "base/TouchInputManager.h"
 #include "systems/PhysicsSystem.h"
 #include "systems/ButtonSystem.h"
 
@@ -29,6 +31,7 @@
 #include "../RecursiveRunnerGame.h"
 
 #include "../systems/SessionSystem.h"
+#include "../systems/CameraTargetSystem.h"
 
 struct PauseStateManager::PauseStateManagerDatas {
     Entity pauseText;
@@ -84,6 +87,7 @@ void PauseStateManager::enter() {
     // disable physics for runners
     for (unsigned i=0; i<session->runners.size(); i++) {
         PHYSICS(session->runners[i])->mass = 0;
+        ANIMATION(session->runners[i])->playbackSpeed = 0;
     }
 
     //show centered texts
@@ -138,8 +142,10 @@ void PauseStateManager::exit() {
 
     // restore physics for runners
     for (unsigned i=0; i<session->runners.size(); i++) {
-        PHYSICS(session->runners[i])->mass = 1;
+        // ^^ this will be done in RunnerSystem PHYSICS(session->runners[i])->mass = 1;
+        ANIMATION(session->runners[i])->playbackSpeed = 1.1;
     }
+    // update camera position
     if (!theMusicSystem.isMuted()) {
         for (unsigned i=0; i<datas->pausedMusic.size(); i++) {
             MUSIC(datas->pausedMusic[i])->control = MusicControl::Play;

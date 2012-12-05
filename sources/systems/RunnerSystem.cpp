@@ -40,10 +40,13 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(startPoint.Y, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.X, tc), 0.001));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(endPoint.Y, tc), 0.001));
+    componentSerializer.add(new Property(OFFSET(color, tc), sizeof(Color)));
     componentSerializer.add(new EpsilonProperty<float>(OFFSET(speed, tc), 0.001));
     componentSerializer.add(new Property(OFFSET(finished, tc), sizeof(bool)));
     componentSerializer.add(new Property(OFFSET(ghost, tc), sizeof(bool)));
     componentSerializer.add(new Property(OFFSET(killed, tc), sizeof(bool)));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(elapsed, tc), 0.001));
+    componentSerializer.add(new EpsilonProperty<float>(OFFSET(jumpingSince, tc), 0.001));
     componentSerializer.add(new Property(OFFSET(currentJump, tc), sizeof(bool)));
     componentSerializer.add(new Property(OFFSET(oldNessBonus, tc), sizeof(int)));
     componentSerializer.add(new Property(OFFSET(coinSequenceBonus, tc), sizeof(int)));
@@ -81,6 +84,7 @@ void RunnerSystem::DoUpdate(float dt) {
     std::vector<Entity> killedRunners;
     FOR_EACH_ENTITY_COMPONENT(Runner, a, rc)
         PhysicsComponent* pc = PHYSICS(a);
+        pc->mass = 1;
         TransformationComponent* tc = TRANSFORM(a);
         {
             RenderingComponent* rendc = RENDERING(a);

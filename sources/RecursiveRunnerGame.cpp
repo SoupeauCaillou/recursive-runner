@@ -352,21 +352,26 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     RENDERING(scorePanel)->hide = false;
     // RENDERING(scorePanel)->color.a = 0.5;
 
-    for (int i=0; i<2; i++) {
-        scoreText[i] = theEntityManager.CreateEntity();
-        ADD_COMPONENT(scoreText[i], Transformation);
-        TRANSFORM(scoreText[i])->position = Vector2(-0.05, -0.3);
-        TRANSFORM(scoreText[i])->z = 0.13;
-        TRANSFORM(scoreText[i])->rotation = 0.06;
-        TRANSFORM(scoreText[i])->parent = scorePanel;
-        ADD_COMPONENT(scoreText[i], TextRendering);
-        TEXT_RENDERING(scoreText[i])->text = "12345";
-        TEXT_RENDERING(scoreText[i])->charHeight = 1.5;
-        TEXT_RENDERING(scoreText[i])->hide = false;
-        // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
-        TEXT_RENDERING(scoreText[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
-        TEXT_RENDERING(scoreText[i])->flags |= TextRenderingComponent::IsANumberBit;
+    scoreText = theEntityManager.CreateEntity();
+    ADD_COMPONENT(scoreText, Transformation);
+    TRANSFORM(scoreText)->position = Vector2(-0.05, -0.3);
+    TRANSFORM(scoreText)->z = 0.13;
+    TRANSFORM(scoreText)->rotation = 0.06;
+    TRANSFORM(scoreText)->parent = scorePanel;
+    ADD_COMPONENT(scoreText, TextRendering);
+    std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
+    if (!players.empty()) {
+        std::stringstream a;
+        a << PLAYER(players[0])->score;
+        TEXT_RENDERING(scoreText)->text = a.str();
+    } else {
+        TEXT_RENDERING(scoreText)->text = "12345";
     }
+    TEXT_RENDERING(scoreText)->charHeight = 1.5;
+    TEXT_RENDERING(scoreText)->hide = false;
+    // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
+    TEXT_RENDERING(scoreText)->color = Color(13.0 / 255, 5.0/255, 42.0/255);
+    TEXT_RENDERING(scoreText)->flags |= TextRenderingComponent::IsANumberBit;
 
     // 3 cameras
     // Default camera (UI)
@@ -520,7 +525,6 @@ static void updateFps(float dt) {
      }
 }
 
-
 void RecursiveRunnerGame::setupCamera(CameraMode mode) {
     switch (mode) {
         case CameraModeSingle:
@@ -533,10 +537,10 @@ void RecursiveRunnerGame::setupCamera(CameraMode mode) {
             theRenderingSystem.cameras[1].screenPosition.Y  = 0;
             theRenderingSystem.cameras[1].mirrorY = false;
 
-            TEXT_RENDERING(scoreText[0])->hide = false;
-            TEXT_RENDERING(scoreText[0])->positioning = TextRenderingComponent::CENTER;
-            TEXT_RENDERING(scoreText[1])->hide = true;
+            TEXT_RENDERING(scoreText)->hide = false;
+            TEXT_RENDERING(scoreText)->positioning = TextRenderingComponent::CENTER;
             break;
+#if 0
         case CameraModeSplit:
             theRenderingSystem.cameras[0].enable = false;
             theRenderingSystem.cameras[1].enable = true;
@@ -557,6 +561,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode mode) {
             TEXT_RENDERING(scoreText[1])->hide = false;
             TEXT_RENDERING(scoreText[1])->positioning = TextRenderingComponent::RIGHT;
             break;
+#endif
         case CameraModeMenu:
             theRenderingSystem.cameras[0].enable = true;
             theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
