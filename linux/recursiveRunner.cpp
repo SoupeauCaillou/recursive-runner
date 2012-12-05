@@ -398,5 +398,6 @@ int main(int argc, char** argv) {
 	emscripten_set_main_loop(updateAndRender, 60);
 #endif
 	delete game;
+    delete record;
 	return 0;
 }
