@@ -21,13 +21,16 @@
 #include "systems/TransformationSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/MusicSystem.h"
-#include "base/TouchInputManager.h"
 #include "systems/PhysicsSystem.h"
+#include "systems/ButtonSystem.h"
+
+#include "base/TouchInputManager.h"
+#include "base/PlacementHelper.h"
 #include "../RecursiveRunnerGame.h"
 
 struct PauseStateManager::PauseStateManagerDatas {
     Entity pauseText;
-    Entity stopText;
+    Entity continueButton, restartButton, stopButton;
     std::vector<Entity> pausedMusic;
 };
 
@@ -45,22 +48,30 @@ void PauseStateManager::setup() {
     TRANSFORM(pauseText)->z = 0.9;
     TRANSFORM(pauseText)->rotation = 0.0;
     ADD_COMPONENT(pauseText, TextRendering);
-    TEXT_RENDERING(pauseText)->text = "PAUSED (touch to continue)";
+    TEXT_RENDERING(pauseText)->text = "PAUSE";
     TEXT_RENDERING(pauseText)->charHeight = 1.;
     TEXT_RENDERING(pauseText)->cameraBitMask = 0x2;
     TEXT_RENDERING(pauseText)->color = Color(13.0 / 255, 5.0/255, 42.0/255);
     TEXT_RENDERING(datas->pauseText)->hide = true;
 
-    Entity stopText = datas->stopText = theEntityManager.CreateEntity();
-    ADD_COMPONENT(stopText, Transformation);
-    TRANSFORM(stopText)->z = 0.9;
-    TRANSFORM(stopText)->rotation = 0.0;
-    ADD_COMPONENT(stopText, TextRendering);
-    TEXT_RENDERING(stopText)->text = "GO BACK";
-    TEXT_RENDERING(stopText)->charHeight = 1.;
-    TEXT_RENDERING(stopText)->cameraBitMask = 0x2;
-    TEXT_RENDERING(stopText)->color = Color(13.0 / 255, 5.0/255, 42.0/255);
-    TEXT_RENDERING(datas->stopText)->hide = true;
+    Entity buttons[3];
+    buttons[0] = datas->continueButton = theEntityManager.CreateEntity();
+    buttons[1] = datas->restartButton = theEntityManager.CreateEntity();
+    buttons[2] = datas->stopButton = theEntityManager.CreateEntity();
+    for (int i = 0; i < 3; ++i) {
+        ADD_COMPONENT(buttons[i], Transformation);
+        TRANSFORM(buttons[i])->size = Vector2(PlacementHelper::ScreenWidth / 3.1, PlacementHelper::ScreenHeight / 2.);
+        TRANSFORM(buttons[i])->parent = game->cameraEntity;
+        TRANSFORM(buttons[i])->position = Vector2( (i - 1) * PlacementHelper::ScreenWidth / 3., 0);
+        TRANSFORM(buttons[i])->z = 0.95;
+        ADD_COMPONENT(buttons[i], Rendering);
+        RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile("pause");
+        RENDERING(buttons[i])->hide = true;
+        RENDERING(buttons[i])->cameraBitMask = 0x2;
+        RENDERING(buttons[i])->color = Color(119.0 / 255, 119.0 / 255, 119.0 / 255);
+        ADD_COMPONENT(buttons[i], Button);
+        BUTTON(buttons[i])->enabled = false;
+    }
 }
 
 void PauseStateManager::earlyEnter() {
@@ -73,11 +84,17 @@ void PauseStateManager::enter() {
     }
 
     //show centered texts
-    TRANSFORM(datas->pauseText)->position = theRenderingSystem.cameras[1].worldPosition + Vector2(0, 3);
+    TRANSFORM(datas->pauseText)->position = theRenderingSystem.cameras[1].worldPosition;
     TEXT_RENDERING(datas->pauseText)->hide = false;
 
-    TRANSFORM(datas->stopText)->position = theRenderingSystem.cameras[1].worldPosition + Vector2(0, 1);
-    TEXT_RENDERING(datas->stopText)->hide = false;
+    //show buttons
+    RENDERING(datas->continueButton)->hide = false;
+    BUTTON(datas->continueButton)->enabled = true;
+    RENDERING(datas->restartButton)->hide = false;
+    BUTTON(datas->restartButton)->enabled = true;
+    RENDERING(datas->stopButton)->hide = false;
+    BUTTON(datas->stopButton)->enabled = true;
+
 
     //mute music
     if (!theMusicSystem.isMuted()) {
@@ -92,8 +109,12 @@ void PauseStateManager::enter() {
 }
 
 State::Enum PauseStateManager::update(float dt) {
-    if (!theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0)) {
+    if (BUTTON(datas->continueButton)->clicked) {
         return State::Game;
+    } else if (BUTTON(datas->restartButton)->clicked) {
+        return State::Menu2Game;
+    } else if (BUTTON(datas->stopButton)->clicked) {
+        return State::Game2Menu;
     }
     return State::Pause;
 }
@@ -104,7 +125,13 @@ void PauseStateManager::backgroundUpdate(float dt __attribute__((unused))) {
 
 void PauseStateManager::exit() {
     TEXT_RENDERING(datas->pauseText)->hide = true;
-    TEXT_RENDERING(datas->stopText)->hide = true;
+    RENDERING(datas->continueButton)->hide = true;
+    BUTTON(datas->continueButton)->enabled = false;
+    RENDERING(datas->restartButton)->hide = true;
+    BUTTON(datas->restartButton)->enabled = false;
+    RENDERING(datas->stopButton)->hide = true;
+    BUTTON(datas->stopButton)->enabled = false;
+
     // restore physics for runners
     for (unsigned i=0; i<game->gameTempVars.runners[0].size(); i++) {
         PHYSICS(game->gameTempVars.runners[0][i])->mass = 1;
