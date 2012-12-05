@@ -35,6 +35,7 @@
 
 class NameInputAPI;
 
+#if 0
 struct GameTempVar {
     void syncRunners();
     void syncCoins();
@@ -45,6 +46,7 @@ struct GameTempVar {
     Entity currentRunner[2];
     std::vector<Entity> runners[2], coins, players, links, sparkling; 
 };
+#endif
 
 enum CameraMode {
     CameraModeMenu,
@@ -85,7 +87,7 @@ class RecursiveRunnerGame : public Game {
         std::vector<Entity> decorEntities;
         CommunicationAPI* communicationAPI;
         StorageAPI* storageAPI;
-        GameTempVar gameTempVars;
+        // GameTempVar gameTempVars;
         Entity scoreText[2], scorePanel;
         Entity muteBtn;
         Vector2 leftMostCameraPos;

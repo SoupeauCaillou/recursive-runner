@@ -1,6 +1,6 @@
 #pragma once
 
-#define COMPUTE_SPEED_FROM_GAME_DURATION(sec) (runner * (20 * 3  + 0.85*2) / (sec))
+#define COMPUTE_SPEED_FROM_GAME_DURATION(sec) (10 * (20 * 3  + 0.85*2) / (sec))
 
 namespace param {
     const int LevelSize = 3;

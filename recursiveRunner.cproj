@@ -44,6 +44,7 @@
     <Compile Include="sources\states\GameStateManager.cpp" />
     <Compile Include="sources\states\LogoStateManager.cpp" />
     <Compile Include="sources\states\TransitionStateManager.cpp" />
+    <Compile Include="sources\systems\SessionSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -69,5 +70,6 @@
     <None Include="sources\Parameters.h" />
     <None Include="sources\systems\RangeFollowerSystem.h" />
     <None Include="sources\states\StateManager.h" />
+    <None Include="sources\systems\SessionSystem.h" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 /*
- This file is part of Heriswap.
+ This file is part of Recursive Runner.
 
  @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
  @author Soupe au Caillou - Gautier Pelloux-Prayer
@@ -16,19 +16,19 @@
  You should have received a copy of the GNU General Public License
  along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "PlayerSystem.h"
-#include "RunnerSystem.h"
+#pragma once
 
-INSTANCE_IMPL(PlayerSystem);
+#include "systems/System.h"
 
-PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") { 
-    PlayerComponent tc;
-    componentSerializer.add(new Property(OFFSET(score, tc), sizeof(int)));
-    componentSerializer.add(new Property(OFFSET(runnersCount, tc), sizeof(int)));
-    componentSerializer.add(new Property(OFFSET(ready, tc), sizeof(bool)));
-}
+struct SessionComponent {
+    SessionComponent() : numPlayers(1), currentRunner(0) {}
+    unsigned numPlayers;
+    Entity currentRunner;
+    std::vector<Entity> runners, coins, players, links, sparkling; 
+};
 
-void PlayerSystem::DoUpdate(float dt __attribute__((unused))) {
+#define theSessionSystem SessionSystem::GetInstance()
+#define SESSION(e) theSessionSystem.Get(e)
 
-}
-
+UPDATABLE_SYSTEM(Session)
+};

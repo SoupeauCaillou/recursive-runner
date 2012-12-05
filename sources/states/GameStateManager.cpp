@@ -35,6 +35,7 @@
 #include "systems/PlayerSystem.h"
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
+#include "systems/SessionSystem.h"
 
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
@@ -42,6 +43,7 @@
 #include <cmath>
 #include <sstream>
 
+#if 0
 void GameTempVar::cleanup() {
     for (unsigned i=0; i<coins.size(); i++) {
         theEntityManager.DeleteEntity(coins[i]);
@@ -114,6 +116,7 @@ void GameTempVar::syncCoins() {
 int GameTempVar::playerIndex() {
     return 0;
 }
+#endif
 
 static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex);
@@ -121,6 +124,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 
 struct GameStateManager::GameStateManagerDatas {
     Entity pauseButton;
+    Entity session;
 };
 
 GameStateManager::GameStateManager(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
@@ -155,47 +159,45 @@ void GameStateManager::earlyEnter() {
 }
 
 void GameStateManager::enter() {
+    datas->session = theSessionSystem.RetrieveAllEntityWithComponent().front();
+    SessionComponent* sc = SESSION(datas->session);
     // only do this on first enter (ie: not when unpausing)
-    if (game->gameTempVars.runners[0].empty()) {
-        for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
-            addRunnerToPlayer(game, game->gameTempVars.players[i], PLAYER(game->gameTempVars.players[i]), i);
+    if (sc->runners.empty()) {
+        for (unsigned i=0; i<sc->numPlayers; i++) {
+            assert (sc->numPlayers == 1);
+            Entity r = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i);
+            sc->runners.push_back(r);
+            sc->currentRunner = r;
         }
-    
-        game->gameTempVars.syncRunners();
-        for (unsigned i=0; i<game->gameTempVars.numPlayers; i++) {
-            theRenderingSystem.cameras[1 + i].worldPosition.X = 
-                TRANSFORM(game->gameTempVars.currentRunner[i])->position.X + PlacementHelper::ScreenWidth * 0.5;
-        }
+    }
+    for (unsigned i=0; i<sc->numPlayers; i++) {
+        theRenderingSystem.cameras[1 + i].worldPosition.X = 
+            TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
     }
     RENDERING(datas->pauseButton)->hide = false;
     BUTTON(datas->pauseButton)->enabled = true;
 }
 
 State::Enum GameStateManager::update(float dt) {
-    GameTempVar& gameTempVars = game->gameTempVars;
-
-    gameTempVars.syncRunners();
+    SessionComponent* sc = SESSION(datas->session);
 
     if (BUTTON(datas->pauseButton)->clicked) {
         return State::Pause;
     }
-    /*if (MUSIC(titleGroup)->loopNext == InvalidMusicRef) {
-        MUSIC(titleGroup)->loopNext = theMusicSystem.loadMusicFile("432796_ragtime.ogg");
-    }*/
 
     // Manage player's current runner
-    for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
-        CAM_TARGET(gameTempVars.currentRunner[i])->enabled = true;
-        CAM_TARGET(gameTempVars.currentRunner[i])->offset = Vector2(
-            ((RUNNER(gameTempVars.currentRunner[i])->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth, 
-            0 - TRANSFORM(gameTempVars.currentRunner[i])->position.Y);
+    for (unsigned i=0; i<sc->numPlayers; i++) {
+        CAM_TARGET(sc->currentRunner)->enabled = true;
+        CAM_TARGET(sc->currentRunner)->offset = Vector2(
+            ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth, 
+            0 - TRANSFORM(sc->currentRunner)->position.Y);
         
         // If current runner has reached the edge of the screen
-        if (RUNNER(gameTempVars.currentRunner[i])->finished) {
-            LOGI("%lu finished, add runner or end game", gameTempVars.currentRunner[i]);
-            CAM_TARGET(gameTempVars.currentRunner[i])->enabled = false;
+        if (RUNNER(sc->currentRunner)->finished) {
+            LOGI("%lu finished, add runner or end game", sc->currentRunner);
+            CAM_TARGET(sc->currentRunner)->enabled = false;
             // return Runner control to master
-            if (PLAYER(gameTempVars.players[i])->runnersCount == param::runner) {
+            if (PLAYER(sc->players[i])->runnersCount == param::runner) {
                 theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
@@ -203,22 +205,23 @@ State::Enum GameStateManager::update(float dt) {
             } else {
                 LOGI("Create runner");
                 // add a new one
-                gameTempVars.currentRunner[i] = addRunnerToPlayer(game, gameTempVars.players[i], PLAYER(gameTempVars.players[i]), i);
+                sc->currentRunner = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i);
+                sc->runners.push_back(sc->currentRunner);
             }
         }
         if (!game->ignoreClick) {
             // Input (jump) handling
             for (int j=0; j<1; j++) {
                 if (theTouchInputManager.isTouched(j)) {
-                    if (gameTempVars.numPlayers == 2) {
+                    if (sc->numPlayers == 2) {
                         const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
                         if (i == 0 && ppp.Y < 0)
                             continue;
                         if (i == 1 && ppp.Y > 0)
                             continue;
                     }
-                    PhysicsComponent* pc = PHYSICS(gameTempVars.currentRunner[i]);
-                    RunnerComponent* rc = RUNNER(gameTempVars.currentRunner[i]);
+                    PhysicsComponent* pc = PHYSICS(sc->currentRunner);
+                    RunnerComponent* rc = RUNNER(sc->currentRunner);
                     if (!theTouchInputManager.wasTouched(j)) {
                         if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
                             rc->jumpTimes.push_back(rc->elapsed);
@@ -233,17 +236,17 @@ State::Enum GameStateManager::update(float dt) {
             }
         }
 
-        TransformationComponent* tc = TRANSFORM(gameTempVars.currentRunner[i]);
-        CAM_TARGET(gameTempVars.currentRunner[i])->offset.Y = 0 - tc->position.Y;
+        TransformationComponent* tc = TRANSFORM(sc->currentRunner);
+        CAM_TARGET(sc->currentRunner)->offset.Y = 0 - tc->position.Y;
     }
 
     { // maybe do it for non master too (but do not delete entities, maybe only hide ?)
         std::vector<TransformationComponent*> activesColl;
         std::vector<int> direction;
         // check for collisions for non-ghost runners
-        for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
-            for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
-                const Entity r = gameTempVars.runners[i][j];
+        for (unsigned i=0; i<sc->numPlayers; i++) {
+            for (unsigned j=0; j<sc->runners.size(); j++) {
+                const Entity r = sc->runners[j];
                 const RunnerComponent* rc = RUNNER(r);
                 if (rc->ghost)
                     continue;
@@ -252,9 +255,9 @@ State::Enum GameStateManager::update(float dt) {
             }
         }
         const unsigned count = activesColl.size();
-        for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
-            for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
-                Entity ghost = gameTempVars.runners[i][j];
+        for (unsigned i=0; i<sc->numPlayers; i++) {
+            for (unsigned j=0; j<sc->runners.size(); j++) {
+                Entity ghost = sc->runners[j];
                 RunnerComponent* rc = RUNNER(ghost);
                 if (!rc->ghost || rc->killed)
                     continue;
@@ -267,6 +270,8 @@ State::Enum GameStateManager::update(float dt) {
                         continue;
                     if (IntersectionUtil::rectangleRectangle(ghostColl, activesColl[k])) {
                         rc->killed = true;
+                        sc->runners.erase(sc->runners.begin() + j);
+                        j--;
                         break;
                     }
                 }
@@ -274,11 +279,11 @@ State::Enum GameStateManager::update(float dt) {
         }
     }
 
-    for (unsigned i=0; i<gameTempVars.numPlayers; i++) {
-        PlayerComponent* player = PLAYER(gameTempVars.players[i]);
-        //std::cout << i << " -> " << gameTempVars.runners[i].size() << std::endl;
-        for (unsigned j=0; j<gameTempVars.runners[i].size(); j++) {
-            Entity e = gameTempVars.runners[i][j];
+    for (unsigned i=0; i<sc->numPlayers; i++) {
+        PlayerComponent* player = PLAYER(sc->players[i]);
+        //std::cout << i << " -> " << sc->runners[i].size() << std::endl;
+        for (unsigned j=0; j<sc->runners.size(); j++) {
+            Entity e = sc->runners[j];
             RunnerComponent* rc = RUNNER(e);
             if (rc->killed)
                 continue;
@@ -297,10 +302,10 @@ State::Enum GameStateManager::update(float dt) {
             }
             const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
             // check coins
-            int end = gameTempVars.coins.size();
+            int end = sc->coins.size();
             Entity prev = 0;
             for(int idx=0; idx<end; idx++) {
-                Entity coin = rc->speed > 0 ? gameTempVars.coins[idx] : gameTempVars.coins[end - idx - 1];
+                Entity coin = rc->speed > 0 ? sc->coins[idx] : sc->coins[end - idx - 1];
                 if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
                     const TransformationComponent* tCoin = TRANSFORM(coin);
                     if (IntersectionUtil::rectangleRectangle(
@@ -313,20 +318,14 @@ State::Enum GameStateManager::update(float dt) {
                                 #if 1
                                 if (!rc->ghost) {
                                     if (rc->speed > 0) {
-                                     for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                         float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                         PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->duration += t;
-                                         /*PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->initialColor = 
-                                            PARTICULE(gameTempVars.sparkling[linkIdx - j + 1])->finalColor =
-                                                Interval<Color>(rc->color, rc->color);*/
-                                     }
+                                        for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                            float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                            PARTICULE(sc->sparkling[linkIdx - j + 1])->duration += t;
+                                        }
                                     } else {
-                                     for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                         PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->duration += 
-                                             1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                         /*PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->initialColor =
-                                            PARTICULE(gameTempVars.sparkling[linkIdx + j - 1])->finalColor =
-                                                Interval<Color>(rc->color, rc->color);*/
+                                        for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                            PARTICULE(sc->sparkling[linkIdx + j - 1])->duration += 
+                                                1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
                                         }
                                     }
                                 }
@@ -341,7 +340,7 @@ State::Enum GameStateManager::update(float dt) {
                         player->score += gain;
                         
                         //coins++ only for player, not his ghosts
-                        if (j == gameTempVars.runners[i].size() - 1)
+                        if (j == sc->runners.size() - 1)
                             player->coins++;
                         
                         spawnGainEntity(gain, coin, rc->color, rc->ghost);
@@ -352,9 +351,9 @@ State::Enum GameStateManager::update(float dt) {
         }
     }
 
-    for (unsigned i=0; i<gameTempVars.players.size(); i++) {
+    for (unsigned i=0; i<sc->players.size(); i++) {
         std::stringstream a;
-        a << PLAYER(gameTempVars.players[i])->score;
+        a << PLAYER(sc->players[i])->score;
         TEXT_RENDERING(game->scoreText[i])->text = a.str();
     }
     
@@ -362,22 +361,7 @@ State::Enum GameStateManager::update(float dt) {
     thePlayerSystem.Update(dt);
     theRunnerSystem.Update(dt);
     theCameraTargetSystem.Update(dt);
-#ifdef SAC_NETWORK
-    {
-        std::stringstream a;
-        a << (int)theNetworkSystem.ulRate/1024 << "kops, " << theNetworkSystem.bytesSent / 1024 << " ko"; 
-        TEXT_RENDERING(networkUL)->text = a.str();
-        TRANSFORM(networkUL)->position = theRenderingSystem.cameraPosition + 
-            Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.46 * PlacementHelper::ScreenHeight);
-    }
-    {
-        std::stringstream a;
-        a << (int)theNetworkSystem.dlRate/1024 << "kops, " << theNetworkSystem.bytesReceived / 1024 << " ko"; 
-        TEXT_RENDERING(networkDL)->text = a.str();
-        TRANSFORM(networkDL)->position = theRenderingSystem.cameraPosition + 
-            Vector2(-PlacementHelper::ScreenWidth * 0.5, 0.43 * PlacementHelper::ScreenHeight);
-    }
-#endif
+
     return State::Game;
 }
 
@@ -493,7 +477,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RENDERING(collisionZone)->color = Color(1,0,0,1);
     #endif
     RUNNER(e)->collisionZone = collisionZone;
-
+    p->runnersCount++;
  LOGI("Add runner %lu at pos : {%.2f, %.2f}, speed: %.2f (player=%lu)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
     return e;
 }

@@ -28,6 +28,8 @@
 #include "base/PlacementHelper.h"
 #include "../RecursiveRunnerGame.h"
 
+#include "../systems/SessionSystem.h"
+
 struct PauseStateManager::PauseStateManagerDatas {
     Entity pauseText;
     Entity continueButton, restartButton, stopButton;
@@ -78,9 +80,10 @@ void PauseStateManager::earlyEnter() {
 }
 
 void PauseStateManager::enter() {
+    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     // disable physics for runners
-    for (unsigned i=0; i<game->gameTempVars.runners[0].size(); i++) {
-        PHYSICS(game->gameTempVars.runners[0][i])->mass = 0;
+    for (unsigned i=0; i<session->runners.size(); i++) {
+        PHYSICS(session->runners[i])->mass = 0;
     }
 
     //show centered texts
@@ -124,6 +127,7 @@ void PauseStateManager::backgroundUpdate(float dt __attribute__((unused))) {
 }
 
 void PauseStateManager::exit() {
+    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     TEXT_RENDERING(datas->pauseText)->hide = true;
     RENDERING(datas->continueButton)->hide = true;
     BUTTON(datas->continueButton)->enabled = false;
@@ -133,8 +137,8 @@ void PauseStateManager::exit() {
     BUTTON(datas->stopButton)->enabled = false;
 
     // restore physics for runners
-    for (unsigned i=0; i<game->gameTempVars.runners[0].size(); i++) {
-        PHYSICS(game->gameTempVars.runners[0][i])->mass = 1;
+    for (unsigned i=0; i<session->runners.size(); i++) {
+        PHYSICS(session->runners[i])->mass = 1;
     }
     if (!theMusicSystem.isMuted()) {
         for (unsigned i=0; i<datas->pausedMusic.size(); i++) {

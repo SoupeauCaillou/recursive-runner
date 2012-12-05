@@ -28,6 +28,8 @@
 #include "systems/MusicSystem.h"
 #include "systems/PlayerSystem.h"
 #include "systems/ParticuleSystem.h"
+#include "../systems/SessionSystem.h"
+#include "../systems/RunnerSystem.h"
 
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
@@ -35,7 +37,7 @@
 #include <sstream>
 #include <vector>
 
-static void createCoins(int count, GameTempVar& gameTempVars);
+static void createCoins(int count, SessionComponent* session);
 
 static void startMenuMusic(Entity title) {
     MUSIC(title)->music = theMusicSystem.loadMusicFile("intro-menu.ogg");
@@ -157,7 +159,18 @@ void MenuStateManager::earlyEnter() {
 }
 
 void MenuStateManager::enter() {
-    game->gameTempVars.cleanup();
+    std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
+    if (!sessions.empty()) {
+        SessionComponent* sc = SESSION(sessions.front());
+        for(unsigned i=0; i<sc->runners.size(); i++)
+            theEntityManager.DeleteEntity(RUNNER(sc->runners[i])->collisionZone); 
+        std::for_each(sc->runners.begin(), sc->runners.end(), deleteEntityFunctor);
+        std::for_each(sc->coins.begin(), sc->coins.end(), deleteEntityFunctor);
+        std::for_each(sc->players.begin(), sc->players.end(), deleteEntityFunctor);
+        std::for_each(sc->links.begin(), sc->links.end(), deleteEntityFunctor);
+        std::for_each(sc->sparkling.begin(), sc->sparkling.end(), deleteEntityFunctor);
+        theEntityManager.DeleteEntity(sessions.front());
+    }
 }
 
 void MenuStateManager::backgroundUpdate(float dt) {
@@ -208,17 +221,23 @@ State::Enum MenuStateManager::update(float dt) {
 }
 
 void MenuStateManager::exit() {
-    game->gameTempVars.numPlayers = 1;
-    if (game->gameTempVars.players.empty()) {
-        Entity e = theEntityManager.CreateEntity();
-        ADD_COMPONENT(e, Player);
-        game->gameTempVars.players.push_back(e);
-    }
+    assert(theSessionSystem.RetrieveAllEntityWithComponent().empty());
+    assert(thePlayerSystem.RetrieveAllEntityWithComponent().empty());
+
+    // Create session
+    Entity session = theEntityManager.CreateEntity(EntityType::Persistent);
+    ADD_COMPONENT(session, Session);
+    SessionComponent* sc = SESSION(session);
+    sc->numPlayers = 1;
+    // Create player
+    Entity player = theEntityManager.CreateEntity(EntityType::Persistent);
+    ADD_COMPONENT(player, Player);
+    sc->players.push_back(player);
+
     MUSIC(datas->title)->control = MusicControl::Stop;
     BUTTON(datas->swarmBtn)->enabled = false;
 
-    createCoins(20, game->gameTempVars);
-    game->gameTempVars.syncCoins();
+    createCoins(20, sc);
 }
 
 void MenuStateManager::lateExit() {
@@ -227,27 +246,23 @@ void MenuStateManager::lateExit() {
 
 float minipause;
 bool MenuStateManager::transitionCanExit() {
+    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     const ADSRComponent* adsr = ADSR(datas->titleGroup);
     {
         float progress = (adsr->value - adsr->attackValue) /
             (adsr->idleValue - adsr->attackValue);
         progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
-        for (unsigned i=0; i<game->gameTempVars.coins.size(); i++) {
-            RENDERING(game->gameTempVars.coins[i])->color.a = progress;
+        for (unsigned i=0; i<session->coins.size(); i++) {
+            RENDERING(session->coins[i])->color.a = progress;
         }
-        for (unsigned i=0; i<game->gameTempVars.links.size(); i++) {
+        for (unsigned i=0; i<session->links.size(); i++) {
             if (i % 2)
-                RENDERING(game->gameTempVars.links[i])->color.a = progress * 0.2;
+                RENDERING(session->links[i])->color.a = progress * 0.2;
             else
-                RENDERING(game->gameTempVars.links[i])->color.a = progress;
+                RENDERING(session->links[i])->color.a = progress;
         }
     }
-    PLAYER(game->gameTempVars.players[0])->ready = true;
-    for (std::vector<Entity>::iterator it=game->gameTempVars.players.begin(); it!=game->gameTempVars.players.end(); ++it) {
-        if (!PLAYER(*it)->ready) {
-            return false;
-        }
-    }
+    PLAYER(session->players[0])->ready = true;
     if (adsr->value < adsr->idleValue) {
         minipause = TimeUtil::getTime();
         return false;
@@ -264,31 +279,35 @@ bool MenuStateManager::transitionCanExit() {
 bool MenuStateManager::transitionCanEnter() {
     ADSRComponent* adsr = ADSR(datas->titleGroup);
     adsr->active = ADSR(datas->subtitle)->active = true;
-    {
-        float progress = (adsr->value - adsr->attackValue) /
-            (adsr->idleValue - adsr->attackValue);
-        progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
-        for (unsigned i=0; i<game->gameTempVars.coins.size(); i++) {
-            RENDERING(game->gameTempVars.coins[i])->color.a = progress;
-        }
-        for (unsigned i=0; i<game->gameTempVars.links.size(); i++) {
-            if (i % 2)
-                RENDERING(game->gameTempVars.links[i])->color.a = progress * 0.2;
-            else
-                RENDERING(game->gameTempVars.links[i])->color.a = progress;
+    std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
+    if (!sessions.empty()) {
+        const SessionComponent* session = SESSION(sessions.front());
+        {
+            float progress = (adsr->value - adsr->attackValue) /
+                (adsr->idleValue - adsr->attackValue);
+            progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
+            for (unsigned i=0; i<session->coins.size(); i++) {
+                RENDERING(session->coins[i])->color.a = progress;
+            }
+            for (unsigned i=0; i<session->links.size(); i++) {
+                if (i % 2)
+                    RENDERING(session->links[i])->color.a = progress * 0.2;
+                else
+                    RENDERING(session->links[i])->color.a = progress;
+            }
         }
     }
     
-    return (ADSR(datas->titleGroup)->value == ADSR(datas->titleGroup)->sustainValue);
+    return (adsr->value == adsr->sustainValue);
 }
 
 static bool sortLeftToRight(Entity e, Entity f) {
- return TRANSFORM(e)->position.X < TRANSFORM(f)->position.X;
+    return TRANSFORM(e)->position.X < TRANSFORM(f)->position.X;
 }
 
-static void createCoins(int count, GameTempVar& gameTempVars) {
+static void createCoins(int count, SessionComponent* session) {
     LOGI("Coins creation started");
-    std::vector<Entity> coins;
+    std::vector<Entity>& coins = session->coins;
     for (int i=0; i<count; i++) {
         Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
         ADD_COMPONENT(e, Transformation);
@@ -390,11 +409,11 @@ static void createCoins(int count, GameTempVar& gameTempVars) {
      PARTICULE(link3)->forceAmplitude = Interval<float>(5 / 10, 10 / 10);
      PARTICULE(link3)->moment = Interval<float>(-5, 5);
      PARTICULE(link3)->mass = 0.01;
-        gameTempVars.sparkling.push_back(link3);
+        session->sparkling.push_back(link3);
 #endif
      previous = topI;
-     gameTempVars.links.push_back(link);
-        gameTempVars.links.push_back(link2);
+     session->links.push_back(link);
+        session->links.push_back(link2);
     }
     #endif
     LOGI("Coins creation finished");

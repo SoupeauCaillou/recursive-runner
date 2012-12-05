@@ -40,6 +40,7 @@
 #include "systems/CameraTargetSystem.h"
 #include "systems/PlayerSystem.h"
 #include "systems/RangeFollowerSystem.h"
+#include "systems/SessionSystem.h"
 
 #include <iomanip>
 
@@ -59,6 +60,7 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
     CameraTargetSystem::CreateInstance();
     PlayerSystem::CreateInstance();
     RangeFollowerSystem::CreateInstance();
+    SessionSystem::CreateInstance();
 
     overrideNextState = State::Invalid;
     currentState = State::Logo;
@@ -82,6 +84,7 @@ RecursiveRunnerGame::~RecursiveRunnerGame() {
     CameraTargetSystem::DestroyInstance();
     PlayerSystem::DestroyInstance();
     RangeFollowerSystem::DestroyInstance();
+    SessionSystem::DestroyInstance();
 
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
         delete it->second;
