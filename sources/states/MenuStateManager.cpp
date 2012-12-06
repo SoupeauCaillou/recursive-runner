@@ -47,7 +47,7 @@ static void startMenuMusic(Entity title) {
 }
 
 struct MenuStateManager::MenuStateManagerDatas {
-    Entity titleGroup, title, subtitle, subtitleText, swarmBtn;
+    Entity titleGroup, title, subtitle, subtitleText, swarmBtn, giftizBtn;
 };
 
 MenuStateManager::MenuStateManager(RecursiveRunnerGame* game) : StateManager(State::Menu, game) {
@@ -65,8 +65,8 @@ void MenuStateManager::setup() {
     TRANSFORM(titleGroup)->rotation = 0.05;
     ADD_COMPONENT(titleGroup, ADSR);
     ADSR(titleGroup)->idleValue = PlacementHelper::ScreenHeight + PlacementHelper::GimpYToScreen(400);
-    ADSR(titleGroup)->sustainValue = 
-        game->baseLine + 
+    ADSR(titleGroup)->sustainValue =
+        game->baseLine +
         PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).Y * 0.5
         + PlacementHelper::GimpHeightToScreen(20);
     ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
@@ -124,7 +124,7 @@ void MenuStateManager::setup() {
         theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, -0.5)
         + TRANSFORM(swarmBtn)->size * Vector2(0.5, 0.5)
         + Vector2(0, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
-        
+
     TRANSFORM(swarmBtn)->z = 0.95;
     ADD_COMPONENT(swarmBtn, Rendering);
     RENDERING(swarmBtn)->texture = theRenderingSystem.loadTextureFile("swarm_icon");
@@ -132,6 +132,23 @@ void MenuStateManager::setup() {
     RENDERING(swarmBtn)->cameraBitMask = 0x1;
     ADD_COMPONENT(swarmBtn, Button);
     BUTTON(swarmBtn)->overSize = 1.2;
+
+    Entity giftizBtn = datas->giftizBtn = theEntityManager.CreateEntity();
+    ADD_COMPONENT(giftizBtn, Transformation);
+    TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm_icon"));
+    TRANSFORM(giftizBtn)->parent = game->cameraEntity;
+    TRANSFORM(giftizBtn)->position =
+        theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, -0.5)
+        + TRANSFORM(giftizBtn)->size * Vector2(0.5, 0.5)
+        + Vector2(2, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+
+    TRANSFORM(giftizBtn)->z = 0.95;
+    ADD_COMPONENT(giftizBtn, Rendering);
+    RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_logo");
+    RENDERING(giftizBtn)->hide = false;
+    RENDERING(giftizBtn)->cameraBitMask = 0x1;
+    ADD_COMPONENT(giftizBtn, Button);
+    BUTTON(giftizBtn)->overSize = 1.2;
 }
 
 void MenuStateManager::earlyEnter() {
@@ -187,6 +204,14 @@ State::Enum MenuStateManager::update(float dt) {
         game->ignoreClick = BUTTON(datas->swarmBtn)->mouseOver;
     }
 
+    // Handle Giftiz button
+    if (!game->ignoreClick) {
+        if (BUTTON(datas->giftizBtn)->clicked) {
+            game->communicationAPI->giftizButtonClicked();
+        }
+        game->ignoreClick = BUTTON(datas->giftizBtn)->mouseOver;
+    }
+
     // Restore music ?
     if (theTouchInputManager.isTouched(0)) {
         if (theMusicSystem.isMuted() != theSoundSystem.mute) {
@@ -209,6 +234,7 @@ void MenuStateManager::exit() {
 
     MUSIC(datas->title)->control = MusicControl::Stop;
     BUTTON(datas->swarmBtn)->enabled = false;
+    BUTTON(datas->giftizBtn)->enabled = false;
 }
 
 void MenuStateManager::lateExit() {
@@ -260,6 +286,6 @@ bool MenuStateManager::transitionCanEnter() {
             }
         }
     }
-    
+
     return (adsr->value == adsr->sustainValue);
 }

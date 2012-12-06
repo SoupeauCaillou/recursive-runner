@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.damsy.soupeaucaillou.recursiveRunner"
-    android:versionCode="1"
-    android:versionName="1.0.0"
-    android:installLocation="auto"
-    >
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+package="net.damsy.soupeaucaillou.recursiveRunner"
+android:versionCode="1"
+android:versionName="1.0.0"
+android:installLocation="auto">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-	<uses-feature android:glEsVersion="0x00020000" />
+    <uses-feature android:glEsVersion="0x00020000" />
 
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="9"/>
     <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
 
-    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication" 
-    			 android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication"
+	android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
 
-        <!-- Our activity is the built-in NativeActivity framework class.
-             This will take care of integrating with our NDK code. -->
-        <activity android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity"
-                android:label="RecursiveRunner" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+	<!-- Our activity is the built-in NativeActivity framework class.
+	This will take care of integrating with our NDK code. -->
+	<activity android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity"
+	android:label="RecursiveRunner" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
+	    <intent-filter>
+		<action android:name="android.intent.action.MAIN" />
+		<category android:name="android.intent.category.LAUNCHER" />
+	    </intent-filter>
+	</activity>
 
-<activity android:name="com.swarmconnect.SwarmMainActivity"
-    android:configChanges="orientation|keyboardHidden"
-    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-    android:windowSoftInputMode="stateHidden" />
-<service android:name="com.swarmconnect.NotificationService" android:process=":swarm"/>
+	<!--Swarm-->
+	<activity android:name="com.swarmconnect.SwarmMainActivity"
+	    android:configChanges="orientation|keyboardHidden"
+	    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+	    android:windowSoftInputMode="stateHidden" />
+	<service android:name="com.swarmconnect.NotificationService" android:process=":swarm"/>
 
-		<activity android:name="com.chartboost.sdk.CBDialogActivity"
-				android:configChanges="orientation|keyboard|keyboardHidden"
-				android:windowSoftInputMode="adjustResize"
-				android:theme="@android:style/Theme.Translucent"
-				android:launchMode="singleTop" android:screenOrientation="portrait">
-		</activity>
+	<!--Chartboost-->
+	<activity android:name="com.chartboost.sdk.CBDialogActivity"
+	    android:configChanges="orientation|keyboard|keyboardHidden"
+	    android:windowSoftInputMode="adjustResize"
+	    android:theme="@android:style/Theme.Translucent"
+	    android:launchMode="singleTop" android:screenOrientation="portrait">
+	</activity>
+
+	<!--Giftiz-->
+	<meta-data android:name="GIFTIZ_PARTNER_KEY" android:value="TEST_PARTNER_KEY"/>
+	<!--enable log for giftiz-->
+	<meta-data android:name="SHOW_GIFTIZ_LOG" android:value="true" />
+	<activity android:name="com.purplebrain.giftiz.sdk.GiftizWebViewActivity" />
     </application>
 </manifest>
