@@ -115,7 +115,7 @@ void PauseStateManager::enter() {
     }
 }
 
-State::Enum PauseStateManager::update(float dt) {
+State::Enum PauseStateManager::update(float dt __attribute__((unused))) {
     if (BUTTON(datas->continueButton)->clicked) {
         return State::Game;
     } else if (BUTTON(datas->restartButton)->clicked) {

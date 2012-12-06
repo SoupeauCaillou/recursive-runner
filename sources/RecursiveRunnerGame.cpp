@@ -80,7 +80,7 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
 RecursiveRunnerGame::~RecursiveRunnerGame() {
     LOGW("Delete game instance %p %p", this, &theEntityManager);
     theEntityManager.deleteAllEntities();
-    
+
     RunnerSystem::DestroyInstance();
     CameraTargetSystem::DestroyInstance();
     PlayerSystem::DestroyInstance();
@@ -103,7 +103,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theRenderingSystem.loadAtlas("arbre", false);
     theRenderingSystem.loadAtlas("fumee", false);
     theRenderingSystem.loadAtlas("logo", true);
-    
+
     // register 4 animations
     std::string runL2R[] = { "run_l2r_0002",
         "run_l2r_0003", "run_l2r_0004", "run_l2r_0005",
@@ -125,7 +125,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.registerAnim("fumee_start", fumeeStart, 6, 8, Interval<int>(0, 0), "fumee_loop");
     theAnimationSystem.registerAnim("fumee_loop", fumeeLoop, 3, 8, Interval<int>(2, 5), "fumee_end");
     theAnimationSystem.registerAnim("fumee_end", fumeeEnd, 4, 8, Interval<int>(0, 0), "fumee_start", Interval<float>(2, 10));
-    
+
     glClearColor(148.0/255, 148.0/255, 148.0/255, 1.0);
 
     // init font
@@ -193,12 +193,12 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     RENDERING(route)->hide = false;
     RENDERING(route)->opaqueType = RenderingComponent::FULL_OPAQUE;
     // RENDERING(route)->cameraBitMask = (0x3 << 1);
-    
+
     Entity buildings = theEntityManager.CreateEntity();
     ADD_COMPONENT(buildings, Transformation);
     Entity trees = theEntityManager.CreateEntity();
     ADD_COMPONENT(trees, Transformation);
-    
+
     PlacementHelper::ScreenWidth *= 3;
     PlacementHelper::GimpWidth = 1280 * 3;
     PlacementHelper::GimpHeight = 800;
@@ -212,7 +212,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     	Decor(float _x=0, float _y=0, float _z=0, TransformationSystem::PositionReference _ref=TransformationSystem::C, const std::string& _texture="", bool _mirrorUV=false, Entity _parent=0) :
     		x(_x), y(_y), z(_z), ref(_ref), texture(_texture), mirrorUV(_mirrorUV), parent(_parent) {}
    	};
-   	
+
 	Decor def[] = {
 		// buildings
 		Decor(554, 149, 0.2, TransformationSystem::NE, "immeuble", false, buildings),
@@ -275,7 +275,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(banderolle, Rendering);
     RENDERING(banderolle)->texture = theRenderingSystem.loadTextureFile("banderolle");
     RENDERING(banderolle)->hide = false;
-    
+
     bestScore = theEntityManager.CreateEntity();
     bestScore = theEntityManager.CreateEntity();
     ADD_COMPONENT(bestScore, Transformation);
@@ -298,14 +298,14 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
         leftMostCameraPos.X, -leftMostCameraPos.X);
-    
+
     ADD_COMPONENT(route, RangeFollower);
     RANGE_FOLLOWER(route)->range = RANGE_FOLLOWER(cameraEntity)->range;
     RANGE_FOLLOWER(route)->parent = cameraEntity;
     ADD_COMPONENT(route, Music);
     MUSIC(route)->fadeOut = 2;
     MUSIC(route)->fadeIn = 1;
-    
+
     ADD_COMPONENT(silhouette, RangeFollower);
     RANGE_FOLLOWER(silhouette)->range = Interval<float>(-6, 6);
     /*RANGE_FOLLOWER(silhouette)->range = Interval<float>(
@@ -320,7 +320,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(muteBtn, Transformation);
     TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("mute"));
     TRANSFORM(muteBtn)->parent = cameraEntity;
-    TRANSFORM(muteBtn)->position = 
+    TRANSFORM(muteBtn)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, 0.5)
         + TRANSFORM(muteBtn)->size * Vector2(0.5, -0.5)
         + Vector2(0, baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
@@ -341,7 +341,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 
 void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     baseLine = PlacementHelper::GimpYToScreen(800);
-    leftMostCameraPos = 
+    leftMostCameraPos =
         Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
         baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
     decor(storageAPI);
@@ -476,7 +476,7 @@ void RecursiveRunnerGame::tick(float dt) {
         ignoreClick = BUTTON(muteBtn)->mouseOver;
     }
     if (theTouchInputManager.isTouched(0)) {
-        ignoreClick |= theTouchInputManager.getTouchLastPosition(0).Y 
+        ignoreClick |= theTouchInputManager.getTouchLastPosition(0).Y
             >= (TRANSFORM(muteBtn)->position.Y - TRANSFORM(muteBtn)->size.Y * BUTTON(muteBtn)->overSize * 0.5);
     }
 
@@ -507,7 +507,7 @@ void RecursiveRunnerGame::tick(float dt) {
         TRANSFORM(cameraEntity)->position.X = camPosX;
         theRenderingSystem.cameras[i].worldPosition.Y = baseLine + theRenderingSystem.cameras[i].worldSize.Y * 0.5;
 
-        
+
     }
 
     theRangeFollowerSystem.Update(dt);
@@ -574,6 +574,8 @@ void RecursiveRunnerGame::setupCamera(CameraMode mode) {
                 theRenderingSystem.cameras[i].worldPosition = leftMostCameraPos;
             }
             break;
+         default:
+            break;
     }
 }
 
@@ -639,7 +641,7 @@ void RecursiveRunnerGame::endGame() {
     if (!sessions.empty()) {
         SessionComponent* sc = SESSION(sessions.front());
         for(unsigned i=0; i<sc->runners.size(); i++)
-            theEntityManager.DeleteEntity(RUNNER(sc->runners[i])->collisionZone); 
+            theEntityManager.DeleteEntity(RUNNER(sc->runners[i])->collisionZone);
         std::for_each(sc->runners.begin(), sc->runners.end(), deleteEntityFunctor);
         std::for_each(sc->coins.begin(), sc->coins.end(), deleteEntityFunctor);
         std::for_each(sc->players.begin(), sc->players.end(), deleteEntityFunctor);

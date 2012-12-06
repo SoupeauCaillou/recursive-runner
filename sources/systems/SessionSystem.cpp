@@ -20,7 +20,7 @@
 
 INSTANCE_IMPL(SessionSystem);
 
-SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session") { 
+SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session") {
     SessionComponent tc;
     componentSerializer.add(new Property(OFFSET(numPlayers, tc), sizeof(int)));
     componentSerializer.add(new EntityProperty(OFFSET(currentRunner, tc)));
@@ -31,7 +31,7 @@ SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session"
     componentSerializer.add(new VectorProperty<Entity>(OFFSET(sparkling, tc)));
 }
 
-void SessionSystem::DoUpdate(float dt) {
+void SessionSystem::DoUpdate(float dt __attribute__((unused))) {
     // nothing
 }
 

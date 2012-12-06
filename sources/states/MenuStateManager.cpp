@@ -174,12 +174,12 @@ void MenuStateManager::enter() {
     RecursiveRunnerGame::endGame();
 }
 
-void MenuStateManager::backgroundUpdate(float dt) {
+void MenuStateManager::backgroundUpdate(float dt __attribute__((unused))) {
     TRANSFORM(datas->titleGroup)->position.Y = ADSR(datas->titleGroup)->value;
     TRANSFORM(datas->subtitle)->position.Y = ADSR(datas->subtitle)->value;
 }
 
-State::Enum MenuStateManager::update(float dt) {
+State::Enum MenuStateManager::update(float dt __attribute__((unused))) {
     const Entity titleGroup = datas->titleGroup;
     const Entity title = datas->title;
     const Entity subtitle = datas->subtitle;

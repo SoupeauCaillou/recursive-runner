@@ -42,8 +42,8 @@ void TransitionStateManager::enter() {
     datas->to->earlyEnter();
 }
 
-State::Enum TransitionStateManager::update(float dt) {
-    if (datas->from->transitionCanExit() && 
+State::Enum TransitionStateManager::update(float dt __attribute__((unused))) {
+    if (datas->from->transitionCanExit() &&
         datas->to->transitionCanEnter()) {
         return datas->to->state;
     }
