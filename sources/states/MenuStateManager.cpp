@@ -172,6 +172,8 @@ void MenuStateManager::earlyEnter() {
 
 void MenuStateManager::enter() {
     RecursiveRunnerGame::endGame();
+    BUTTON(datas->swarmBtn)->enabled = true;
+    BUTTON(datas->giftizBtn)->enabled = true;
 }
 
 void MenuStateManager::backgroundUpdate(float dt __attribute__((unused))) {
