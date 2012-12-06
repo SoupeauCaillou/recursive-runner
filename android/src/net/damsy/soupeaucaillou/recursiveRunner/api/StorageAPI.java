@@ -1,3 +1,21 @@
+/*
+	This file is part of RecursiveRunner.
+
+	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+	@author Soupe au Caillou - Gautier Pelloux-Prayer
+
+	RecursiveRunner is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
+
+	RecursiveRunner is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package net.damsy.soupeaucaillou.recursiveRunner.api;
 
 import net.damsy.soupeaucaillou.SacJNILib;
@@ -53,7 +71,7 @@ public class StorageAPI {
 			Log.i("sac", "Swarm is initialized: " + Swarm.isInitialized());
 			Log.i("sac", "Swarm is online: " + Swarm.isOnline());
 		}
-	} 
+	}
 
 	static public int getScores(int[] points,
 			int[] coins, String[] names) {
@@ -69,7 +87,7 @@ public class StorageAPI {
 			points[i] = cursor.getInt(cursor.getColumnIndex("points"));
 			coins[i] = ( cursor.getInt(cursor.getColumnIndex("coins")) - 1 ) / 2;
 			names[i] = cursor.getString(cursor.getColumnIndex("name"));
- 
+
 			// NOLOGLog.i(RecursiveRunnerActivity.Tag, points[i] + ", " + levels[i] +
 			// ", "+ times[i] + ", " + names[i] + ".");
 			cursor.moveToNext();
@@ -84,12 +102,12 @@ public class StorageAPI {
 				.getReadableDatabase();
 		Cursor cursor = db.rawQuery(
 				"select sum(coins) as coins, count(coins) as count from score", null);
-				
+
 		if (cursor == null || cursor.getCount() != 1) {
 			Log.e("RecursiveRunner", "cursor count:" + cursor.getCount());
 			return 0;
 		}
-		
+
 		cursor.moveToFirst();
 		int coins = cursor.getInt(cursor.getColumnIndex("coins"));
 		int scoreCount = cursor.getInt(cursor.getColumnIndex("count"));
@@ -112,13 +130,13 @@ public class StorageAPI {
 		ed.putInt(GameCountBeforeAds, value);
 		ed.commit();
 	}
-	
+
 	static public boolean isMuted() {
 		SharedPreferences preferences = SacJNILib.activity
 				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
 		return preferences.getBoolean(SoundMutedPref, false);
 	}
-	
+
 	static public void setMuted(boolean b) {
 		SharedPreferences preferences = SacJNILib.activity
 				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);

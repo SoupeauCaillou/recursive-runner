@@ -1,20 +1,20 @@
 /*
- This file is part of Recursive Runner.
+	This file is part of RecursiveRunner.
 
- @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
- @author Soupe au Caillou - Gautier Pelloux-Prayer
+	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+	@author Soupe au Caillou - Gautier Pelloux-Prayer
 
- Heriswap is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, version 3.
+	RecursiveRunner is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
 
- Heriswap is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+	RecursiveRunner is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "StateManager.h"
 
@@ -66,7 +66,7 @@ void GameStateManager::setup() {
     ADD_COMPONENT(pauseButton, Transformation);
     TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("mute"));
     TRANSFORM(pauseButton)->parent = game->cameraEntity;
-    TRANSFORM(pauseButton)->position = 
+    TRANSFORM(pauseButton)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(0.5, 0.5)
         + TRANSFORM(pauseButton)->size * Vector2(-0.5, -0.5)
         + Vector2(0, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
@@ -97,7 +97,7 @@ void GameStateManager::enter() {
             sc->currentRunner = r;
         }
         for (unsigned i=0; i<sc->numPlayers; i++) {
-            theRenderingSystem.cameras[1 + i].worldPosition.X = 
+            theRenderingSystem.cameras[1 + i].worldPosition.X =
                 TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
         }
     }
@@ -116,9 +116,9 @@ State::Enum GameStateManager::update(float dt) {
     for (unsigned i=0; i<sc->numPlayers; i++) {
         CAM_TARGET(sc->currentRunner)->enabled = true;
         CAM_TARGET(sc->currentRunner)->offset = Vector2(
-            ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth, 
+            ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth,
             0 - TRANSFORM(sc->currentRunner)->position.Y);
-        
+
         // If current runner has reached the edge of the screen
         if (RUNNER(sc->currentRunner)->finished) {
             LOGI("%lu finished, add runner or end game", sc->currentRunner);
@@ -215,7 +215,7 @@ State::Enum GameStateManager::update(float dt) {
             if (rc->killed)
                 continue;
             PhysicsComponent* pc = PHYSICS(e);
-    
+
             // check jumps
             if (pc->gravity.Y < 0) {
                 TransformationComponent* tc = TRANSFORM(e);
@@ -251,13 +251,13 @@ State::Enum GameStateManager::update(float dt) {
                                         }
                                     } else {
                                         for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                            PARTICULE(sc->sparkling[linkIdx + j - 1])->duration += 
+                                            PARTICULE(sc->sparkling[linkIdx + j - 1])->duration +=
                                                 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
                                         }
                                     }
                                 }
                                 #endif
-                                
+
                             } else {
                                 rc->coinSequenceBonus = 1;
                             }
@@ -265,11 +265,11 @@ State::Enum GameStateManager::update(float dt) {
                         rc->coins.push_back(coin);
                         int gain = 10 * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                         player->score += gain;
-                        
+
                         //coins++ only for player, not his ghosts
                         if (j == sc->runners.size() - 1)
                             player->coins++;
-                        
+
                         spawnGainEntity(gain, coin, rc->color, rc->ghost);
                     }
                 }
@@ -283,7 +283,7 @@ State::Enum GameStateManager::update(float dt) {
         a << PLAYER(sc->players[i])->score;
         TEXT_RENDERING(game->scoreText)->text = a.str();
     }
-    
+
 
     thePlayerSystem.Update(dt);
     theRunnerSystem.Update(dt);
@@ -328,7 +328,7 @@ static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, con
     RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
     RENDERING(e)->color = color;
     RENDERING(e)->hide = false;
-    
+
     PARTICULE(parent)->duration = 0.1;
     PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
 #if 0
@@ -370,7 +370,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     /*TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
         direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
         -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);*/
-    theTransformationSystem.setPosition(TRANSFORM(e), 
+    theTransformationSystem.setPosition(TRANSFORM(e),
         Vector2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, game->baseLine), TransformationSystem::S);
     RUNNER(e)->startPoint = TRANSFORM(e)->position;
     RUNNER(e)->endPoint = Vector2(direction * (param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, 0);
@@ -398,7 +398,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     ANIMATION(e)->name = "runL2R";
     ANIMATION(e)->playbackSpeed = 1.1;
     RENDERING(e)->mirrorH = (direction < 0);
-    
+
     Entity collisionZone = theEntityManager.CreateEntity(EntityType::Persistent);
     ADD_COMPONENT(collisionZone, Transformation);
     TRANSFORM(collisionZone)->parent = e;

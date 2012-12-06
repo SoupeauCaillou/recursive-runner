@@ -1,20 +1,20 @@
 /*
- This file is part of Recursive Runner.
+	This file is part of RecursiveRunner.
 
- @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
- @author Soupe au Caillou - Gautier Pelloux-Prayer
+	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+	@author Soupe au Caillou - Gautier Pelloux-Prayer
 
- Heriswap is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, version 3.
+	RecursiveRunner is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
 
- Heriswap is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+	RecursiveRunner is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "StateManager.h"
 
@@ -135,7 +135,7 @@ void MenuStateManager::setup() {
 
     Entity giftizBtn = datas->giftizBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(giftizBtn, Transformation);
-    TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm_icon"));
+    TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("giftiz_icon"));
     TRANSFORM(giftizBtn)->parent = game->cameraEntity;
     TRANSFORM(giftizBtn)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, -0.5)
@@ -144,7 +144,7 @@ void MenuStateManager::setup() {
 
     TRANSFORM(giftizBtn)->z = 0.95;
     ADD_COMPONENT(giftizBtn, Rendering);
-    RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_logo");
+    RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_icon");
     RENDERING(giftizBtn)->hide = false;
     RENDERING(giftizBtn)->cameraBitMask = 0x1;
     ADD_COMPONENT(giftizBtn, Button);
@@ -171,7 +171,9 @@ void MenuStateManager::earlyEnter() {
 }
 
 void MenuStateManager::enter() {
-    RecursiveRunnerGame::endGame();
+   RecursiveRunnerGame::endGame();
+   BUTTON(datas->swarmBtn)->enabled = false;
+   BUTTON(datas->giftizBtn)->enabled = false;
 }
 
 void MenuStateManager::backgroundUpdate(float dt __attribute__((unused))) {

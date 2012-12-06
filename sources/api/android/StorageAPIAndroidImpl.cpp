@@ -1,3 +1,21 @@
+/*
+	This file is part of RecursiveRunner.
+
+	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+	@author Soupe au Caillou - Gautier Pelloux-Prayer
+
+	RecursiveRunner is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
+
+	RecursiveRunner is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "StorageAPIAndroidImpl.h"
 #include "sac/base/Log.h"
 
@@ -55,7 +73,7 @@ void StorageAPIAndroidImpl::init(JNIEnv* pEnv) {
 
     datas->isMuted = jniMethodLookup(env, datas->cls, "isMuted", "()Z");
     datas->setMuted = jniMethodLookup(env, datas->cls, "setMuted", "(Z)V");
- 
+
 	datas->initialized = true;
 }
 
@@ -68,13 +86,13 @@ void StorageAPIAndroidImpl::uninit() {
 
 void StorageAPIAndroidImpl::submitScore(Score inScr) {
 	jstring name = env->NewStringUTF(inScr.name.c_str());
-	
+
 	env->CallStaticVoidMethod(datas->cls, datas->submitScore, inScr.points, inScr.coins, name);
 }
 
 std::vector<StorageAPI::Score> StorageAPIAndroidImpl::getScores(float& outAverage) {
 	std::vector<StorageAPI::Score> sav;
-	
+
 	// build arrays params
 	jintArray points = env->NewIntArray(5);
 	jintArray coins = env->NewIntArray(5);
@@ -104,7 +122,7 @@ std::vector<StorageAPI::Score> StorageAPIAndroidImpl::getScores(float& outAverag
 		}
 		sav.push_back(s);
 	}
-	
+
 	// *** env->GetIntArrayRegion(points, 5, 1, &outAverage);
 	return sav;
 }
@@ -122,7 +140,7 @@ void StorageAPIAndroidImpl::setGameCountBeforeNextAd(int inCount) {
 }
 
 bool StorageAPIAndroidImpl::isMuted() const {
-    return env->CallStaticBooleanMethod(datas->cls, datas->isMuted); 
+    return env->CallStaticBooleanMethod(datas->cls, datas->isMuted);
 }
 
 void StorageAPIAndroidImpl::setMuted(bool b) {

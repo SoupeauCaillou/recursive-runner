@@ -1,20 +1,20 @@
 /*
- This file is part of Heriswap.
+	This file is part of RecursiveRunner.
 
- @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
- @author Soupe au Caillou - Gautier Pelloux-Prayer
+	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+	@author Soupe au Caillou - Gautier Pelloux-Prayer
 
- Heriswap is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, version 3.
+	RecursiveRunner is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
 
- Heriswap is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+	RecursiveRunner is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "RunnerSystem.h"
 #include "base/MathUtil.h"
@@ -28,11 +28,11 @@
 std::map<TextureRef, CollisionZone> texture2Collision;
 
 INSTANCE_IMPL(RunnerSystem);
- 
+
 float RunnerSystem::MinJumpDuration = 0.005;
 float RunnerSystem::MaxJumpDuration = 0.2;
 
-RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") { 
+RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     RunnerComponent tc;
     componentSerializer.add(new EntityProperty(OFFSET(playerOwner, tc)));
     componentSerializer.add(new EntityProperty(OFFSET(collisionZone, tc)));
@@ -112,7 +112,7 @@ void RunnerSystem::DoUpdate(float dt) {
         if (rc->elapsed >= rc->startTime) {
             tc->position.X += rc->speed * dt;
 
-            if ((tc->position.X > rc->endPoint.X && rc->speed > 0) || 
+            if ((tc->position.X > rc->endPoint.X && rc->speed > 0) ||
                 (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
                 if (!rc->ghost)
                     std::cout << a << " finished! (" << rc->coins.size() << ")" << TimeUtil::getTime() << " (pos=" << tc->position << ") "<< rc->endPoint.X << std::endl;
@@ -126,15 +126,15 @@ void RunnerSystem::DoUpdate(float dt) {
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
                 rc->currentJump = 0;
-                
+
                 pc->linearVelocity = Vector2::Zero;
                 pc->gravity.Y = 0;
                 rc->coins.clear();
             }
         }
-        
+
         if (!rc->jumpTimes.empty() && rc->currentJump < (int)rc->jumpTimes.size()) {
-            if ((rc->elapsed - rc->startTime)>= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {           
+            if ((rc->elapsed - rc->startTime)>= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {
                 // std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
                 Vector2 force = Vector2(0, 1800 * 1.5);
                 pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), RunnerSystem::MinJumpDuration));

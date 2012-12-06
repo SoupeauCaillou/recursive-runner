@@ -1,3 +1,21 @@
+/*
+	This file is part of RecursiveRunner.
+
+	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+	@author Soupe au Caillou - Gautier Pelloux-Prayer
+
+	RecursiveRunner is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
+
+	RecursiveRunner is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "StorageAPILinuxImpl.h"
 #include <string>
 #include <sstream>
@@ -19,14 +37,14 @@
 static bool request(const std::string& dbPath, std::string s, void* res, int (*callbackP)(void*,int,char**,char**)) {
 	sqlite3 *db;
 	char *zErrMsg = 0;
-	
+
 	int rc = sqlite3_open(dbPath.c_str(), &db);
 	if( rc ){
 		LOGE("Can't open database %s: %s\n", dbPath.c_str(), sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return false;
 	}
-	
+
 	//si on veut notre callback personnel(script component)
 	if (callbackP && res) {
 		rc = sqlite3_exec(db, s.c_str(), callbackP, res, &zErrMsg);
@@ -34,12 +52,12 @@ static bool request(const std::string& dbPath, std::string s, void* res, int (*c
 	} else {
 		rc = sqlite3_exec(db, s.c_str(), callback, res, &zErrMsg);
 	}
-	
+
 	if( rc!=SQLITE_OK ){
 		LOGE("SQL error: %s (asked = %s)\n", zErrMsg, s.c_str());
 		sqlite3_free(zErrMsg);
 	}
-	
+
 	sqlite3_close(db);
 	return true;
 }
@@ -58,7 +76,7 @@ void StorageAPILinuxImpl::init() {
 	}
 	ss << "recursiveRunner/";
 	dbPath = ss.str();
-	
+
 	// create folder if needed
 	struct stat statFolder;
 	int st = stat(dbPath.c_str(), &statFolder);
@@ -72,7 +90,7 @@ void StorageAPILinuxImpl::init() {
 	ss << "recursiveRunner.db";
 	dbPath = ss.str();
 	bool r = request(dbPath, "", 0, 0);
-	
+
 	if (r) {
 		LOGI("initializing database...");
 		request(dbPath, "create table score(points number(7) default '0', coins number(7) default '0', name varchar2(11) default 'Anonymous')", 0, 0);
@@ -92,27 +110,27 @@ void StorageAPILinuxImpl::init() {
 
 void StorageAPILinuxImpl::submitScore(Score inScr) {
 	#ifndef EMSCRIPTEN
-	
+
 	//check that the player isn't cheating (adding himself coins) (max is number of coints * runnerCount * runnerghost)
 	if (inScr.coins > 20*10) {
 		LOGE("you're cheating! %d coins really ?", inScr.coins);
 		return;
 	}
-	
-	
+
+
 	std::stringstream tmp;
-	
+
 	tmp << "INSERT INTO score VALUES (" << inScr.points << "," << 2 * inScr.coins + 1 << ",'" << inScr.name << "')";
 	request(dbPath, tmp.str().c_str(), 0, 0);
-	
+
 	#else
 	for (unsigned i = 0; i < 5; i++) {
 		if ((scores[i].points == 0 || inScr.points > scores[i].points) {
-			
+
 			for (unsigned j = 4; j != i; j--) {
 				scores[j] = scores[j-1];
 			}
-			
+
 			scores[i] = inScr;
 			break;
 		}
@@ -122,10 +140,10 @@ void StorageAPILinuxImpl::submitScore(Score inScr) {
 
 std::vector<StorageAPI::Score> StorageAPILinuxImpl::getScores(float& outAvg) {
 	std::vector<StorageAPI::Score> result;
-	
+
 	#ifndef EMSCRIPTEN
 	request(dbPath, "select * from score order by points desc limit 5", &result, callbackScore);
-   
+
    #else
 	for (unsigned i = 0; i < 5; i++) {
 		if (scores[i].points == 0) {
@@ -135,7 +153,7 @@ std::vector<StorageAPI::Score> StorageAPILinuxImpl::getScores(float& outAvg) {
 		}
 	}
 	#endif
-	
+
 	outAvg = -1;
 	return result;
 }
@@ -144,10 +162,10 @@ int StorageAPILinuxImpl::getCoinsCount() {
 	#ifndef EMSCRIPTEN
 	std::string s;
 	request(dbPath, "select sum(coins), count(coins) from score", &s, 0);
-	
+
 	int coins, scoreCount;
 	sscanf(s.c_str(), "%d, %d", &coins, &scoreCount);
-		
+
 	return ((coins - scoreCount) / 2.);
 	#else
 	return 0;

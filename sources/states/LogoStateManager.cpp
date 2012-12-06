@@ -1,20 +1,20 @@
 /*
- This file is part of Recursive Runner.
+	This file is part of RecursiveRunner.
 
- @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
- @author Soupe au Caillou - Gautier Pelloux-Prayer
+	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+	@author Soupe au Caillou - Gautier Pelloux-Prayer
 
- Heriswap is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, version 3.
+	RecursiveRunner is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
 
- Heriswap is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+	RecursiveRunner is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with Heriswap.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "StateManager.h"
 
@@ -57,21 +57,21 @@ void LogoStateManager::setup() {
     Entity logo = datas->logo = theEntityManager.CreateEntity();
     Entity logobg = datas->logobg = theEntityManager.CreateEntity();
     Entity logofade = datas->logofade = theEntityManager.CreateEntity();
-    
+
     ADD_COMPONENT(logo, Rendering);
     ADD_COMPONENT(logo, Transformation);
     TRANSFORM(logo)->position = Vector2(0,0);
     TRANSFORM(logo)->size = Vector2(PlacementHelper::ScreenHeight * 0.8, PlacementHelper::ScreenHeight * 0.8);
     TRANSFORM(logo)->z = DL_Logo;
     RENDERING(logo)->texture = theRenderingSystem.loadTextureFile("soupe_logo");
-    
+
     ADD_COMPONENT(logobg, Rendering);
     ADD_COMPONENT(logobg, Transformation);
     TRANSFORM(logobg)->position = Vector2(0,0);
     TRANSFORM(logobg)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
     RENDERING(logobg)->color = Color(0,0,0);
     TRANSFORM(logobg)->z = DL_BehindLogo;
-    
+
     ADD_COMPONENT(logofade, Rendering);
     ADD_COMPONENT(logofade, Transformation);
     TRANSFORM(logofade)->position = Vector2(0,0);
@@ -86,7 +86,7 @@ void LogoStateManager::earlyEnter() {
 void LogoStateManager::enter() {
     datas->animLogo = theEntityManager.CreateEntity();
     ADD_COMPONENT(datas->animLogo, Transformation);
-    TRANSFORM(datas->animLogo)->size = TRANSFORM(datas->logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331") 
+    TRANSFORM(datas->animLogo)->size = TRANSFORM(datas->logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331")
         * Vector2(1.0 / theRenderingSystem.getTextureSize("soupe_logo").X, 1.0 / theRenderingSystem.getTextureSize("soupe_logo").Y);
     Vector2 offset = Vector2(-10 / 800.0, 83/869.0) * TRANSFORM(datas->logo)->size;
     TRANSFORM(datas->animLogo)->position = TRANSFORM(datas->logo)->position + offset;
@@ -174,7 +174,7 @@ void LogoStateManager::exit() {
 }
 
 void LogoStateManager::lateExit() {
- 
+
 }
 
 bool LogoStateManager::transitionCanExit() {
