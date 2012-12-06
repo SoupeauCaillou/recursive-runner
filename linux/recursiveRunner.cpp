@@ -220,49 +220,43 @@ void GLFWCALL myKeyCallback( int key, int action ) {
 }
 
 static void updateAndRenderLoop() {
-	bool running = true;
-	float timer = 0;
-	float dtAccumuled=0, dt = 0, time = 0;
+   bool running = true;
 
-	time = TimeUtil::getTime();
+   while(running) {
+      game->step();
 
-	int frames = 0;
-	float nextfps = time + 5;
-	while(running) {
-        game->step();
+      running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 
-        running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
-
-        bool focus = glfwGetWindowParam(GLFW_ACTIVE);
-        if (focus) {
-            theMusicSystem.toggleMute(theSoundSystem.mute);
-        } else {
-            // theMusicSystem.toggleMute(true);
-        }
-        //pause ?
-        if (glfwGetKey( GLFW_KEY_SPACE )) {// || !focus) {
-            if (game->willConsumeBackEvent()) {
-                game->backPressed();
-            }
-        }
-        // recording
-        if (glfwGetKey( GLFW_KEY_F10) && timer<=0){
-            record->stop();
-        }
-        if (glfwGetKey( GLFW_KEY_F9) && timer<=0){
-            record->start();
-        }
-        //user entered his name?
-        if (glfwGetKey( GLFW_KEY_ENTER ) && timer<=0) {
-            if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
-                nameInput->textIsReady = true;
-            }
-        }
-    }
-	glfwTerminate();
+      bool focus = glfwGetWindowParam(GLFW_ACTIVE);
+      if (focus) {
+	 theMusicSystem.toggleMute(theSoundSystem.mute);
+      } else {
+	 // theMusicSystem.toggleMute(true);
+      }
+      //pause ?
+      if (glfwGetKey( GLFW_KEY_SPACE )) {// || !focus) {
+	 if (game->willConsumeBackEvent()) {
+	    game->backPressed();
+	 }
+      }
+      // recording
+      if (glfwGetKey( GLFW_KEY_F10)){
+	 record->stop();
+      }
+      if (glfwGetKey( GLFW_KEY_F9)){
+	 record->start();
+      }
+      //user entered his name?
+      if (glfwGetKey( GLFW_KEY_ENTER )) {
+	 if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
+	    nameInput->textIsReady = true;
+	 }
+      }
+   }
+   glfwTerminate();
 }
 
-static void* callback_thread(void *obj){
+static void* callback_thread(void *obj __attribute__((unused))){
 	updateAndRenderLoop();
 	pthread_exit (0);
 }
