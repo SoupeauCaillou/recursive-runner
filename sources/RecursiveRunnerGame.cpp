@@ -36,6 +36,7 @@
 #include "systems/MusicSystem.h"
 #include "systems/AnimationSystem.h"
 #include "systems/ParticuleSystem.h"
+#include "systems/AutoDestroySystem.h"
 
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -648,6 +649,9 @@ void RecursiveRunnerGame::endGame() {
         std::for_each(sc->links.begin(), sc->links.end(), deleteEntityFunctor);
         std::for_each(sc->sparkling.begin(), sc->sparkling.end(), deleteEntityFunctor);
         theEntityManager.DeleteEntity(sessions.front());
+        // on supprime aussi tous les trucs temporaires (lumières, ...)
+        std::vector<Entity> temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
+        std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
     }
 }
 
