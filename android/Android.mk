@@ -29,6 +29,7 @@ LOCAL_SRC_FILES := \
     ../sources/states/MenuStateManager.cpp \
     ../sources/states/PauseStateManager.cpp \
     ../sources/states/RateStateManager.cpp \
+    ../sources/states/AdStateManager.cpp \
     ../sources/states/TransitionStateManager.cpp \
     ../sources/systems/RunnerSystem.cpp \
     ../sources/systems/PlayerSystem.cpp \
