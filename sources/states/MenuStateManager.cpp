@@ -226,7 +226,7 @@ State::Enum MenuStateManager::update(float dt __attribute__((unused))) {
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
         ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
         MUSIC(game->route)->music = theMusicSystem.loadMusicFile("jeu.ogg");
-        return State::Menu2Game;
+        return State::Ad;
     }
     return State::Menu;
 }
@@ -240,7 +240,6 @@ void MenuStateManager::exit() {
 }
 
 void MenuStateManager::lateExit() {
-    game->setupCamera(CameraModeSingle);
 }
 
 bool MenuStateManager::transitionCanExit() {

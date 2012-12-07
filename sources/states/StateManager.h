@@ -26,11 +26,12 @@ namespace State {
         Logo,
         Logo2Menu, // Transition
         Menu,
-        Menu2Game, // Transition
         Game,
         Game2Menu, // Transition
         Game2Rate, // Transition
         Pause,
+        Ad,
+        Ad2Game, // Transition
         Rate,
         Rate2Menu // Transition
     };
@@ -98,3 +99,4 @@ DEF_STATE_MANAGER(Menu)
 DEF_STATE_MANAGER(Game)
 DEF_STATE_MANAGER(Pause)
 DEF_STATE_MANAGER(Rate)
+DEF_STATE_MANAGER(Ad)

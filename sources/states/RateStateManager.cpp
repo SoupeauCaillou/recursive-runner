@@ -19,23 +19,13 @@
 #include "StateManager.h"
 
 #include "base/PlacementHelper.h"
+
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
-#include "systems/ButtonSystem.h"
-#include "systems/ADSRSystem.h"
 #include "systems/TextRenderingSystem.h"
-#include "systems/SoundSystem.h"
-#include "systems/MusicSystem.h"
-#include "systems/PlayerSystem.h"
-#include "systems/ParticuleSystem.h"
-#include "../systems/SessionSystem.h"
-#include "../systems/RunnerSystem.h"
+#include "systems/ButtonSystem.h"
 
 #include "../RecursiveRunnerGame.h"
-#include "../Parameters.h"
-
-#include <sstream>
-#include <vector>
 
 struct RateStateManager::RateStateManagerDatas {
    Entity rateText, btnNow, btnLater, btnNever;

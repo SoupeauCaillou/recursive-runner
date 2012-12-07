@@ -68,12 +68,13 @@ RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, Nam
    currentState = State::Logo;
    state2manager.insert(std::make_pair(State::Logo, new LogoStateManager(this)));
    state2manager.insert(std::make_pair(State::Menu, new MenuStateManager(this)));
+   state2manager.insert(std::make_pair(State::Ad, new AdStateManager(this)));
    state2manager.insert(std::make_pair(State::Pause, new PauseStateManager(this)));
    state2manager.insert(std::make_pair(State::Rate, new RateStateManager(this)));
    state2manager.insert(std::make_pair(State::Game, new GameStateManager(this)));
 
-   state2manager.insert(std::make_pair(State::Menu2Game,
-   new TransitionStateManager(State::Menu2Game, state2manager[State::Menu], state2manager[State::Game], this)));
+   state2manager.insert(std::make_pair(State::Ad2Game,
+   new TransitionStateManager(State::Ad2Game, state2manager[State::Ad], state2manager[State::Game], this)));
 
    state2manager.insert(std::make_pair(State::Game2Menu,
    new TransitionStateManager(State::Game2Menu, state2manager[State::Game], state2manager[State::Menu], this)));

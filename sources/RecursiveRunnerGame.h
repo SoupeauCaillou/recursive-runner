@@ -93,6 +93,7 @@ class RecursiveRunnerGame : public Game {
       std::vector<Entity> decorEntities;
       CommunicationAPI* communicationAPI;
       StorageAPI* storageAPI;
+      AdAPI* adAPI;
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;
       Entity muteBtn;
