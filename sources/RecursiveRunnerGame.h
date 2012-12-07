@@ -96,6 +96,6 @@ class RecursiveRunnerGame : public Game {
       AdAPI* adAPI;
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;
-      Entity muteBtn;
+      Entity muteBtn, pianist;
       Vector2 leftMostCameraPos;
 };

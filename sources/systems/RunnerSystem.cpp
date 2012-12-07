@@ -57,27 +57,21 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
 
 static void killRunner(Entity runner) {
     RENDERING(runner)->hide = true;
-    int dir = 1 - 2 * MathUtil::RandomIntInRange(0, 2);//(RUNNER(current)->speed > 0) ? 1 : -1;
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     *TRANSFORM(e) = *TRANSFORM(runner);
+    TRANSFORM(e)->position.Y += TRANSFORM(e)->size.Y * 0.1;
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->hide = false;
-    RENDERING(e)->color = RENDERING(runner)->color;
     RENDERING(e)->texture = RENDERING(runner)->texture;
     RENDERING(e)->cameraBitMask = (0x3 << 1);
+    RENDERING(e)->color.a = 0.5;
     ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = "runL2R";
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    PHYSICS(e)->gravity.Y = -10;
-    PHYSICS(e)->forces.push_back(std::make_pair(
-    Force(Vector2::Rotate(Vector2(MathUtil::RandomIntInRange(500, 700), 0), dir > 0 ? MathUtil::RandomFloatInRange(0.25, 1.5) : MathUtil::RandomFloatInRange(1.5, 3.14-0.25)),
-        Vector2::Rotate(TRANSFORM(e)->size * 0.2, MathUtil::RandomFloat(6.28))), 0.016));
+    ANIMATION(e)->name = "disappear";
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
-    AUTO_DESTROY(e)->params.lifetime.value = 0.5;
+    //AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
+    AUTO_DESTROY(e)->params.lifetime.value = 6 / 18.0;
 }
 
 void RunnerSystem::DoUpdate(float dt) {

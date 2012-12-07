@@ -131,11 +131,15 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
         "jump_l2r_0006", "jump_l2r_0007", "jump_l2r_0008",
         "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015", "jump_l2r_0016"};
+    std::string disappear[] = { "D1", "D2", "D3", "D4", "D5", "D6"};
+    std::string piano[] = { "P1", "P2", "P3", "P4" };
 
     theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, Interval<int>(-1, -1));
     theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 5, 20, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[5], 3, 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 4, 30, Interval<int>(0, 0), "runL2R");
+    theAnimationSystem.registerAnim("disappear", disappear, 6 , 15, Interval<int>(0, 0));
+    theAnimationSystem.registerAnim("piano", piano, 4 , 5, Interval<int>(-1, -1));
 
     std::string fumeeStart[] = {"fumee0", "fumee1", "fumee2", "fumee3", "fumee4", "fumee5" };
     std::string fumeeLoop[] = {"fumee5b", "fumee5c", "fumee5" };
@@ -306,6 +310,17 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     // TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::IsANumberBit;
     TEXT_RENDERING(bestScore)->hide = false;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
+
+    pianist = theEntityManager.CreateEntity();
+    ADD_COMPONENT(pianist, Transformation);
+    TRANSFORM(pianist)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("P1"));
+    TRANSFORM(pianist)->position = Vector2(PlacementHelper::GimpXToScreen(294), PlacementHelper::GimpYToScreen(700));
+    TRANSFORM(pianist)->z = 0.5;
+    ADD_COMPONENT(pianist, Rendering);
+    RENDERING(pianist)->hide = false;
+    RENDERING(pianist)->cameraBitMask = 0x3;
+    ADD_COMPONENT(pianist, Animation);
+    ANIMATION(pianist)->name = "piano";
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
