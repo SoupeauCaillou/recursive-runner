@@ -132,14 +132,22 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
         "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015", "jump_l2r_0016"};
     std::string disappear[] = { "D1", "D2", "D3", "D4", "D5", "D6"};
-    std::string piano[] = { "P1", "P2", "P3", "P4" };
+    std::string piano1[] = { "P2", "P3", "P6", "P7", "P8", "P9"};
+    std::string piano2[] = { "P8", "P7", "P6", "P3"};
+    std::string pianojournal[] = { "J1", "J2"};
+    // std::string piano3[] = { "P7", "P8", "P9", "P8", "P7"};
 
     theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, Interval<int>(-1, -1));
     theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 5, 20, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[5], 3, 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 4, 30, Interval<int>(0, 0), "runL2R");
     theAnimationSystem.registerAnim("disappear", disappear, 6 , 15, Interval<int>(0, 0));
-    theAnimationSystem.registerAnim("piano", piano, 4 , 5, Interval<int>(-1, -1));
+    theAnimationSystem.registerAnim("piano", piano1, 6 , 8, Interval<int>(0, 0), "piano2");
+    theAnimationSystem.registerAnim("piano2", piano2, 4 , 8, Interval<int>(0, 0), "piano");
+    theAnimationSystem.registerAnim("pianojournal", pianojournal, 1 , 0.1, Interval<int>(-1, -1));
+    //theAnimationSystem.registerAnim("piano2", piano2, 2 , 5, Interval<int>(1, 4), "piano");
+    //theAnimationSystem.registerAnim("piano2b", piano2, 2 , 5, Interval<int>(1, 4), "piano");
+    //theAnimationSystem.registerAnim("piano3", piano3, 5 , 10, Interval<int>(0, 1), "piano2b");
 
     std::string fumeeStart[] = {"fumee0", "fumee1", "fumee2", "fumee3", "fumee4", "fumee5" };
     std::string fumeeLoop[] = {"fumee5b", "fumee5c", "fumee5" };
@@ -310,7 +318,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     // TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::IsANumberBit;
     TEXT_RENDERING(bestScore)->hide = false;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
-
+    const bool muted = storageAPI->isMuted();
     pianist = theEntityManager.CreateEntity();
     ADD_COMPONENT(pianist, Transformation);
     TRANSFORM(pianist)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("P1"));
@@ -319,8 +327,9 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(pianist, Rendering);
     RENDERING(pianist)->hide = false;
     RENDERING(pianist)->cameraBitMask = 0x3;
+    RENDERING(pianist)->color.a = 0.8;
     ADD_COMPONENT(pianist, Animation);
-    ANIMATION(pianist)->name = "piano";
+    ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
@@ -359,7 +368,6 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         + Vector2(0, baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
     TRANSFORM(muteBtn)->z = 0.95;
     ADD_COMPONENT(muteBtn, Rendering);
-    bool muted = storageAPI->isMuted();
     RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son" : "son");
     RENDERING(muteBtn)->hide = false;
     RENDERING(muteBtn)->cameraBitMask = 0x3;
@@ -503,6 +511,7 @@ void RecursiveRunnerGame::tick(float dt) {
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son" : "son");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
+        ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
         ignoreClick = true;
     } else {
         ignoreClick = BUTTON(muteBtn)->mouseOver;
