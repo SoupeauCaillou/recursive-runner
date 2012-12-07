@@ -361,13 +361,10 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
     ADD_COMPONENT(e, Transformation);
-    // TRANSFORM(e)->position = Vector2(-9, 2);
-    // TRANSFORM(e)->size = Vector2(0.85, 2 * 0.85) * .8;//0.4,1);//0.572173, 0.815538);
-    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;//0.4,1);//0.572173, 0.815538);
+    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);
-    // RENDERING(e)->color = Color(1 - playerIndex, playerIndex, 1);
     RENDERING(e)->hide = false;
     RENDERING(e)->cameraBitMask = (0x3 << 1);
     RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);

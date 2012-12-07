@@ -132,6 +132,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
         "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015", "jump_l2r_0016"};
     std::string disappear[] = { "D1", "D2", "D3", "D4", "D5", "D6"};
+    std::string disappear2[] = { "e1", "e2", "e3", "e4", "e5", "e4", "e5", "e4", "e5"};
     std::string piano1[] = { "P2", "P3", "P6", "P7", "P8", "P9"};
     std::string piano2[] = { "P8", "P7", "P6", "P3"};
     std::string pianojournal[] = { "J1", "J2"};
@@ -142,6 +143,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[5], 3, 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 4, 30, Interval<int>(0, 0), "runL2R");
     theAnimationSystem.registerAnim("disappear", disappear, 6 , 15, Interval<int>(0, 0));
+    theAnimationSystem.registerAnim("disappear2", disappear2, 9 , 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("piano", piano1, 6 , 8, Interval<int>(0, 0), "piano2");
     theAnimationSystem.registerAnim("piano2", piano2, 4 , 8, Interval<int>(0, 0), "piano");
     theAnimationSystem.registerAnim("pianojournal", pianojournal, 1 , 0.1, Interval<int>(-1, -1));

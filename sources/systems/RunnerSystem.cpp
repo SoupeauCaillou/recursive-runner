@@ -67,7 +67,7 @@ static void killRunner(Entity runner) {
     RENDERING(e)->cameraBitMask = (0x3 << 1);
     RENDERING(e)->color.a = 0.5;
     ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = "disappear";
+    ANIMATION(e)->name = "disappear2";
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
     //AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
