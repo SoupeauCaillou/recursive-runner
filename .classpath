@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="libs/chartboost.jar"/>
 	<classpathentry kind="lib" path="libs/Swarm.jar"/>
 	<classpathentry kind="lib" path="libs/GiftizSDK_1.4.6.jar"/>
-	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
