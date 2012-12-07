@@ -61,7 +61,29 @@ static bool request(const std::string& dbPath, std::string s, void* res, int (*c
 	sqlite3_close(db);
 	return true;
 }
+
+static void checkInTable(const std::string & dbPath, const std::string & option,
+const std::string & valueIfExist, const std::string & valueIf404) {
+	std::string lookFor = "select value from info where opt like '" + option + "'";
+	std::string res;
+
+	request(dbPath, lookFor, &res, 0);
+
+	//it doesn't exist yet
+	if (res.length() == 0 && valueIf404 != "(null)") {
+		lookFor = "insert into info values('" + option + "', '" +
+		valueIf404 + "')";
+		request(dbPath, lookFor, 0, 0);
+
+	//it exist - need to be updated?
+	} else if (res.length() != 0 && valueIfExist != "(null)") {
+		lookFor = "update info set value='" + valueIfExist
+		+ "' where opt='" + option + "'";
+		request(dbPath, lookFor, 0, 0);
+	}
+}
 #endif
+
 
 void StorageAPILinuxImpl::init() {
 	#ifndef EMSCRIPTEN
@@ -95,15 +117,10 @@ void StorageAPILinuxImpl::init() {
 		LOGI("initializing database...");
 		request(dbPath, "create table score(points number(7) default '0', coins number(7) default '0', name varchar2(11) default 'Anonymous')", 0, 0);
 		request(dbPath, "create table info(opt varchar2(8), value varchar2(11), constraint f1 primary key(opt,value))", 0, 0);
-		std::string s;
 
-		s = "";
-		request(dbPath, "select value from info where opt like 'gameb4Ads'", &s, 0);
-		if (s.length()==0) {
-			request(dbPath, "insert into info values('gameb4Ads', '2')", 0, 0);
-		} else {
-			request(dbPath, "UPDATE info SET value='2' where opt='gameb4Ads'",0, 0);
-		}
+
+		checkInTable(dbPath, "sound", "(null)", "on");
+		checkInTable(dbPath, "gameb4Ads", "2", "2");
 	}
 	#endif
 }
