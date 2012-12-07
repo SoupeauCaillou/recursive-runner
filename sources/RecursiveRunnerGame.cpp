@@ -336,7 +336,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 
     muteBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(muteBtn, Transformation);
-    TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("mute"));
+    TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("son"));
     TRANSFORM(muteBtn)->parent = cameraEntity;
     TRANSFORM(muteBtn)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, 0.5)
@@ -345,10 +345,9 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     TRANSFORM(muteBtn)->z = 0.95;
     ADD_COMPONENT(muteBtn, Rendering);
     bool muted = storageAPI->isMuted();
-    RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "unmute" : "mute");
+    RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son" : "son");
     RENDERING(muteBtn)->hide = false;
     RENDERING(muteBtn)->cameraBitMask = 0x3;
-    RENDERING(muteBtn)->color = Color(119.0 / 255, 119.0 / 255, 119.0 / 255);
     ADD_COMPONENT(muteBtn, Button);
     BUTTON(muteBtn)->enabled = true;
     BUTTON(muteBtn)->overSize = 1.2;
@@ -486,7 +485,7 @@ void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
         bool muted = !storageAPI->isMuted();
         storageAPI->setMuted(muted);
-        RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "unmute" : "mute");
+        RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son" : "son");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
         ignoreClick = true;

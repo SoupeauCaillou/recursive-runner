@@ -118,7 +118,7 @@ void MenuStateManager::setup() {
 
     Entity swarmBtn = datas->swarmBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(swarmBtn, Transformation);
-    TRANSFORM(swarmBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm_icon"));
+    TRANSFORM(swarmBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm"));
     TRANSFORM(swarmBtn)->parent = game->cameraEntity;
     TRANSFORM(swarmBtn)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, -0.5)
@@ -127,7 +127,7 @@ void MenuStateManager::setup() {
 
     TRANSFORM(swarmBtn)->z = 0.95;
     ADD_COMPONENT(swarmBtn, Rendering);
-    RENDERING(swarmBtn)->texture = theRenderingSystem.loadTextureFile("swarm_icon");
+    RENDERING(swarmBtn)->texture = theRenderingSystem.loadTextureFile("swarm");
     RENDERING(swarmBtn)->hide = false;
     RENDERING(swarmBtn)->cameraBitMask = 0x1;
     ADD_COMPONENT(swarmBtn, Button);
@@ -135,16 +135,12 @@ void MenuStateManager::setup() {
 
     Entity giftizBtn = datas->giftizBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(giftizBtn, Transformation);
-    TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("giftiz_icon"));
-    TRANSFORM(giftizBtn)->parent = game->cameraEntity;
-    TRANSFORM(giftizBtn)->position =
-        theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, -0.5)
-        + TRANSFORM(giftizBtn)->size * Vector2(0.5, 0.5)
-        + Vector2(2, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
-
-    TRANSFORM(giftizBtn)->z = 0.95;
+    TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("giftiz"));
+    TRANSFORM(giftizBtn)->parent = swarmBtn;
+    TRANSFORM(giftizBtn)->position = Vector2(0, TRANSFORM(giftizBtn)->size.Y * 1.2);
+    TRANSFORM(giftizBtn)->z = 0;
     ADD_COMPONENT(giftizBtn, Rendering);
-    RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_icon");
+    RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz");
     RENDERING(giftizBtn)->hide = false;
     RENDERING(giftizBtn)->cameraBitMask = 0x1;
     ADD_COMPONENT(giftizBtn, Button);

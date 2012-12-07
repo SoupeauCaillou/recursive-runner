@@ -34,7 +34,7 @@
 #include "../systems/CameraTargetSystem.h"
 
 struct PauseStateManager::PauseStateManagerDatas {
-    Entity pauseText;
+    Entity title, pauseText;
     Entity continueButton, restartButton, stopButton;
     std::vector<Entity> pausedMusic;
 };
@@ -48,32 +48,47 @@ PauseStateManager::~PauseStateManager() {
 }
 
 void PauseStateManager::setup() {
+    Entity title = datas->title = theEntityManager.CreateEntity();
+    ADD_COMPONENT(title, Transformation);
+    TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("menu-pause"));
+    TRANSFORM(title)->z = 0.85;
+    TRANSFORM(title)->position = Vector2(0, PlacementHelper::ScreenHeight * 0.5 - TRANSFORM(title)->size.Y * 0.43);
+    TRANSFORM(title)->rotation = 0.05;
+    TRANSFORM(title)->parent = game->cameraEntity;
+    ADD_COMPONENT(title, Rendering);
+    RENDERING(title)->texture = theRenderingSystem.loadTextureFile("menu-pause");
+    RENDERING(title)->hide = true;
+    RENDERING(title)->cameraBitMask = 0x2;
+
     Entity pauseText = datas->pauseText = theEntityManager.CreateEntity();
     ADD_COMPONENT(pauseText, Transformation);
     TRANSFORM(pauseText)->z = 0.9;
-   TRANSFORM(pauseText)->parent = game->cameraEntity;
+    TRANSFORM(pauseText)->parent = title;
     ADD_COMPONENT(pauseText, TextRendering);
     TEXT_RENDERING(pauseText)->text = "PAUSE";
     TEXT_RENDERING(pauseText)->charHeight = 1.;
     TEXT_RENDERING(pauseText)->cameraBitMask = 0x2;
-    TEXT_RENDERING(pauseText)->color = Color(13.0 / 255, 5.0/255, 42.0/255);
     TEXT_RENDERING(datas->pauseText)->hide = true;
 
+    std::string textures[] = {"reprendre", "recommencer", "fermer"};
     Entity buttons[3];
     buttons[0] = datas->continueButton = theEntityManager.CreateEntity();
     buttons[1] = datas->restartButton = theEntityManager.CreateEntity();
     buttons[2] = datas->stopButton = theEntityManager.CreateEntity();
     for (int i = 0; i < 3; ++i) {
         ADD_COMPONENT(buttons[i], Transformation);
-        TRANSFORM(buttons[i])->size = Vector2(PlacementHelper::ScreenWidth / 3.1, PlacementHelper::ScreenHeight / 2.);
-        TRANSFORM(buttons[i])->parent = game->cameraEntity;
-        TRANSFORM(buttons[i])->position = Vector2( (i - 1) * PlacementHelper::ScreenWidth / 3., 0);
-        TRANSFORM(buttons[i])->z = 0.85;
+        TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i]));
+        TRANSFORM(buttons[i])->parent = title;
+        TRANSFORM(buttons[i])->rotation = -0.05;
+        int mul = 0;
+        if (i == 0) mul = -1;
+        else if(i==2) mul=1;
+        TRANSFORM(buttons[i])->position = Vector2(mul * TRANSFORM(title)->size.X * 0.25, - (TRANSFORM(title)->size.Y + TRANSFORM(buttons[i])->size.Y) * 0.45);
+        TRANSFORM(buttons[i])->z = 0.01;
         ADD_COMPONENT(buttons[i], Rendering);
-        RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile("pause");
+        RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile(textures[i]);
         RENDERING(buttons[i])->hide = true;
         RENDERING(buttons[i])->cameraBitMask = 0x2;
-        RENDERING(buttons[i])->color = Color(119.0 / 255, 119.0 / 255, 119.0 / 255);
         ADD_COMPONENT(buttons[i], Button);
         BUTTON(buttons[i])->enabled = false;
     }
@@ -98,6 +113,7 @@ void PauseStateManager::enter() {
     BUTTON(datas->restartButton)->enabled = true;
     RENDERING(datas->stopButton)->hide = false;
     BUTTON(datas->stopButton)->enabled = true;
+    RENDERING(datas->title)->hide = false;
 
 
     //mute music
@@ -139,6 +155,7 @@ void PauseStateManager::exit() {
     BUTTON(datas->restartButton)->enabled = false;
     RENDERING(datas->stopButton)->hide = true;
     BUTTON(datas->stopButton)->enabled = false;
+    RENDERING(datas->title)->hide = true;
 
     // restore physics for runners
     for (unsigned i=0; i<session->runners.size(); i++) {

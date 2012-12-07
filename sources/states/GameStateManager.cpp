@@ -64,7 +64,7 @@ GameStateManager::~GameStateManager() {
 void GameStateManager::setup() {
     Entity pauseButton = datas->pauseButton = theEntityManager.CreateEntity();
     ADD_COMPONENT(pauseButton, Transformation);
-    TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("mute"));
+    TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("pause"));
     TRANSFORM(pauseButton)->parent = game->cameraEntity;
     TRANSFORM(pauseButton)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(0.5, 0.5)
@@ -75,7 +75,6 @@ void GameStateManager::setup() {
     RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
     RENDERING(pauseButton)->hide = true;
     RENDERING(pauseButton)->cameraBitMask = 0x2;
-    RENDERING(pauseButton)->color = Color(119.0 / 255, 119.0 / 255, 119.0 / 255);
     ADD_COMPONENT(pauseButton, Button);
     BUTTON(pauseButton)->enabled = false;
     BUTTON(pauseButton)->overSize = 1.2;
