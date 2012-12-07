@@ -11,8 +11,20 @@ if [ $# != 1 ]; then
 	exit
 fi
 
+rm -r /tmp/$1
+mkdir /tmp/$1
+for file in `ls $1/*png`
+do
+    used_rect=`../sac/tools/texture_packer/tiniest_rectangle.py ${file}`
+    ww=`echo $used_rect | cut -d, -f1`
+    hh=`echo $used_rect | cut -d, -f2`
+    xx=`echo $used_rect | cut -d, -f3`
+    yy=`echo $used_rect | cut -d, -f4`
+    convert -crop ${ww}x${hh}+${xx}+${yy} ${file} PNG32:/tmp/$1/`basename ${file}`
+done
+
 cd $1
-texture_packer *png | ../../sac/tools/texture_packer/texture_packer.sh $1
+texture_packer /tmp/$1/*png | ../../sac/tools/texture_packer/texture_packer.sh $1
 cd -
 convert /tmp/$1.png -alpha extract -depth 8 ../assets/$1_alpha.png
 # mais pourquoi j'ai fait ca ?convert ../assets/$1_alpha.png -background white -flatten +matte -depth 8 ../assets/$1_alpha.png
