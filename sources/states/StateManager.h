@@ -21,20 +21,22 @@
 class RecursiveRunnerGame;
 
 namespace State {
-    enum Enum {
-        Invalid,
-        Logo,
-        Logo2Menu, // Transition
-        Menu,
-        Game,
-        Game2Menu, // Transition
-        Game2Rate, // Transition
-        Pause,
-        Ad,
-        Ad2Game, // Transition
-        Rate,
-        Rate2Menu // Transition
-    };
+   enum Enum {
+      Invalid,
+      Logo,
+      Logo2Menu, // Transition
+      Menu,
+      Game,
+      Game2Pause, // Transition
+      Game2Menu, // Transition
+      Game2Rate, // Transition
+      Pause,
+      Pause2Game, // Transition
+      Ad,
+      Ad2Game, // Transition
+      Rate,
+      Rate2Menu // Transition
+   };
 }
 
 class StateManager {
