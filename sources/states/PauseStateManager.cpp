@@ -51,7 +51,7 @@ void PauseStateManager::setup() {
     Entity pauseText = datas->pauseText = theEntityManager.CreateEntity();
     ADD_COMPONENT(pauseText, Transformation);
     TRANSFORM(pauseText)->z = 0.9;
-    TRANSFORM(pauseText)->rotation = 0.0;
+   TRANSFORM(pauseText)->parent = game->cameraEntity;
     ADD_COMPONENT(pauseText, TextRendering);
     TEXT_RENDERING(pauseText)->text = "PAUSE";
     TEXT_RENDERING(pauseText)->charHeight = 1.;
@@ -68,7 +68,7 @@ void PauseStateManager::setup() {
         TRANSFORM(buttons[i])->size = Vector2(PlacementHelper::ScreenWidth / 3.1, PlacementHelper::ScreenHeight / 2.);
         TRANSFORM(buttons[i])->parent = game->cameraEntity;
         TRANSFORM(buttons[i])->position = Vector2( (i - 1) * PlacementHelper::ScreenWidth / 3., 0);
-        TRANSFORM(buttons[i])->z = 0.95;
+        TRANSFORM(buttons[i])->z = 0.85;
         ADD_COMPONENT(buttons[i], Rendering);
         RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile("pause");
         RENDERING(buttons[i])->hide = true;
@@ -90,11 +90,8 @@ void PauseStateManager::enter() {
         ANIMATION(session->runners[i])->playbackSpeed = 0;
     }
 
-    //show centered texts
-    TRANSFORM(datas->pauseText)->position = theRenderingSystem.cameras[1].worldPosition;
+    //show text & buttons
     TEXT_RENDERING(datas->pauseText)->hide = false;
-
-    //show buttons
     RENDERING(datas->continueButton)->hide = false;
     BUTTON(datas->continueButton)->enabled = true;
     RENDERING(datas->restartButton)->hide = false;

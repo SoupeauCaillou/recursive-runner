@@ -55,43 +55,46 @@ enum CameraMode {
 };
 
 class RecursiveRunnerGame : public Game {
-    public:
-        static void startGame(bool transition);
-        static void endGame();
-	public:
-		RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exAPI, CommunicationAPI* comAPI);
-        ~RecursiveRunnerGame();
-		void sacInit(int windowW, int windowH);
-		void init(const uint8_t* in = 0, int size = 0);
-		void tick(float dt);
-		void backPressed();
-        void changeState(State::Enum newState);
-        bool willConsumeBackEvent();
-        void togglePause(bool pause);
+   public:
+      static void startGame(bool transition);
+      static void endGame();
 
-        int saveState(uint8_t** out);
-        void setupCamera(CameraMode mode);
-        void updateBestScore();
-	private:
-        State::Enum currentState, overrideNextState;
-        std::map<State::Enum, StateManager*> state2manager;
+   public:
+      RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exAPI, CommunicationAPI* comAPI);
+      ~RecursiveRunnerGame();
+      void sacInit(int windowW, int windowH);
+      void init(const uint8_t* in = 0, int size = 0);
+      void tick(float dt);
+      void backPressed();
+      void changeState(State::Enum newState);
+      bool willConsumeBackEvent();
+      void togglePause(bool pause);
 
-		AssetAPI* assetAPI;
-		NameInputAPI* nameInputAPI;
-		ExitAPI* exitAPI;
+      int saveState(uint8_t** out);
+      void setupCamera(CameraMode mode);
+      void updateBestScore();
 
-        void decor(StorageAPI* storageAPI);
-        void initGame(StorageAPI* storageAPI);
+   private:
+      State::Enum currentState, overrideNextState;
+      std::map<State::Enum, StateManager*> state2manager;
 
-    public: // shared/global vars
-        float baseLine;
-        bool ignoreClick;
-        Entity silhouette, route, cameraEntity, bestScore;
-        std::vector<Entity> decorEntities;
-        CommunicationAPI* communicationAPI;
-        StorageAPI* storageAPI;
-        // GameTempVar gameTempVars;
-        Entity scoreText, scorePanel;
-        Entity muteBtn;
-        Vector2 leftMostCameraPos;
+      AssetAPI* assetAPI;
+      NameInputAPI* nameInputAPI;
+      ExitAPI* exitAPI;
+
+      void decor(StorageAPI* storageAPI);
+      void initGame(StorageAPI* storageAPI);
+
+   public:
+      // shared/global vars
+      float baseLine;
+      bool ignoreClick;
+      Entity silhouette, route, cameraEntity, bestScore;
+      std::vector<Entity> decorEntities;
+      CommunicationAPI* communicationAPI;
+      StorageAPI* storageAPI;
+      // GameTempVar gameTempVars;
+      Entity scoreText, scorePanel;
+      Entity muteBtn;
+      Vector2 leftMostCameraPos;
 };

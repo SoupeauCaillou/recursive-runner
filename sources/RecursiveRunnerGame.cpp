@@ -51,31 +51,41 @@ static void updateFps(float dt);
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI, CommunicationAPI* comAPI) : Game() {
-	assetAPI = ast;
-	storageAPI = storage;
-    nameInputAPI = nameInput;
-	exitAPI = exAPI;
-    communicationAPI = comAPI;
+   assetAPI = ast;
+   storageAPI = storage;
+   nameInputAPI = nameInput;
+   exitAPI = exAPI;
+   communicationAPI = comAPI;
 
 
-    RunnerSystem::CreateInstance();
-    CameraTargetSystem::CreateInstance();
-    PlayerSystem::CreateInstance();
-    RangeFollowerSystem::CreateInstance();
-    SessionSystem::CreateInstance();
+   RunnerSystem::CreateInstance();
+   CameraTargetSystem::CreateInstance();
+   PlayerSystem::CreateInstance();
+   RangeFollowerSystem::CreateInstance();
+   SessionSystem::CreateInstance();
 
-    overrideNextState = State::Invalid;
-    currentState = State::Logo;
-    state2manager.insert(std::make_pair(State::Logo, new LogoStateManager(this)));
-    state2manager.insert(std::make_pair(State::Menu, new MenuStateManager(this)));
-    state2manager.insert(std::make_pair(State::Pause, new PauseStateManager(this)));
-    state2manager.insert(std::make_pair(State::Game, new GameStateManager(this)));
-    state2manager.insert(std::make_pair(State::Menu2Game,
-        new TransitionStateManager(State::Menu2Game, state2manager[State::Menu], state2manager[State::Game], this)));
-    state2manager.insert(std::make_pair(State::Game2Menu,
-        new TransitionStateManager(State::Game2Menu, state2manager[State::Game], state2manager[State::Menu], this)));
-    state2manager.insert(std::make_pair(State::Logo2Menu,
-        new TransitionStateManager(State::Logo2Menu, state2manager[State::Logo], state2manager[State::Menu], this)));
+   overrideNextState = State::Invalid;
+   currentState = State::Logo;
+   state2manager.insert(std::make_pair(State::Logo, new LogoStateManager(this)));
+   state2manager.insert(std::make_pair(State::Menu, new MenuStateManager(this)));
+   state2manager.insert(std::make_pair(State::Pause, new PauseStateManager(this)));
+   state2manager.insert(std::make_pair(State::Rate, new RateStateManager(this)));
+   state2manager.insert(std::make_pair(State::Game, new GameStateManager(this)));
+
+   state2manager.insert(std::make_pair(State::Menu2Game,
+   new TransitionStateManager(State::Menu2Game, state2manager[State::Menu], state2manager[State::Game], this)));
+
+   state2manager.insert(std::make_pair(State::Game2Menu,
+   new TransitionStateManager(State::Game2Menu, state2manager[State::Game], state2manager[State::Menu], this)));
+
+   state2manager.insert(std::make_pair(State::Game2Rate,
+   new TransitionStateManager(State::Game2Rate, state2manager[State::Game], state2manager[State::Rate], this)));
+
+   state2manager.insert(std::make_pair(State::Rate2Menu,
+   new TransitionStateManager(State::Rate2Menu, state2manager[State::Rate], state2manager[State::Menu], this)));
+
+   state2manager.insert(std::make_pair(State::Logo2Menu,
+   new TransitionStateManager(State::Logo2Menu, state2manager[State::Logo], state2manager[State::Menu], this)));
 }
 
 RecursiveRunnerGame::~RecursiveRunnerGame() {

@@ -201,7 +201,7 @@ State::Enum MenuStateManager::update(float dt __attribute__((unused))) {
     // Handle Swarm button
     if (!game->ignoreClick) {
         if (BUTTON(datas->swarmBtn)->clicked) {
-            game->communicationAPI->swarmRegistering(-1,-1);
+            game->communicationAPI->swarmRegistering();
         }
         game->ignoreClick = BUTTON(datas->swarmBtn)->mouseOver;
     }

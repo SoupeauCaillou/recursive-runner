@@ -128,7 +128,14 @@ State::Enum GameStateManager::update(float dt) {
                 theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
-                return State::Game2Menu;
+
+                //if it's time to rate, go to rate.
+                  if (game->communicationAPI->mustShowRateDialog()) {
+                     return State::Game2Rate;
+                //else go to menu
+                  } else {
+                   return State::Game2Menu;
+                }
             } else {
                 LOGI("Create runner");
                 // add a new one
