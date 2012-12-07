@@ -31,7 +31,7 @@ SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session"
     componentSerializer.add(new VectorProperty<Entity>(OFFSET(sparkling, tc)));
 }
 
-void SessionSystem::DoUpdate(float dt __attribute__((unused))) {
+void SessionSystem::DoUpdate(float) {
     // nothing
 }
 

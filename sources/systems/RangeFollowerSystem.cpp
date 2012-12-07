@@ -27,7 +27,7 @@ RangeFollowerSystem::RangeFollowerSystem() : ComponentSystemImpl<RangeFollowerCo
     componentSerializer.add(new IntervalProperty<float>(OFFSET(range, tc)));
 }
 
-void RangeFollowerSystem::DoUpdate(float dt __attribute__((unused))) {
+void RangeFollowerSystem::DoUpdate(float) {
     FOR_EACH_ENTITY_COMPONENT(RangeFollower, a, rc)
         TransformationComponent* tc = TRANSFORM(a);
         if (rc->parent) {

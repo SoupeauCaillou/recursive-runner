@@ -28,7 +28,7 @@ PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
     componentSerializer.add(new Property(OFFSET(ready, tc), sizeof(bool)));
 }
 
-void PlayerSystem::DoUpdate(float dt __attribute__((unused))) {
+void PlayerSystem::DoUpdate(float) {
 
 }
 

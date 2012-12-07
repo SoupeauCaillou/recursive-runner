@@ -176,12 +176,12 @@ void MenuStateManager::enter() {
     BUTTON(datas->giftizBtn)->enabled = true;
 }
 
-void MenuStateManager::backgroundUpdate(float dt __attribute__((unused))) {
+void MenuStateManager::backgroundUpdate(float) {
     TRANSFORM(datas->titleGroup)->position.Y = ADSR(datas->titleGroup)->value;
     TRANSFORM(datas->subtitle)->position.Y = ADSR(datas->subtitle)->value;
 }
 
-State::Enum MenuStateManager::update(float dt __attribute__((unused))) {
+State::Enum MenuStateManager::update(float) {
     const Entity titleGroup = datas->titleGroup;
     const Entity title = datas->title;
     const Entity subtitle = datas->subtitle;

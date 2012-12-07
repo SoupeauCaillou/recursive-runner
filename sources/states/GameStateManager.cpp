@@ -299,7 +299,7 @@ State::Enum GameStateManager::update(float dt) {
     return State::Game;
 }
 
-void GameStateManager::backgroundUpdate(float dt __attribute__((unused))) {
+void GameStateManager::backgroundUpdate(float) {
 
 }
 
@@ -324,7 +324,7 @@ bool GameStateManager::transitionCanEnter() {
     }
 }
 
-static void spawnGainEntity(int gain __attribute__((unused)), Entity parent, const Color& color, bool isGhost) {
+static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
     Entity e = theEntityManager.CreateEntity();
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = TRANSFORM(parent)->position;

@@ -164,7 +164,7 @@ State::Enum LogoStateManager::update(float dt) {
     return State::Logo;
 }
 
-void LogoStateManager::backgroundUpdate(float dt __attribute__((unused))) {
+void LogoStateManager::backgroundUpdate(float) {
 
 }
 

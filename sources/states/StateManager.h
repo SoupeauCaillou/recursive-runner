@@ -84,7 +84,7 @@ class TransitionStateManager : public StateManager {
         void earlyEnter() {}
         void enter();
         State::Enum update(float dt);
-        void backgroundUpdate(float dt __attribute__((unused))) {}
+        void backgroundUpdate(float) {}
         void exit();
         void lateExit() {}
         bool transitionCanExit() { return true; }

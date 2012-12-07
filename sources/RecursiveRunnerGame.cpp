@@ -50,13 +50,16 @@ static void updateFps(float dt);
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
-RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad __attribute__((unused)), ExitAPI* exAPI, CommunicationAPI* comAPI) : Game() {
+RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage,
+NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communication) :
+   Game() {
+
    assetAPI = ast;
    storageAPI = storage;
    nameInputAPI = nameInput;
-   exitAPI = exAPI;
-   communicationAPI = comAPI;
-
+   exitAPI = exit;
+   communicationAPI = communication;
+   adAPI = ad;
 
    RunnerSystem::CreateInstance();
    CameraTargetSystem::CreateInstance();

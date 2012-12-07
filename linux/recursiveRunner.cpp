@@ -83,7 +83,7 @@ Recorder *record;
 
 class MouseNativeTouchState: public NativeTouchState {
 	public:
-		bool isTouching(int index __attribute__((unused)), Vector2* windowCoords) const {
+		bool isTouching(int, Vector2* windowCoords) const {
 			#ifdef EMSCRIPTEN
 			 static bool down = false;
 			 static Vector2 position;
@@ -256,7 +256,7 @@ static void updateAndRenderLoop() {
    glfwTerminate();
 }
 
-static void* callback_thread(void *obj __attribute__((unused))){
+static void* callback_thread(void *){
 	updateAndRenderLoop();
 	pthread_exit (0);
 }

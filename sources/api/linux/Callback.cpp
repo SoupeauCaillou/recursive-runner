@@ -32,7 +32,7 @@
 #include <iostream>
 
 //convertit le résultat en une string de la forme "res1, res2, res3, ..."
-int callback(void *save, int argc, char **argv, char **azColName __attribute__((unused))){
+int callback(void *save, int argc, char **argv, char **){
 	std::string *sav = static_cast<std::string*>(save);
 
 	int i = 0;
@@ -66,7 +66,7 @@ int callbackScore(void *save, int argc, char **argv, char **azColName){
 
 
 //renvoie le nom des colonnes de la requête
-int callbackNames(void *save, int argc, char **argv, char **azColName __attribute__((unused))){
+int callbackNames(void *save, int argc, char **argv, char **){
 	std::vector<std::string> *sav = static_cast<std::vector<std::string>*>(save);
 	for (int i = 0; i < argc; i++) {
 		sav->push_back(argv[i]);

@@ -81,10 +81,10 @@ void RateStateManager::enter() {
    BUTTON(datas->btnNever)->enabled = true;
 }
 
-void RateStateManager::backgroundUpdate(float dt __attribute__((unused))) {
+void RateStateManager::backgroundUpdate(float) {
 }
 
-State::Enum RateStateManager::update(float dt __attribute__((unused))) {
+State::Enum RateStateManager::update(float) {
    if (BUTTON(datas->btnNow)->clicked) {
       game->communicationAPI->rateItNow();
       return State::Rate2Menu;

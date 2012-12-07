@@ -72,10 +72,10 @@ void AdStateManager::enter() {
    }
 }
 
-void AdStateManager::backgroundUpdate(float dt __attribute__((unused))) {
+void AdStateManager::backgroundUpdate(float) {
 }
 
-State::Enum AdStateManager::update(float dt __attribute__((unused))) {
+State::Enum AdStateManager::update(float) {
    if (datas->gameb4Ad>0 || game->adAPI->done()) {
       return State::Ad2Game;
    }
