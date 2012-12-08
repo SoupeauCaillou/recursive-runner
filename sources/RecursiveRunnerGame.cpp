@@ -318,10 +318,6 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(pianist, Animation);
     ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
 
-	PlacementHelper::GimpWidth = 1280;
-    PlacementHelper::GimpHeight = 800;
-    PlacementHelper::ScreenWidth /= 3;
-
     cameraEntity = theEntityManager.CreateEntity();
     ADD_COMPONENT(cameraEntity, Transformation);
     ADD_COMPONENT(cameraEntity, RangeFollower);
@@ -342,17 +338,22 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     RANGE_FOLLOWER(buildings)->range = Interval<float>(-2, 2);
     RANGE_FOLLOWER(buildings)->parent = cameraEntity;
 
+    PlacementHelper::GimpWidth = 1280;
+    PlacementHelper::GimpHeight = 800;
+    PlacementHelper::ScreenWidth /= 3;
+    
+    buttonSpacing.H = PlacementHelper::GimpWidthToScreen(94);
+    buttonSpacing.V = PlacementHelper::GimpHeightToScreen(76);
+    
     muteBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(muteBtn, Transformation);
-    TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("son"));
+    TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("son-off"));
     TRANSFORM(muteBtn)->parent = cameraEntity;
-    TRANSFORM(muteBtn)->position =
-        theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, 0.5)
-        + TRANSFORM(muteBtn)->size * Vector2(0.5, -0.5)
-        + Vector2(0, baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+    TRANSFORM(muteBtn)->position = theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, 0.5)
+        + Vector2(buttonSpacing.H, -buttonSpacing.V);
     TRANSFORM(muteBtn)->z = 0.95;
     ADD_COMPONENT(muteBtn, Rendering);
-    RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son" : "son");
+    RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
     RENDERING(muteBtn)->hide = false;
     RENDERING(muteBtn)->cameraBitMask = 0x3;
     ADD_COMPONENT(muteBtn, Button);
@@ -361,6 +362,8 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 
     theSoundSystem.mute = muted;
     theMusicSystem.toggleMute(muted);
+    
+    
 }
 
 void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
@@ -375,6 +378,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
     theTransformationSystem.setPosition(TRANSFORM(scorePanel), Vector2(0, baseLine + PlacementHelper::ScreenHeight), TransformationSystem::N);
     TRANSFORM(scorePanel)->z = 0.8;
+    // TRANSFORM(scorePanel)->parent = cameraEntity;
     ADD_COMPONENT(scorePanel, Rendering);
     RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
     RENDERING(scorePanel)->hide = false;
@@ -494,7 +498,7 @@ void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
         bool muted = !storageAPI->isMuted();
         storageAPI->setMuted(muted);
-        RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son" : "son");
+        RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
         ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
@@ -521,6 +525,7 @@ void RecursiveRunnerGame::tick(float dt) {
             currentState = State::Transition;
         }
     } else if (transitionManager.transitionFinished(&currentState)) {
+        transitionManager.exit();
         state2manager[currentState]->enter();
     }
 

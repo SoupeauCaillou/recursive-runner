@@ -53,7 +53,7 @@ void PauseStateManager::setup() {
     TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("menu-pause"));
     TRANSFORM(title)->z = 0.85;
     TRANSFORM(title)->position = Vector2(0, PlacementHelper::ScreenHeight * 0.5 - TRANSFORM(title)->size.Y * 0.43);
-    TRANSFORM(title)->rotation = 0.05;
+    //TRANSFORM(title)->rotation = 0.05;
     TRANSFORM(title)->parent = game->cameraEntity;
     ADD_COMPONENT(title, Rendering);
     RENDERING(title)->texture = theRenderingSystem.loadTextureFile("menu-pause");
@@ -79,7 +79,6 @@ void PauseStateManager::setup() {
         ADD_COMPONENT(buttons[i], Transformation);
         TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i]));
         TRANSFORM(buttons[i])->parent = title;
-        TRANSFORM(buttons[i])->rotation = -0.05;
         int mul = 0;
         if (i == 0) mul = -1;
         else if(i==2) mul=1;
@@ -95,9 +94,12 @@ void PauseStateManager::setup() {
 }
 
 void PauseStateManager::willEnter() {
+    TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = true;
 }
 
 void PauseStateManager::enter() {
+    // TEXT_RENDERING(game->scoreText)->text = "Paused";
+
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     // disable physics for runners
     for (unsigned i=0; i<session->runners.size(); i++) {
@@ -114,7 +116,6 @@ void PauseStateManager::enter() {
     RENDERING(datas->stopButton)->hide = false;
     BUTTON(datas->stopButton)->enabled = true;
     RENDERING(datas->title)->hide = false;
-
 
     //mute music
     if (!theMusicSystem.isMuted()) {
@@ -156,6 +157,7 @@ void PauseStateManager::willExit() {
     RENDERING(datas->stopButton)->hide = true;
     BUTTON(datas->stopButton)->enabled = false;
     RENDERING(datas->title)->hide = true;
+    TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
 }
 
 void PauseStateManager::exit() {

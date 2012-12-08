@@ -122,8 +122,7 @@ void MenuStateManager::setup() {
     TRANSFORM(swarmBtn)->parent = game->cameraEntity;
     TRANSFORM(swarmBtn)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, -0.5)
-        + TRANSFORM(swarmBtn)->size * Vector2(0.5, 0.5)
-        + Vector2(0, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+        + Vector2(game->buttonSpacing.H, game->buttonSpacing.V);
 
     TRANSFORM(swarmBtn)->z = 0.95;
     ADD_COMPONENT(swarmBtn, Rendering);
@@ -137,7 +136,7 @@ void MenuStateManager::setup() {
     ADD_COMPONENT(giftizBtn, Transformation);
     TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("giftiz"));
     TRANSFORM(giftizBtn)->parent = swarmBtn;
-    TRANSFORM(giftizBtn)->position = Vector2(0, TRANSFORM(giftizBtn)->size.Y * 1.2);
+    TRANSFORM(giftizBtn)->position = Vector2(0, (TRANSFORM(swarmBtn)->size.Y) * 0.5 + game->buttonSpacing.V);
     TRANSFORM(giftizBtn)->z = 0;
     ADD_COMPONENT(giftizBtn, Rendering);
     RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz");
@@ -152,6 +151,8 @@ void MenuStateManager::setup() {
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
 void MenuStateManager::willEnter() {
+    RecursiveRunnerGame::endGame();
+
     // activate animation
     ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = true;
 

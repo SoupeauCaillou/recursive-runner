@@ -99,4 +99,7 @@ class RecursiveRunnerGame : public Game {
       Entity scoreText, scorePanel;
       Entity muteBtn, pianist;
       Vector2 leftMostCameraPos;
+      struct {
+        float H, V;
+      } buttonSpacing;
 };

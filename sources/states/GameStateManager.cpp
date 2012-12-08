@@ -68,8 +68,7 @@ void GameStateManager::setup() {
     TRANSFORM(pauseButton)->parent = game->cameraEntity;
     TRANSFORM(pauseButton)->position =
         theRenderingSystem.cameras[0].worldSize * Vector2(0.5, 0.5)
-        + TRANSFORM(pauseButton)->size * Vector2(-0.5, -0.5)
-        + Vector2(0, game->baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+        - Vector2(game->buttonSpacing.H, game->buttonSpacing.V);
     TRANSFORM(pauseButton)->z = 0.95;
     ADD_COMPONENT(pauseButton, Rendering);
     RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
@@ -363,7 +362,6 @@ bool GameStateManager::transitionCanExit() {
 
 void GameStateManager::exit() {
     RENDERING(datas->pauseButton)->hide = true;
-    RecursiveRunnerGame::endGame();
 }
 
 
