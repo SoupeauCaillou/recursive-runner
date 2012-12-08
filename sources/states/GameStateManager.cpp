@@ -170,7 +170,7 @@ State::Enum GameStateManager::update(float dt) {
                 // resetGame();
 
                 //if it's time to rate, go to rate.
-                  if (game->communicationAPI->mustShowRateDialog()) {
+                  if (0 && game->communicationAPI->mustShowRateDialog()) {
                      return State::Rate;
                 //else go to menu
                   } else {

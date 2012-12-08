@@ -28,6 +28,7 @@
 #include "systems/MusicSystem.h"
 #include "systems/PlayerSystem.h"
 #include "systems/ParticuleSystem.h"
+#include "systems/AutoDestroySystem.h"
 #include "../systems/SessionSystem.h"
 #include "../systems/RunnerSystem.h"
 
@@ -151,8 +152,9 @@ void MenuStateManager::setup() {
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
 void MenuStateManager::willEnter(State::Enum) {
-    RecursiveRunnerGame::endGame();
-
+    std::vector<Entity> temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
+    std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
+    
     // activate animation
     ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = true;
 
@@ -187,6 +189,7 @@ bool MenuStateManager::transitionCanEnter(State::Enum) {
 
 
 void MenuStateManager::enter(State::Enum) {
+    RecursiveRunnerGame::endGame();
     // enable UI
     BUTTON(datas->swarmBtn)->enabled = true;
     BUTTON(datas->giftizBtn)->enabled = true;
