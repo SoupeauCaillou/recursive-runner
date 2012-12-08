@@ -147,12 +147,18 @@ void MenuStateManager::setup() {
     BUTTON(giftizBtn)->overSize = 1.2;
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- ENTER SECTION ----------------------------------------//
+///----------------------------------------------------------------------------//
 void MenuStateManager::willEnter() {
+    // activate animation
+    ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = true;
+
     // Restore camera position
-    for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
-        theRenderingSystem.cameras[i].worldPosition = game->leftMostCameraPos;
-    }
     game->setupCamera(CameraModeMenu);
+
+    // save score if any
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty()) {
         std::stringstream a;
@@ -161,36 +167,58 @@ void MenuStateManager::willEnter() {
         game->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
         game->updateBestScore();
     }
+    // start music if not muted
     if (!theMusicSystem.isMuted()) {
         startMenuMusic(datas->title);
     }
+    // unhide UI
+    RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = false;
+    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = 0;
 }
+
+bool MenuStateManager::transitionCanEnter() {
+    // check if adsr is complete
+    ADSRComponent* adsr = ADSR(datas->titleGroup);
+    float progress = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
+    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = progress;
+    return (adsr->value == adsr->sustainValue);
+}
+
 
 void MenuStateManager::enter() {
-    RecursiveRunnerGame::endGame();
+    // enable UI
     BUTTON(datas->swarmBtn)->enabled = true;
     BUTTON(datas->giftizBtn)->enabled = true;
+    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = 1;
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- UPDATE SECTION ---------------------------------------//
+///----------------------------------------------------------------------------//
 void MenuStateManager::backgroundUpdate(float) {
     TRANSFORM(datas->titleGroup)->position.Y = ADSR(datas->titleGroup)->value;
     TRANSFORM(datas->subtitle)->position.Y = ADSR(datas->subtitle)->value;
 }
 
 State::Enum MenuStateManager::update(float) {
-    const Entity titleGroup = datas->titleGroup;
-    const Entity title = datas->title;
-    const Entity subtitle = datas->subtitle;
-
+    // Menu music
     if (!theMusicSystem.isMuted()) {
-        MusicComponent* music = MUSIC(title);
+        MusicComponent* music = MUSIC(datas->title);
         music->control = MusicControl::Play;
 
         if (music->music == InvalidMusicRef) {
-            startMenuMusic(title);
+            startMenuMusic(datas->title);
         } else if (music->loopNext == InvalidMusicRef) {
             music->loopAt = 21.34;
             music->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
+        }
+    } else if (theMusicSystem.isMuted() != theSoundSystem.mute) {
+        // restore music
+        if (theTouchInputManager.isTouched(0)) {
+            theMusicSystem.toggleMute(theSoundSystem.mute);
+            game->ignoreClick = true;
+            startMenuMusic(datas->title);
         }
     }
 
@@ -210,79 +238,39 @@ State::Enum MenuStateManager::update(float) {
         game->ignoreClick = BUTTON(datas->giftizBtn)->mouseOver;
     }
 
-    // Restore music ?
-    if (theTouchInputManager.isTouched(0)) {
-        if (theMusicSystem.isMuted() != theSoundSystem.mute) {
-            theMusicSystem.toggleMute(theSoundSystem.mute);
-            game->ignoreClick = true;
-        }
-    }
-
     // Start game ?
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
-        ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
-        MUSIC(game->route)->music = theMusicSystem.loadMusicFile("jeu.ogg");
         return State::Ad;
     }
     return State::Menu;
 }
 
-void MenuStateManager::willExit() {
-    RecursiveRunnerGame::startGame(true);
 
+///----------------------------------------------------------------------------//
+///--------------------- EXIT SECTION -----------------------------------------//
+///----------------------------------------------------------------------------//
+void MenuStateManager::willExit() {
+    // stop menu music
     MUSIC(datas->title)->control = MusicControl::Stop;
+
+    // disable button interaction
     BUTTON(datas->swarmBtn)->enabled = false;
     BUTTON(datas->giftizBtn)->enabled = false;
-}
 
-void MenuStateManager::exit() {
+    // activate animation
+    ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = false;
 }
 
 bool MenuStateManager::transitionCanExit() {
-    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     const ADSRComponent* adsr = ADSR(datas->titleGroup);
-    {
-        float progress = (adsr->value - adsr->attackValue) /
+    float progress = (adsr->value - adsr->attackValue) /
             (adsr->idleValue - adsr->attackValue);
-        progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
-        for (unsigned i=0; i<session->coins.size(); i++) {
-            RENDERING(session->coins[i])->color.a = progress;
-        }
-        for (unsigned i=0; i<session->links.size(); i++) {
-            if (i % 2)
-                RENDERING(session->links[i])->color.a = progress * 0.2;
-            else
-                RENDERING(session->links[i])->color.a = progress;
-        }
-    }
-    PLAYER(session->players[0])->ready = true;
-    if (adsr->value < adsr->idleValue) {
-        return false;
-    }
-    return true;
+
+    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = 1 - progress;
+    // check if animation is finished
+    return (adsr->value >= adsr->idleValue);
 }
 
-bool MenuStateManager::transitionCanEnter() {
-    ADSRComponent* adsr = ADSR(datas->titleGroup);
-    adsr->active = ADSR(datas->subtitle)->active = true;
-    std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
-    if (!sessions.empty()) {
-        const SessionComponent* session = SESSION(sessions.front());
-        {
-            float progress = (adsr->value - adsr->attackValue) /
-                (adsr->idleValue - adsr->attackValue);
-            progress = MathUtil::Max(0.0f, MathUtil::Min(1.0f, progress));
-            for (unsigned i=0; i<session->coins.size(); i++) {
-                RENDERING(session->coins[i])->color.a = progress;
-            }
-            for (unsigned i=0; i<session->links.size(); i++) {
-                if (i % 2)
-                    RENDERING(session->links[i])->color.a = progress * 0.2;
-                else
-                    RENDERING(session->links[i])->color.a = progress;
-            }
-        }
-    }
-
-    return (adsr->value == adsr->sustainValue);
+void MenuStateManager::exit() {
+    RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = true;
 }

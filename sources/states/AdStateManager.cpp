@@ -44,7 +44,15 @@ void AdStateManager::setup() {
    datas->lastAdTime = -30.;
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- ENTER SECTION ----------------------------------------//
+///----------------------------------------------------------------------------//
 void AdStateManager::willEnter() {
+}
+
+bool AdStateManager::transitionCanEnter() {
+   return true;
 }
 
 void AdStateManager::enter() {
@@ -62,26 +70,34 @@ void AdStateManager::enter() {
       datas->gameb4Ad = 1;
    }
 
-   if (datas->gameb4Ad==0 || timeSinceLAstAd > 150) {
-      if (game->adAPI->showAd()) {
-	 datas->gameb4Ad = 0;
-	 datas->lastAdTime = TimeUtil::getTime();
-      } else {
-	 datas->gameb4Ad = 1;
-      }
-   }
+    if (datas->gameb4Ad==0 || timeSinceLAstAd > 150) {
+        if (game->adAPI->showAd()) {
+            datas->gameb4Ad = 0;
+            datas->lastAdTime = TimeUtil::getTime();
+        } else {
+            datas->gameb4Ad = 1;
+        }
+    }
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- UPDATE SECTION ---------------------------------------//
+///----------------------------------------------------------------------------//
 void AdStateManager::backgroundUpdate(float) {
 }
 
 State::Enum AdStateManager::update(float) {
-   if (datas->gameb4Ad>0 || game->adAPI->done()) {
+   if (datas->gameb4Ad > 0 || game->adAPI->done()) {
       return State::Game;
    }
    return State::Ad;
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- EXIT SECTION -----------------------------------------//
+///----------------------------------------------------------------------------//
 void AdStateManager::willExit() {
    if (datas->gameb4Ad==0)
       datas->gameb4Ad=3;
@@ -89,14 +105,10 @@ void AdStateManager::willExit() {
    game->storageAPI->setGameCountBeforeNextAd(datas->gameb4Ad);
 }
 
-void AdStateManager::exit() {
-   game->setupCamera(CameraModeSingle);
-}
-
 bool AdStateManager::transitionCanExit() {
    return true;
 }
 
-bool AdStateManager::transitionCanEnter() {
-   return true;
+void AdStateManager::exit() {
+   game->setupCamera(CameraModeSingle);
 }

@@ -45,12 +45,12 @@
 
 static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex);
-
+static void updateSessionTransition(const SessionComponent* session, float progress);
 
 struct GameStateManager::GameStateManagerDatas {
     Entity pauseButton;
     Entity session;
-    float minipause;
+    Entity transition;
 };
 
 GameStateManager::GameStateManager(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
@@ -78,10 +78,50 @@ void GameStateManager::setup() {
     ADD_COMPONENT(pauseButton, Button);
     BUTTON(pauseButton)->enabled = false;
     BUTTON(pauseButton)->overSize = 1.2;
+
+    Entity transition = datas->transition = theEntityManager.CreateEntity();
+    ADD_COMPONENT(transition, ADSR);
+    ADSR(transition)->idleValue = 0;
+    ADSR(transition)->sustainValue = 1;
+    ADSR(transition)->attackValue = 1;
+    ADSR(transition)->attackTiming = 1;
+    ADSR(transition)->decayTiming = 0.;
+    ADSR(transition)->releaseTiming = 0.5;
+    ADD_COMPONENT(transition, Music);
+    MUSIC(transition)->fadeOut = 2;
+    MUSIC(transition)->fadeIn = 1;
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- ENTER SECTION ----------------------------------------//
+///----------------------------------------------------------------------------//
 void GameStateManager::willEnter() {
-    datas->minipause = TimeUtil::getTime();
+    ADSR(datas->transition)->active = true;
+
+    if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
+        RecursiveRunnerGame::startGame(true);
+        MUSIC(datas->transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
+    }
+    if (theMusicSystem.isMuted()) {
+        MUSIC(datas->transition)->control = MusicControl::Stop;
+    } else {
+        MUSIC(datas->transition)->control = MusicControl::Play;
+    }
+    RENDERING(datas->pauseButton)->hide = false;
+    RENDERING(datas->pauseButton)->color.a = 0;
+}
+
+bool GameStateManager::transitionCanEnter() {
+    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+
+    float progress = ADSR(datas->transition)->value;
+    updateSessionTransition(session, progress);
+    RENDERING(datas->pauseButton)->color.a = progress;
+
+    PLAYER(session->players[0])->ready = true;
+
+    return progress >= ADSR(datas->transition)->sustainValue;
 }
 
 void GameStateManager::enter() {
@@ -95,15 +135,15 @@ void GameStateManager::enter() {
             sc->runners.push_back(r);
             sc->currentRunner = r;
         }
-        for (unsigned i=0; i<sc->numPlayers; i++) {
-            theRenderingSystem.cameras[1 + i].worldPosition.X =
-                TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
-        }
+        game->setupCamera(CameraModeSingle);
     }
-    RENDERING(datas->pauseButton)->hide = false;
     BUTTON(datas->pauseButton)->enabled = true;
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- UPDATE SECTION ---------------------------------------//
+///----------------------------------------------------------------------------//
 State::Enum GameStateManager::update(float dt) {
     SessionComponent* sc = SESSION(datas->session);
 
@@ -302,26 +342,30 @@ void GameStateManager::backgroundUpdate(float) {
 
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- EXIT SECTION -----------------------------------------//
+///----------------------------------------------------------------------------//
 void GameStateManager::willExit() {
     BUTTON(datas->pauseButton)->enabled = false;
+    ADSR(datas->transition)->active = false;
+}
+
+bool GameStateManager::transitionCanExit() {
+    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+
+    float progress = ADSR(datas->transition)->value;
+    updateSessionTransition(session, progress);
+    RENDERING(datas->pauseButton)->color.a = progress;
+
+    return progress <= ADSR(datas->transition)->idleValue;
 }
 
 void GameStateManager::exit() {
     RENDERING(datas->pauseButton)->hide = true;
+    RecursiveRunnerGame::endGame();
 }
 
-bool GameStateManager::transitionCanExit() {
-    return true;
-}
-
-bool GameStateManager::transitionCanEnter() {
-    MUSIC(game->route)->control = MusicControl::Play;
-    if (TimeUtil::getTime() - datas->minipause >= 1) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
     Entity e = theEntityManager.CreateEntity();
@@ -415,4 +459,16 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     p->runnersCount++;
  LOGI("Add runner %lu at pos : {%.2f, %.2f}, speed: %.2f (player=%lu)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
     return e;
+}
+
+static void updateSessionTransition(const SessionComponent* session, float progress) {
+    for (unsigned i=0; i<session->coins.size(); i++) {
+        RENDERING(session->coins[i])->color.a = progress;
+    }
+    for (unsigned i=0; i<session->links.size(); i++) {
+        if (i % 2)
+            RENDERING(session->links[i])->color.a = progress * 0.2;
+        else
+            RENDERING(session->links[i])->color.a = progress;
+    }
 }

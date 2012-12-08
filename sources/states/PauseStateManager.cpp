@@ -134,7 +134,8 @@ State::Enum PauseStateManager::update(float) {
     } else if (BUTTON(datas->restartButton)->clicked) {
         // stop music :-[
         RecursiveRunnerGame::endGame();
-        RecursiveRunnerGame::startGame(false);
+        RecursiveRunnerGame::startGame(true);
+        game->setupCamera(CameraModeSingle);
         return State::Game;
     } else if (BUTTON(datas->stopButton)->clicked) {
         return State::Menu;
@@ -147,7 +148,6 @@ void PauseStateManager::backgroundUpdate(float) {
 }
 
 void PauseStateManager::willExit() {
-    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     TEXT_RENDERING(datas->pauseText)->hide = true;
     RENDERING(datas->continueButton)->hide = true;
     BUTTON(datas->continueButton)->enabled = false;
@@ -156,23 +156,21 @@ void PauseStateManager::willExit() {
     RENDERING(datas->stopButton)->hide = true;
     BUTTON(datas->stopButton)->enabled = false;
     RENDERING(datas->title)->hide = true;
+}
 
+void PauseStateManager::exit() {
+    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     // restore physics for runners
     for (unsigned i=0; i<session->runners.size(); i++) {
         // ^^ this will be done in RunnerSystem PHYSICS(session->runners[i])->mass = 1;
         ANIMATION(session->runners[i])->playbackSpeed = 1.1;
     }
-    // update camera position
     if (!theMusicSystem.isMuted()) {
         for (unsigned i=0; i<datas->pausedMusic.size(); i++) {
             MUSIC(datas->pausedMusic[i])->control = MusicControl::Play;
         }
     }
     datas->pausedMusic.clear();
-}
-
-void PauseStateManager::exit() {
-
 }
 
 bool PauseStateManager::transitionCanExit() {

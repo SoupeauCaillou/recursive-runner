@@ -331,9 +331,6 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(route, RangeFollower);
     RANGE_FOLLOWER(route)->range = RANGE_FOLLOWER(cameraEntity)->range;
     RANGE_FOLLOWER(route)->parent = cameraEntity;
-    ADD_COMPONENT(route, Music);
-    MUSIC(route)->fadeOut = 2;
-    MUSIC(route)->fadeIn = 1;
 
     ADD_COMPONENT(silhouette, RangeFollower);
     RANGE_FOLLOWER(silhouette)->range = Interval<float>(-6, 6);
@@ -580,29 +577,12 @@ void RecursiveRunnerGame::setupCamera(CameraMode mode) {
 
             TEXT_RENDERING(scoreText)->hide = false;
             TEXT_RENDERING(scoreText)->positioning = TextRenderingComponent::CENTER;
+            
+            for (unsigned i=0; i<1; i++) {
+                theRenderingSystem.cameras[1 + i].worldPosition.X = leftMostCameraPos.X;
+                    //TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
+            }
             break;
-#if 0
-        case CameraModeSplit:
-            theRenderingSystem.cameras[0].enable = false;
-            theRenderingSystem.cameras[1].enable = true;
-            theRenderingSystem.cameras[2].enable = true;
-            theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
-            theRenderingSystem.cameras[1].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
-            theRenderingSystem.cameras[1].screenSize.Y = 0.5;
-            theRenderingSystem.cameras[1].screenPosition.Y  = 0.25;
-            theRenderingSystem.cameras[1].mirrorY = true;
-            theRenderingSystem.cameras[2].worldSize.Y = PlacementHelper::ScreenHeight * 0.5;
-            theRenderingSystem.cameras[2].worldPosition.Y = -PlacementHelper::ScreenHeight * 0.25;
-            theRenderingSystem.cameras[2].screenSize.Y = 0.5;
-            theRenderingSystem.cameras[2].screenPosition.Y  = -0.25;
-            TRANSFORM(scoreText[0])->position = Vector2(-PlacementHelper::ScreenWidth * 0.5, -0.1 * PlacementHelper::ScreenHeight);
-            TRANSFORM(scoreText[1])->position = Vector2(PlacementHelper::ScreenWidth * 0.5, -0.1 * PlacementHelper::ScreenHeight);
-            TEXT_RENDERING(scoreText[0])->hide = false;
-            TEXT_RENDERING(scoreText[0])->positioning = TextRenderingComponent::LEFT;
-            TEXT_RENDERING(scoreText[1])->hide = false;
-            TEXT_RENDERING(scoreText[1])->positioning = TextRenderingComponent::RIGHT;
-            break;
-#endif
         case CameraModeMenu:
             theRenderingSystem.cameras[0].enable = true;
             theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;

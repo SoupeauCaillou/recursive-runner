@@ -57,6 +57,7 @@ void LogoStateManager::setup() {
     Entity logo = datas->logo = theEntityManager.CreateEntity();
     Entity logobg = datas->logobg = theEntityManager.CreateEntity();
     Entity logofade = datas->logofade = theEntityManager.CreateEntity();
+    datas->animLogo = theEntityManager.CreateEntity();
 
     ADD_COMPONENT(logo, Rendering);
     ADD_COMPONENT(logo, Transformation);
@@ -78,13 +79,7 @@ void LogoStateManager::setup() {
     TRANSFORM(logofade)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
     RENDERING(logofade)->color = Color(0,0,0);
     TRANSFORM(logofade)->z = 1;
-}
 
-void LogoStateManager::willEnter() {
-}
-#define FADE 0.5
-void LogoStateManager::enter() {
-    datas->animLogo = theEntityManager.CreateEntity();
     ADD_COMPONENT(datas->animLogo, Transformation);
     TRANSFORM(datas->animLogo)->size = TRANSFORM(datas->logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331")
         * Vector2(1.0 / theRenderingSystem.getTextureSize("soupe_logo").X, 1.0 / theRenderingSystem.getTextureSize("soupe_logo").Y);
@@ -94,15 +89,33 @@ void LogoStateManager::enter() {
     ADD_COMPONENT(datas->animLogo, Rendering);
     RENDERING(datas->animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo2_365_331");
     RENDERING(datas->animLogo)->hide = true;
-    datas->duration = 0;
     ADD_COMPONENT(datas->animLogo, Sound);
+}
 
+
+///----------------------------------------------------------------------------//
+///--------------------- ENTER SECTION ----------------------------------------//
+///----------------------------------------------------------------------------//
+void LogoStateManager::willEnter() {
+}
+
+bool LogoStateManager::transitionCanEnter() {
+    return true;
+}
+
+#define FADE 0.5
+void LogoStateManager::enter() {
+    datas->duration = 0;
     RENDERING(datas->logo)->hide = RENDERING(datas->logobg)->hide = RENDERING(datas->logofade)->hide = false;
     // preload sound
     theSoundSystem.loadSoundFile("son_monte.ogg");
     datas->step = LogoStep0;
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- UPDATE SECTION ---------------------------------------//
+///----------------------------------------------------------------------------//
 State::Enum LogoStateManager::update(float dt) {
     float& duration = (datas->duration += dt);
 
@@ -155,9 +168,6 @@ State::Enum LogoStateManager::update(float dt) {
             RENDERING(datas->logofade)->color.a = (duration / FADE);
             if (duration > FADE) {
                 duration = 0;
-                theEntityManager.DeleteEntity(datas->logo);
-                theEntityManager.DeleteEntity(datas->logobg);
-                theEntityManager.DeleteEntity(datas->animLogo);
                 return State::Menu;
             }
     }
@@ -168,19 +178,26 @@ void LogoStateManager::backgroundUpdate(float) {
 
 }
 
+
+///----------------------------------------------------------------------------//
+///--------------------- EXIT SECTION -----------------------------------------//
+///----------------------------------------------------------------------------//
 void LogoStateManager::willExit() {
-    theRenderingSystem.unloadAtlas("logo");
+    theEntityManager.DeleteEntity(datas->logo);
+    theEntityManager.DeleteEntity(datas->logobg);
+    theEntityManager.DeleteEntity(datas->animLogo);
     theEntityManager.DeleteEntity(datas->logofade);
-}
-
-void LogoStateManager::exit() {
-
+    theRenderingSystem.unloadAtlas("logo");
 }
 
 bool LogoStateManager::transitionCanExit() {
     return true;
 }
 
-bool LogoStateManager::transitionCanEnter() {
-    return true;
+void LogoStateManager::exit() {
+
 }
+
+
+
+
