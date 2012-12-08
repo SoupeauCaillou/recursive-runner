@@ -147,7 +147,7 @@ void MenuStateManager::setup() {
     BUTTON(giftizBtn)->overSize = 1.2;
 }
 
-void MenuStateManager::earlyEnter() {
+void MenuStateManager::willEnter() {
     // Restore camera position
     for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
         theRenderingSystem.cameras[i].worldPosition = game->leftMostCameraPos;
@@ -227,7 +227,7 @@ State::Enum MenuStateManager::update(float) {
     return State::Menu;
 }
 
-void MenuStateManager::exit() {
+void MenuStateManager::willExit() {
     RecursiveRunnerGame::startGame(true);
 
     MUSIC(datas->title)->control = MusicControl::Stop;
@@ -235,7 +235,7 @@ void MenuStateManager::exit() {
     BUTTON(datas->giftizBtn)->enabled = false;
 }
 
-void MenuStateManager::lateExit() {
+void MenuStateManager::exit() {
 }
 
 bool MenuStateManager::transitionCanExit() {

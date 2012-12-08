@@ -94,7 +94,7 @@ void PauseStateManager::setup() {
     }
 }
 
-void PauseStateManager::earlyEnter() {
+void PauseStateManager::willEnter() {
 }
 
 void PauseStateManager::enter() {
@@ -137,7 +137,7 @@ State::Enum PauseStateManager::update(float) {
         RecursiveRunnerGame::startGame(false);
         return State::Game;
     } else if (BUTTON(datas->stopButton)->clicked) {
-        return State::Game2Menu;
+        return State::Menu;
     }
     return State::Pause;
 }
@@ -146,7 +146,7 @@ void PauseStateManager::backgroundUpdate(float) {
 
 }
 
-void PauseStateManager::exit() {
+void PauseStateManager::willExit() {
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     TEXT_RENDERING(datas->pauseText)->hide = true;
     RENDERING(datas->continueButton)->hide = true;
@@ -171,7 +171,7 @@ void PauseStateManager::exit() {
     datas->pausedMusic.clear();
 }
 
-void PauseStateManager::lateExit() {
+void PauseStateManager::exit() {
 
 }
 

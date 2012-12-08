@@ -52,13 +52,6 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
-static void createTransition(RecursiveRunnerGame* game,
-std::map<State::Enum, StateManager*> & state2manager,
-State::Enum Transition, State::Enum Past, State::Enum Future) {
-   state2manager.insert(std::make_pair(Transition, new
-   TransitionStateManager(Transition, state2manager[Past], state2manager[Future], game)));
-}
-
 RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage,
 NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communication) :
    Game() {
@@ -84,14 +77,6 @@ NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communicati
    state2manager.insert(std::make_pair(State::Pause, new PauseStateManager(this)));
    state2manager.insert(std::make_pair(State::Rate, new RateStateManager(this)));
    state2manager.insert(std::make_pair(State::Game, new GameStateManager(this)));
-
-   createTransition(this, state2manager, State::Logo2Menu, State::Logo, State::Menu);
-   createTransition(this, state2manager, State::Game2Pause, State::Game, State::Pause);
-   createTransition(this, state2manager, State::Game2Menu, State::Game, State::Menu);
-   createTransition(this, state2manager, State::Game2Rate, State::Game, State::Rate);
-   createTransition(this, state2manager, State::Pause2Game, State::Pause, State::Game);
-   createTransition(this, state2manager, State::Ad2Game, State::Ad, State::Game);
-   createTransition(this, state2manager, State::Rate2Menu, State::Rate, State::Menu);
 }
 
 
@@ -485,8 +470,10 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 void RecursiveRunnerGame::changeState(State::Enum newState) {
     if (newState == currentState)
         return;
+    state2manager[currentState]->willExit();
     state2manager[currentState]->exit();
     currentState = newState;
+    state2manager[currentState]->willEnter();
     state2manager[currentState]->enter();
 }
 
@@ -528,13 +515,20 @@ void RecursiveRunnerGame::tick(float dt) {
         overrideNextState = State::Invalid;
     }
 
-    State::Enum newState = state2manager[currentState]->update(dt);
-    for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
-        it->second->backgroundUpdate(dt);
+    if (State::Transition != currentState) {
+        State::Enum newState = state2manager[currentState]->update(dt);
+
+        if (newState != currentState) {
+            state2manager[currentState]->willExit();
+            transitionManager.enter(state2manager[currentState], state2manager[newState]);
+            currentState = State::Transition;
+        }
+    } else if (transitionManager.transitionFinished(&currentState)) {
+        state2manager[currentState]->enter();
     }
 
-    if (newState != currentState) {
-        changeState(newState);
+    for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
+        it->second->backgroundUpdate(dt);
     }
 
     // limit cam pos

@@ -44,7 +44,7 @@ void AdStateManager::setup() {
    datas->lastAdTime = -30.;
 }
 
-void AdStateManager::earlyEnter() {
+void AdStateManager::willEnter() {
 }
 
 void AdStateManager::enter() {
@@ -77,19 +77,19 @@ void AdStateManager::backgroundUpdate(float) {
 
 State::Enum AdStateManager::update(float) {
    if (datas->gameb4Ad>0 || game->adAPI->done()) {
-      return State::Ad2Game;
+      return State::Game;
    }
    return State::Ad;
 }
 
-void AdStateManager::exit() {
+void AdStateManager::willExit() {
    if (datas->gameb4Ad==0)
       datas->gameb4Ad=3;
    datas->gameb4Ad--;
    game->storageAPI->setGameCountBeforeNextAd(datas->gameb4Ad);
 }
 
-void AdStateManager::lateExit() {
+void AdStateManager::exit() {
    game->setupCamera(CameraModeSingle);
 }
 

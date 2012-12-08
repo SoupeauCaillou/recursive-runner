@@ -68,7 +68,7 @@ void RateStateManager::setup() {
 
 }
 
-void RateStateManager::earlyEnter() {
+void RateStateManager::willEnter() {
 }
 
 void RateStateManager::enter() {
@@ -87,19 +87,19 @@ void RateStateManager::backgroundUpdate(float) {
 State::Enum RateStateManager::update(float) {
    if (BUTTON(datas->btnNow)->clicked) {
       game->communicationAPI->rateItNow();
-      return State::Rate2Menu;
+      return State::Menu;
    } else if (BUTTON(datas->btnNever)->clicked) {
       game->communicationAPI->rateItNever();
-      return State::Rate2Menu;
+      return State::Menu;
    } else if (BUTTON(datas->btnLater)->clicked) {
       game->communicationAPI->rateItLater();
-      return State::Rate2Menu;
+      return State::Menu;
    }
 
    return State::Rate;
 }
 
-void RateStateManager::exit() {
+void RateStateManager::willExit() {
    TEXT_RENDERING(datas->rateText)->hide = true;
    TEXT_RENDERING(datas->btnNow)->hide = true;
    BUTTON(datas->btnNow)->enabled = false;
@@ -109,7 +109,7 @@ void RateStateManager::exit() {
    BUTTON(datas->btnNever)->enabled = false;
 }
 
-void RateStateManager::lateExit() {
+void RateStateManager::exit() {
 }
 
 bool RateStateManager::transitionCanExit() {

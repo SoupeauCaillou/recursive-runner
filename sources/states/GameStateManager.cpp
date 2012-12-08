@@ -80,7 +80,7 @@ void GameStateManager::setup() {
     BUTTON(pauseButton)->overSize = 1.2;
 }
 
-void GameStateManager::earlyEnter() {
+void GameStateManager::willEnter() {
     datas->minipause = TimeUtil::getTime();
 }
 
@@ -130,10 +130,10 @@ State::Enum GameStateManager::update(float dt) {
 
                 //if it's time to rate, go to rate.
                   if (game->communicationAPI->mustShowRateDialog()) {
-                     return State::Game2Rate;
+                     return State::Rate;
                 //else go to menu
                   } else {
-                   return State::Game2Menu;
+                   return State::Menu;
                 }
             } else {
                 LOGI("Create runner");
@@ -302,11 +302,11 @@ void GameStateManager::backgroundUpdate(float) {
 
 }
 
-void GameStateManager::exit() {
+void GameStateManager::willExit() {
     BUTTON(datas->pauseButton)->enabled = false;
 }
 
-void GameStateManager::lateExit() {
+void GameStateManager::exit() {
     RENDERING(datas->pauseButton)->hide = true;
 }
 

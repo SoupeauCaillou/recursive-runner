@@ -23,19 +23,13 @@ class RecursiveRunnerGame;
 namespace State {
    enum Enum {
       Invalid,
+      Transition,
       Logo,
-      Logo2Menu, // Transition
       Menu,
       Game,
-      Game2Pause, // Transition
-      Game2Menu, // Transition
-      Game2Rate, // Transition
       Pause,
-      Pause2Game, // Transition
       Ad,
-      Ad2Game, // Transition
       Rate,
-      Rate2Menu // Transition
    };
 }
 
@@ -45,12 +39,12 @@ class StateManager {
         virtual ~StateManager() {}
 
         virtual void setup() = 0;
-        virtual void earlyEnter() = 0;
+        virtual void willEnter() = 0;
         virtual void enter() = 0;
         virtual State::Enum update(float dt) = 0;
         virtual void backgroundUpdate(float dt) = 0;
+        virtual void willExit() = 0;
         virtual void exit() = 0;
-        virtual void lateExit() = 0;
         virtual bool transitionCanExit() = 0;
         virtual bool transitionCanEnter() = 0;
 
@@ -65,12 +59,12 @@ class StateManager {
             state##StateManager(RecursiveRunnerGame* _game);\
             ~state##StateManager();\
             void setup();\
-            void earlyEnter();\
+            void willEnter();\
             void enter();\
             State::Enum update(float dt);\
             void backgroundUpdate(float dt);\
+            void willExit();\
             void exit();\
-            void lateExit();\
             bool transitionCanExit();\
             bool transitionCanEnter();\
         private:\
@@ -78,22 +72,13 @@ class StateManager {
             state##StateManagerDatas* datas;\
     };\
 
-class TransitionStateManager : public StateManager {
+class TransitionStateManager {
     public:
-        TransitionStateManager(State::Enum transitionState, StateManager* from, StateManager* to, RecursiveRunnerGame* _game);
-        ~TransitionStateManager();
-        void setup();
-        void earlyEnter() {}
-        void enter();
-        State::Enum update(float dt);
-        void backgroundUpdate(float) {}
+        void enter(StateManager* _from, StateManager* _to);
+        bool transitionFinished(State::Enum* nextState);
         void exit();
-        void lateExit() {}
-        bool transitionCanExit() { return true; }
-        bool transitionCanEnter() { return true; }
     private:
-        class TransitionStateManagerDatas;
-        TransitionStateManagerDatas* datas;
+        StateManager* from, *to;
 };
 
 DEF_STATE_MANAGER(Logo)

@@ -18,39 +18,22 @@
 */
 #include "StateManager.h"
 
-struct TransitionStateManager::TransitionStateManagerDatas {
-    State::Enum state;
-    StateManager* from, *to;
-};
-
-TransitionStateManager::TransitionStateManager(State::Enum state, StateManager* from, StateManager* to, RecursiveRunnerGame* game) : StateManager(state, game) {
-    datas = new TransitionStateManagerDatas;
-    datas->state = state;
-    datas->from = from;
-    datas->to = to;
+void TransitionStateManager::enter(StateManager* _from, StateManager* _to) {
+    from = _from;
+    to = _to;
+    to->willEnter();
 }
 
-TransitionStateManager::~TransitionStateManager() {
-    delete datas;
-}
-
-void TransitionStateManager::setup() {
-
-}
-
-void TransitionStateManager::enter() {
-    datas->to->earlyEnter();
-}
-
-State::Enum TransitionStateManager::update(float) {
-    if (datas->from->transitionCanExit() &&
-        datas->to->transitionCanEnter()) {
-        return datas->to->state;
+bool TransitionStateManager::transitionFinished(State::Enum* nextState) {
+    if (from->transitionCanExit() &&
+        to->transitionCanEnter()) {
+        *nextState = to->state;
+        return true;
     }
-    return state;
+    return false;
 }
 
 void TransitionStateManager::exit() {
-    datas->from->lateExit();
+    from->exit();
 }
 

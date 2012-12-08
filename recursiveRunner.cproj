@@ -45,6 +45,8 @@
     <Compile Include="sources\states\LogoStateManager.cpp" />
     <Compile Include="sources\states\TransitionStateManager.cpp" />
     <Compile Include="sources\systems\SessionSystem.cpp" />
+    <Compile Include="sources\states\AdStateManager.cpp" />
+    <Compile Include="sources\states\RateStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />

@@ -77,6 +77,7 @@ class RecursiveRunnerGame : public Game {
    private:
       State::Enum currentState, overrideNextState;
       std::map<State::Enum, StateManager*> state2manager;
+      TransitionStateManager transitionManager;
 
       AssetAPI* assetAPI;
       NameInputAPI* nameInputAPI;
