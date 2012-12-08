@@ -262,6 +262,20 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 		Decor(3464, 758, 0.35, TransformationSystem::S, "bench_cat", false, trees),
 		Decor(3612, 762, 0.6, TransformationSystem::S, "bench", false, trees),
     };
+    Vector2 v[5][4] = {
+        {Vector2(71, 123), Vector2(73, 114), Vector2(125, 126), Vector2(92, 216)},
+        {Vector2(116, 153), Vector2(78, 155), Vector2(100, 168), Vector2(44, 46)},
+        {Vector2(69, 178), Vector2(155, 125), Vector2(163, 116), Vector2(206, 93)},
+        {Vector2(152, 160), Vector2(85, 138), Vector2(84, 111), Vector2(168, 171)},
+        {Vector2(115, 67), Vector2(146, 69), Vector2(132, 107), Vector2(124, 130)}
+        };
+    Vector2 o[5][4] = {
+        {Vector2(0, 0), Vector2(313, 0), Vector2(0, 498), Vector2(293, 624-216)},
+        {Vector2(0, 250), Vector2(0, 0), Vector2(137, 244), Vector2(193, 0)},
+        {Vector2(0, 0), Vector2(308, 0), Vector2(300, 510), Vector2(0, 499)},
+        {Vector2(0, 460), Vector2(0, 0), Vector2(438, 0), Vector2(354, 449)},
+        {Vector2(0, 0), Vector2(234, 0), Vector2(248, 259), Vector2(0, 236)}
+        };
     for (int i=0; i<count; i++) {
     	const Decor& bdef = def[i];
 
@@ -281,6 +295,31 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 
         if (i < 3) {
             fumee(b);
+        }
+        if (bdef.texture.find("arbre") != std::string::npos) {
+            int idx = atoi(bdef.texture.substr(5, 1).c_str()) - 1;
+            const Vector2& size = TRANSFORM(b)->size;
+            for (int j=0; j<4; j++) {
+                Entity bb = theEntityManager.CreateEntity();
+                ADD_COMPONENT(bb, Transformation);
+                TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(v[idx][j]);
+                Vector2 ratio(o[idx][j] / theRenderingSystem.getTextureSize(bdef.texture));
+                ratio.Y = 1 - ratio.Y;
+                TRANSFORM(bb)->position = 
+                    size * (Vector2(-0.5) + ratio) + TRANSFORM(bb)->size * Vector2(0.5, -0.5);
+                if (bdef.mirrorUV)
+                    TRANSFORM(bb)->position.X = -TRANSFORM(bb)->position.X;
+                TRANSFORM(bb)->z = 0;
+                TRANSFORM(bb)->parent = b;
+                ADD_COMPONENT(bb, Rendering);
+                *RENDERING(bb) = *RENDERING(b);
+                #if 1
+                RENDERING(bb)->zPrePass = true;
+                #else
+                RENDERING(bb)->texture = InvalidTextureRef;
+                RENDERING(bb)->color = Color(1,1,0,0.6);
+                #endif
+            }
         }
 	}
 
