@@ -138,7 +138,6 @@ State::Enum PauseStateManager::update(float) {
         game->setupCamera(CameraModeSingle);
         return State::RestartGame;
     } else if (BUTTON(datas->stopButton)->clicked) {
-        datas->pausedMusic.clear();
         return State::Menu;
     }
     return State::Pause;
@@ -160,7 +159,7 @@ void PauseStateManager::willExit(State::Enum) {
     TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
 }
 
-void PauseStateManager::exit(State::Enum) {
+void PauseStateManager::exit(State::Enum to) {
     std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
     if (!sessions.empty()) {
         const SessionComponent* session = SESSION(sessions.front());
@@ -170,9 +169,13 @@ void PauseStateManager::exit(State::Enum) {
             ANIMATION(session->runners[i])->playbackSpeed = 1.1;
         }
     }
-    if (!theMusicSystem.isMuted()) {
+    if (!theMusicSystem.isMuted() && to == State::Game) {
         for (unsigned i=0; i<datas->pausedMusic.size(); i++) {
             MUSIC(datas->pausedMusic[i])->control = MusicControl::Play;
+        }
+    } else {
+        for (unsigned i=0; i<datas->pausedMusic.size(); i++) {
+            MUSIC(datas->pausedMusic[i])->control = MusicControl::Stop;
         }
     }
     datas->pausedMusic.clear();
