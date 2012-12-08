@@ -93,11 +93,11 @@ void PauseStateManager::setup() {
     }
 }
 
-void PauseStateManager::willEnter() {
+void PauseStateManager::willEnter(State::Enum) {
     TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = true;
 }
 
-void PauseStateManager::enter() {
+void PauseStateManager::enter(State::Enum) {
     // TEXT_RENDERING(game->scoreText)->text = "Paused";
 
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
@@ -135,10 +135,10 @@ State::Enum PauseStateManager::update(float) {
     } else if (BUTTON(datas->restartButton)->clicked) {
         // stop music :-[
         RecursiveRunnerGame::endGame();
-        RecursiveRunnerGame::startGame(true);
         game->setupCamera(CameraModeSingle);
-        return State::Game;
+        return State::RestartGame;
     } else if (BUTTON(datas->stopButton)->clicked) {
+        datas->pausedMusic.clear();
         return State::Menu;
     }
     return State::Pause;
@@ -148,7 +148,7 @@ void PauseStateManager::backgroundUpdate(float) {
 
 }
 
-void PauseStateManager::willExit() {
+void PauseStateManager::willExit(State::Enum) {
     TEXT_RENDERING(datas->pauseText)->hide = true;
     RENDERING(datas->continueButton)->hide = true;
     BUTTON(datas->continueButton)->enabled = false;
@@ -160,12 +160,15 @@ void PauseStateManager::willExit() {
     TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
 }
 
-void PauseStateManager::exit() {
-    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-    // restore physics for runners
-    for (unsigned i=0; i<session->runners.size(); i++) {
-        // ^^ this will be done in RunnerSystem PHYSICS(session->runners[i])->mass = 1;
-        ANIMATION(session->runners[i])->playbackSpeed = 1.1;
+void PauseStateManager::exit(State::Enum) {
+    std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
+    if (!sessions.empty()) {
+        const SessionComponent* session = SESSION(sessions.front());
+        // restore physics for runners
+        for (unsigned i=0; i<session->runners.size(); i++) {
+            // ^^ this will be done in RunnerSystem PHYSICS(session->runners[i])->mass = 1;
+            ANIMATION(session->runners[i])->playbackSpeed = 1.1;
+        }
     }
     if (!theMusicSystem.isMuted()) {
         for (unsigned i=0; i<datas->pausedMusic.size(); i++) {
@@ -175,10 +178,10 @@ void PauseStateManager::exit() {
     datas->pausedMusic.clear();
 }
 
-bool PauseStateManager::transitionCanExit() {
+bool PauseStateManager::transitionCanExit(State::Enum) {
     return true;
 }
 
-bool PauseStateManager::transitionCanEnter() {
+bool PauseStateManager::transitionCanEnter(State::Enum) {
     return true;
 }

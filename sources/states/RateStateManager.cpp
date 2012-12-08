@@ -68,10 +68,10 @@ void RateStateManager::setup() {
 
 }
 
-void RateStateManager::willEnter() {
+void RateStateManager::willEnter(State::Enum) {
 }
 
-void RateStateManager::enter() {
+void RateStateManager::enter(State::Enum) {
    TEXT_RENDERING(datas->rateText)->hide = false;
    TEXT_RENDERING(datas->btnNow)->hide = false;
    BUTTON(datas->btnNow)->enabled = true;
@@ -99,7 +99,7 @@ State::Enum RateStateManager::update(float) {
    return State::Rate;
 }
 
-void RateStateManager::willExit() {
+void RateStateManager::willExit(State::Enum) {
    TEXT_RENDERING(datas->rateText)->hide = true;
    TEXT_RENDERING(datas->btnNow)->hide = true;
    BUTTON(datas->btnNow)->enabled = false;
@@ -109,13 +109,13 @@ void RateStateManager::willExit() {
    BUTTON(datas->btnNever)->enabled = false;
 }
 
-void RateStateManager::exit() {
+void RateStateManager::exit(State::Enum) {
 }
 
-bool RateStateManager::transitionCanExit() {
+bool RateStateManager::transitionCanExit(State::Enum) {
    return true;
 }
 
-bool RateStateManager::transitionCanEnter() {
+bool RateStateManager::transitionCanEnter(State::Enum) {
    return true;
 }

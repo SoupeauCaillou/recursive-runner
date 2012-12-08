@@ -47,6 +47,7 @@
     <Compile Include="sources\systems\SessionSystem.cpp" />
     <Compile Include="sources\states\AdStateManager.cpp" />
     <Compile Include="sources\states\RateStateManager.cpp" />
+    <Compile Include="sources\states\RestartGameStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />

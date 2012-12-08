@@ -21,12 +21,12 @@
 void TransitionStateManager::enter(StateManager* _from, StateManager* _to) {
     from = _from;
     to = _to;
-    to->willEnter();
+    to->willEnter(_from->state);
 }
 
 bool TransitionStateManager::transitionFinished(State::Enum* nextState) {
-    if (from->transitionCanExit() &&
-        to->transitionCanEnter()) {
+    if (from->transitionCanExit(to->state) &&
+        to->transitionCanEnter(from->state)) {
         *nextState = to->state;
         return true;
     }
@@ -34,6 +34,6 @@ bool TransitionStateManager::transitionFinished(State::Enum* nextState) {
 }
 
 void TransitionStateManager::exit() {
-    from->exit();
+    from->exit(to->state);
 }
 

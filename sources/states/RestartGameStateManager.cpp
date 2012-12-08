@@ -27,88 +27,60 @@
 
 #include "../RecursiveRunnerGame.h"
 
-struct AdStateManager::AdStateManagerDatas {
-   int gameb4Ad;
-   float lastAdTime;
+struct RestartGameStateManager::RestartGameStateManagerDatas {
+
 };
 
-AdStateManager::AdStateManager(RecursiveRunnerGame* game) : StateManager(State::Ad, game) {
-   datas = new AdStateManagerDatas;
+RestartGameStateManager::RestartGameStateManager(RecursiveRunnerGame* game) : StateManager(State::Ad, game) {
+   datas = new RestartGameStateManagerDatas;
 }
 
-AdStateManager::~AdStateManager() {
+RestartGameStateManager::~RestartGameStateManager() {
    delete datas;
 }
 
-void AdStateManager::setup() {
-   datas->lastAdTime = -30.;
+void RestartGameStateManager::setup() {
+   
 }
 
 
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void AdStateManager::willEnter(State::Enum ) {
+void RestartGameStateManager::willEnter(State::Enum ) {
 }
 
-bool AdStateManager::transitionCanEnter(State::Enum ) {
+bool RestartGameStateManager::transitionCanEnter(State::Enum ) {
    return true;
 }
 
-void AdStateManager::enter(State::Enum) {
-   datas->gameb4Ad = game->storageAPI->getGameCountBeforeNextAd();
-
-   LOGI("%s : %d", __PRETTY_FUNCTION__, datas->gameb4Ad);
-   if (datas->gameb4Ad > 3) {
-      datas->gameb4Ad = 3;
-   }
-
-   float timeSinceLAstAd = TimeUtil::getTime() - datas->lastAdTime;
-
-   // postpone ad if previous ad was shown less than 30sec ago
-   if (datas->gameb4Ad <= 0 && timeSinceLAstAd < 30) {
-      datas->gameb4Ad = 1;
-   }
-
-    if (datas->gameb4Ad==0 || timeSinceLAstAd > 150) {
-        if (game->adAPI->showAd()) {
-            datas->gameb4Ad = 0;
-            datas->lastAdTime = TimeUtil::getTime();
-        } else {
-            datas->gameb4Ad = 1;
-        }
-    }
+void RestartGameStateManager::enter(State::Enum) {
+   
 }
 
 
 ///----------------------------------------------------------------------------//
 ///--------------------- UPDATE SECTION ---------------------------------------//
 ///----------------------------------------------------------------------------//
-void AdStateManager::backgroundUpdate(float) {
+void RestartGameStateManager::backgroundUpdate(float) {
 }
 
-State::Enum AdStateManager::update(float) {
-   if (datas->gameb4Ad > 0 || game->adAPI->done()) {
-      return State::Game;
-   }
-   return State::Ad;
+State::Enum RestartGameStateManager::update(float) {
+   return State::Game;
 }
 
 
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void AdStateManager::willExit(State::Enum) {
-   if (datas->gameb4Ad==0)
-      datas->gameb4Ad=3;
-   datas->gameb4Ad--;
-   game->storageAPI->setGameCountBeforeNextAd(datas->gameb4Ad);
+void RestartGameStateManager::willExit(State::Enum) {
+
 }
 
-bool AdStateManager::transitionCanExit(State::Enum) {
+bool RestartGameStateManager::transitionCanExit(State::Enum) {
    return true;
 }
 
-void AdStateManager::exit(State::Enum) {
-   game->setupCamera(CameraModeSingle);
+void RestartGameStateManager::exit(State::Enum) {
+
 }

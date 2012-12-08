@@ -77,6 +77,7 @@ NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communicati
    state2manager.insert(std::make_pair(State::Pause, new PauseStateManager(this)));
    state2manager.insert(std::make_pair(State::Rate, new RateStateManager(this)));
    state2manager.insert(std::make_pair(State::Game, new GameStateManager(this)));
+   state2manager.insert(std::make_pair(State::RestartGame, new RestartGameStateManager(this)));
 }
 
 
@@ -465,17 +466,18 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     } else {
         currentState = State::Logo;
     }
-    state2manager[currentState]->enter();
+    state2manager[currentState]->willEnter(State::Invalid);
+    state2manager[currentState]->enter(State::Invalid);
 }
 
 void RecursiveRunnerGame::changeState(State::Enum newState) {
     if (newState == currentState)
         return;
-    state2manager[currentState]->willExit();
-    state2manager[currentState]->exit();
+    state2manager[currentState]->willExit(newState);
+    state2manager[currentState]->exit(newState);
+    state2manager[newState]->willEnter(currentState);
+    state2manager[newState]->enter(currentState);
     currentState = newState;
-    state2manager[currentState]->willEnter();
-    state2manager[currentState]->enter();
 }
 
 bool RecursiveRunnerGame::willConsumeBackEvent() {
@@ -520,13 +522,13 @@ void RecursiveRunnerGame::tick(float dt) {
         State::Enum newState = state2manager[currentState]->update(dt);
 
         if (newState != currentState) {
-            state2manager[currentState]->willExit();
+            state2manager[currentState]->willExit(newState);
             transitionManager.enter(state2manager[currentState], state2manager[newState]);
             currentState = State::Transition;
         }
     } else if (transitionManager.transitionFinished(&currentState)) {
         transitionManager.exit();
-        state2manager[currentState]->enter();
+        state2manager[currentState]->enter(transitionManager.from->state);
     }
 
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {

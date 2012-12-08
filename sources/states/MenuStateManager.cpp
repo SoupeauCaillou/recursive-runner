@@ -150,7 +150,7 @@ void MenuStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void MenuStateManager::willEnter() {
+void MenuStateManager::willEnter(State::Enum) {
     RecursiveRunnerGame::endGame();
 
     // activate animation
@@ -177,7 +177,7 @@ void MenuStateManager::willEnter() {
     RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = 0;
 }
 
-bool MenuStateManager::transitionCanEnter() {
+bool MenuStateManager::transitionCanEnter(State::Enum) {
     // check if adsr is complete
     ADSRComponent* adsr = ADSR(datas->titleGroup);
     float progress = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
@@ -186,7 +186,7 @@ bool MenuStateManager::transitionCanEnter() {
 }
 
 
-void MenuStateManager::enter() {
+void MenuStateManager::enter(State::Enum) {
     // enable UI
     BUTTON(datas->swarmBtn)->enabled = true;
     BUTTON(datas->giftizBtn)->enabled = true;
@@ -250,7 +250,7 @@ State::Enum MenuStateManager::update(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void MenuStateManager::willExit() {
+void MenuStateManager::willExit(State::Enum) {
     // stop menu music
     MUSIC(datas->title)->control = MusicControl::Stop;
 
@@ -262,7 +262,7 @@ void MenuStateManager::willExit() {
     ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = false;
 }
 
-bool MenuStateManager::transitionCanExit() {
+bool MenuStateManager::transitionCanExit(State::Enum) {
     const ADSRComponent* adsr = ADSR(datas->titleGroup);
     float progress = (adsr->value - adsr->attackValue) /
             (adsr->idleValue - adsr->attackValue);
@@ -272,6 +272,6 @@ bool MenuStateManager::transitionCanExit() {
     return (adsr->value >= adsr->idleValue);
 }
 
-void MenuStateManager::exit() {
+void MenuStateManager::exit(State::Enum) {
     RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = true;
 }

@@ -95,12 +95,14 @@ void GameStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void GameStateManager::willEnter() {
+void GameStateManager::willEnter(State::Enum) {
     ADSR(datas->transition)->active = true;
 
     if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
         RecursiveRunnerGame::startGame(true);
         MUSIC(datas->transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
+        ADSR(datas->transition)->value = ADSR(datas->transition)->idleValue;
+        ADSR(datas->transition)->activationTime = 0;
     }
     if (theMusicSystem.isMuted()) {
         MUSIC(datas->transition)->control = MusicControl::Stop;
@@ -111,7 +113,7 @@ void GameStateManager::willEnter() {
     RENDERING(datas->pauseButton)->color.a = 0;
 }
 
-bool GameStateManager::transitionCanEnter() {
+bool GameStateManager::transitionCanEnter(State::Enum) {
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
 
     float progress = ADSR(datas->transition)->value;
@@ -123,11 +125,11 @@ bool GameStateManager::transitionCanEnter() {
     return progress >= ADSR(datas->transition)->sustainValue;
 }
 
-void GameStateManager::enter() {
+void GameStateManager::enter(State::Enum from) {
     datas->session = theSessionSystem.RetrieveAllEntityWithComponent().front();
     SessionComponent* sc = SESSION(datas->session);
     // only do this on first enter (ie: not when unpausing)
-    if (sc->runners.empty()) {
+    if (from != State::Pause) {
         for (unsigned i=0; i<sc->numPlayers; i++) {
             assert (sc->numPlayers == 1);
             Entity r = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i);
@@ -345,12 +347,17 @@ void GameStateManager::backgroundUpdate(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void GameStateManager::willExit() {
+void GameStateManager::willExit(State::Enum to) {
     BUTTON(datas->pauseButton)->enabled = false;
-    ADSR(datas->transition)->active = false;
+    if (to != State::Pause) {
+        ADSR(datas->transition)->active = false;
+    }
 }
 
-bool GameStateManager::transitionCanExit() {
+bool GameStateManager::transitionCanExit(State::Enum to) {
+    if (to == State::Pause) {
+        return true;
+    }
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
 
     float progress = ADSR(datas->transition)->value;
@@ -360,7 +367,7 @@ bool GameStateManager::transitionCanExit() {
     return progress <= ADSR(datas->transition)->idleValue;
 }
 
-void GameStateManager::exit() {
+void GameStateManager::exit(State::Enum to) {
     RENDERING(datas->pauseButton)->hide = true;
 }
 

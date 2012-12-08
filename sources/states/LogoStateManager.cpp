@@ -96,15 +96,15 @@ void LogoStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void LogoStateManager::willEnter() {
+void LogoStateManager::willEnter(State::Enum) {
 }
 
-bool LogoStateManager::transitionCanEnter() {
+bool LogoStateManager::transitionCanEnter(State::Enum) {
     return true;
 }
 
 #define FADE 0.5
-void LogoStateManager::enter() {
+void LogoStateManager::enter(State::Enum) {
     datas->duration = 0;
     RENDERING(datas->logo)->hide = RENDERING(datas->logobg)->hide = RENDERING(datas->logofade)->hide = false;
     // preload sound
@@ -182,7 +182,7 @@ void LogoStateManager::backgroundUpdate(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void LogoStateManager::willExit() {
+void LogoStateManager::willExit(State::Enum) {
     theEntityManager.DeleteEntity(datas->logo);
     theEntityManager.DeleteEntity(datas->logobg);
     theEntityManager.DeleteEntity(datas->animLogo);
@@ -190,11 +190,11 @@ void LogoStateManager::willExit() {
     theRenderingSystem.unloadAtlas("logo");
 }
 
-bool LogoStateManager::transitionCanExit() {
+bool LogoStateManager::transitionCanExit(State::Enum) {
     return true;
 }
 
-void LogoStateManager::exit() {
+void LogoStateManager::exit(State::Enum) {
 
 }
 
