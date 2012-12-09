@@ -73,7 +73,7 @@ void GameStateManager::setup() {
     ADD_COMPONENT(pauseButton, Rendering);
     RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
     RENDERING(pauseButton)->hide = true;
-    RENDERING(pauseButton)->cameraBitMask = 0x2;
+    RENDERING(pauseButton)->cameraBitMask = 0x3;
     ADD_COMPONENT(pauseButton, Button);
     BUTTON(pauseButton)->enabled = false;
     BUTTON(pauseButton)->overSize = 1.2;
@@ -119,7 +119,6 @@ bool GameStateManager::transitionCanEnter(State::Enum) {
     float progress = ADSR(datas->transition)->value;
     updateSessionTransition(session, progress);
     RENDERING(datas->pauseButton)->color.a = progress;
-
     PLAYER(session->players[0])->ready = true;
 
     return progress >= ADSR(datas->transition)->sustainValue;
