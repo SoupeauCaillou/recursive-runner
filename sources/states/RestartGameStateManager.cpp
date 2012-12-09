@@ -31,7 +31,7 @@ struct RestartGameStateManager::RestartGameStateManagerDatas {
 
 };
 
-RestartGameStateManager::RestartGameStateManager(RecursiveRunnerGame* game) : StateManager(State::Ad, game) {
+RestartGameStateManager::RestartGameStateManager(RecursiveRunnerGame* game) : StateManager(State::RestartGame, game) {
    datas = new RestartGameStateManagerDatas;
 }
 
