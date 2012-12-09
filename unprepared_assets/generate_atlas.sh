@@ -30,7 +30,11 @@ convert /tmp/$1.png -alpha extract -depth 8 ../assets/$1_alpha.png
 # mais pourquoi j'ai fait ca ?convert ../assets/$1_alpha.png -background white -flatten +matte -depth 8 ../assets/$1_alpha.png
 convert /tmp/$1.png -background white -alpha off -type TrueColor PNG24:../assets/$1.png
 
-PVRTexToolCL -f OGLPVRTC4 -yflip0 -i ../assets/$1.png -p -pvrlegacy -m -o ../assets/$1.pvr
+PVRTexToolCL -f OGLPVRTC4 -yflip0 -i ../assets/$1.png -p -pvrlegacy -m -o /tmp/$1.pvr
 cp -v /tmp/$1.desc ../assets/
-etc1tool --encode ../assets/$1.png -o ../assets/$1.pkm
+etc1tool --encode ../assets/$1.png -o /tmp/$1.pkm
+split -d -b 1024K /tmp/$1.pkm $1.pkm.
+mv $1.pkm.0* ../assets/
+split -d -b 1024K /tmp/$1.pvr $1.pvr.
+mv $1.pvr.0* ../assets/
 
