@@ -294,9 +294,9 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 	    decorEntities.push_back(b);
 
         if (i < 3) {
-            fumee(b);
+            //fumee(b);
         }
-        if (bdef.texture.find("arbre") != std::string::npos) {
+        if (0 && bdef.texture.find("arbre") != std::string::npos) {
             int idx = atoi(bdef.texture.substr(5, 1).c_str()) - 1;
             const Vector2& size = TRANSFORM(b)->size;
             for (int j=0; j<4; j++) {
@@ -442,7 +442,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     TEXT_RENDERING(scoreText)->charHeight = 1.5;
     TEXT_RENDERING(scoreText)->hide = false;
     // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
-    TEXT_RENDERING(scoreText)->color = Color(13.0 / 255, 5.0/255, 42.0/255);
+    TEXT_RENDERING(scoreText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
     TEXT_RENDERING(scoreText)->flags |= TextRenderingComponent::IsANumberBit;
 
     // 3 cameras
