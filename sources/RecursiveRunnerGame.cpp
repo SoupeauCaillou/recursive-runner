@@ -368,6 +368,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 
     cameraEntity = theEntityManager.CreateEntity();
     ADD_COMPONENT(cameraEntity, Transformation);
+    TRANSFORM(cameraEntity)->position = theRenderingSystem.cameras[0].worldPosition;
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
         leftMostCameraPos.X, -leftMostCameraPos.X);
@@ -419,7 +420,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
         Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
         baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
 
-    theRenderingSystem.cameras[0].worldPosition.X = leftMostCameraPos.X;
+    theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
     // 3 cameras
     // Default camera (UI)
     if (theRenderingSystem.cameras.size() < 3) {
@@ -599,8 +600,6 @@ void RecursiveRunnerGame::tick(float dt) {
         // TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
         TRANSFORM(cameraEntity)->position.X = camPosX;
         theRenderingSystem.cameras[i].worldPosition.Y = baseLine + theRenderingSystem.cameras[i].worldSize.Y * 0.5;
-
-
     }
 
     theRangeFollowerSystem.Update(dt);

@@ -166,7 +166,6 @@ State::Enum GameStateManager::update(float dt) {
             CAM_TARGET(sc->currentRunner)->enabled = false;
             // return Runner control to master
             if (PLAYER(sc->players[i])->runnersCount == param::runner) {
-                theRenderingSystem.cameras[0].worldPosition = Vector2::Zero;
                 // end of game
                 // resetGame();
 
