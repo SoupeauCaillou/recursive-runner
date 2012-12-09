@@ -102,6 +102,7 @@ void PauseStateManager::willEnter(State::Enum) {
 
 void PauseStateManager::enter(State::Enum) {
     // TEXT_RENDERING(game->scoreText)->text = "Paused";
+    ANIMATION(game->pianist)->name = "pianojournal";
 
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     // disable physics for runners
@@ -186,6 +187,7 @@ void PauseStateManager::exit(State::Enum to) {
         }
     }
     datas->pausedMusic.clear();
+    ANIMATION(game->pianist)->name = (theMusicSystem.isMuted() ? "pianojournal" : "piano");
 }
 
 bool PauseStateManager::transitionCanExit(State::Enum) {
