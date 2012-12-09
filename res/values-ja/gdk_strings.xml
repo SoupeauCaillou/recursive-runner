@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdk_welcome">ようこそ</string>
+    <string name="gdk_mission_complete">任務完了</string>
+    <string name="gdk_in_app_purchase">購入完了</string>
+    
+	<string name="gdk_error">エラー</string>
+	<string name="gdk_ok">承認する</string>
+	<string name="gdk_no_network">ネットワーク、利用不可能</string>
+	
+	<string name="gdk_loading"> ローディング中 . . . </string>
+	
+	<string name="gdk_try">実行して下さい</string>
+	
+	<string name="gdk_discover">アンドロイドゲームを発見しよう</string>
+	<string name="gdk_missions">任務を遂行して下さい</string>
+	<string name="gdk_gifts">プレゼントに当選しよう</string>
+	
+	<string name="gdk_free">解除する</string>
+	
+</resources>

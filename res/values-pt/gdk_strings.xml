@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdk_welcome">Bem vindo</string>
+    <string name="gdk_mission_complete">Missão cumprida</string>
+    <string name="gdk_in_app_purchase">Compra efetuada!</string>
+    
+	<string name="gdk_error">Erro</string>
+	<string name="gdk_ok">OK</string>
+	<string name="gdk_no_network">Rede não disponível</string>
+	
+	<string name="gdk_loading"> Carregando . . . </string>
+	
+	<string name="gdk_try">Experimente agora!</string>
+	
+	<string name="gdk_discover">Descubra\nAndroid Games</string>
+	<string name="gdk_missions">Realize Missões</string>
+	<string name="gdk_gifts">Ganhe\nPrémios Reais</string>
+	
+	<string name="gdk_free">Gratuito</string>
+	
+</resources>

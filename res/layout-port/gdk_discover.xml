@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/gdk_webview_discover"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:gravity="center"
+	android:background="@drawable/giftiz_background_port">
+    	
+    <ImageView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_weight="1"
+        android:src="@drawable/giftiz_discover_top_port"
+           />
+       
+    <LinearLayout 
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+        android:paddingLeft="5dp"
+		android:gravity="center"
+		android:layout_weight="99"
+		android:baselineAligned="true">
+		
+        <LinearLayout 
+        	android:orientation="horizontal"
+	        android:layout_width="fill_parent"
+			android:layout_height="0dip"
+			android:layout_weight="33"
+			android:gravity="center">
+			<TextView 
+			    android:id="@+id/gdk_giftiz_discover"
+		        android:layout_width="0dip"
+		        android:layout_height="fill_parent"
+				android:layout_weight="40"
+				android:gravity="center"
+				android:textColor="#FFF"
+				android:shadowColor="#000"
+				android:shadowRadius="3"
+				android:textSize="18dip"
+		        android:text="@string/gdk_discover"
+			    />
+		    <RelativeLayout
+			    android:layout_width="0dip"
+			    android:layout_height="fill_parent"
+				android:layout_weight="60"
+			    android:gravity="center">
+			   <ImageView 
+			      	android:layout_width="wrap_content"
+			      	android:layout_height="wrap_content"
+			        android:src="@drawable/giftiz_discover" />
+			</RelativeLayout>
+        </LinearLayout>
+        
+        <LinearLayout 
+        	android:orientation="horizontal"
+	        android:layout_width="fill_parent"
+			android:layout_height="0dip"
+			android:layout_weight="33"
+	        android:gravity="center">
+	        <TextView 
+			    android:id="@+id/gdk_giftiz_do_missions"
+		        android:layout_width="0dip"
+		        android:layout_height="fill_parent"
+				android:layout_weight="40"
+				android:gravity="center"
+				android:textColor="#FFF"
+				android:shadowColor="#000"
+				android:shadowRadius="3"
+				android:textSize="18dip"
+		        android:text="@string/gdk_missions"
+			    />
+		    <RelativeLayout
+			    android:layout_width="0dip"
+			    android:layout_height="fill_parent"
+				android:layout_weight="60"
+			    android:gravity="center">
+			   <ImageView 
+			      	android:layout_width="wrap_content"
+			      	android:layout_height="wrap_content"
+			        android:src="@drawable/giftiz_missions" />
+			</RelativeLayout>
+        </LinearLayout>
+        
+        <LinearLayout 
+        	android:orientation="horizontal"
+	        android:layout_width="fill_parent"
+			android:layout_height="0dip"
+			android:layout_weight="33"
+	        android:gravity="center">
+	        <TextView 
+			    android:id="@+id/gdk_giftiz_gifts"
+		        android:layout_width="0dip"
+		        android:layout_height="fill_parent"
+				android:layout_weight="40"
+				android:gravity="center"
+				android:textColor="#FFF"
+				android:shadowColor="#000"
+				android:shadowRadius="3"
+				android:textSize="18dip"
+		        android:text="@string/gdk_gifts"
+			    />
+		    <RelativeLayout
+			    android:layout_width="0dip"
+			    android:layout_height="fill_parent"
+				android:layout_weight="60"
+			    android:gravity="center">
+			   <ImageView 
+			      	android:layout_width="wrap_content"
+			      	android:layout_height="wrap_content"
+			        android:src="@drawable/giftiz_gifts" />
+			</RelativeLayout>
+        </LinearLayout>
+        
+        <RelativeLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="67dip">
+        	<Button
+			    android:id="@+id/gdk_webview_discover_btn"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/gdk_try"
+		        android:textColor="#000"
+		        android:textSize="18dip"
+			    android:background="@drawable/giftiz_btn_discover" 
+			    android:layout_alignParentBottom="true"
+			    android:layout_centerHorizontal="true"
+			    android:layout_marginRight="2dip"
+			    android:layout_marginBottom="2dip"
+			    />
+       	</RelativeLayout>
+        
+    </LinearLayout>
+   
+</LinearLayout>

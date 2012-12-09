@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <WebView
+        android:id="@+id/gdk_webview"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+        />
+    
+	<LinearLayout 
+		android:id="@+id/gdk_loading_view"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:paddingTop="5dp"
+		android:paddingLeft="5dp" >
+    
+       	<ProgressBar 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        style="@android:style/Widget.ProgressBar.Small"
+       	    />
+       
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="5dip"
+	        android:textColor="#FFF"
+	        android:shadowColor="#444"
+	        android:shadowDx="0"
+	        android:shadowDy="0"
+	        android:shadowRadius="2"
+	        android:text="@string/gdk_loading" />
+	</LinearLayout>
+	
+	<ImageView 
+	    android:id="@+id/gdk_webview_giftiz_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="10dip"
+        android:layout_marginBottom="10dip"
+        android:src="@drawable/giftiz_toast_logo"
+	    />
+	
+	<!-- Discover -->
+	<include layout="@layout/gdk_discover"/>
+    
+</RelativeLayout>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/gdk_webview_discover"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:gravity="center"
+	android:background="@drawable/giftiz_background_land">
+   
+    <ImageView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/giftiz_discover_top_land" />
+       
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+		android:layout_height="0dip"
+		android:layout_weight="99"
+		android:baselineAligned="true"
+		android:gravity="center">
+		
+        <LinearLayout 
+        	android:orientation="vertical"
+	        android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="33"
+			android:gravity="center">
+			<TextView 
+			    android:id="@+id/gdk_giftiz_discover"
+		        android:layout_width="fill_parent"
+		        android:layout_height="42dip"
+				android:gravity="center"
+				android:textColor="#FFF"
+				android:shadowColor="#000"
+				android:shadowRadius="3"
+				android:textSize="18dip"
+		        android:text="@string/gdk_discover"
+			    />
+	        <ImageView 
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="-20dip"
+	            android:src="@drawable/giftiz_discover"
+	            />
+        </LinearLayout>
+        
+        <LinearLayout 
+        	android:orientation="vertical"
+	        android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="33"
+	        android:gravity="center">
+	        <TextView 
+			    android:id="@+id/gdk_giftiz_do_missions"
+		        android:layout_width="fill_parent"
+		        android:layout_height="42dip"
+				android:gravity="center"
+				android:textColor="#FFF"
+				android:shadowColor="#000"
+				android:shadowRadius="3"
+				android:textSize="18dip"
+		        android:text="@string/gdk_missions"
+			    />
+	        <ImageView 
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="-20dip"
+	            android:src="@drawable/giftiz_missions"
+	            />
+        </LinearLayout>
+        
+        <LinearLayout 
+        	android:orientation="vertical"
+	        android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="33"
+	        android:gravity="center">
+	        <TextView 
+			    android:id="@+id/gdk_giftiz_gifts"
+		        android:layout_width="fill_parent"
+		        android:layout_height="42dip"
+				android:gravity="center"
+				android:textColor="#FFF"
+				android:shadowColor="#000"
+				android:shadowRadius="3"
+				android:textSize="18dip"
+		        android:text="@string/gdk_gifts"
+			    />
+	        <ImageView 
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="-15dip"
+	            android:src="@drawable/giftiz_gifts"
+	            />
+        </LinearLayout>
+        
+    </LinearLayout>
+    
+    <RelativeLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="67dip">
+      	<Button
+		    android:id="@+id/gdk_webview_discover_btn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/gdk_try"
+	        android:textColor="#000"
+	        android:textSize="18dip"
+		    android:background="@drawable/giftiz_btn_discover" 
+		    android:layout_alignParentBottom="true"
+		    android:layout_alignParentRight="true"
+		    android:layout_marginRight="2dip"
+		    android:layout_marginBottom="2dip"
+		    />
+   	</RelativeLayout>
+   
+</LinearLayout>

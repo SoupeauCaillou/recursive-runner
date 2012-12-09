@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdk_welcome">환영합니다!</string>
+    <string name="gdk_mission_complete">미션 성공!</string>
+    <string name="gdk_in_app_purchase">구입등록</string>
+    
+	<string name="gdk_error">오류</string>
+	<string name="gdk_ok">확인</string>
+	<string name="gdk_no_network">네트워크 오류</string>
+	
+	<string name="gdk_loading"> 로딩중 . . . </string>
+	
+	<string name="gdk_try">지금 경험해보세요</string>
+	
+	<string name="gdk_discover">안드로이드 게임을 경험해보세요</string>
+	<string name="gdk_missions">미션을 수행하세요</string>
+	<string name="gdk_gifts">현물을 받아가세요</string>
+	
+	<string name="gdk_free">무료</string>
+	
+</resources>

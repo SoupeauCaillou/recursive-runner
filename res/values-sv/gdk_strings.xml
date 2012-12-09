@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdk_welcome">Välkommen</string>
+    <string name="gdk_mission_complete">Uppdrag avklarat!</string>
+    <string name="gdk_in_app_purchase">Ditt inköpt är registrerat!</string>
+    
+	<string name="gdk_error">Fel</string>
+	<string name="gdk_ok">OK</string>
+	<string name="gdk_no_network">Nätverket är ej tillgängligt för närvarande.</string>
+	
+	<string name="gdk_loading"> Laddar . . . </string>
+	
+	<string name="gdk_try">Prova nu!</string>
+	
+	<string name="gdk_discover">Upptäck\nAndroid Spel</string>
+	<string name="gdk_missions">Gör Uppdrag</string>
+	<string name="gdk_gifts">Vinn Riktiga Vinster</string>
+	
+	<string name="gdk_free">Konstnadsfritt</string>
+	
+</resources>

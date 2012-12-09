@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gdk_welcome">Добро пожаловать</string>
+    <string name="gdk_mission_complete">Миссия завершена!</string>
+    <string name="gdk_in_app_purchase">Покупка произведена!</string>
+    
+	<string name="gdk_error">Ошибка</string>
+	<string name="gdk_ok">OK</string>
+	<string name="gdk_no_network">Сеть недоступна</string>
+	
+	<string name="gdk_loading"> Загрузка . . . </string>
+	
+	<string name="gdk_try">Попробуйте сейчас!</string>
+	
+	<string name="gdk_discover">Познакомьтесь с играми Android</string>
+	<string name="gdk_missions">Выполняйте миссии</string>
+	<string name="gdk_gifts">Выигрывайте призы</string>
+	
+	<string name="gdk_free">Бесплатно</string>
+	
+</resources>
