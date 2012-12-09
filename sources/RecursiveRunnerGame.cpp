@@ -262,13 +262,13 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 		Decor(3464, 758, 0.35, TransformationSystem::S, "bench_cat", false, trees),
 		Decor(3612, 762, 0.6, TransformationSystem::S, "bench", false, trees),
         // lampadaire
-        Decor(472, 748, 0.6, TransformationSystem::S, "lampadaire2", false, trees),
-        Decor(970, 748, 0.6, TransformationSystem::S, "lampadaire3", false, trees),
-        Decor(1740, 748, 0.6, TransformationSystem::S, "lampadaire2", false, trees),
-        Decor(2208, 748, 0.6, TransformationSystem::S, "lampadaire1", false, trees),
-        Decor(2620, 748, 0.6, TransformationSystem::S, "lampadaire3", false, trees),
-        Decor(3182, 748, 0.6, TransformationSystem::S, "lampadaire1", false, trees),
-        Decor(3732, 748, 0.6, TransformationSystem::S, "lampadaire3", false, trees),
+        Decor(472, 748, 0.3, TransformationSystem::S, "lampadaire2", false, trees),
+        Decor(970, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
+        Decor(1740, 748, 0.3, TransformationSystem::S, "lampadaire2", false, trees),
+        Decor(2208, 748, 0.3, TransformationSystem::S, "lampadaire1", false, trees),
+        Decor(2620, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
+        Decor(3182, 748, 0.3, TransformationSystem::S, "lampadaire1", false, trees),
+        Decor(3732, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
     };
     Vector2 v[5][4] = {
         {Vector2(71, 123), Vector2(73, 114), Vector2(125, 126), Vector2(92, 216)},
