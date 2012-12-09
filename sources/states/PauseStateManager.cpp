@@ -136,6 +136,10 @@ void PauseStateManager::enter(State::Enum) {
 }
 
 State::Enum PauseStateManager::update(float) {
+    RENDERING(datas->continueButton)->color = BUTTON(datas->continueButton)->mouseOver ? Color("gray") : Color();
+    RENDERING(datas->restartButton)->color = BUTTON(datas->restartButton)->mouseOver ? Color("gray") : Color();
+    RENDERING(datas->stopButton)->color = BUTTON(datas->stopButton)->mouseOver ? Color("gray") : Color();
+ 
     if (BUTTON(datas->continueButton)->clicked) {
         return State::Game;
     } else if (BUTTON(datas->restartButton)->clicked) {

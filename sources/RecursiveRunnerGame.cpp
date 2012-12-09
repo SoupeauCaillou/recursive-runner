@@ -410,11 +410,10 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 
     theSoundSystem.mute = muted;
     theMusicSystem.toggleMute(muted);
-    
-    
 }
 
 void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
+    Color::nameColor(Color(0.8, 0.8, 0.8), "gray");
     baseLine = PlacementHelper::GimpYToScreen(800);
     leftMostCameraPos =
         Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
@@ -554,7 +553,10 @@ void RecursiveRunnerGame::tick(float dt) {
         ignoreClick = true;
     } else {
         ignoreClick = BUTTON(muteBtn)->mouseOver;
+        RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color("gray") : Color();
     }
+
+
     if (theTouchInputManager.isTouched(0)) {
         ignoreClick |= theTouchInputManager.getTouchLastPosition(0).Y
             >= (TRANSFORM(muteBtn)->position.Y - TRANSFORM(muteBtn)->size.Y * BUTTON(muteBtn)->overSize * 0.5);

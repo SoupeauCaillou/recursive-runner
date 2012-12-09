@@ -150,6 +150,7 @@ State::Enum GameStateManager::update(float dt) {
     if (BUTTON(datas->pauseButton)->clicked) {
         return State::Pause;
     }
+    RENDERING(datas->pauseButton)->color = BUTTON(datas->pauseButton)->mouseOver ? Color("gray") : Color();
 
     // Manage player's current runner
     for (unsigned i=0; i<sc->numPlayers; i++) {

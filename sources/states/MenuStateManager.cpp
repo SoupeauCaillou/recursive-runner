@@ -233,6 +233,7 @@ State::Enum MenuStateManager::update(float) {
         }
         game->ignoreClick = BUTTON(datas->swarmBtn)->mouseOver;
     }
+    RENDERING(datas->swarmBtn)->color = BUTTON(datas->swarmBtn)->mouseOver ? Color("gray") : Color();
 
     // Handle Giftiz button
     if (!game->ignoreClick) {
@@ -241,6 +242,7 @@ State::Enum MenuStateManager::update(float) {
         }
         game->ignoreClick = BUTTON(datas->giftizBtn)->mouseOver;
     }
+    RENDERING(datas->giftizBtn)->color = BUTTON(datas->giftizBtn)->mouseOver ? Color("gray") : Color();
 
     // Start game ?
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
