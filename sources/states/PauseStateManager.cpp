@@ -148,6 +148,7 @@ State::Enum PauseStateManager::update(float) {
         game->setupCamera(CameraModeSingle);
         return State::RestartGame;
     } else if (BUTTON(datas->stopButton)->clicked) {
+        RecursiveRunnerGame::endGame();
         return State::Menu;
     }
     return State::Pause;
@@ -169,6 +170,7 @@ void PauseStateManager::willExit(State::Enum) {
     // TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
     TRANSFORM(game->scorePanel)->position.X = 0;
     TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit;
+    ANIMATION(game->pianist)->name = (theMusicSystem.isMuted() ? "pianojournal" : "piano");
 }
 
 void PauseStateManager::exit(State::Enum to) {
@@ -187,11 +189,11 @@ void PauseStateManager::exit(State::Enum to) {
         }
     } else {
         for (unsigned i=0; i<datas->pausedMusic.size(); i++) {
+            MUSIC(datas->pausedMusic[i])->fadeOut = 0;
             MUSIC(datas->pausedMusic[i])->control = MusicControl::Stop;
         }
     }
     datas->pausedMusic.clear();
-    ANIMATION(game->pianist)->name = (theMusicSystem.isMuted() ? "pianojournal" : "piano");
 }
 
 bool PauseStateManager::transitionCanExit(State::Enum) {

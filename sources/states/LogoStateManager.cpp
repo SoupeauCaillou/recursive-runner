@@ -61,21 +61,21 @@ void LogoStateManager::setup() {
 
     ADD_COMPONENT(logo, Rendering);
     ADD_COMPONENT(logo, Transformation);
-    TRANSFORM(logo)->position = Vector2(0,0);
+    TRANSFORM(logo)->position = theRenderingSystem.cameras[0].worldPosition;
     TRANSFORM(logo)->size = Vector2(PlacementHelper::ScreenHeight * 0.8, PlacementHelper::ScreenHeight * 0.8);
     TRANSFORM(logo)->z = DL_Logo;
     RENDERING(logo)->texture = theRenderingSystem.loadTextureFile("soupe_logo");
 
     ADD_COMPONENT(logobg, Rendering);
     ADD_COMPONENT(logobg, Transformation);
-    TRANSFORM(logobg)->position = Vector2(0,0);
+    TRANSFORM(logobg)->position = theRenderingSystem.cameras[0].worldPosition;
     TRANSFORM(logobg)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
     RENDERING(logobg)->color = Color(0,0,0);
     TRANSFORM(logobg)->z = DL_BehindLogo;
 
     ADD_COMPONENT(logofade, Rendering);
     ADD_COMPONENT(logofade, Transformation);
-    TRANSFORM(logofade)->position = Vector2(0,0);
+    TRANSFORM(logofade)->position = theRenderingSystem.cameras[0].worldPosition;
     TRANSFORM(logofade)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
     RENDERING(logofade)->color = Color(0,0,0);
     TRANSFORM(logofade)->z = 1;

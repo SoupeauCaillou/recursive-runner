@@ -100,6 +100,7 @@ void GameStateManager::willEnter(State::Enum) {
 
     if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
         RecursiveRunnerGame::startGame(true);
+        MUSIC(datas->transition)->fadeOut = 2;
         MUSIC(datas->transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
         ADSR(datas->transition)->value = ADSR(datas->transition)->idleValue;
         ADSR(datas->transition)->activationTime = 0;
@@ -110,7 +111,7 @@ void GameStateManager::willEnter(State::Enum) {
         MUSIC(datas->transition)->control = MusicControl::Play;
     }
     RENDERING(datas->pauseButton)->hide = false;
-    RENDERING(datas->pauseButton)->color.a = 0;
+    RENDERING(datas->pauseButton)->color = Color(1,1,1,0);
 }
 
 bool GameStateManager::transitionCanEnter(State::Enum) {

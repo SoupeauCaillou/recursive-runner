@@ -418,6 +418,18 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     leftMostCameraPos =
         Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
         baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+
+    theRenderingSystem.cameras[0].worldPosition.X = leftMostCameraPos.X;
+    // 3 cameras
+    // Default camera (UI)
+    if (theRenderingSystem.cameras.size() < 3) {
+        RenderingSystem::Camera cam = theRenderingSystem.cameras[0];
+        cam.enable = false;
+        // 1st player
+        theRenderingSystem.cameras.push_back(cam);
+        // 2nd player
+        theRenderingSystem.cameras.push_back(cam);
+    }
     decor(storageAPI);
 
     scorePanel = theEntityManager.CreateEntity();
@@ -451,15 +463,6 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
     TEXT_RENDERING(scoreText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
     TEXT_RENDERING(scoreText)->flags |= TextRenderingComponent::IsANumberBit;
-
-    // 3 cameras
-    // Default camera (UI)
-    RenderingSystem::Camera cam = theRenderingSystem.cameras[0];
-    cam.enable = false;
-    // 1st player
-    theRenderingSystem.cameras.push_back(cam);
-    // 2nd player
-    theRenderingSystem.cameras.push_back(cam);
 
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0000")] =  CollisionZone(90,52,28,84,-0.1);
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0001")] =  CollisionZone(91,62,27,78,-0.1);

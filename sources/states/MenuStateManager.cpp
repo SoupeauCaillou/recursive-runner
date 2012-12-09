@@ -151,7 +151,7 @@ void MenuStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void MenuStateManager::willEnter(State::Enum) {
+void MenuStateManager::willEnter(State::Enum from) {
     std::vector<Entity> temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
     std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
     
@@ -163,12 +163,16 @@ void MenuStateManager::willEnter(State::Enum) {
 
     // save score if any
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
-    if (!players.empty()) {
+    if (!players.empty() && from == State::Game) {
         std::stringstream a;
         a << PLAYER(players[0])->score << " points - tap screen to restart";
         TEXT_RENDERING(datas->subtitleText)->text = a.str();
         game->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
         game->updateBestScore();
+
+        if (PLAYER(players[0])->score >= 15000) {
+            game->communicationAPI->giftizMissionDone();
+        }
     }
     // start music if not muted
     if (!theMusicSystem.isMuted()) {
@@ -176,7 +180,22 @@ void MenuStateManager::willEnter(State::Enum) {
     }
     // unhide UI
     RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = false;
-    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = 0;
+    RENDERING(datas->swarmBtn)->color = RENDERING(datas->giftizBtn)->color = Color(1,1,1,0);
+
+    int giftizState = game->communicationAPI->giftizGetButtonState();
+    switch (giftizState) {
+        case 0: 
+            RENDERING(datas->giftizBtn)->hide = true;
+            break;
+        case 1:
+            break;
+        case 2:
+            RENDERING(datas->giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_1");
+            break;
+        case 3:
+            RENDERING(datas->giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_warning");
+            break;
+    }
 }
 
 bool MenuStateManager::transitionCanEnter(State::Enum) {

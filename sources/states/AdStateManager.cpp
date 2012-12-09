@@ -34,6 +34,7 @@ struct AdStateManager::AdStateManagerDatas {
 
 AdStateManager::AdStateManager(RecursiveRunnerGame* game) : StateManager(State::Ad, game) {
    datas = new AdStateManagerDatas;
+   datas->gameb4Ad = 2;
 }
 
 AdStateManager::~AdStateManager() {
@@ -56,7 +57,7 @@ bool AdStateManager::transitionCanEnter(State::Enum ) {
 }
 
 void AdStateManager::enter(State::Enum) {
-   datas->gameb4Ad = game->storageAPI->getGameCountBeforeNextAd();
+   // datas->gameb4Ad = game->storageAPI->getGameCountBeforeNextAd();
 
    LOGI("%s : %d", __PRETTY_FUNCTION__, datas->gameb4Ad);
    if (datas->gameb4Ad > 3) {
@@ -70,9 +71,9 @@ void AdStateManager::enter(State::Enum) {
       datas->gameb4Ad = 1;
    }
 
-    if (datas->gameb4Ad==0 || timeSinceLAstAd > 150) {
+    if (datas->gameb4Ad == 0) {// || timeSinceLAstAd > 150) {
         if (game->adAPI->showAd()) {
-            datas->gameb4Ad = 0;
+            datas->gameb4Ad = 3;
             datas->lastAdTime = TimeUtil::getTime();
         } else {
             datas->gameb4Ad = 1;
@@ -99,10 +100,10 @@ State::Enum AdStateManager::update(float) {
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
 void AdStateManager::willExit(State::Enum) {
-   if (datas->gameb4Ad==0)
+   /*if (datas->gameb4Ad==0)
       datas->gameb4Ad=3;
    datas->gameb4Ad--;
-   game->storageAPI->setGameCountBeforeNextAd(datas->gameb4Ad);
+   game->storageAPI->setGameCountBeforeNextAd(datas->gameb4Ad);*/
 }
 
 bool AdStateManager::transitionCanExit(State::Enum) {
@@ -110,5 +111,4 @@ bool AdStateManager::transitionCanExit(State::Enum) {
 }
 
 void AdStateManager::exit(State::Enum) {
-   game->setupCamera(CameraModeSingle);
 }

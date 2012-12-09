@@ -34,9 +34,9 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
  
 public class RecursiveRunnerActivity extends SacActivity {
-	static {
+	static { 
         System.loadLibrary("recursiveRunner");
-    } 
+    }
 	@Override
 	public boolean canShowAppRater() {
 		return false;
@@ -59,7 +59,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	@Override
 	public String getBundleKey() {
 		return TILEMATCH_BUNDLE_KEY;
-	}
+	} 
 	
 	@Override
 	public int getParentViewId() {
