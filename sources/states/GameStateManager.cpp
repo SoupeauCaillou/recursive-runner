@@ -473,6 +473,6 @@ static void updateSessionTransition(const SessionComponent* session, float progr
         if (i % 2)
             RENDERING(session->links[i])->color.a = progress * 0.2;
         else
-            RENDERING(session->links[i])->color.a = progress;
+            RENDERING(session->links[i])->color.a = progress * 0.65;
     }
 }

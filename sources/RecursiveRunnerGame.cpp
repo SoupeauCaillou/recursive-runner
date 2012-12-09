@@ -220,7 +220,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     PlacementHelper::ScreenWidth *= 3;
     PlacementHelper::GimpWidth = 1280 * 3;
     PlacementHelper::GimpHeight = 800;
-    int count = 26;
+    int count = 33;
     struct Decor {
     	float x, y, z;
     	TransformationSystem::PositionReference ref;
@@ -261,6 +261,14 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 		Decor(2526, 762, 0.35, TransformationSystem::S, "bench", false, trees),
 		Decor(3464, 758, 0.35, TransformationSystem::S, "bench_cat", false, trees),
 		Decor(3612, 762, 0.6, TransformationSystem::S, "bench", false, trees),
+        // lampadaire
+        Decor(472, 748, 0.6, TransformationSystem::S, "lampadaire2", false, trees),
+        Decor(970, 748, 0.6, TransformationSystem::S, "lampadaire3", false, trees),
+        Decor(1740, 748, 0.6, TransformationSystem::S, "lampadaire2", false, trees),
+        Decor(2208, 748, 0.6, TransformationSystem::S, "lampadaire1", false, trees),
+        Decor(2620, 748, 0.6, TransformationSystem::S, "lampadaire3", false, trees),
+        Decor(3182, 748, 0.6, TransformationSystem::S, "lampadaire1", false, trees),
+        Decor(3732, 748, 0.6, TransformationSystem::S, "lampadaire3", false, trees),
     };
     Vector2 v[5][4] = {
         {Vector2(71, 123), Vector2(73, 114), Vector2(125, 126), Vector2(92, 216)},
@@ -789,7 +797,7 @@ static void createCoins(int count, SessionComponent* session, bool transition) {
      ADD_COMPONENT(link, Transformation);
      TRANSFORM(link)->position = (topI + previous) * 0.5;
      TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(54));
-     TRANSFORM(link)->z = 0.4;
+     TRANSFORM(link)->z = 0.6;
      TRANSFORM(link)->rotation = MathUtil::AngleFromVector(topI - previous);
      ADD_COMPONENT(link, Rendering);
      RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
@@ -804,7 +812,7 @@ static void createCoins(int count, SessionComponent* session, bool transition) {
          ADD_COMPONENT(link2, Rendering);
          RENDERING(link2)->texture = theRenderingSystem.loadTextureFile("link");
          RENDERING(link2)->color.a = (transition ? 0 : 0.2);
-         RENDERING(link2)->hide = false;
+//         RENDERING(link2)->hide = false;
 
 #if 1
         Entity link3 = theEntityManager.CreateEntity(EntityType::Persistent);
