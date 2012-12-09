@@ -70,20 +70,23 @@ void PauseStateManager::setup() {
     TEXT_RENDERING(pauseText)->cameraBitMask = 0x2;
     TEXT_RENDERING(datas->pauseText)->hide = true;
 
-    std::string textures[] = {"reprendre", "recommencer", "fermer"};
+    std::string textures[] = {"fermer", "recommencer", "reprendre"};
     Entity buttons[3];
-    buttons[0] = datas->continueButton = theEntityManager.CreateEntity();
+    buttons[2] = datas->continueButton = theEntityManager.CreateEntity();
     buttons[1] = datas->restartButton = theEntityManager.CreateEntity();
-    buttons[2] = datas->stopButton = theEntityManager.CreateEntity();
+    buttons[0] = datas->stopButton = theEntityManager.CreateEntity();
     for (int i = 0; i < 3; ++i) {
         ADD_COMPONENT(buttons[i], Transformation);
-        TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i]));
-        TRANSFORM(buttons[i])->parent = title;
+        TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i])) * 1.2;
+        TRANSFORM(buttons[i])->parent = game->cameraEntity;
         int mul = 0;
         if (i == 0) mul = -1;
         else if(i==2) mul=1;
-        TRANSFORM(buttons[i])->position = Vector2(mul * TRANSFORM(title)->size.X * 0.25, - (TRANSFORM(title)->size.Y + TRANSFORM(buttons[i])->size.Y) * 0.45);
-        TRANSFORM(buttons[i])->z = 0.01;
+        TRANSFORM(buttons[i])->position = 
+            Vector2(mul * TRANSFORM(title)->size.X * 0.35,
+            0);//PlacementHelper::ScreenHeight * 0.1);
+            //- (TRANSFORM(title)->size.Y + TRANSFORM(buttons[i])->size.Y) * 0.45);
+        TRANSFORM(buttons[i])->z = 0.9;
         ADD_COMPONENT(buttons[i], Rendering);
         RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile(textures[i]);
         RENDERING(buttons[i])->hide = true;
@@ -94,7 +97,7 @@ void PauseStateManager::setup() {
 }
 
 void PauseStateManager::willEnter(State::Enum) {
-    TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = true;
+    // TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = true;
 }
 
 void PauseStateManager::enter(State::Enum) {
@@ -115,8 +118,10 @@ void PauseStateManager::enter(State::Enum) {
     BUTTON(datas->restartButton)->enabled = true;
     RENDERING(datas->stopButton)->hide = false;
     BUTTON(datas->stopButton)->enabled = true;
-    RENDERING(datas->title)->hide = false;
-
+    // RENDERING(datas->title)->hide = false;
+    TRANSFORM(game->scorePanel)->position.X = theRenderingSystem.cameras[1].worldPosition.X;
+    TEXT_RENDERING(game->scoreText)->text = "Pause";
+    TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit;
     //mute music
     if (!theMusicSystem.isMuted()) {
         std::vector<Entity> musics = theMusicSystem.RetrieveAllEntityWithComponent();
@@ -155,8 +160,10 @@ void PauseStateManager::willExit(State::Enum) {
     BUTTON(datas->restartButton)->enabled = false;
     RENDERING(datas->stopButton)->hide = true;
     BUTTON(datas->stopButton)->enabled = false;
-    RENDERING(datas->title)->hide = true;
-    TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
+    // RENDERING(datas->title)->hide = true;
+    // TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
+    TRANSFORM(game->scorePanel)->position.X = 0;
+    TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit;
 }
 
 void PauseStateManager::exit(State::Enum to) {
