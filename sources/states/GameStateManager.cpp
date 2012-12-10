@@ -101,6 +101,7 @@ void GameStateManager::willEnter(State::Enum) {
     if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
         RecursiveRunnerGame::startGame(true);
         MUSIC(datas->transition)->fadeOut = 2;
+        MUSIC(datas->transition)->volume = 1;
         MUSIC(datas->transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
         ADSR(datas->transition)->value = ADSR(datas->transition)->idleValue;
         ADSR(datas->transition)->activationTime = 0;

@@ -42,6 +42,7 @@ static void startMenuMusic(Entity title) {
     MUSIC(title)->music = theMusicSystem.loadMusicFile("intro-menu.ogg");
     MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
     MUSIC(title)->loopAt = 4.54;
+    MUSIC(title)->volume = 1;
     MUSIC(title)->fadeOut = 2;
     MUSIC(title)->fadeIn = 1;
     MUSIC(title)->control = MusicControl::Play;
