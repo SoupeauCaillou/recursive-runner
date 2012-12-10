@@ -217,6 +217,11 @@ void GLFWCALL myKeyCallback( int key, int action ) {
         }
         exit(0);
     }
+    else if (key == GLFW_KEY_SPACE ) {// || !focus) {
+        if (game->willConsumeBackEvent()) {
+            game->backPressed();
+        }
+    }
 }
 
 static void updateAndRenderLoop() {
@@ -234,11 +239,7 @@ static void updateAndRenderLoop() {
 	 // theMusicSystem.toggleMute(true);
       }
       //pause ?
-      if (glfwGetKey( GLFW_KEY_SPACE )) {// || !focus) {
-	 if (game->willConsumeBackEvent()) {
-	    game->backPressed();
-	 }
-      }
+
       // recording
       if (glfwGetKey( GLFW_KEY_F10)){
 	 record->stop();

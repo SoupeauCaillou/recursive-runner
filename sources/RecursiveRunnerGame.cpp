@@ -531,13 +531,16 @@ void RecursiveRunnerGame::changeState(State::Enum newState) {
 }
 
 bool RecursiveRunnerGame::willConsumeBackEvent() {
-    if (currentState == State::Game)
-        return true;
-    return false;
+    if (currentState == State::Menu)
+        return false;
+    return true;
 }
 
 void RecursiveRunnerGame::backPressed() {
-    overrideNextState = State::Pause;
+    if (currentState == State::Game)
+        overrideNextState = State::Pause;
+    else if (currentState == State::Pause)
+        overrideNextState = State::Menu;
 }
 
 void RecursiveRunnerGame::togglePause(bool pause) {
@@ -830,7 +833,7 @@ static void createCoins(int count, SessionComponent* session, bool transition) {
      PARTICULE(link3)->duration = 0;
      PARTICULE(link3)->lifetime = 0.1 * 1;
      PARTICULE(link3)->texture = InvalidTextureRef;
-     PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
+     PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 1), Color(145.0/255, 145.0/255, 145.0/255, 1));
      PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
      PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
      PARTICULE(link3)->finalSize = Interval<float>(0.01, 0.03);
