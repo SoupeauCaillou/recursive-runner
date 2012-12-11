@@ -64,6 +64,7 @@ class RecursiveRunnerGame : public Game {
       ~RecursiveRunnerGame();
       void sacInit(int windowW, int windowH);
       void init(const uint8_t* in = 0, int size = 0);
+      void quickInit();
       void tick(float dt);
       void backPressed();
       void changeState(State::Enum newState);

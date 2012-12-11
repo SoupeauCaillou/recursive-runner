@@ -48,6 +48,7 @@
     <Compile Include="sources\states\AdStateManager.cpp" />
     <Compile Include="sources\states\RateStateManager.cpp" />
     <Compile Include="sources\states\RestartGameStateManager.cpp" />
+    <Compile Include="sources\states\TutorialStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -59,6 +60,7 @@
     <Folder Include="sources\systems\" />
     <Folder Include="sources\menus\" />
     <Folder Include="sources\states\" />
+    <Folder Include="sources\states\tutorial\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sources\systems\RunnerSystem.h" />
@@ -74,5 +76,13 @@
     <None Include="sources\systems\RangeFollowerSystem.h" />
     <None Include="sources\states\StateManager.h" />
     <None Include="sources\systems\SessionSystem.h" />
+    <None Include="sources\states\tutorial\IntroduceHero.h" />
+    <None Include="sources\states\tutorial\SmallJump.h" />
+    <None Include="sources\states\tutorial\ScorePoints.h" />
+    <None Include="sources\states\tutorial\BigJump.h" />
+    <None Include="sources\states\tutorial\NewHero.h" />
+    <None Include="sources\states\tutorial\AvoidYourself.h" />
+    <None Include="sources\states\tutorial\MeetYourself.h" />
+    <None Include="sources\states\tutorial\TheEnd.h" />
   </ItemGroup>
 </Project>

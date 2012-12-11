@@ -78,6 +78,7 @@ NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communicati
    state2manager.insert(std::make_pair(State::Rate, new RateStateManager(this)));
    state2manager.insert(std::make_pair(State::Game, new GameStateManager(this)));
    state2manager.insert(std::make_pair(State::RestartGame, new RestartGameStateManager(this)));
+   state2manager.insert(std::make_pair(State::Tutorial, new TutorialStateManager(this)));
 }
 
 
@@ -516,6 +517,12 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     } else {
         currentState = State::Logo;
     }
+    state2manager[currentState]->willEnter(State::Invalid);
+    state2manager[currentState]->enter(State::Invalid);
+}
+
+void RecursiveRunnerGame::quickInit() {
+    // we just need to make sure current state is properly initiated
     state2manager[currentState]->willEnter(State::Invalid);
     state2manager[currentState]->enter(State::Invalid);
 }
