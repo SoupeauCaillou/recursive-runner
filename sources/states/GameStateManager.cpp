@@ -184,7 +184,7 @@ State::Enum GameStateManager::update(float dt) {
                 sc->runners.push_back(sc->currentRunner);
             }
         }
-        if (!game->ignoreClick) {
+        if (!game->ignoreClick && sc->userInputEnabled) {
             // Input (jump) handling
             for (int j=0; j<1; j++) {
                 if (theTouchInputManager.isTouched(j)) {
