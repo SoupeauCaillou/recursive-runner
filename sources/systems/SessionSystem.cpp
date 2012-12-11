@@ -24,6 +24,7 @@ SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session"
     SessionComponent tc;
     componentSerializer.add(new Property(OFFSET(numPlayers, tc), sizeof(int)));
     componentSerializer.add(new EntityProperty(OFFSET(currentRunner, tc)));
+    componentSerializer.add(new Property(OFFSET(userInputEnabled, tc), sizeof(bool)));
     componentSerializer.add(new VectorProperty<Entity>(OFFSET(runners, tc)));
     componentSerializer.add(new VectorProperty<Entity>(OFFSET(coins, tc)));
     componentSerializer.add(new VectorProperty<Entity>(OFFSET(players, tc)));

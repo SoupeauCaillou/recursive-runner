@@ -21,9 +21,10 @@
 #include "systems/System.h"
 
 struct SessionComponent {
-    SessionComponent() : numPlayers(1), currentRunner(0) {}
+    SessionComponent() : numPlayers(1), currentRunner(0), userInputEnabled(true) {}
     unsigned numPlayers;
     Entity currentRunner;
+    bool userInputEnabled;
     std::vector<Entity> runners, coins, players, links, sparkling;
 };
 
