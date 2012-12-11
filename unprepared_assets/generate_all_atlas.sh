@@ -1,8 +1,10 @@
 #!/bin/sh
 
-./generate_atlas.sh decor
-./generate_atlas.sh alphabet
-./generate_atlas.sh fumee
-./generate_atlas.sh logo
-./generate_atlas.sh dummy
-./generate_atlas.sh arbre
+folders="decor alphabet fumee logo dummy arbre"
+
+for folder in $folders
+do
+    echo "Building '$folder' atlas"
+    ./generate_atlas.sh $folder
+done
+
