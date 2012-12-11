@@ -34,7 +34,7 @@ struct AdStateManager::AdStateManagerDatas {
 
 AdStateManager::AdStateManager(RecursiveRunnerGame* game) : StateManager(State::Ad, game) {
    datas = new AdStateManagerDatas;
-   datas->gameb4Ad = 2;
+   datas->gameb4Ad = 1;
 }
 
 AdStateManager::~AdStateManager() {
@@ -66,14 +66,13 @@ void AdStateManager::enter(State::Enum) {
 
    float timeSinceLAstAd = TimeUtil::getTime() - datas->lastAdTime;
 
-   // postpone ad if previous ad was shown less than 30sec ago
-   if (datas->gameb4Ad <= 0 && timeSinceLAstAd < 30) {
+   // postpone ad if previous ad was shown less than 60sec ago
+   if (datas->gameb4Ad <= 0 && timeSinceLAstAd < 60) {
       datas->gameb4Ad = 1;
    }
 
     if (datas->gameb4Ad == 0) {// || timeSinceLAstAd > 150) {
         if (game->adAPI->showAd()) {
-            datas->gameb4Ad = 3;
             datas->lastAdTime = TimeUtil::getTime();
         } else {
             datas->gameb4Ad = 1;
@@ -89,10 +88,14 @@ void AdStateManager::backgroundUpdate(float) {
 }
 
 State::Enum AdStateManager::update(float) {
-   if (datas->gameb4Ad > 0 || game->adAPI->done()) {
-      return State::Game;
-   }
-   return State::Ad;
+    if (datas->gameb4Ad > 0) {
+        datas->gameb4Ad--;
+        return State::Game;
+    } else if(game->adAPI->done()) {
+        datas->gameb4Ad = 3;
+        return State::Game;
+    }
+    return State::Ad;
 }
 
 
