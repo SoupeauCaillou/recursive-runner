@@ -27,6 +27,7 @@ namespace State {
       Logo,
       Menu,
       Game,
+      Tutorial,
       Pause,
       Ad,
       Rate,
@@ -85,6 +86,7 @@ class TransitionStateManager {
 DEF_STATE_MANAGER(Logo)
 DEF_STATE_MANAGER(Menu)
 DEF_STATE_MANAGER(Game)
+DEF_STATE_MANAGER(Tutorial)
 DEF_STATE_MANAGER(Pause)
 DEF_STATE_MANAGER(Rate)
 DEF_STATE_MANAGER(Ad)
