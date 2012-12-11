@@ -38,6 +38,7 @@
 #include <sstream>
 #include <vector>
 
+static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game);
 static void startMenuMusic(Entity title) {
     MUSIC(title)->music = theMusicSystem.loadMusicFile("intro-menu.ogg");
     MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
@@ -182,21 +183,7 @@ void MenuStateManager::willEnter(State::Enum from) {
     // unhide UI
     RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = false;
     RENDERING(datas->swarmBtn)->color = RENDERING(datas->giftizBtn)->color = Color(1,1,1,0);
-
-    int giftizState = game->communicationAPI->giftizGetButtonState();
-    switch (giftizState) {
-        case 0: 
-            RENDERING(datas->giftizBtn)->hide = true;
-            break;
-        case 1:
-            break;
-        case 2:
-            RENDERING(datas->giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_1");
-            break;
-        case 3:
-            RENDERING(datas->giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz_warning");
-            break;
-    }
+    updateGiftizButton(datas->giftizBtn, game);
 }
 
 bool MenuStateManager::transitionCanEnter(State::Enum) {
@@ -245,6 +232,7 @@ State::Enum MenuStateManager::update(float) {
             startMenuMusic(datas->title);
         }
     }
+    updateGiftizButton(datas->giftizBtn, game);
 
     // Handle Swarm button
     if (!game->ignoreClick) {
@@ -299,4 +287,25 @@ bool MenuStateManager::transitionCanExit(State::Enum) {
 
 void MenuStateManager::exit(State::Enum) {
     RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = true;
+}
+
+static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game) {
+     int giftizState = game->communicationAPI->giftizGetButtonState();
+    switch (giftizState) {
+        case 0: 
+            RENDERING(btn)->hide = true;
+            break;
+        case 1:
+            RENDERING(btn)->hide = false;
+            RENDERING(btn)->texture = theRenderingSystem.loadTextureFile("giftiz");
+            break;
+        case 2:
+            RENDERING(btn)->hide = false;
+            RENDERING(btn)->texture = theRenderingSystem.loadTextureFile("giftiz_1");
+            break;
+        case 3:
+            RENDERING(btn)->hide = false;
+            RENDERING(btn)->texture = theRenderingSystem.loadTextureFile("giftiz_warning");
+            break;
+    }
 }
