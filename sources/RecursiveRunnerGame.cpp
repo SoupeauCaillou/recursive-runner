@@ -702,7 +702,7 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
     return finalSize;
 }
 
-static void createCoins(int count, SessionComponent* session, bool transition);
+static std::vector<Vector2> generateCoinsCoordinates(int count);
 
 void RecursiveRunnerGame::startGame(bool transition) {
     assert(theSessionSystem.RetrieveAllEntityWithComponent().empty());
@@ -718,7 +718,7 @@ void RecursiveRunnerGame::startGame(bool transition) {
     ADD_COMPONENT(player, Player);
     sc->players.push_back(player);
 
-    createCoins(20, sc, transition);
+    createCoins(generateCoinsCoordinates(20), sc, transition);
 }
 
 void RecursiveRunnerGame::endGame() {
@@ -744,13 +744,9 @@ static bool sortLeftToRight(Entity e, Entity f) {
     return TRANSFORM(e)->position.X < TRANSFORM(f)->position.X;
 }
 
-static void createCoins(int count, SessionComponent* session, bool transition) {
-    LOGI("Coins creation started");
-    std::vector<Entity>& coins = session->coins;
+static std::vector<Vector2> generateCoinsCoordinates(int count) {
+    std::vector<Vector2> positions;
     for (int i=0; i<count; i++) {
-        Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
-        ADD_COMPONENT(e, Transformation);
-        TRANSFORM(e)->size = Vector2(0.3, 0.3) * param::CoinScale;
         Vector2 p;
         bool notFarEnough = true;
         do {
@@ -761,16 +757,26 @@ static void createCoins(int count, SessionComponent* session, bool transition) {
                 MathUtil::RandomFloatInRange(
                     PlacementHelper::GimpYToScreen(700),
                     PlacementHelper::GimpYToScreen(450)));
-                    //-0.3 * PlacementHelper::ScreenHeight,
-                    // -0.05 * PlacementHelper::ScreenHeight));
            notFarEnough = false;
-           for (unsigned j = 0; j < coins.size() && !notFarEnough; j++) {
-                if (Vector2::Distance(TRANSFORM(coins[j])->position, p) < 1) {
+           for (unsigned j = 0; j < positions.size() && !notFarEnough; j++) {
+                if (Vector2::Distance(positions[j], p) < 1) {
                     notFarEnough = true;
                 }
            }
         } while (notFarEnough);
-        TRANSFORM(e)->position = p;
+        positions.push_back(p);
+    }
+    return positions;
+}
+
+void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, SessionComponent* session, bool transition) {
+    LOGI("Coins creation started");
+    std::vector<Entity>& coins = session->coins;
+    for (unsigned i=0; i<coordinates.size(); i++) {
+        Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
+        ADD_COMPONENT(e, Transformation);
+        TRANSFORM(e)->size = Vector2(0.3, 0.3) * param::CoinScale;
+        TRANSFORM(e)->position = coordinates[i];
         TRANSFORM(e)->rotation = -0.1 + MathUtil::RandomFloat() * 0.2;
         TRANSFORM(e)->z = 0.75;
         ADD_COMPONENT(e, Rendering);

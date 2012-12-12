@@ -34,19 +34,7 @@
 #include "states/StateManager.h"
 
 class NameInputAPI;
-
-#if 0
-struct GameTempVar {
-    void syncRunners();
-    void syncCoins();
-    void cleanup();
-    int playerIndex();
-
-    unsigned numPlayers;
-    Entity currentRunner[2];
-    std::vector<Entity> runners[2], coins, players, links, sparkling;
-};
-#endif
+class SessionComponent;
 
 enum CameraMode {
     CameraModeMenu,
@@ -103,4 +91,6 @@ class RecursiveRunnerGame : public Game {
       struct {
         float H, V;
       } buttonSpacing;
+
+      static void createCoins(const std::vector<Vector2>& coordinates, SessionComponent* session, bool transition);
 };
