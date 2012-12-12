@@ -432,6 +432,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RUNNER(e)->playerOwner = player;
 
     std::cout <<" add runner: " << e << " - " << TimeUtil::getTime()  << "(pos: " << TRANSFORM(e)->position << ")" << RUNNER(e)->speed << std::endl;
+    #if 0
     do {
         Color c(Color::random());
         c.a = 1;
@@ -442,6 +443,11 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
             break;
         }
     } while (true);
+    #else
+    int idx = MathUtil::RandomInt(p->colors.size());
+    RUNNER(e)->color = p->colors[idx];
+    p->colors.erase(p->colors.begin() + idx);
+    #endif
     ADD_COMPONENT(e, CameraTarget);
     CAM_TARGET(e)->cameraIndex = 1 + playerIndex;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;

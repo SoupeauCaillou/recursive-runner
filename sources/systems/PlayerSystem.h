@@ -19,13 +19,14 @@
 #pragma once
 
 #include "systems/System.h"
-#include <set>
+#include "base/Color.h"
 
 struct PlayerComponent {
     PlayerComponent() : score(0), coins(0), runnersCount(0), ready(true) {}
     int score, coins;
     int runnersCount;
     bool ready;
+    std::vector<Color> colors;
 };
 
 #define thePlayerSystem PlayerSystem::GetInstance()

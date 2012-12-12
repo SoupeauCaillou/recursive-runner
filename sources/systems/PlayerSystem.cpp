@@ -26,6 +26,7 @@ PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
     componentSerializer.add(new Property(OFFSET(score, tc), sizeof(int)));
     componentSerializer.add(new Property(OFFSET(runnersCount, tc), sizeof(int)));
     componentSerializer.add(new Property(OFFSET(ready, tc), sizeof(bool)));
+    componentSerializer.add(new VectorProperty<Color>(OFFSET(colors, tc)));
 }
 
 void PlayerSystem::DoUpdate(float) {

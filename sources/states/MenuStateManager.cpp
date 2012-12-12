@@ -254,7 +254,7 @@ State::Enum MenuStateManager::update(float) {
 
     // Start game ?
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
-        return State::Tutorial;
+        return State::Ad;
     }
     return State::Menu;
 }

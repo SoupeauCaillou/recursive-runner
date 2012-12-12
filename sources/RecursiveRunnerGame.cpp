@@ -548,6 +548,8 @@ void RecursiveRunnerGame::backPressed() {
         overrideNextState = State::Pause;
     else if (currentState == State::Pause)
         overrideNextState = State::Menu;
+    else if (currentState == State::Tutorial)
+        overrideNextState = State::Menu;
 }
 
 void RecursiveRunnerGame::togglePause(bool pause) {
@@ -717,6 +719,18 @@ void RecursiveRunnerGame::startGame(bool transition) {
     Entity player = theEntityManager.CreateEntity(EntityType::Persistent);
     ADD_COMPONENT(player, Player);
     sc->players.push_back(player);
+    PlayerComponent* pc = PLAYER(player);
+    #define COLOR(n) Color(((0x##n >> 16) & 0xff) / 255.0, ((0x##n >> 8) & 0xff) / 255.0, ((0x##n >> 0) & 0xff) / 255.0, 1.0)
+    pc->colors.push_back(COLOR(c30101));
+    pc->colors.push_back(COLOR(ea6c06));
+    pc->colors.push_back(COLOR(f4cf00));
+    pc->colors.push_back(COLOR(8ec301));
+    pc->colors.push_back(COLOR(01c373));
+    pc->colors.push_back(COLOR(12bbd9));
+    pc->colors.push_back(COLOR(1e49d7));
+    pc->colors.push_back(COLOR(5d00bd));
+    pc->colors.push_back(COLOR(a910db));
+    pc->colors.push_back(COLOR(dc52b0));
 
     createCoins(generateCoinsCoordinates(20), sc, transition);
 }
