@@ -347,7 +347,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(bestScore, Transformation);
     TRANSFORM(bestScore)->parent = banderolle;
     TRANSFORM(bestScore)->z = 0.001;
-    TRANSFORM(bestScore)->position = Vector2(0, -0.25);
+    TRANSFORM(bestScore)->position = Vector2(0, -0.2);
     ADD_COMPONENT(bestScore, TextRendering);
     TEXT_RENDERING(bestScore)->text = "bla";
     TEXT_RENDERING(bestScore)->charHeight = 0.7;
@@ -447,7 +447,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
 
     scoreText = theEntityManager.CreateEntity();
     ADD_COMPONENT(scoreText, Transformation);
-    TRANSFORM(scoreText)->position = Vector2(-0.05, -0.3);
+    TRANSFORM(scoreText)->position = Vector2(-0.05, -0.18);
     TRANSFORM(scoreText)->z = 0.13;
     TRANSFORM(scoreText)->rotation = 0.06;
     TRANSFORM(scoreText)->parent = scorePanel;
