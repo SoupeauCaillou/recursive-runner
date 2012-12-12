@@ -303,7 +303,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
 	    decorEntities.push_back(b);
 
         if (i < 3) {
-            //fumee(b);
+            fumee(b);
         }
         if (0 && bdef.texture.find("arbre") != std::string::npos) {
             int idx = atoi(bdef.texture.substr(5, 1).c_str()) - 1;
