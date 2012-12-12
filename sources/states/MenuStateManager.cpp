@@ -65,13 +65,13 @@ void MenuStateManager::setup() {
     Entity titleGroup = datas->titleGroup  = theEntityManager.CreateEntity();
     ADD_COMPONENT(titleGroup, Transformation);
     TRANSFORM(titleGroup)->z = 0.7;
-    TRANSFORM(titleGroup)->rotation = 0.05;
+    TRANSFORM(titleGroup)->rotation = 0.02;
     ADD_COMPONENT(titleGroup, ADSR);
     ADSR(titleGroup)->idleValue = PlacementHelper::ScreenHeight + PlacementHelper::GimpYToScreen(400);
     ADSR(titleGroup)->sustainValue =
         game->baseLine +
         PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).Y * 0.5
-        + PlacementHelper::GimpHeightToScreen(20);
+        + PlacementHelper::GimpHeightToScreen(10);
     ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
     ADSR(titleGroup)->attackTiming = 2;
     ADSR(titleGroup)->decayTiming = 0.2;
@@ -114,7 +114,7 @@ void MenuStateManager::setup() {
     TRANSFORM(subtitleText)->position = Vector2(0, -PlacementHelper::GimpHeightToScreen(25));
     ADD_COMPONENT(subtitleText, TextRendering);
     TEXT_RENDERING(subtitleText)->text = "Tap screen to start";
-    TEXT_RENDERING(subtitleText)->charHeight = PlacementHelper::GimpHeightToScreen(45);
+    TEXT_RENDERING(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
     TEXT_RENDERING(subtitleText)->hide = false;
     TEXT_RENDERING(subtitleText)->cameraBitMask = 0x1;
     TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
