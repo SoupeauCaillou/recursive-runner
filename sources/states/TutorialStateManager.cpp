@@ -123,7 +123,44 @@ void TutorialStateManager::willEnter(State::Enum from) {
 
     // hack lights/links
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-    
+    std::for_each(session->coins.begin(), session->coins.end(), deleteEntityFunctor);
+    session->coins.clear();
+    std::for_each(session->links.begin(), session->links.end(), deleteEntityFunctor);
+    session->links.clear();
+    std::for_each(session->sparkling.begin(), session->sparkling.end(), deleteEntityFunctor);
+    session->sparkling.clear();
+
+    PlacementHelper::ScreenWidth = 60;
+    PlacementHelper::GimpWidth = 3840;
+    Vector2 c[] = {
+        PlacementHelper::GimpPositionToScreen(Vector2(184, 568)),
+        PlacementHelper::GimpPositionToScreen(Vector2(316, 448)),
+        PlacementHelper::GimpPositionToScreen(Vector2(432, 612)),
+        PlacementHelper::GimpPositionToScreen(Vector2(844, 600)),
+        PlacementHelper::GimpPositionToScreen(Vector2(910, 450)),
+        PlacementHelper::GimpPositionToScreen(Vector2(1046, 630)),
+        PlacementHelper::GimpPositionToScreen(Vector2(1244, 564)),
+        PlacementHelper::GimpPositionToScreen(Vector2(1340, 508)),
+        PlacementHelper::GimpPositionToScreen(Vector2(1568, 460)),
+        PlacementHelper::GimpPositionToScreen(Vector2(1820, 450)),
+        PlacementHelper::GimpPositionToScreen(Vector2(1872, 580)),
+        PlacementHelper::GimpPositionToScreen(Vector2(2096, 464)),
+        PlacementHelper::GimpPositionToScreen(Vector2(2380, 584)),
+        PlacementHelper::GimpPositionToScreen(Vector2(2540, 472)),
+        PlacementHelper::GimpPositionToScreen(Vector2(2692, 572)),
+        PlacementHelper::GimpPositionToScreen(Vector2(2916, 500)),
+        PlacementHelper::GimpPositionToScreen(Vector2(3044, 568)),
+        PlacementHelper::GimpPositionToScreen(Vector2(3560, 492)),
+        PlacementHelper::GimpPositionToScreen(Vector2(3684, 566)),
+        PlacementHelper::GimpPositionToScreen(Vector2(3776, 470))
+    };
+    std::vector<Vector2> coords;
+    coords.resize(20);
+    std::copy(c, &c[20], coords.begin());
+    RecursiveRunnerGame::createCoins(coords, session, true);
+
+    PlacementHelper::ScreenWidth = 20;
+    PlacementHelper::GimpWidth = 1280;
 }
 
 bool TutorialStateManager::transitionCanEnter(State::Enum from) {
