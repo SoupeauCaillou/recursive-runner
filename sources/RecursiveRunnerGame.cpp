@@ -473,8 +473,10 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);
     TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
-    theTransformationSystem.setPosition(TRANSFORM(scorePanel), Vector2(0, baseLine + PlacementHelper::ScreenHeight), TransformationSystem::N);
+    theTransformationSystem.setPosition(TRANSFORM(scorePanel), 
+        Vector2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TransformationSystem::N);
     TRANSFORM(scorePanel)->z = 0.8;
+    TRANSFORM(scorePanel)->rotation = 0.04;
     // TRANSFORM(scorePanel)->parent = cameraEntity;
     ADD_COMPONENT(scorePanel, Rendering);
     RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
@@ -485,7 +487,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     ADD_COMPONENT(scoreText, Transformation);
     TRANSFORM(scoreText)->position = Vector2(-0.05, -0.18);
     TRANSFORM(scoreText)->z = 0.13;
-    TRANSFORM(scoreText)->rotation = 0.06;
+    // TRANSFORM(scoreText)->rotation = 0.06;
     TRANSFORM(scoreText)->parent = scorePanel;
     ADD_COMPONENT(scoreText, TextRendering);
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
