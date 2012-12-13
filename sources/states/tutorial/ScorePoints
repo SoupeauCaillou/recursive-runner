@@ -16,12 +16,10 @@ struct ScorePointsTutorialStep : public TutorialStep {
         }
     }
     bool canExit(SessionComponent* sc, TutorialEntities*) {
-        if (theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
-            ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
-            PHYSICS(sc->currentRunner)->mass = 1;
-            return true;
-        } else {
-            return false;
-        }
+        return ANIMATION(sc->currentRunner)->playbackSpeed == 0;
+    }
+    void exit(SessionComponent* sc, TutorialEntities*) {
+        ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
+        PHYSICS(sc->currentRunner)->mass = 1;
     }
 };

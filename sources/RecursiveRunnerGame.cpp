@@ -603,6 +603,16 @@ void RecursiveRunnerGame::tick(float dt) {
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
+        if (!muted && (currentState == State::Game || currentState == State::Tutorial)) {
+            // actually check that 1 music is playing
+            muted = true;
+            std::vector<Entity> e = theMusicSystem.RetrieveAllEntityWithComponent();
+            for (unsigned i=0; i<e.size(); i++) {
+                if (MUSIC(e[i])->control == MusicControl::Play) {
+                    muted = false;
+                }
+            }
+        }
         ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
         ignoreClick = true;
     } else {

@@ -16,14 +16,15 @@ struct BigJumpTutorialStep : public TutorialStep {
     bool canExit(SessionComponent* sc, TutorialEntities* entities) {
         if (TRANSFORM(sc->currentRunner)->position.X >= 0) {
             TEXT_RENDERING(entities->text)->hide = false;
-            if (theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
-                RUNNER(sc->currentRunner)->jumpTimes.push_back(RUNNER(sc->currentRunner)->elapsed);
-                RUNNER(sc->currentRunner)->jumpDurations.push_back(RunnerSystem::MaxJumpDuration);
-                ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
-                TEXT_RENDERING(entities->text)->text = "Your hero will run until the edge of the screen";
-                return true;
-            }
+            ANIMATION(sc->currentRunner)->playbackSpeed = 0;
+            return true;
         }
         return false;
+    }
+    
+    void exit(SessionComponent* sc, TutorialEntities* entities) {
+        RUNNER(sc->currentRunner)->jumpTimes.push_back(RUNNER(sc->currentRunner)->elapsed);
+        RUNNER(sc->currentRunner)->jumpDurations.push_back(RunnerSystem::MaxJumpDuration);
+        ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
     }
 };

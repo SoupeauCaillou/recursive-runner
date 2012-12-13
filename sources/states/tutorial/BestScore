@@ -1,0 +1,24 @@
+#pragma once
+
+struct BestScoreTutorialStep : public TutorialStep {
+    void enter(SessionComponent* sc, TutorialEntities* entities) {
+        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->text = "10 heroes, 5 roundtrips: try to get the best score!";
+    }
+    bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
+        return (TRANSFORM(sc->currentRunner)->position.X > -15);
+    }
+    bool canExit(SessionComponent* sc, TutorialEntities* entities) {
+        if (TRANSFORM(sc->currentRunner)->position.X <= -15) {
+            ANIMATION(sc->currentRunner)->playbackSpeed = 0;
+            TEXT_RENDERING(entities->text)->hide = false;
+            return true;
+        }
+        return false;
+    }
+    void exit(SessionComponent* sc, TutorialEntities* entities) {
+        TEXT_RENDERING(entities->text)->hide = true;
+        ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
+    }
+};
+

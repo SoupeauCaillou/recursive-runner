@@ -28,19 +28,24 @@
 #include "systems/SessionSystem.h"
 #include "systems/PhysicsSystem.h"
 #include "systems/RunnerSystem.h"
+#include "systems/MusicSystem.h"
 
 #include "../RecursiveRunnerGame.h"
 
 namespace Tutorial {
     enum Enum {
-        IntroduceHero = 0,
+        Title,
+        IntroduceHero,
         SmallJump,
         ScorePoints,
         BigJump,
+        RunTilTheEdge,
         NewHero,
         MeetYourself,
         AvoidYourself,
-        TheEnd
+        BestScore,
+        TheEnd,
+        Count
     };
 }
 
@@ -50,19 +55,24 @@ struct TutorialEntities {
 };
 
 struct TutorialStep {
+    virtual ~TutorialStep() {}
     virtual void enter(SessionComponent* sc, TutorialEntities* entities) = 0;
     virtual bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) = 0;
     virtual bool canExit(SessionComponent* sc, TutorialEntities* entities) = 0;
+    virtual void exit(SessionComponent* sc, TutorialEntities* entities) = 0;
 };
 
-#include "tutorial/IntroduceHero.h"
-#include "tutorial/SmallJump.h"
-#include "tutorial/ScorePoints.h"
-#include "tutorial/BigJump.h"
-#include "tutorial/NewHero.h"
-#include "tutorial/MeetYourself.h"
-#include "tutorial/AvoidYourself.h"
-#include "tutorial/TheEnd.h"
+#include "tutorial/Title"
+#include "tutorial/IntroduceHero"
+#include "tutorial/SmallJump"
+#include "tutorial/ScorePoints"
+#include "tutorial/BigJump"
+#include "tutorial/RunTilTheEdge"
+#include "tutorial/NewHero"
+#include "tutorial/MeetYourself"
+#include "tutorial/AvoidYourself"
+#include "tutorial/BestScore"
+#include "tutorial/TheEnd"
 
 struct TutorialStateManager::TutorialStateManagerDatas {
     GameStateManager* gameStateMgr;
@@ -70,29 +80,18 @@ struct TutorialStateManager::TutorialStateManagerDatas {
     TutorialEntities entities;
     Entity titleGroup, title, hideText;
     Tutorial::Enum currentStep;
+    bool waitingClick;
     std::map<Tutorial::Enum, TutorialStep*> step2mgr;
 };
 
 TutorialStateManager::TutorialStateManager(RecursiveRunnerGame* game) : StateManager(State::Tutorial, game) {
    datas = new TutorialStateManagerDatas;
    datas->gameStateMgr = new GameStateManager(game);
-   datas->step2mgr[Tutorial::IntroduceHero] = new IntroduceHeroTutorialStep;
-   datas->step2mgr[Tutorial::SmallJump] = new SmallJumpTutorialStep;
-   datas->step2mgr[Tutorial::ScorePoints] = new ScorePointsTutorialStep;
-   datas->step2mgr[Tutorial::BigJump] = new BigJumpTutorialStep;
-   datas->step2mgr[Tutorial::NewHero] = new NewHeroTutorialStep;
-   datas->step2mgr[Tutorial::MeetYourself] = new MeetYourselfTutorialStep;
-   datas->step2mgr[Tutorial::AvoidYourself] = new AvoidYourselfTutorialStep;
-   datas->step2mgr[Tutorial::TheEnd] = new TheEndTutorialStep;
 }
 
 TutorialStateManager::~TutorialStateManager() {
     delete datas->gameStateMgr;
-    for(std::map<Tutorial::Enum, TutorialStep*>::iterator it=datas->step2mgr.begin();
-        it!=datas->step2mgr.end();
-        ++it) {
-        delete it->second;
-    }
+
     delete datas;
 }
 
@@ -161,7 +160,26 @@ void TutorialStateManager::setup() {
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
 void TutorialStateManager::willEnter(State::Enum from) {
+    #define INSTANCIATE_STEP(step) \
+        datas->step2mgr[Tutorial:: step] = new step##TutorialStep
+    INSTANCIATE_STEP(Title);
+    INSTANCIATE_STEP(IntroduceHero);
+    INSTANCIATE_STEP(SmallJump);
+    INSTANCIATE_STEP(ScorePoints);
+    INSTANCIATE_STEP(BigJump);
+    INSTANCIATE_STEP(RunTilTheEdge);
+    INSTANCIATE_STEP(NewHero);
+    INSTANCIATE_STEP(MeetYourself);
+    INSTANCIATE_STEP(AvoidYourself);
+    INSTANCIATE_STEP(BestScore);
+    INSTANCIATE_STEP(TheEnd);
+    assert(datas->step2mgr.size() == (int)Tutorial::Count);
+
+    bool isMuted = theMusicSystem.isMuted();
+    theMusicSystem.toggleMute(true);
     datas->gameStateMgr->willEnter(from);
+    theMusicSystem.toggleMute(isMuted);
+    ANIMATION(game->pianist)->name = "pianojournal";
 
     datas->waitBeforeEnterExit = TimeUtil::getTime();
     RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
@@ -206,6 +224,8 @@ void TutorialStateManager::willEnter(State::Enum from) {
 
     PlacementHelper::ScreenWidth = 20;
     PlacementHelper::GimpWidth = 1280;
+    TEXT_RENDERING(datas->entities.text)->text = "How to play?";
+    TEXT_RENDERING(datas->entities.text)->hide = false;
 }
 
 bool TutorialStateManager::transitionCanEnter(State::Enum from) {
@@ -229,7 +249,8 @@ void TutorialStateManager::enter(State::Enum from) {
     session->userInputEnabled = false;
 
     datas->gameStateMgr->enter(from);
-    datas->currentStep = Tutorial::IntroduceHero;
+    datas->waitingClick = true;
+    datas->currentStep = Tutorial::Title;
     datas->step2mgr[datas->currentStep]->enter(session, &datas->entities);
     RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
 }
@@ -244,15 +265,26 @@ void TutorialStateManager::backgroundUpdate(float) {
 State::Enum TutorialStateManager::update(float dt) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
 
-    if (datas->step2mgr[datas->currentStep]->mustUpdateGame(session, &datas->entities)) {
-        datas->gameStateMgr->update(dt);
-    }
-    if (datas->step2mgr[datas->currentStep]->canExit(session, &datas->entities)) {
-        if (datas->currentStep == Tutorial::TheEnd) {
-            return State::Menu;
-        } else {
-            datas->currentStep = (Tutorial::Enum) (datas->currentStep + 1);
-            datas->step2mgr[datas->currentStep]->enter(session, &datas->entities);
+    if (datas->waitingClick) {
+        if (!game->ignoreClick && theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
+            datas->waitingClick = false;
+            std::cout << datas->currentStep << " : exit" << std::endl;
+            datas->step2mgr[datas->currentStep]->exit(session, &datas->entities);
+            if (datas->currentStep == Tutorial::TheEnd) {
+                return State::Menu;
+            } else {
+                datas->currentStep = (Tutorial::Enum) (datas->currentStep + 1);
+                std::cout << datas->currentStep << " : enter" << std::endl;
+                datas->step2mgr[datas->currentStep]->enter(session, &datas->entities);
+            }
+        }
+    } else {
+        if (datas->step2mgr[datas->currentStep]->mustUpdateGame(session, &datas->entities)) {
+            datas->gameStateMgr->update(dt);
+        }
+        if (datas->step2mgr[datas->currentStep]->canExit(session, &datas->entities)) {
+            std::cout << datas->currentStep << " : canExit" << std::endl;
+            datas->waitingClick = true;
         }
     }
     return State::Tutorial;
@@ -268,6 +300,7 @@ void TutorialStateManager::willExit(State::Enum to) {
     session->userInputEnabled = false;
     RENDERING(datas->title)->hide = true;
     RENDERING(datas->hideText)->hide = true;
+    TEXT_RENDERING(datas->entities.text)->hide = true;
     datas->gameStateMgr->willExit(to);
     RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = false;
 }
@@ -279,5 +312,11 @@ bool TutorialStateManager::transitionCanExit(State::Enum to) {
 
 void TutorialStateManager::exit(State::Enum to) {
     datas->gameStateMgr->exit(to);
+    for(std::map<Tutorial::Enum, TutorialStep*>::iterator it=datas->step2mgr.begin();
+        it!=datas->step2mgr.end();
+        ++it) {
+        delete it->second;
+    }
+    datas->step2mgr.clear();
 }
 

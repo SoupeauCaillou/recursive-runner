@@ -1,0 +1,24 @@
+#pragma once
+
+struct RunTilTheEdgeTutorialStep : public TutorialStep {
+    void enter(SessionComponent* , TutorialEntities* entities) {
+        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->text = "Your hero will run until the edge of the screen";
+    }
+    bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
+        return (TRANSFORM(sc->currentRunner)->position.X < 29);
+    }
+    bool canExit(SessionComponent* sc, TutorialEntities* entities) {
+        if (TRANSFORM(sc->currentRunner)->position.X >= 29) {
+            ANIMATION(sc->currentRunner)->playbackSpeed = 0;
+            TEXT_RENDERING(entities->text)->hide = false;
+            return true;
+        }
+        return false;
+    }
+    
+    void exit(SessionComponent* sc, TutorialEntities* entities) {
+        TEXT_RENDERING(entities->text)->hide = true;
+        ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
+    }
+};

@@ -76,13 +76,16 @@
     <None Include="sources\systems\RangeFollowerSystem.h" />
     <None Include="sources\states\StateManager.h" />
     <None Include="sources\systems\SessionSystem.h" />
-    <None Include="sources\states\tutorial\IntroduceHero.h" />
-    <None Include="sources\states\tutorial\SmallJump.h" />
-    <None Include="sources\states\tutorial\ScorePoints.h" />
-    <None Include="sources\states\tutorial\BigJump.h" />
-    <None Include="sources\states\tutorial\NewHero.h" />
-    <None Include="sources\states\tutorial\AvoidYourself.h" />
-    <None Include="sources\states\tutorial\MeetYourself.h" />
-    <None Include="sources\states\tutorial\TheEnd.h" />
+    <None Include="sources\states\tutorial\AvoidYourself" />
+    <None Include="sources\states\tutorial\BigJump" />
+    <None Include="sources\states\tutorial\IntroduceHero" />
+    <None Include="sources\states\tutorial\MeetYourself" />
+    <None Include="sources\states\tutorial\NewHero" />
+    <None Include="sources\states\tutorial\ScorePoints" />
+    <None Include="sources\states\tutorial\SmallJump" />
+    <None Include="sources\states\tutorial\TheEnd" />
+    <None Include="sources\states\tutorial\Title" />
+    <None Include="sources\states\tutorial\RunTilTheEdge" />
+    <None Include="sources\states\tutorial\BestScore" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 struct AvoidYourselfTutorialStep : public TutorialStep {
     void enter(SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "Avoiding your previous heroes is the best way to scores a lot of points";
+        TEXT_RENDERING(entities->text)->text = "Avoid him: he'll keep scoring points!";
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
         if (Vector2::Distance(TRANSFORM(sc->runners[0])->position, TRANSFORM(sc->runners[1])->position) > 4) {
@@ -16,14 +16,12 @@ struct AvoidYourselfTutorialStep : public TutorialStep {
         }
     }
     bool canExit(SessionComponent* sc, TutorialEntities* ) {
-        if (ANIMATION(sc->currentRunner)->playbackSpeed == 0) {
-            if (theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
-                RUNNER(sc->currentRunner)->jumpTimes.push_back(RUNNER(sc->currentRunner)->elapsed);
-                RUNNER(sc->currentRunner)->jumpDurations.push_back(RunnerSystem::MaxJumpDuration);
-                ANIMATION(sc->runners[0])->playbackSpeed = ANIMATION(sc->runners[1])->playbackSpeed = 1.1;
-                return true;
-            }
-        }
-        return false;
+        return (ANIMATION(sc->currentRunner)->playbackSpeed == 0);
+    }
+    void exit(SessionComponent* sc, TutorialEntities* entities) {
+        TEXT_RENDERING(entities->text)->hide = true;
+        RUNNER(sc->currentRunner)->jumpTimes.push_back(RUNNER(sc->currentRunner)->elapsed);
+        RUNNER(sc->currentRunner)->jumpDurations.push_back(RunnerSystem::MaxJumpDuration * 0.8);
+        ANIMATION(sc->runners[0])->playbackSpeed = ANIMATION(sc->runners[1])->playbackSpeed = 1.1;
     }
 };

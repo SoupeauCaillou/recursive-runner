@@ -1,0 +1,22 @@
+#pragma once
+
+struct TheEndTutorialStep : public TutorialStep {
+    void enter(SessionComponent* sc, TutorialEntities* entities) {
+        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->text = "Good luck!";
+    }
+    bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
+        return (TRANSFORM(sc->currentRunner)->position.X > -29);
+    }
+    bool canExit(SessionComponent* sc, TutorialEntities* entities) {
+        if (TRANSFORM(sc->currentRunner)->position.X <= -29) {
+            TEXT_RENDERING(entities->text)->hide = false;
+            ANIMATION(sc->currentRunner)->playbackSpeed = 0;
+            return true;
+        }
+        return false;
+    }
+    void exit(SessionComponent* sc, TutorialEntities* entities) {
+        ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
+    }
+};

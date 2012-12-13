@@ -1,0 +1,23 @@
+#pragma once
+
+struct IntroduceHeroTutorialStep : public TutorialStep {
+    void enter(SessionComponent* sc, TutorialEntities* entities) {
+        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->text = "This is You";
+    }
+    bool mustUpdateGame(SessionComponent* , TutorialEntities*) {
+        return true;
+    }
+    bool canExit(SessionComponent* sc, TutorialEntities* entities) {
+        if (TRANSFORM(sc->currentRunner)->position.X >= -22) {
+            ANIMATION(sc->currentRunner)->playbackSpeed = 0;
+            TEXT_RENDERING(entities->text)->hide = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    void exit(SessionComponent* sc, TutorialEntities*) {
+        ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
+    }
+};
