@@ -22,7 +22,7 @@ struct BigJumpTutorialStep : public TutorialStep {
         return false;
     }
     
-    void exit(SessionComponent* sc, TutorialEntities* entities) {
+    void exit(SessionComponent* sc, TutorialEntities* ) {
         RUNNER(sc->currentRunner)->jumpTimes.push_back(RUNNER(sc->currentRunner)->elapsed);
         RUNNER(sc->currentRunner)->jumpDurations.push_back(RunnerSystem::MaxJumpDuration);
         ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;

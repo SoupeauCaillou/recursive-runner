@@ -1,7 +1,7 @@
 #pragma once
 
 struct SmallJumpTutorialStep : public TutorialStep {
-    void enter(SessionComponent* sc, TutorialEntities* entities) {
+    void enter(SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
         TEXT_RENDERING(entities->text)->text = "Tap the screen to jump";
     }
