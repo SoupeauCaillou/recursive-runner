@@ -1,7 +1,7 @@
 #pragma once
 
 struct TitleTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* ) {
+    void enter(LocalizeAPI* , SessionComponent* , TutorialEntities* ) {
     }
     bool mustUpdateGame(SessionComponent* , TutorialEntities* ) {
         return false;

@@ -29,6 +29,7 @@
 #include "systems/PhysicsSystem.h"
 #include "systems/RunnerSystem.h"
 #include "systems/MusicSystem.h"
+#include "api/LocalizeAPI.h"
 
 #include "../RecursiveRunnerGame.h"
 
@@ -56,7 +57,7 @@ struct TutorialEntities {
 
 struct TutorialStep {
     virtual ~TutorialStep() {}
-    virtual void enter(SessionComponent* sc, TutorialEntities* entities) = 0;
+    virtual void enter(LocalizeAPI* loc, SessionComponent* sc, TutorialEntities* entities) = 0;
     virtual bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) = 0;
     virtual bool canExit(SessionComponent* sc, TutorialEntities* entities) = 0;
     virtual void exit(SessionComponent* sc, TutorialEntities* entities) = 0;
@@ -223,7 +224,7 @@ void TutorialStateManager::willEnter(State::Enum from) {
 
     PlacementHelper::ScreenWidth = 20;
     PlacementHelper::GimpWidth = 1280;
-    TEXT_RENDERING(datas->entities.text)->text = "How to play? (tap to continue)";
+    TEXT_RENDERING(datas->entities.text)->text = game->localizeAPI->text("how_to_play", "How to play? (tap to continue)");
     TEXT_RENDERING(datas->entities.text)->hide = true;
 }
 
@@ -251,7 +252,7 @@ void TutorialStateManager::enter(State::Enum from) {
     datas->gameStateMgr->enter(State::Tutorial);
     datas->waitingClick = true;
     datas->currentStep = Tutorial::Title;
-    datas->step2mgr[datas->currentStep]->enter(session, &datas->entities);
+    datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
     RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
 }
 
@@ -268,14 +269,12 @@ State::Enum TutorialStateManager::update(float dt) {
     if (datas->waitingClick) {
         if (!game->ignoreClick && theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
             datas->waitingClick = false;
-            std::cout << datas->currentStep << " : exit" << std::endl;
             datas->step2mgr[datas->currentStep]->exit(session, &datas->entities);
             if (datas->currentStep == Tutorial::TheEnd) {
                 return State::Menu;
             } else {
                 datas->currentStep = (Tutorial::Enum) (datas->currentStep + 1);
-                std::cout << datas->currentStep << " : enter" << std::endl;
-                datas->step2mgr[datas->currentStep]->enter(session, &datas->entities);
+                datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
             }
         }
     } else {
@@ -283,7 +282,6 @@ State::Enum TutorialStateManager::update(float dt) {
             datas->gameStateMgr->update(dt);
         }
         if (datas->step2mgr[datas->currentStep]->canExit(session, &datas->entities)) {
-            std::cout << datas->currentStep << " : canExit" << std::endl;
             datas->waitingClick = true;
         }
     }

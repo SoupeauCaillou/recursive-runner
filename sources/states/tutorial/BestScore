@@ -1,9 +1,9 @@
 #pragma once
 
 struct BestScoreTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "10 heroes, 5 roundtrips: try to get the best score!";
+        TEXT_RENDERING(entities->text)->text = loc->text("ten_heroes", "10 heroes, 5 roundtrips: try to get the best score!");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
         return (TRANSFORM(sc->currentRunner)->position.X > -15);

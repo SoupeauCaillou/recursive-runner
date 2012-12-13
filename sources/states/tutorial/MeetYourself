@@ -1,9 +1,9 @@
 #pragma once
 
 struct MeetYourselfTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "Your previous hero is replaying its run";
+        TEXT_RENDERING(entities->text)->text = loc->text("previous_hero_replay", "Your previous hero is replaying its run");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
         if (Vector2::Distance(TRANSFORM(sc->runners[0])->position, TRANSFORM(sc->runners[1])->position) > theRenderingSystem.cameras[1].worldSize.X * 0.7) {

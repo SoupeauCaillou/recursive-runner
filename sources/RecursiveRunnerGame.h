@@ -35,6 +35,7 @@
 
 class NameInputAPI;
 class SessionComponent;
+class LocalizeAPI;
 
 enum CameraMode {
     CameraModeMenu,
@@ -48,7 +49,7 @@ class RecursiveRunnerGame : public Game {
       static void endGame();
 
    public:
-      RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exAPI, CommunicationAPI* comAPI);
+      RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exAPI, CommunicationAPI* comAPI, LocalizeAPI* locAPI);
       ~RecursiveRunnerGame();
       void sacInit(int windowW, int windowH);
       void init(const uint8_t* in = 0, int size = 0);
@@ -83,6 +84,7 @@ class RecursiveRunnerGame : public Game {
       Entity silhouette, route, cameraEntity, bestScore;
       std::vector<Entity> decorEntities;
       CommunicationAPI* communicationAPI;
+      LocalizeAPI* localizeAPI;
       StorageAPI* storageAPI;
       AdAPI* adAPI;
       // GameTempVar gameTempVars;

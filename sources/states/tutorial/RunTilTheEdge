@@ -1,9 +1,9 @@
 #pragma once
 
 struct RunTilTheEdgeTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "Your hero will run until the edge of the screen";
+        TEXT_RENDERING(entities->text)->text = loc->text("run_edge", "Your hero will run until the edge of the screen");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
         return (TRANSFORM(sc->currentRunner)->position.X < 29);
@@ -17,8 +17,7 @@ struct RunTilTheEdgeTutorialStep : public TutorialStep {
         return false;
     }
     
-    void exit(SessionComponent* sc, TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+    void exit(SessionComponent* sc, TutorialEntities* ) {
         ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
     }
 };

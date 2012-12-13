@@ -1,13 +1,13 @@
 #pragma once
 
 struct ScorePointsTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->text = loc->text("turn_on", "Turn on lights to score points");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
         if (PHYSICS(sc->currentRunner)->linearVelocity.Y < 0) { // check coins instead
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
-            TEXT_RENDERING(entities->text)->text = "Turn on lights to score points";
             TEXT_RENDERING(entities->text)->hide = false;
             PHYSICS(sc->currentRunner)->mass = 0;
             return false;

@@ -31,6 +31,7 @@
 #include "systems/AutoDestroySystem.h"
 #include "../systems/SessionSystem.h"
 #include "../systems/RunnerSystem.h"
+#include "api/LocalizeAPI.h"
 
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
@@ -111,16 +112,17 @@ void MenuStateManager::setup() {
     Entity subtitleText = datas->subtitleText = theEntityManager.CreateEntity();
     ADD_COMPONENT(subtitleText, Transformation);
     TRANSFORM(subtitleText)->parent = subtitle;
+    TRANSFORM(subtitleText)->z = 0.01;
     TRANSFORM(subtitleText)->position = Vector2(0, -PlacementHelper::GimpHeightToScreen(25));
     TRANSFORM(subtitleText)->size = Vector2(PlacementHelper::GimpWidthToScreen(790), 1);
     ADD_COMPONENT(subtitleText, TextRendering);
-    TEXT_RENDERING(subtitleText)->text = "Tap screen to start";
+    TEXT_RENDERING(subtitleText)->text = game->localizeAPI->text("tap_screen_to_start", "Tap screen to start");
     TEXT_RENDERING(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
     TEXT_RENDERING(subtitleText)->hide = false;
     TEXT_RENDERING(subtitleText)->cameraBitMask = 0x1;
     TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
     TEXT_RENDERING(subtitleText)->flags = TextRenderingComponent::AdjustHeightToFillWidthBit;
-
+std::cout << "TEXT:'" << TEXT_RENDERING(subtitleText)->text << "'" << std::endl;
     Entity swarmBtn = datas->swarmBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(swarmBtn, Transformation);
     TRANSFORM(swarmBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm"));
@@ -182,7 +184,7 @@ void MenuStateManager::willEnter(State::Enum from) {
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty() && from == State::Game) {
         std::stringstream a;
-        a << PLAYER(players[0])->score << " points - tap screen to restart";
+        a << PLAYER(players[0])->score << " points - " << game->localizeAPI->text("tap_screen_to_restart", "tap screen to restart");;
         TEXT_RENDERING(datas->subtitleText)->text = a.str();
         game->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
         game->updateBestScore();

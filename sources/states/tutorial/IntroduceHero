@@ -1,9 +1,9 @@
 #pragma once
 
 struct IntroduceHeroTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc,  SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "This is You";
+        TEXT_RENDERING(entities->text)->text = loc->text("this_is_you", "This is You");
     }
     bool mustUpdateGame(SessionComponent* , TutorialEntities*) {
         return true;

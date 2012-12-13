@@ -1,9 +1,9 @@
 #pragma once
 
 struct BigJumpTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "Do longer press to make higher jumps";
+        TEXT_RENDERING(entities->text)->text = loc->text("longer_press", "Do longer press to make higher jumps");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
         if (TRANSFORM(sc->currentRunner)->position.X < 0) {

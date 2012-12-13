@@ -1,9 +1,9 @@
 #pragma once
 
 struct AvoidYourselfTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "Avoid him: he'll keep scoring points!";
+        TEXT_RENDERING(entities->text)->text = loc->text("avoid_him", "Avoid him: he'll keep scoring points!");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
         if (Vector2::Distance(TRANSFORM(sc->runners[0])->position, TRANSFORM(sc->runners[1])->position) > 4) {

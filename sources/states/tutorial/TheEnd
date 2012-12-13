@@ -1,9 +1,9 @@
 #pragma once
 
 struct TheEndTutorialStep : public TutorialStep {
-    void enter(SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
-        TEXT_RENDERING(entities->text)->text = "Good luck!";
+        TEXT_RENDERING(entities->text)->text = loc->text("good_luck", "Good luck!");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
         return (TRANSFORM(sc->currentRunner)->position.X > -29);

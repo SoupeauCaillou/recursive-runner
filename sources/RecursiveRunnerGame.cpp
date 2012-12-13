@@ -53,7 +53,7 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage,
-NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communication) :
+NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communication, LocalizeAPI* loc) :
    Game() {
 
    assetAPI = ast;
@@ -61,6 +61,7 @@ NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communicati
    nameInputAPI = nameInput;
    exitAPI = exit;
    communicationAPI = communication;
+   localizeAPI = loc;
    adAPI = ad;
 
    RunnerSystem::CreateInstance();

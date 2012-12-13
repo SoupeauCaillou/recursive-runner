@@ -333,13 +333,13 @@ int main(int argc, char** argv) {
 	#endif
 
 	LocalizeAPILinuxImpl* loc = new LocalizeAPILinuxImpl();
-
+    loc->init();
 	nameInput = new NameInputAPILinuxImpl();
 
 	StorageAPILinuxImpl* storage = new StorageAPILinuxImpl();
 	storage->init();
 
-	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), storage, nameInput, new AdAPI(), new ExitAPILinuxImpl(), new CommunicationAPILinuxImpl());
+	game = new RecursiveRunnerGame(new AssetAPILinuxImpl(), storage, nameInput, new AdAPI(), new ExitAPILinuxImpl(), new CommunicationAPILinuxImpl(), loc);
 
 	theSoundSystem.init();
 	theTouchInputManager.setNativeTouchStatePtr(new MouseNativeTouchState());
@@ -359,7 +359,7 @@ int main(int argc, char** argv) {
 
 #ifndef EMSCRIPTEN
     setlocale( LC_ALL, "" );
-    loc->init();
+    
     glfwSetCharCallback(myCharCallback);
     glfwSetKeyCallback(myKeyCallback);
 #endif
