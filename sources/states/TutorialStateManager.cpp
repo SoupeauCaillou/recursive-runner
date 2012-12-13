@@ -223,7 +223,7 @@ void TutorialStateManager::willEnter(State::Enum from) {
 
     PlacementHelper::ScreenWidth = 20;
     PlacementHelper::GimpWidth = 1280;
-    TEXT_RENDERING(datas->entities.text)->text = "How to play?";
+    TEXT_RENDERING(datas->entities.text)->text = "How to play? (tap to continue)";
     TEXT_RENDERING(datas->entities.text)->hide = true;
 }
 
