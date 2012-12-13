@@ -95,7 +95,7 @@ void GameStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void GameStateManager::willEnter(State::Enum) {
+void GameStateManager::willEnter(State::Enum from) {
     ADSR(datas->transition)->active = true;
 
     if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
@@ -111,8 +111,10 @@ void GameStateManager::willEnter(State::Enum) {
     } else {
         MUSIC(datas->transition)->control = MusicControl::Play;
     }
-    RENDERING(datas->pauseButton)->hide = false;
-    RENDERING(datas->pauseButton)->color = Color(1,1,1,0);
+    if (from != State::Tutorial) {
+        RENDERING(datas->pauseButton)->hide = false;
+        RENDERING(datas->pauseButton)->color = Color(1,1,1,0);
+    }
 }
 
 bool GameStateManager::transitionCanEnter(State::Enum) {
@@ -139,7 +141,8 @@ void GameStateManager::enter(State::Enum from) {
         }
         game->setupCamera(CameraModeSingle);
     }
-    BUTTON(datas->pauseButton)->enabled = true;
+    if (from != State::Tutorial)
+        BUTTON(datas->pauseButton)->enabled = true;
 }
 
 

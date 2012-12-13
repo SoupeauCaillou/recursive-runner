@@ -177,7 +177,7 @@ void TutorialStateManager::willEnter(State::Enum from) {
 
     bool isMuted = theMusicSystem.isMuted();
     theMusicSystem.toggleMute(true);
-    datas->gameStateMgr->willEnter(from);
+    datas->gameStateMgr->willEnter(State::Tutorial);
     theMusicSystem.toggleMute(isMuted);
 
     datas->waitBeforeEnterExit = TimeUtil::getTime();
@@ -248,7 +248,7 @@ void TutorialStateManager::enter(State::Enum from) {
     session->userInputEnabled = false;
     TEXT_RENDERING(datas->entities.text)->hide = false;
 
-    datas->gameStateMgr->enter(from);
+    datas->gameStateMgr->enter(State::Tutorial);
     datas->waitingClick = true;
     datas->currentStep = Tutorial::Title;
     datas->step2mgr[datas->currentStep]->enter(session, &datas->entities);
