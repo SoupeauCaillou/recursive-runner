@@ -50,7 +50,7 @@ static void startMenuMusic(Entity title) {
 }
 
 struct MenuStateManager::MenuStateManagerDatas {
-    Entity titleGroup, title, subtitle, subtitleText, swarmBtn, giftizBtn;
+    Entity titleGroup, title, subtitle, subtitleText, helpBtn, swarmBtn, giftizBtn;
 };
 
 MenuStateManager::MenuStateManager(RecursiveRunnerGame* game) : StateManager(State::Menu, game) {
@@ -147,6 +147,19 @@ void MenuStateManager::setup() {
     RENDERING(giftizBtn)->cameraBitMask = 0x1;
     ADD_COMPONENT(giftizBtn, Button);
     BUTTON(giftizBtn)->overSize = 1.2;
+
+    Entity helpBtn = datas->helpBtn = theEntityManager.CreateEntity();
+    ADD_COMPONENT(helpBtn, Transformation);
+    TRANSFORM(helpBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("aide"));
+    TRANSFORM(helpBtn)->parent = game->muteBtn;
+    TRANSFORM(helpBtn)->position = Vector2(0, -(TRANSFORM(helpBtn)->size.Y * 0.5 + game->buttonSpacing.V));
+    TRANSFORM(helpBtn)->z = 0;
+    ADD_COMPONENT(helpBtn, Rendering);
+    RENDERING(helpBtn)->texture = theRenderingSystem.loadTextureFile("aide");
+    RENDERING(helpBtn)->hide = false;
+    RENDERING(helpBtn)->cameraBitMask = 0x1;
+    ADD_COMPONENT(helpBtn, Button);
+    BUTTON(helpBtn)->overSize = 1.2;
 }
 
 
@@ -181,8 +194,8 @@ void MenuStateManager::willEnter(State::Enum from) {
         startMenuMusic(datas->title);
     }
     // unhide UI
-    RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = false;
-    RENDERING(datas->swarmBtn)->color = RENDERING(datas->giftizBtn)->color = Color(1,1,1,0);
+    RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = RENDERING(datas->helpBtn)->hide = false;
+    RENDERING(datas->swarmBtn)->color = RENDERING(datas->giftizBtn)->color = RENDERING(datas->helpBtn)->color = Color(1,1,1,0);
     updateGiftizButton(datas->giftizBtn, game);
 }
 
@@ -190,7 +203,7 @@ bool MenuStateManager::transitionCanEnter(State::Enum) {
     // check if adsr is complete
     ADSRComponent* adsr = ADSR(datas->titleGroup);
     float progress = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
-    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = progress;
+    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = progress;
     return (adsr->value == adsr->sustainValue);
 }
 
@@ -198,9 +211,8 @@ bool MenuStateManager::transitionCanEnter(State::Enum) {
 void MenuStateManager::enter(State::Enum) {
     RecursiveRunnerGame::endGame();
     // enable UI
-    BUTTON(datas->swarmBtn)->enabled = true;
-    BUTTON(datas->giftizBtn)->enabled = true;
-    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = 1;
+    BUTTON(datas->swarmBtn)->enabled = BUTTON(datas->giftizBtn)->enabled = BUTTON(datas->helpBtn)->enabled = true;
+    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = 1;
 }
 
 
@@ -252,6 +264,15 @@ State::Enum MenuStateManager::update(float) {
     }
     RENDERING(datas->giftizBtn)->color = BUTTON(datas->giftizBtn)->mouseOver ? Color("gray") : Color();
 
+    // Handle help button
+    if (!game->ignoreClick) {
+        if (BUTTON(datas->helpBtn)->clicked) {
+            return State::Tutorial;
+        }
+        game->ignoreClick = BUTTON(datas->helpBtn)->mouseOver;
+    }
+    RENDERING(datas->helpBtn)->color = BUTTON(datas->helpBtn)->mouseOver ? Color("gray") : Color();
+
     // Start game ?
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
         return State::Ad;
@@ -270,6 +291,7 @@ void MenuStateManager::willExit(State::Enum) {
     // disable button interaction
     BUTTON(datas->swarmBtn)->enabled = false;
     BUTTON(datas->giftizBtn)->enabled = false;
+    BUTTON(datas->helpBtn)->enabled = false;
 
     // activate animation
     ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = false;
@@ -280,13 +302,13 @@ bool MenuStateManager::transitionCanExit(State::Enum) {
     float progress = (adsr->value - adsr->attackValue) /
             (adsr->idleValue - adsr->attackValue);
 
-    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = 1 - progress;
+    RENDERING(datas->swarmBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = 1 - progress;
     // check if animation is finished
     return (adsr->value >= adsr->idleValue);
 }
 
 void MenuStateManager::exit(State::Enum) {
-    RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = true;
+    RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = RENDERING(datas->helpBtn)->hide = true;
 }
 
 static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game) {

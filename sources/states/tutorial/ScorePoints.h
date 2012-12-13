@@ -1,7 +1,7 @@
 #pragma once
 
 struct ScorePointsTutorialStep : public TutorialStep {
-    void enter(SessionComponent* sc, TutorialEntities* entities) {
+    void enter(SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
@@ -15,7 +15,7 @@ struct ScorePointsTutorialStep : public TutorialStep {
             return true;
         }
     }
-    bool canExit(SessionComponent* sc, TutorialEntities* entities) {
+    bool canExit(SessionComponent* sc, TutorialEntities*) {
         if (theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
             ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
             PHYSICS(sc->currentRunner)->mass = 1;

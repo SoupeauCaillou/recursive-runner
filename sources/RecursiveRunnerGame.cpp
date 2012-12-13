@@ -348,10 +348,11 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     TRANSFORM(bestScore)->parent = banderolle;
     TRANSFORM(bestScore)->z = 0.001;
     TRANSFORM(bestScore)->position = Vector2(0, -0.2);
+    TRANSFORM(bestScore)->size.X = PlacementHelper::GimpWidthToScreen(775);
     ADD_COMPONENT(bestScore, TextRendering);
     TEXT_RENDERING(bestScore)->text = "bla";
     TEXT_RENDERING(bestScore)->charHeight = 0.7;
-    // TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::IsANumberBit;
+    TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
     TEXT_RENDERING(bestScore)->hide = false;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
     const bool muted = storageAPI->isMuted();

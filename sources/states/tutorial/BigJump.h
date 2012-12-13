@@ -1,11 +1,11 @@
 #pragma once
 
 struct BigJumpTutorialStep : public TutorialStep {
-    void enter(SessionComponent* sc, TutorialEntities* entities) {
+    void enter(SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
         TEXT_RENDERING(entities->text)->text = "Do longer press to make higher jumps";
     }
-    bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
+    bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
         if (TRANSFORM(sc->currentRunner)->position.X < 0) {
             return true;
         } else {

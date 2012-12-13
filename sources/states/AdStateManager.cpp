@@ -90,7 +90,6 @@ void AdStateManager::backgroundUpdate(float) {
 
 State::Enum AdStateManager::update(float) {
     if (datas->gameb4Ad > 0) {
-        datas->gameb4Ad--;
         return State::Game;
     } else if(game->adAPI->done()) {
         datas->waitAfterAdDisplay = TimeUtil::getTime();
@@ -121,5 +120,7 @@ bool AdStateManager::transitionCanExit(State::Enum) {
 void AdStateManager::exit(State::Enum) {
     if (datas->gameb4Ad == 0) {
         datas->gameb4Ad =3;
+    } else {
+        datas->gameb4Ad--;
     }
 }

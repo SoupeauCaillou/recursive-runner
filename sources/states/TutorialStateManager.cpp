@@ -23,6 +23,7 @@
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/AnimationSystem.h"
+#include "systems/ADSRSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/SessionSystem.h"
 #include "systems/PhysicsSystem.h"
@@ -49,12 +50,10 @@ struct TutorialEntities {
 };
 
 struct TutorialStep {
-        virtual void enter(SessionComponent* sc, TutorialEntities* entities) = 0;
-        virtual bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) = 0;
-        virtual bool canExit(SessionComponent* sc, TutorialEntities* entities) = 0;
+    virtual void enter(SessionComponent* sc, TutorialEntities* entities) = 0;
+    virtual bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) = 0;
+    virtual bool canExit(SessionComponent* sc, TutorialEntities* entities) = 0;
 };
-
-
 
 #include "tutorial/IntroduceHero.h"
 #include "tutorial/SmallJump.h"
@@ -67,7 +66,9 @@ struct TutorialStep {
 
 struct TutorialStateManager::TutorialStateManagerDatas {
     GameStateManager* gameStateMgr;
+    float waitBeforeEnterExit;
     TutorialEntities entities;
+    Entity titleGroup, title, hideText;
     Tutorial::Enum currentStep;
     std::map<Tutorial::Enum, TutorialStep*> step2mgr;
 };
@@ -99,13 +100,54 @@ void TutorialStateManager::setup() {
     // setup game
     datas->gameStateMgr->setup();
     // setup tutorial
+    Entity titleGroup = datas->titleGroup  = theEntityManager.CreateEntity();
+    ADD_COMPONENT(titleGroup, Transformation);
+    TRANSFORM(titleGroup)->z = 0.7;
+    TRANSFORM(titleGroup)->rotation = 0.02;
+    TRANSFORM(titleGroup)->parent = game->cameraEntity;
+    ADD_COMPONENT(titleGroup, ADSR);
+    ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenHeight + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).Y) * 0.6;
+    ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).Y) * 0.5
+        + PlacementHelper::GimpHeightToScreen(10);
+    ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
+    ADSR(titleGroup)->attackTiming = 1;
+    ADSR(titleGroup)->decayTiming = 0.1;
+    ADSR(titleGroup)->releaseTiming = 0.3;
+    TRANSFORM(titleGroup)->position = Vector2(0, ADSR(titleGroup)->idleValue);
+
+    Entity title = datas->title = theEntityManager.CreateEntity();
+    ADD_COMPONENT(title, Transformation);
+    TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre"));
+    TRANSFORM(title)->parent = titleGroup;
+    TRANSFORM(title)->position = Vector2::Zero;
+    TRANSFORM(title)->z = 0.15;
+    ADD_COMPONENT(title, Rendering);
+    RENDERING(title)->texture = theRenderingSystem.loadTextureFile("titre");
+    RENDERING(title)->cameraBitMask = 0x3;
+
+    Entity hideText = datas->hideText = theEntityManager.CreateEntity();
+    ADD_COMPONENT(hideText, Transformation);
+    TRANSFORM(hideText)->size = PlacementHelper::GimpSizeToScreen(Vector2(776, 102));
+    TRANSFORM(hideText)->parent = title;
+    TRANSFORM(hideText)->position = (Vector2(-0.5, 0.5) + Vector2(41, -72) / theRenderingSystem.getTextureSize("titre")) * 
+        TRANSFORM(title)->size + TRANSFORM(hideText)->size * Vector2(0.5, -0.5);
+    TRANSFORM(hideText)->z = 0.01;
+    ADD_COMPONENT(hideText, Rendering);
+    RENDERING(hideText)->color = Color(130.0/255, 116.0/255, 117.0/255);
+    RENDERING(hideText)->cameraBitMask = 0x3;
+    
     Entity text = datas->entities.text = theEntityManager.CreateEntity();
     ADD_COMPONENT(text, Transformation);
+    TRANSFORM(text)->size = TRANSFORM(hideText)->size;
+    TRANSFORM(text)->parent = hideText;
+    TRANSFORM(text)->z = 0.02;
     ADD_COMPONENT(text, TextRendering);
-    TEXT_RENDERING(text)->charHeight = PlacementHelper::GimpHeightToScreen(45);
+    TEXT_RENDERING(text)->charHeight = PlacementHelper::GimpHeightToScreen(60);
     TEXT_RENDERING(text)->hide = true;
     TEXT_RENDERING(text)->cameraBitMask = 0x3;
     TEXT_RENDERING(text)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
+    TEXT_RENDERING(text)->positioning = TextRenderingComponent::CENTER;
+    TEXT_RENDERING(text)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
 
     Entity anim = datas->entities.anim = theEntityManager.CreateEntity();
     ADD_COMPONENT(anim, Transformation);
@@ -120,6 +162,9 @@ void TutorialStateManager::setup() {
 ///----------------------------------------------------------------------------//
 void TutorialStateManager::willEnter(State::Enum from) {
     datas->gameStateMgr->willEnter(from);
+
+    datas->waitBeforeEnterExit = TimeUtil::getTime();
+    RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
 
     // hack lights/links
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
@@ -165,8 +210,18 @@ void TutorialStateManager::willEnter(State::Enum from) {
 
 bool TutorialStateManager::transitionCanEnter(State::Enum from) {
    bool gameCanEnter = datas->gameStateMgr->transitionCanEnter(from);
-   
-   return gameCanEnter;
+
+    if (TimeUtil::getTime() - datas->waitBeforeEnterExit < ADSR(datas->titleGroup)->attackTiming) {
+        return false;
+    }
+    // TRANSFORM(datas->titleGroup)->position.X = theRenderingSystem.cameras[1].worldPosition.X;
+    ADSR(datas->titleGroup)->active = true;
+    RENDERING(datas->title)->hide = false;
+    RENDERING(datas->hideText)->hide = false;
+
+    ADSRComponent* adsr = ADSR(datas->titleGroup);
+    TRANSFORM(datas->titleGroup)->position.Y = adsr->value;
+    return (adsr->value == adsr->sustainValue) && gameCanEnter;
 }
 
 void TutorialStateManager::enter(State::Enum from) {
@@ -176,6 +231,7 @@ void TutorialStateManager::enter(State::Enum from) {
     datas->gameStateMgr->enter(from);
     datas->currentStep = Tutorial::IntroduceHero;
     datas->step2mgr[datas->currentStep]->enter(session, &datas->entities);
+    RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
 }
 
 
@@ -207,13 +263,18 @@ State::Enum TutorialStateManager::update(float dt) {
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
 void TutorialStateManager::willExit(State::Enum to) {
+    ADSR(datas->titleGroup)->active = true;
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     session->userInputEnabled = false;
+    RENDERING(datas->title)->hide = true;
+    RENDERING(datas->hideText)->hide = true;
     datas->gameStateMgr->willExit(to);
+    RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = false;
 }
 
 bool TutorialStateManager::transitionCanExit(State::Enum to) {
-   return datas->gameStateMgr->transitionCanExit(to);
+    TRANSFORM(datas->titleGroup)->position.Y = ADSR(datas->titleGroup)->value;
+    return datas->gameStateMgr->transitionCanExit(to);
 }
 
 void TutorialStateManager::exit(State::Enum to) {

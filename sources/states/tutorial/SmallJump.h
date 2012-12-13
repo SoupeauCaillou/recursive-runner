@@ -3,12 +3,8 @@
 struct SmallJumpTutorialStep : public TutorialStep {
     void enter(SessionComponent* sc, TutorialEntities* entities) {
         ANIMATION(sc->currentRunner)->playbackSpeed = 0;
-        TRANSFORM(entities->text)->parent = sc->currentRunner;
-        TRANSFORM(entities->text)->z = 0.1;
-        TRANSFORM(entities->text)->position = Vector2(0, TRANSFORM(sc->currentRunner)->size.Y * 2);
         TEXT_RENDERING(entities->text)->hide = false;
         TEXT_RENDERING(entities->text)->text = "Tap the screen to jump";
-        TEXT_RENDERING(entities->text)->positioning = TextRenderingComponent::LEFT;
     }
     bool mustUpdateGame(SessionComponent*, TutorialEntities*) {
         return false;
