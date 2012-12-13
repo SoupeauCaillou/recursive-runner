@@ -616,7 +616,7 @@ void RecursiveRunnerGame::tick(float dt) {
             pianistPlaying = false;
             std::vector<Entity> e = theMusicSystem.RetrieveAllEntityWithComponent();
             for (unsigned i=0; i<e.size(); i++) {
-                if (MUSIC(e[i])->control == MusicControl::Play) {
+                if (MUSIC(e[i])->opaque[0]) {// == MusicControl::Play) {
                     pianistPlaying = true;
                     break;
                 }
