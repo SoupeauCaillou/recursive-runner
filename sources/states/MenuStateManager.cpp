@@ -112,12 +112,14 @@ void MenuStateManager::setup() {
     ADD_COMPONENT(subtitleText, Transformation);
     TRANSFORM(subtitleText)->parent = subtitle;
     TRANSFORM(subtitleText)->position = Vector2(0, -PlacementHelper::GimpHeightToScreen(25));
+    TRANSFORM(subtitleText)->size = Vector2(PlacementHelper::GimpWidthToScreen(790), 1);
     ADD_COMPONENT(subtitleText, TextRendering);
     TEXT_RENDERING(subtitleText)->text = "Tap screen to start";
     TEXT_RENDERING(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
     TEXT_RENDERING(subtitleText)->hide = false;
     TEXT_RENDERING(subtitleText)->cameraBitMask = 0x1;
     TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
+    TEXT_RENDERING(subtitleText)->flags = TextRenderingComponent::AdjustHeightToFillWidthBit;
 
     Entity swarmBtn = datas->swarmBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(swarmBtn, Transformation);
