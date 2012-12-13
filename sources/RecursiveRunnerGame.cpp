@@ -603,23 +603,33 @@ void RecursiveRunnerGame::tick(float dt) {
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
-        if (!muted && (currentState == State::Game || currentState == State::Tutorial)) {
-            // actually check that 1 music is playing
-            muted = true;
-            std::vector<Entity> e = theMusicSystem.RetrieveAllEntityWithComponent();
-            for (unsigned i=0; i<e.size(); i++) {
-                if (MUSIC(e[i])->control == MusicControl::Play) {
-                    muted = false;
-                }
-            }
-        }
-        ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
+        
         ignoreClick = true;
     } else {
         ignoreClick = BUTTON(muteBtn)->mouseOver;
         RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color("gray") : Color();
     }
 
+    {
+        bool pianistPlaying = !theMusicSystem.isMuted();
+        if (pianistPlaying) {
+            pianistPlaying = false;
+            std::vector<Entity> e = theMusicSystem.RetrieveAllEntityWithComponent();
+            for (unsigned i=0; i<e.size(); i++) {
+                if (MUSIC(e[i])->control == MusicControl::Play) {
+                    pianistPlaying = true;
+                    break;
+                }
+            }
+         }
+         if (pianistPlaying) {
+            if (ANIMATION(pianist)->name == "pianojournal") {
+                ANIMATION(pianist)->name = "piano";
+            }
+         } else {
+            ANIMATION(pianist)->name = "pianojournal";
+         }
+    }
 
     if (theTouchInputManager.isTouched(0)) {
         ignoreClick |= theTouchInputManager.getTouchLastPosition(0).Y

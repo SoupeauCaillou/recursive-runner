@@ -75,6 +75,7 @@ class RecursiveRunnerGame : public Game {
       void decor(StorageAPI* storageAPI);
       void initGame(StorageAPI* storageAPI);
 
+      Entity pianist;
    public:
       // shared/global vars
       float baseLine;
@@ -86,7 +87,7 @@ class RecursiveRunnerGame : public Game {
       AdAPI* adAPI;
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;
-      Entity muteBtn, pianist;
+      Entity muteBtn;
       Vector2 leftMostCameraPos;
       struct {
         float H, V;

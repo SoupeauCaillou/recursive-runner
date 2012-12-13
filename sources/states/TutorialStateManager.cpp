@@ -179,7 +179,6 @@ void TutorialStateManager::willEnter(State::Enum from) {
     theMusicSystem.toggleMute(true);
     datas->gameStateMgr->willEnter(from);
     theMusicSystem.toggleMute(isMuted);
-    ANIMATION(game->pianist)->name = "pianojournal";
 
     datas->waitBeforeEnterExit = TimeUtil::getTime();
     RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
@@ -225,7 +224,7 @@ void TutorialStateManager::willEnter(State::Enum from) {
     PlacementHelper::ScreenWidth = 20;
     PlacementHelper::GimpWidth = 1280;
     TEXT_RENDERING(datas->entities.text)->text = "How to play?";
-    TEXT_RENDERING(datas->entities.text)->hide = false;
+    TEXT_RENDERING(datas->entities.text)->hide = true;
 }
 
 bool TutorialStateManager::transitionCanEnter(State::Enum from) {
@@ -247,6 +246,7 @@ bool TutorialStateManager::transitionCanEnter(State::Enum from) {
 void TutorialStateManager::enter(State::Enum from) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     session->userInputEnabled = false;
+    TEXT_RENDERING(datas->entities.text)->hide = false;
 
     datas->gameStateMgr->enter(from);
     datas->waitingClick = true;
@@ -311,6 +311,7 @@ bool TutorialStateManager::transitionCanExit(State::Enum to) {
 }
 
 void TutorialStateManager::exit(State::Enum to) {
+    TEXT_RENDERING(datas->entities.text)->hide = true;
     datas->gameStateMgr->exit(to);
     for(std::map<Tutorial::Enum, TutorialStep*>::iterator it=datas->step2mgr.begin();
         it!=datas->step2mgr.end();
