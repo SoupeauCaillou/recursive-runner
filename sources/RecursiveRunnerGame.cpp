@@ -271,6 +271,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         Decor(3182, 748, 0.3, TransformationSystem::S, "lampadaire1", false, trees),
         Decor(3732, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
     };
+    // pour les arbres
     Vector2 v[5][4] = {
         {Vector2(71, 123), Vector2(73, 114), Vector2(125, 126), Vector2(92, 216)},
         {Vector2(116, 153), Vector2(78, 155), Vector2(100, 168), Vector2(44, 46)},
@@ -285,6 +286,20 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         {Vector2(0, 460), Vector2(0, 0), Vector2(438, 0), Vector2(354, 449)},
         {Vector2(0, 0), Vector2(234, 0), Vector2(248, 259), Vector2(0, 236)}
         };
+    // pour les batiments
+    Vector2 vBat[][4] = {
+        {Vector2(901, 44), Vector2(215, 35), Vector2(174, 41), Vector2(265, 37)},
+        {Vector2(143, 55), Vector2(83, 51), Vector2(82, 47), Vector2::Zero},
+        {Vector2(324, 15), Vector2::Zero, Vector2::Zero, Vector2::Zero},
+        {Vector2(124, 233), Vector2(630, 69), Vector2(245, 71), Vector2::Zero},
+    };
+    Vector2 oBat[][4] = {
+        {Vector2(43, 0), Vector2(172, 44), Vector2(424, 44), Vector2(629, 44)},
+        {Vector2(12, 0), Vector2(169, 0), Vector2(344, 0), Vector2::Zero},
+        {Vector2(8, 0), Vector2::Zero, Vector2::Zero, Vector2::Zero},
+        {Vector2(8, 0), Vector2(249, 0), Vector2(573, 69), Vector2::Zero},
+        
+    };
     for (int i=0; i<count; i++) {
     	const Decor& bdef = def[i];
 
@@ -305,14 +320,34 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         if (i < 3) {
             fumee(b);
         }
-        if (0 && bdef.texture.find("arbre") != std::string::npos) {
+        Vector2* zPrepassSize = 0, *zPrepassOffset = 0;
+
+        if (bdef.texture.find("arbre") != std::string::npos) {
             int idx = atoi(bdef.texture.substr(5, 1).c_str()) - 1;
+            zPrepassSize = v[idx];
+            zPrepassOffset = o[idx];
+        } else if (bdef.texture == "immeuble") {
+            zPrepassSize = vBat[0];
+            zPrepassOffset = oBat[0];
+        } else if (bdef.texture == "maison") {
+            zPrepassSize = vBat[1];
+            zPrepassOffset = oBat[1];
+        } else if (bdef.texture == "usine2") {
+            zPrepassSize = vBat[2];
+            zPrepassOffset = oBat[2];
+        } else if (bdef.texture == "usine_desaf") {
+            zPrepassSize = vBat[3];
+            zPrepassOffset = oBat[3];
+        }
+        if (zPrepassSize) {
             const Vector2& size = TRANSFORM(b)->size;
             for (int j=0; j<4; j++) {
+                if (zPrepassSize[j] == Vector2::Zero)
+                    break;
                 Entity bb = theEntityManager.CreateEntity();
                 ADD_COMPONENT(bb, Transformation);
-                TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(v[idx][j]);
-                Vector2 ratio(o[idx][j] / theRenderingSystem.getTextureSize(bdef.texture));
+                TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
+                Vector2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
                 ratio.Y = 1 - ratio.Y;
                 TRANSFORM(bb)->position = 
                     size * (Vector2(-0.5) + ratio) + TRANSFORM(bb)->size * Vector2(0.5, -0.5);
