@@ -104,12 +104,12 @@ void TutorialStateManager::setup() {
     Entity titleGroup = datas->titleGroup  = theEntityManager.CreateEntity();
     ADD_COMPONENT(titleGroup, Transformation);
     TRANSFORM(titleGroup)->z = 0.7;
-    TRANSFORM(titleGroup)->rotation = 0.02;
+    TRANSFORM(titleGroup)->rotation = 0.036;
     TRANSFORM(titleGroup)->parent = game->cameraEntity;
     ADD_COMPONENT(titleGroup, ADSR);
     ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenHeight + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).Y) * 0.6;
     ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).Y) * 0.5
-        + PlacementHelper::GimpHeightToScreen(10);
+        + PlacementHelper::GimpHeightToScreen(35);
     ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
     ADSR(titleGroup)->attackTiming = 1;
     ADSR(titleGroup)->decayTiming = 0.1;
@@ -118,12 +118,12 @@ void TutorialStateManager::setup() {
 
     Entity title = datas->title = theEntityManager.CreateEntity();
     ADD_COMPONENT(title, Transformation);
-    TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre"));
+    TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
     TRANSFORM(title)->parent = titleGroup;
     TRANSFORM(title)->position = Vector2::Zero;
     TRANSFORM(title)->z = 0.15;
     ADD_COMPONENT(title, Rendering);
-    RENDERING(title)->texture = theRenderingSystem.loadTextureFile("titre");
+    RENDERING(title)->texture = theRenderingSystem.loadTextureFile("taptostart");
     RENDERING(title)->cameraBitMask = 0x3;
 
     Entity hideText = datas->hideText = theEntityManager.CreateEntity();
@@ -142,8 +142,9 @@ void TutorialStateManager::setup() {
     TRANSFORM(text)->size = TRANSFORM(hideText)->size;
     TRANSFORM(text)->parent = hideText;
     TRANSFORM(text)->z = 0.02;
+    TRANSFORM(text)->rotation = 0.004;
     ADD_COMPONENT(text, TextRendering);
-    TEXT_RENDERING(text)->charHeight = PlacementHelper::GimpHeightToScreen(60);
+    TEXT_RENDERING(text)->charHeight = PlacementHelper::GimpHeightToScreen(50);
     TEXT_RENDERING(text)->hide = true;
     TEXT_RENDERING(text)->cameraBitMask = 0x3;
     TEXT_RENDERING(text)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
@@ -181,6 +182,7 @@ void TutorialStateManager::willEnter(State::Enum from) {
     INSTANCIATE_STEP(TheEnd);
     assert(datas->step2mgr.size() == (int)Tutorial::Count);
 
+    datas->flecheAccum = -1;
     bool isMuted = theMusicSystem.isMuted();
     theMusicSystem.toggleMute(true);
     datas->gameStateMgr->willEnter(State::Tutorial);
@@ -242,7 +244,7 @@ bool TutorialStateManager::transitionCanEnter(State::Enum from) {
     // TRANSFORM(datas->titleGroup)->position.X = theRenderingSystem.cameras[1].worldPosition.X;
     ADSR(datas->titleGroup)->active = true;
     RENDERING(datas->title)->hide = false;
-    RENDERING(datas->hideText)->hide = false;
+    //RENDERING(datas->hideText)->hide = false;
 
     ADSRComponent* adsr = ADSR(datas->titleGroup);
     TRANSFORM(datas->titleGroup)->position.Y = adsr->value;
@@ -331,6 +333,7 @@ bool TutorialStateManager::transitionCanExit(State::Enum to) {
 
 void TutorialStateManager::exit(State::Enum to) {
     TEXT_RENDERING(datas->entities.text)->hide = true;
+    RENDERING(datas->entities.anim)->hide = true;
     datas->gameStateMgr->exit(to);
     for(std::map<Tutorial::Enum, TutorialStep*>::iterator it=datas->step2mgr.begin();
         it!=datas->step2mgr.end();
