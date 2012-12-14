@@ -19,24 +19,22 @@
 package net.damsy.soupeaucaillou.recursiveRunner;
 
 import net.damsy.soupeaucaillou.SacActivity;
-import net.damsy.soupeaucaillou.SacJNILib;
-import net.damsy.soupeaucaillou.api.MusicAPI;
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.media.AudioTrack;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-//import android.util.Log;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+//import android.util.Log;
  
 public class RecursiveRunnerActivity extends SacActivity {
 	static { 
         System.loadLibrary("recursiveRunner");
-    } 
+    }
 	@Override
 	public boolean canShowAppRater() {
 		return false;
@@ -59,7 +57,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	@Override
 	public String getBundleKey() {
 		return TILEMATCH_BUNDLE_KEY;
-	} 
+	}
 
 	@Override
 	public int getParentViewId() {
@@ -108,7 +106,7 @@ public class RecursiveRunnerActivity extends SacActivity {
    
 	@Override 
     protected void onCreate(Bundle savedInstanceState) {
-		android.util.Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
+		// android.util.Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
    
         /*        
@@ -119,6 +117,48 @@ public class RecursiveRunnerActivity extends SacActivity {
 		*/
         RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
+	}
+  
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		SharedPreferences preferences = this
+				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
+		Log.i("sac", "onCreateOptionsMenu, value: " + menu.getItem(0).isChecked());
+		boolean checked = preferences.getBoolean(UseLowGfxPref, false);
+		MenuItem item = menu.findItem(R.id.low_quality);
+		item.setChecked(checked);
+		if (checked) {
+			item.setTitle(R.string.high_quality_gfx_summ);
+		} else {
+			item.setTitle(R.string.low_quality_gfx_summ);
+		}
+		item.setTitleCondensed(item.getTitle());
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.low_quality) {
+			SharedPreferences preferences = this
+					.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
+			boolean newVal = !preferences.getBoolean(UseLowGfxPref, false);
+			Log.i("sac", "Option clicked, new value: " + newVal);
+			item.setChecked(newVal);
+			Editor ed = preferences.edit();
+			ed.putBoolean(UseLowGfxPref, newVal);
+			ed.commit();
+			if (newVal) {
+				item.setTitle(R.string.high_quality_gfx_summ);
+			} else {
+				item.setTitle(R.string.low_quality_gfx_summ);
+			}
+			item.setTitleCondensed(item.getTitle());
+			return true;
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
 	}
  
 	public void preNameInputViewShow() {
@@ -137,7 +177,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 			synchronized (renderer.gameThread) {
 				renderer.gameThread.notifyAll();
 			}
-			android.util.Log.i("sac", "pouet");
+			// android.util.Log.i("sac", "pouet");
 		}
 		super.onDestroy();
 	}
