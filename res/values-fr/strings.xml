@@ -2,15 +2,17 @@
 <resources>
 	<string name="tap_screen_to_start">"Touchez l'écran pour jouer"</string>
 	<string name="tap_screen_to_restart">"touchez l'écran pour rejouer"</string>
-	<string name="how_to_play">"Comment jouer ? (touchez l'écran pour continuer)"</string>
+	<string name="how_to_play">"Comment jouer ? (appuyez pour continuer)"</string>
 	<string name="this_is_you">"Ce personnage : c'est Vous"</string>
 	<string name="tap_jump">"Appuyez sur l'écran pour sauter"</string>
-	<string name="turn_on">"Allumez les lumières pour marquer des points"</string>
+	<string name="turn_on">"Marquez des points en allumant les lumières"</string>
 	<string name="longer_press">"Un appui long provoque un saut plus haut"</string>
 	<string name="run_edge">"Vous courez jusqu'au bord de l'écran"</string>
 	<string name="new_hero">"Puis, un nouveau Vous apparaît"</string>
 	<string name="previous_hero_replay">"Votre précédent-Vous refait sa course"</string>
 	<string name="avoid_him">"Évitez-le : il marque encore des points !"</string>
-	<string name="ten_heroes">"Quel score ferez-vous en 5 aller-retour ?"</string>
+	<string name="ten_heroes">"Quel score ferez-vous avec 10 Vous ?"</string>
 	<string name="good_luck">"Bonne chance !"</string>
+	<string name="high_quality_gfx_summ">Utiliser les graphismes haute résolution (nécessite de redémarrer le jeu)</string>
+	<string name="low_quality_gfx_summ">Utiliser les graphismes basse résolution (nécessite de redémarrer le jeu)</string>
 </resources>
