@@ -17,7 +17,7 @@ LOCAL_CXXFLAGS := -DANDROID_NDK \
 				-I$(LOCAL_PATH)/../sac/ \
 				-I$(LOCAL_PATH)/../sac/libs/libpng/jni/ \
 				-I$(LOCAL_PATH)/../sac/libs/ \
-                -ffast-math -O3 -funroll-loops
+                -ffast-math -Os -funroll-loops
 
 LOCAL_ARM_MODE := arm
 

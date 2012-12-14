@@ -113,6 +113,7 @@ void MenuStateManager::setup() {
     ADD_COMPONENT(subtitleText, Transformation);
     TRANSFORM(subtitleText)->parent = subtitle;
     TRANSFORM(subtitleText)->z = 0.01;
+    TRANSFORM(subtitleText)->rotation = 0.005;
     TRANSFORM(subtitleText)->position = Vector2(0, -PlacementHelper::GimpHeightToScreen(25));
     TRANSFORM(subtitleText)->size = Vector2(PlacementHelper::GimpWidthToScreen(790), 1);
     ADD_COMPONENT(subtitleText, TextRendering);

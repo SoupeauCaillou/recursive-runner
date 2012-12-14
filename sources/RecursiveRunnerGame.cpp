@@ -182,7 +182,7 @@ void fumee(Entity building) {
         TRANSFORM(fumee)->z = -0.1;
         ADD_COMPONENT(fumee, Rendering);
         RENDERING(fumee)->hide = true;
-        RENDERING(fumee)->color = Color(1,1,1,1);
+        RENDERING(fumee)->color = Color(1,1,1,0.6);
         RENDERING(fumee)->opaqueType = RenderingComponent::NON_OPAQUE;
         ADD_COMPONENT(fumee, Animation);
         ANIMATION(fumee)->name = "fumee_start";
