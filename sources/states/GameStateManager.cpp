@@ -405,7 +405,7 @@ static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost
 #endif
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.value = 5;
+    AUTO_DESTROY(e)->params.lifetime.value = 3.5;
     AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
     // AUTO_DESTROY(e)->hasTextRendering = true;
 }

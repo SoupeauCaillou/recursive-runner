@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="run_edge">"Your hero will run until the edge of the screen"</string>
-	<string name="new_hero">"This is the your new hero"</string>
-	<string name="turn_on">"Turn on lights to score points"</string>
-	<string name="ten_heroes">"10 heroes, 5 roundtrips: try to get the best score!"</string>
-	<string name="tap_jump">"Tap the screen to jump"</string>
-	<string name="avoid_him">"Avoid him: he'll keep scoring points!"</string>
-	<string name="good_luck">"Good luck!"</string>
-	<string name="this_is_you">"This is You"</string>
-	<string name="longer_press">"Do longer press to make higher jumps"</string>
-	<string name="previous_hero_replay">"Your previous hero is replaying its run"</string>
 	<string name="tap_screen_to_start">"Tap screen to start"</string>
-	<string name="tap_screen_to_restart">"Tap screen to restart"</string>
+	<string name="tap_screen_to_restart">"tap screen to restart"</string>
 	<string name="how_to_play">"How to play? (tap to continue)"</string>
+	<string name="this_is_you">"This is You"</string>
+	<string name="tap_jump">"Tap the screen to jump"</string>
+	<string name="turn_on">"Turn on lights to score points"</string>
+	<string name="longer_press">"Do longer press to make higher jumps"</string>
+	<string name="run_edge">"You'll run until the edge of the screen"</string>
+	<string name="new_hero">"Then, there's a new You"</string>
+	<string name="previous_hero_replay">"Previous-You is replaying its run"</string>
+	<string name="avoid_him">"Avoid him: he'll keep scoring points!"</string>
+	<string name="ten_heroes">"10 You, 5 roundtrips: try to get the best score!"</string>
+	<string name="good_luck">"Good luck!"</string>
 </resources>

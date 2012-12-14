@@ -50,6 +50,6 @@ GameHolder* GameHolder::build() {
 		&hld->gameThreadJNICtx->ad,
 		&hld->gameThreadJNICtx->exitAPI,
         &hld->gameThreadJNICtx->communicationAPI,
-        &hld->gameThreadJNICtx->localizeAPI);
+        &hld->gameThreadJNICtx->localize);
 	return hld;
 };

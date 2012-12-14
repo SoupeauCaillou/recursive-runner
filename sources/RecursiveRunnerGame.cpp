@@ -617,7 +617,7 @@ void RecursiveRunnerGame::tick(float dt) {
             pianistPlaying = false;
             std::vector<Entity> e = theMusicSystem.RetrieveAllEntityWithComponent();
             for (unsigned i=0; i<e.size(); i++) {
-                if (MUSIC(e[i])->opaque[0]) {// == MusicControl::Play) {
+                if (MUSIC(e[i])->opaque[0] && MUSIC(e[i])->control != MusicControl::Pause) {
                     pianistPlaying = true;
                     break;
                 }
@@ -854,6 +854,7 @@ void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, S
         TRANSFORM(e)->z = 0.75;
         ADD_COMPONENT(e, Rendering);
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
+        RENDERING(e)->color.a = 0.5;
         // RENDERING(e)->cameraBitMask = (0x3 << 1);
         RENDERING(e)->hide = false;
         RENDERING(e)->color.a = (transition ? 0 : 1);
