@@ -29,14 +29,14 @@ cd -
 convert /tmp/$1.png -alpha extract -depth 8 ../assets/$1_alpha.png
 # mais pourquoi j'ai fait ca ?convert ../assets/$1_alpha.png -background white -flatten +matte -depth 8 ../assets/$1_alpha.png
 echo "Create $1.png"
-convert /tmp/$1.png -background white -alpha off -type TrueColor PNG24:../assets/$1.png
+convert /tmp/$1.png -background white -alpha off -type TrueColor PNG24:../assetspc/$1.png
 echo "Create $1.pvr.*"
-PVRTexToolCL -f OGLPVRTC4 -yflip0 -i ../assets/$1.png -p -pvrlegacy -m -o /tmp/$1.pvr
+PVRTexToolCL -f OGLPVRTC4 -yflip0 -i ../assetspc/$1.png -p -pvrlegacy -m -o /tmp/$1.pvr
 split -d -b 1024K /tmp/$1.pvr $1.pvr.
 mv $1.pvr.0* ../assets/
 
 echo "Create $1.pkm.*"
-PVRTexToolCL -f ETC -yflip0 -i ../assets/$1.png -q 3 -m -pvrlegacy -o /tmp/$1.pkm
+PVRTexToolCL -f ETC -yflip0 -i ../assetspc/$1.png -q 3 -m -pvrlegacy -o /tmp/$1.pkm
 #etc1tool --encode ../assets/$1.png -o /tmp/$1.pkm
 # PVRTexToolCL ignore name extension
 split -d -b 1024K /tmp/$1.pvr $1.pkm.

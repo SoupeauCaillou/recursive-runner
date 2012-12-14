@@ -8,3 +8,6 @@ do
     ./generate_atlas.sh $folder
 done
 
+echo "Removing unneeded alphabet color"
+rm ../assets/alphabet.p*
+rm ../assetspc/alphabet.p*
