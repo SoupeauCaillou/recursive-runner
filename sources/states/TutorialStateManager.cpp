@@ -286,11 +286,15 @@ State::Enum TutorialStateManager::update(float dt) {
                 datas->currentStep = (Tutorial::Enum) (datas->currentStep + 1);
                 // datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
                 TEXT_RENDERING(datas->entities.text)->hide = false;
-                TEXT_RENDERING(datas->entities.text)->text = "(...)";
+                TEXT_RENDERING(datas->entities.text)->text = ". . .";
                 RENDERING(datas->entities.anim)->hide = true;
+                datas->flecheAccum = 0;
             }
         }
     } else {
+        datas->flecheAccum += dt * 3;
+        TEXT_RENDERING(datas->entities.text)->hide = (((int)datas->flecheAccum) % 2);
+        
         if (datas->step2mgr[datas->currentStep]->mustUpdateGame(session, &datas->entities)) {
             datas->gameStateMgr->update(dt);
         }
