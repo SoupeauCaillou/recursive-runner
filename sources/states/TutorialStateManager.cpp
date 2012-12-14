@@ -274,7 +274,9 @@ State::Enum TutorialStateManager::update(float dt) {
                 return State::Menu;
             } else {
                 datas->currentStep = (Tutorial::Enum) (datas->currentStep + 1);
-                datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
+                // datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
+                TEXT_RENDERING(datas->entities.text)->hide = false;
+                TEXT_RENDERING(datas->entities.text)->text = "(...)";
             }
         }
     } else {
@@ -282,6 +284,9 @@ State::Enum TutorialStateManager::update(float dt) {
             datas->gameStateMgr->update(dt);
         }
         if (datas->step2mgr[datas->currentStep]->canExit(session, &datas->entities)) {
+            // this is not a bug, enter method need to be renamed
+            datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
+            TEXT_RENDERING(datas->entities.text)->hide = false;
             datas->waitingClick = true;
         }
     }
