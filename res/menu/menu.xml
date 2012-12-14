@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:checkableBehavior="all">
+    <item android:id="@+id/low_quality"
+          android:title="@string/low_quality_gfx_summ"
+          android:titleCondensed="@string/low_quality_gfx_summ"
+          android:checkable="true"
+          android:icon="@android:drawable/ic_menu_preferences" 
+           />
+    </group>
+</menu>
