@@ -83,6 +83,7 @@ struct TutorialStateManager::TutorialStateManagerDatas {
     Tutorial::Enum currentStep;
     bool waitingClick;
     std::map<Tutorial::Enum, TutorialStep*> step2mgr;
+    float flecheAccum;
 };
 
 TutorialStateManager::TutorialStateManager(RecursiveRunnerGame* game) : StateManager(State::Tutorial, game) {
@@ -151,9 +152,13 @@ void TutorialStateManager::setup() {
 
     Entity anim = datas->entities.anim = theEntityManager.CreateEntity();
     ADD_COMPONENT(anim, Transformation);
+    TRANSFORM(anim)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fleche"));
+    TRANSFORM(anim)->z = 0.9;
     ADD_COMPONENT(anim, Rendering);
     RENDERING(anim)->cameraBitMask = 0x3;
-    ADD_COMPONENT(anim, Animation);
+    RENDERING(anim)->texture = theRenderingSystem.loadTextureFile("fleche");
+    RENDERING(anim)->hide = true;
+    // ADD_COMPONENT(anim, Animation);
 }
 
 
@@ -267,6 +272,11 @@ State::Enum TutorialStateManager::update(float dt) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
 
     if (datas->waitingClick) {
+        if (datas->flecheAccum >= 0) {
+            datas->flecheAccum += dt * 2;
+            RENDERING(datas->entities.anim)->hide = (((int)datas->flecheAccum) % 2);
+        }
+            
         if (!game->ignoreClick && theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
             datas->waitingClick = false;
             datas->step2mgr[datas->currentStep]->exit(session, &datas->entities);
@@ -277,6 +287,7 @@ State::Enum TutorialStateManager::update(float dt) {
                 // datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
                 TEXT_RENDERING(datas->entities.text)->hide = false;
                 TEXT_RENDERING(datas->entities.text)->text = "(...)";
+                RENDERING(datas->entities.anim)->hide = true;
             }
         }
     } else {
@@ -287,6 +298,7 @@ State::Enum TutorialStateManager::update(float dt) {
             // this is not a bug, enter method need to be renamed
             datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
             TEXT_RENDERING(datas->entities.text)->hide = false;
+            datas->flecheAccum = RENDERING(datas->entities.anim)->hide ? -1 : 0;
             datas->waitingClick = true;
         }
     }

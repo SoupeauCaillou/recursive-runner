@@ -1,9 +1,15 @@
 #pragma once
 
 struct MeetYourselfTutorialStep : public TutorialStep {
-    void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc, SessionComponent* sc, TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
         TEXT_RENDERING(entities->text)->text = loc->text("previous_hero_replay", "Your previous hero is replaying its run");
+    
+        RENDERING(entities->anim)->hide = false;
+        TRANSFORM(entities->anim)->position = TRANSFORM(sc->runners[0])->worldPosition +
+            TRANSFORM(sc->runners[0])->size * Vector2(0.5, 1);
+        TRANSFORM(entities->anim)->rotation = MathUtil::AngleFromVector(
+             TRANSFORM(sc->runners[0])->worldPosition - TRANSFORM(entities->anim)->position);
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
         if (Vector2::Distance(TRANSFORM(sc->runners[0])->position, TRANSFORM(sc->runners[1])->position) > theRenderingSystem.cameras[1].worldSize.X * 0.7) {

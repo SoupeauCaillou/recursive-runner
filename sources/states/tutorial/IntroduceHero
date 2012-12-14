@@ -1,15 +1,20 @@
 #pragma once
 
 struct IntroduceHeroTutorialStep : public TutorialStep {
-    void enter(LocalizeAPI* loc,  SessionComponent* , TutorialEntities* entities) {
+    void enter(LocalizeAPI* loc,  SessionComponent* sc, TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->hide = true;
         TEXT_RENDERING(entities->text)->text = loc->text("this_is_you", "This is You");
+        RENDERING(entities->anim)->hide = false;
+        TRANSFORM(entities->anim)->position = TRANSFORM(sc->currentRunner)->worldPosition +
+            TRANSFORM(sc->currentRunner)->size * Vector2(0.5, 1);
+        TRANSFORM(entities->anim)->rotation = MathUtil::AngleFromVector(
+             TRANSFORM(sc->currentRunner)->worldPosition - TRANSFORM(entities->anim)->position);
     }
     bool mustUpdateGame(SessionComponent* , TutorialEntities*) {
         return true;
     }
     bool canExit(SessionComponent* sc, TutorialEntities* entities) {
-        if (TRANSFORM(sc->currentRunner)->position.X >= -22) {
+        if (TRANSFORM(sc->currentRunner)->position.X >= -23) {
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
             TEXT_RENDERING(entities->text)->hide = false;
             return true;
