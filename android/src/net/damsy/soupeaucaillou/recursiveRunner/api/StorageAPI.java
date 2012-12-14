@@ -25,7 +25,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+// import android.util.Log;
 
 import com.swarmconnect.Swarm;
 import com.swarmconnect.SwarmLeaderboard;
@@ -46,7 +46,7 @@ public class StorageAPI {
 		v.put("name", name);
 		db.insert("score", null, v);
 
-		Log.i("Sac", "Submitted score: " + points + ", coins: " + coins);
+		//Log.i("Sac", "Submitted score: " + points + ", coins: " + coins);
 		// db.close();
 		// submit to Swarm
 		if (Swarm.isEnabled() && Swarm.isInitialized() && Swarm.isOnline()) {
@@ -54,12 +54,12 @@ public class StorageAPI {
 				@Override
 				public void gotLeaderboard(final SwarmLeaderboard leaderboard) {
 					if (leaderboard != null) {
-						Log.i("Sac", "Got leaderboard");
-						Log.i("Sac", "Submit: " + points + " to ldb '" + leaderboard.name + "'");
+						//Log.i("Sac", "Got leaderboard");
+						//Log.i("Sac", "Submit: " + points + " to ldb '" + leaderboard.name + "'");
 						leaderboard.submitScore(points, null, new SwarmLeaderboard.SubmitScoreCB() {
 							@Override
 							public void scoreSubmitted(int arg0) {
-								Log.i("Sac", "Score submitted result : " + arg0);
+								//Log.i("Sac", "Score submitted result : " + arg0);
 							}
 						});
 					}
@@ -67,9 +67,9 @@ public class StorageAPI {
 			};
 			SwarmLeaderboard.getLeaderboardById(SacJNILib.activity.getSwarmBoards()[0], callback);
 		} else {
-			Log.i("sac", "Swarm is enabled: " + Swarm.isEnabled());
-			Log.i("sac", "Swarm is initialized: " + Swarm.isInitialized());
-			Log.i("sac", "Swarm is online: " + Swarm.isOnline());
+			//Log.i("sac", "Swarm is enabled: " + Swarm.isEnabled());
+			//Log.i("sac", "Swarm is initialized: " + Swarm.isInitialized());
+			//Log.i("sac", "Swarm is online: " + Swarm.isOnline());
 		}
 	}
 
@@ -88,7 +88,7 @@ public class StorageAPI {
 			coins[i] = ( cursor.getInt(cursor.getColumnIndex("coins")) - 1 ) / 2;
 			names[i] = cursor.getString(cursor.getColumnIndex("name"));
 
-			// NOLOGLog.i(RecursiveRunnerActivity.Tag, points[i] + ", " + levels[i] +
+			// NOLOG//Log.i(RecursiveRunnerActivity.Tag, points[i] + ", " + levels[i] +
 			// ", "+ times[i] + ", " + names[i] + ".");
 			cursor.moveToNext();
 		}
@@ -104,14 +104,14 @@ public class StorageAPI {
 				"select sum(coins) as coins, count(coins) as count from score", null);
 
 		if (cursor == null || cursor.getCount() != 1) {
-			Log.e("RecursiveRunner", "cursor count:" + cursor.getCount());
+			// Log.e("RecursiveRunner", "cursor count:" + cursor.getCount());
 			return 0;
 		}
 
 		cursor.moveToFirst();
 		int coins = cursor.getInt(cursor.getColumnIndex("coins"));
 		int scoreCount = cursor.getInt(cursor.getColumnIndex("count"));
-		Log.i("RecursiveRunner", "you have" + (coins - scoreCount) / 2 + "coins");
+		//Log.i("RecursiveRunner", "you have" + (coins - scoreCount) / 2 + "coins");
 		cursor.close();
 		// db.close();
 		return ((coins - scoreCount) / 2);
