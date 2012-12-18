@@ -254,6 +254,7 @@ static void updateAndRenderLoop() {
 	 }
       }
    }
+   theRenderingSystem.setFrameQueueWritable(false);
    glfwTerminate();
 }
 
@@ -392,6 +393,7 @@ int main(int argc, char** argv) {
 #else
 	emscripten_set_main_loop(updateAndRender, 60);
 #endif
+
 	delete game;
     delete record;
 	return 0;
