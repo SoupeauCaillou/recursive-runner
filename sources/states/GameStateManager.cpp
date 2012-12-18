@@ -47,6 +47,7 @@
 static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex);
 static void updateSessionTransition(const SessionComponent* session, float progress);
+static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc);
 
 struct GameStateManager::GameStateManagerDatas {
     Entity pauseButton;
@@ -262,9 +263,8 @@ State::Enum GameStateManager::update(float dt) {
             RunnerComponent* rc = RUNNER(e);
             if (rc->killed)
                 continue;
-            PhysicsComponent* pc = PHYSICS(e);
-
 #if 0
+            PhysicsComponent* pc = PHYSICS(e);
             // check jumps
             if (pc->gravity.Y < 0) {
                 TransformationComponent* tc = TRANSFORM(e);
@@ -278,54 +278,8 @@ State::Enum GameStateManager::update(float dt) {
                 }
             }
 #endif
-            const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
             // check coins
-            int end = sc->coins.size();
-            Entity prev = 0;
-            for(int idx=0; idx<end; idx++) {
-                Entity coin = rc->speed > 0 ? sc->coins[idx] : sc->coins[end - idx - 1];
-                if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
-                    const TransformationComponent* tCoin = TRANSFORM(coin);
-                    if (IntersectionUtil::rectangleRectangle(
-                        collisionZone->worldPosition, collisionZone->size, collisionZone->worldRotation,
-                        tCoin->worldPosition, tCoin->size * Vector2(0.5, 0.6), tCoin->worldRotation)) {
-                        if (!rc->coins.empty()) {
-                         int linkIdx = (rc->speed > 0) ? idx : end - idx;
-                            if (rc->coins.back() == prev) {
-                                rc->coinSequenceBonus++;
-                                #if 1
-                                if (!rc->ghost) {
-                                    if (rc->speed > 0) {
-                                        for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                            float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                            PARTICULE(sc->sparkling[linkIdx - j + 1])->duration += t;
-                                        }
-                                    } else {
-                                        for (int j=1; j<rc->coinSequenceBonus; j++) {
-                                            PARTICULE(sc->sparkling[linkIdx + j - 1])->duration +=
-                                                1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
-                                        }
-                                    }
-                                }
-                                #endif
-
-                            } else {
-                                rc->coinSequenceBonus = 1;
-                            }
-                        }
-                        rc->coins.push_back(coin);
-                        int gain = 10 * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
-                        player->score += gain;
-
-                        //coins++ only for player, not his ghosts
-                        if (j == sc->runners.size() - 1)
-                            player->coins++;
-
-                        spawnGainEntity(gain, coin, rc->color, rc->ghost);
-                    }
-                }
-                prev = coin;
-            }
+            checkCoinsPickupForRunner(player, e, rc, sc);
         }
     }
 
@@ -485,5 +439,56 @@ static void updateSessionTransition(const SessionComponent* session, float progr
             RENDERING(session->links[i])->color.a = progress * 0.2;
         else
             RENDERING(session->links[i])->color.a = progress * 0.65;
+    }
+}
+
+static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc) {
+    const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
+    const int end = sc->coins.size();
+    Entity prev = 0;
+
+    for(int idx=0; idx<end; idx++) {
+        Entity coin = rc->speed > 0 ? sc->coins[idx] : sc->coins[end - idx - 1];
+        if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
+            const TransformationComponent* tCoin = TRANSFORM(coin);
+            if (IntersectionUtil::rectangleRectangle(
+                collisionZone->worldPosition, collisionZone->size, collisionZone->worldRotation,
+                tCoin->worldPosition, tCoin->size * Vector2(0.5, 0.6), tCoin->worldRotation)) {
+                if (!rc->coins.empty()) {
+                 int linkIdx = (rc->speed > 0) ? idx : end - idx;
+                    if (rc->coins.back() == prev) {
+                        rc->coinSequenceBonus++;
+                        #if 1
+                        if (!rc->ghost) {
+                            if (rc->speed > 0) {
+                                for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                    float t = 1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                    PARTICULE(sc->sparkling[linkIdx - j + 1])->duration += t;
+                                }
+                            } else {
+                                for (int j=1; j<rc->coinSequenceBonus; j++) {
+                                    PARTICULE(sc->sparkling[linkIdx + j - 1])->duration +=
+                                        1 * ((rc->coinSequenceBonus - (j - 1.0)) / (float)rc->coinSequenceBonus);
+                                }
+                            }
+                        }
+                        #endif
+
+                    } else {
+                        rc->coinSequenceBonus = 1;
+                    }
+                }
+                rc->coins.push_back(coin);
+                int gain = 10 * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
+                player->score += gain;
+
+                //coins++ only for player, not his ghosts
+                if (sc->currentRunner == e)
+                    player->coins++;
+
+                spawnGainEntity(gain, coin, rc->color, rc->ghost);
+            }
+        }
+        prev = coin;
     }
 }
