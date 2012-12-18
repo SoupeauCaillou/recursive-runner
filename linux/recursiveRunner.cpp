@@ -168,7 +168,6 @@ class MouseNativeTouchState: public NativeTouchState {
 };
 
 #ifndef EMSCRIPTEN
-float gameSpeedFactor = 1.0;
 void GLFWCALL myCharCallback( int c, int action ) {
 	if (globalFTW == 0) {
 
@@ -187,16 +186,7 @@ void GLFWCALL myCharCallback( int c, int action ) {
 void GLFWCALL myKeyCallback( int key, int action ) {
     if (action != GLFW_RELEASE)
         return;
-
-    if (key == GLFW_KEY_F6) {
-        gameSpeedFactor = MathUtil::Min(gameSpeedFactor + 0.1f, 3.0f);
-        std::cout << "Game speed: " << gameSpeedFactor << std::endl;
-    }
-    else if (key == GLFW_KEY_F5) {
-        gameSpeedFactor = MathUtil::Max(gameSpeedFactor - 0.1f, 0.0f);
-        std::cout << "Game speed: " << gameSpeedFactor << std::endl;
-    }
-    else if (key == GLFW_KEY_BACKSPACE) {
+    if (key == GLFW_KEY_BACKSPACE) {
         if (!TEXT_RENDERING(nameInput->nameEdit)->hide) {
             std::string& text = TEXT_RENDERING(nameInput->nameEdit)->text;
             if (text.length() > 0) {
