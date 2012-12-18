@@ -37,10 +37,11 @@ class NameInputAPI;
 class SessionComponent;
 class LocalizeAPI;
 
-enum CameraMode {
-    CameraModeMenu,
-    CameraModeSingle,
-    CameraModeSplit
+namespace CameraMode {
+    enum Enum {
+        Menu,
+        Single,
+    };
 };
 
 class RecursiveRunnerGame : public Game {
@@ -61,7 +62,7 @@ class RecursiveRunnerGame : public Game {
       void togglePause(bool pause);
 
       int saveState(uint8_t** out);
-      void setupCamera(CameraMode mode);
+      void setupCamera(CameraMode::Enum mode);
       void updateBestScore();
 
    private:

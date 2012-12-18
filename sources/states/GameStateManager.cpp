@@ -140,7 +140,7 @@ void GameStateManager::enter(State::Enum from) {
             sc->runners.push_back(r);
             sc->currentRunner = r;
         }
-        game->setupCamera(CameraModeSingle);
+        game->setupCamera(CameraMode::Single);
     }
     if (from != State::Tutorial)
         BUTTON(datas->pauseButton)->enabled = true;

@@ -179,7 +179,7 @@ void MenuStateManager::willEnter(State::Enum from) {
     ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = true;
 
     // Restore camera position
-    game->setupCamera(CameraModeMenu);
+    game->setupCamera(CameraMode::Menu);
 
     // save score if any
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();

@@ -700,9 +700,9 @@ static void updateFps(float dt) {
      }
 }
 
-void RecursiveRunnerGame::setupCamera(CameraMode mode) {
+void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
     switch (mode) {
-        case CameraModeSingle:
+        case CameraMode::Single:
             theRenderingSystem.cameras[0].enable = false;
             theRenderingSystem.cameras[1].enable = true;
             theRenderingSystem.cameras[2].enable = false;
@@ -720,7 +720,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode mode) {
                     //TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
             }
             break;
-        case CameraModeMenu:
+        case CameraMode::Menu:
             theRenderingSystem.cameras[0].enable = true;
             theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
             for (unsigned i=1; i<theRenderingSystem.cameras.size(); i++) {

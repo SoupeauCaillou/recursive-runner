@@ -143,7 +143,7 @@ State::Enum PauseStateManager::update(float) {
     } else if (BUTTON(datas->restartButton)->clicked) {
         // stop music :-[
         RecursiveRunnerGame::endGame();
-        game->setupCamera(CameraModeSingle);
+        game->setupCamera(CameraMode::Single);
         return State::RestartGame;
     } else if (BUTTON(datas->stopButton)->clicked) {
         RecursiveRunnerGame::endGame();
