@@ -89,7 +89,7 @@ class RecursiveRunnerGame : public Game {
       AdAPI* adAPI;
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;
-      Entity muteBtn;
+      Entity muteBtn, ground;
       Vector2 leftMostCameraPos;
       struct {
         float H, V;

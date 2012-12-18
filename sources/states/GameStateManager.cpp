@@ -36,6 +36,7 @@
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
 #include "systems/SessionSystem.h"
+#include "systems/PlatformerSystem.h"
 
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
@@ -168,21 +169,17 @@ State::Enum GameStateManager::update(float dt) {
         if (RUNNER(sc->currentRunner)->finished) {
             LOGI("%lu finished, add runner or end game", sc->currentRunner);
             CAM_TARGET(sc->currentRunner)->enabled = false;
-            // return Runner control to master
-            if (PLAYER(sc->players[i])->runnersCount == param::runner) {
-                // end of game
-                // resetGame();
 
-                //if it's time to rate, go to rate.
+            if (PLAYER(sc->players[i])->runnersCount == param::runner) {
+                // Game is finished, show either Rate Menu or Main Menu
                   if (0 && game->communicationAPI->mustShowRateDialog()) {
                      return State::Rate;
-                //else go to menu
                   } else {
                    return State::Menu;
                 }
             } else {
                 LOGI("Create runner");
-                // add a new one
+                // add a new runner
                 sc->currentRunner = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i);
                 sc->runners.push_back(sc->currentRunner);
             }
@@ -218,10 +215,11 @@ State::Enum GameStateManager::update(float dt) {
         CAM_TARGET(sc->currentRunner)->offset.Y = 0 - tc->position.Y;
     }
 
-    { // maybe do it for non master too (but do not delete entities, maybe only hide ?)
+    // Manage runner-runner collisions
+    {
         std::vector<TransformationComponent*> activesColl;
         std::vector<int> direction;
-        // check for collisions for non-ghost runners
+        
         for (unsigned i=0; i<sc->numPlayers; i++) {
             for (unsigned j=0; j<sc->runners.size(); j++) {
                 const Entity r = sc->runners[j];
@@ -259,7 +257,6 @@ State::Enum GameStateManager::update(float dt) {
 
     for (unsigned i=0; i<sc->numPlayers; i++) {
         PlayerComponent* player = PLAYER(sc->players[i]);
-        //std::cout << i << " -> " << sc->runners[i].size() << std::endl;
         for (unsigned j=0; j<sc->runners.size(); j++) {
             Entity e = sc->runners[j];
             RunnerComponent* rc = RUNNER(e);
@@ -267,9 +264,11 @@ State::Enum GameStateManager::update(float dt) {
                 continue;
             PhysicsComponent* pc = PHYSICS(e);
 
+#if 0
             // check jumps
             if (pc->gravity.Y < 0) {
                 TransformationComponent* tc = TRANSFORM(e);
+                // landing management
                 if ((tc->position.Y - tc->size.Y * 0.5) <= game->baseLine) {
                     pc->gravity.Y = 0;
                     pc->linearVelocity = Vector2::Zero;
@@ -278,6 +277,7 @@ State::Enum GameStateManager::update(float dt) {
                     RENDERING(e)->mirrorH = (rc->speed < 0);
                 }
             }
+#endif
             const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
             // check coins
             int end = sc->coins.size();
@@ -336,6 +336,7 @@ State::Enum GameStateManager::update(float dt) {
     }
 
 
+    thePlatformerSystem.Update(dt);
     thePlayerSystem.Update(dt);
     theRunnerSystem.Update(dt);
     theCameraTargetSystem.Update(dt);
@@ -422,10 +423,6 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RENDERING(e)->cameraBitMask = (0x3 << 1);
     RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
     ADD_COMPONENT(e, Runner);
-
-    /*TRANSFORM(e)->position = RUNNER(e)->startPoint = Vector2(
-        direction * -LEVEL_SIZE * 0.5 * PlacementHelper::ScreenWidth,
-        -0.5 * PlacementHelper::ScreenHeight + TRANSFORM(e)->size.Y * 0.5);*/
     theTransformationSystem.setPosition(TRANSFORM(e),
         Vector2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, game->baseLine), TransformationSystem::S);
     RUNNER(e)->startPoint = TRANSFORM(e)->position;
@@ -433,7 +430,10 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
-
+    ADD_COMPONENT(e, Platformer);
+    PLATFORMER(e)->offset = Vector2(0, TRANSFORM(e)->size.Y * -0.5);
+    PLATFORMER(e)->platforms.push_back(game->ground);
+    
     std::cout <<" add runner: " << e << " - " << TimeUtil::getTime()  << "(pos: " << TRANSFORM(e)->position << ")" << RUNNER(e)->speed << std::endl;
     #if 0
     do {

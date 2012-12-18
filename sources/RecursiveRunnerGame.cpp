@@ -43,6 +43,7 @@
 #include "systems/PlayerSystem.h"
 #include "systems/RangeFollowerSystem.h"
 #include "systems/SessionSystem.h"
+#include "systems/PlatformerSystem.h"
 
 #include <iomanip>
 
@@ -69,6 +70,7 @@ NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communicati
    PlayerSystem::CreateInstance();
    RangeFollowerSystem::CreateInstance();
    SessionSystem::CreateInstance();
+   PlatformerSystem::CreateInstance();
 
    overrideNextState = State::Invalid;
    currentState = State::Logo;
@@ -92,6 +94,7 @@ RecursiveRunnerGame::~RecursiveRunnerGame() {
     PlayerSystem::DestroyInstance();
     RangeFollowerSystem::DestroyInstance();
     SessionSystem::DestroyInstance();
+    PlatformerSystem::DestroyInstance();
 
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
         delete it->second;
@@ -470,6 +473,11 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
         theRenderingSystem.cameras.push_back(cam);
     }
     decor(storageAPI);
+    
+    ground = theEntityManager.CreateEntity();
+    ADD_COMPONENT(ground, Transformation);
+    TRANSFORM(ground)->size = Vector2(PlacementHelper::ScreenWidth * param::LevelSize, 0);
+    TRANSFORM(ground)->position = Vector2(0, baseLine);
 
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);

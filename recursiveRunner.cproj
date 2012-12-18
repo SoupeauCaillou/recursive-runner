@@ -49,6 +49,7 @@
     <Compile Include="sources\states\RateStateManager.cpp" />
     <Compile Include="sources\states\RestartGameStateManager.cpp" />
     <Compile Include="sources\states\TutorialStateManager.cpp" />
+    <Compile Include="sources\systems\PlatformerSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="linux\recursiveRunner.cpp" />
@@ -87,5 +88,6 @@
     <None Include="sources\states\tutorial\Title" />
     <None Include="sources\states\tutorial\RunTilTheEdge" />
     <None Include="sources\states\tutorial\BestScore" />
+    <None Include="sources\systems\PlatformerSystem.h" />
   </ItemGroup>
 </Project>
