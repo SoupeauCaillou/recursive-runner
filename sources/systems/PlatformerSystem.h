@@ -22,9 +22,10 @@
 #include "base/Vector2.h"
 
 struct PlatformerComponent {
-    PlatformerComponent() : previousPosition(Vector2::Zero) {}
+    PlatformerComponent() : previousPosition(Vector2::Zero), onPlatform(0) {}
     Vector2 previousPosition, offset;
-    std::vector<Entity> platforms;
+    Entity onPlatform;
+    std::map<Entity, bool> platforms;
 };
 
 #define thePlatformerSystem PlatformerSystem::GetInstance()
