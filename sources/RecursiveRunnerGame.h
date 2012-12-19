@@ -42,11 +42,18 @@ namespace CameraMode {
         Menu,
         Single,
     };
-};
+}
+
+namespace Level {
+    enum Enum {
+        Level1,
+        Level2
+    };
+}
 
 class RecursiveRunnerGame : public Game {
    public:
-      static void startGame(bool transition);
+      static void startGame(Level::Enum level, bool transition);
       static void endGame();
 
    public:
@@ -92,6 +99,7 @@ class RecursiveRunnerGame : public Game {
       Entity scoreText, scorePanel;
       Entity muteBtn, ground;
       Vector2 leftMostCameraPos;
+      Level::Enum level;
       struct {
         float H, V;
       } buttonSpacing;

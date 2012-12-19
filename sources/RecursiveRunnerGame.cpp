@@ -553,6 +553,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
     }
 
+    level = Level::Level2;
     initGame(storageAPI);
     updateBestScore();
 
@@ -771,9 +772,9 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
     return finalSize;
 }
 
-static std::vector<Vector2> generateCoinsCoordinates(int count);
+static std::vector<Vector2> generateCoinsCoordinates(int count, float heightMin, float heightMax);
 
-void RecursiveRunnerGame::startGame(bool transition) {
+void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     assert(theSessionSystem.RetrieveAllEntityWithComponent().empty());
     assert(thePlayerSystem.RetrieveAllEntityWithComponent().empty());
 
@@ -799,7 +800,25 @@ void RecursiveRunnerGame::startGame(bool transition) {
     pc->colors.push_back(COLOR(a910db));
     pc->colors.push_back(COLOR(dc52b0));
 
-    createCoins(generateCoinsCoordinates(20), sc, transition);
+    switch (level) {
+        case Level::Level1:
+            createCoins(generateCoinsCoordinates(20, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
+            break;
+        case Level::Level2:
+            createCoins(generateCoinsCoordinates(10, PlacementHelper::GimpYToScreen(600), PlacementHelper::GimpYToScreen(600)), sc, transition);
+            // use created coins as platforms switches
+            for (unsigned i=0; i<(sc->coins.size() - 1); i++) {
+                Platform pf;
+                pf.switches[0].entity = sc->coins[i];
+                pf.switches[1].entity = sc->coins[i+1];
+                pf.platform = sc->links[i+1];
+                RENDERING(pf.platform)->texture = InvalidTextureRef;
+                sc->platforms.push_back(pf);
+            }
+            createCoins(generateCoinsCoordinates(15, PlacementHelper::GimpYToScreen(400), PlacementHelper::GimpYToScreen(150)), sc, transition);
+            
+            break;
+    }
 }
 
 void RecursiveRunnerGame::endGame() {
@@ -825,7 +844,7 @@ static bool sortLeftToRight(Entity e, Entity f) {
     return TRANSFORM(e)->position.X < TRANSFORM(f)->position.X;
 }
 
-static std::vector<Vector2> generateCoinsCoordinates(int count) {
+static std::vector<Vector2> generateCoinsCoordinates(int count, float heightMin, float heightMax) {
     std::vector<Vector2> positions;
     for (int i=0; i<count; i++) {
         Vector2 p;
@@ -836,8 +855,8 @@ static std::vector<Vector2> generateCoinsCoordinates(int count) {
                     -param::LevelSize * 0.5 * PlacementHelper::ScreenWidth,
                     param::LevelSize * 0.5 * PlacementHelper::ScreenWidth),
                 MathUtil::RandomFloatInRange(
-                    PlacementHelper::GimpYToScreen(700),
-                    PlacementHelper::GimpYToScreen(450)));
+                    heightMin,
+                    heightMax));
            notFarEnough = false;
            for (unsigned j = 0; j < positions.size() && !notFarEnough; j++) {
                 if (Vector2::Distance(positions[j], p) < 1) {
@@ -852,7 +871,7 @@ static std::vector<Vector2> generateCoinsCoordinates(int count) {
 
 void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, SessionComponent* session, bool transition) {
     LOGI("Coins creation started");
-    std::vector<Entity>& coins = session->coins;
+    std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
         Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
         ADD_COMPONENT(e, Transformation);
@@ -906,16 +925,6 @@ void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, S
      RENDERING(link)->hide = false;
         RENDERING(link)->color.a =  (transition ? 0 : 1);
 
-        Entity link2 = theEntityManager.CreateEntity(EntityType::Persistent);
-         ADD_COMPONENT(link2, Transformation);
-         TRANSFORM(link2)->parent = link;
-         TRANSFORM(link2)->size = TRANSFORM(link)->size;
-         TRANSFORM(link2)->z = 0.2;
-         ADD_COMPONENT(link2, Rendering);
-         RENDERING(link2)->texture = theRenderingSystem.loadTextureFile("link");
-         RENDERING(link2)->color.a = (transition ? 0 : 0.2);
-//         RENDERING(link2)->hide = false;
-
 #if 1
         Entity link3 = theEntityManager.CreateEntity(EntityType::Persistent);
         ADD_COMPONENT(link3, Transformation);
@@ -940,8 +949,10 @@ void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, S
 #endif
      previous = topI;
      session->links.push_back(link);
-        session->links.push_back(link2);
     }
     #endif
+    for (unsigned i=0; i<coins.size(); i++) {
+        session->coins.push_back(coins[i]);
+    }
     LOGI("Coins creation finished");
 }

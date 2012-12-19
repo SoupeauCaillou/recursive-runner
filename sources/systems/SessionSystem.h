@@ -20,12 +20,27 @@
 
 #include "systems/System.h"
 
+struct Platform {
+    Platform() {
+        active = false;
+        switches[0].owner = switches[1].owner = 0;
+        switches[0].state = switches[1].state = false;
+    }
+    struct {
+        Entity entity, owner;
+        bool state;
+    } switches[2];
+    Entity platform;
+    bool active;
+};
+
 struct SessionComponent {
     SessionComponent() : numPlayers(1), currentRunner(0), userInputEnabled(true) {}
     unsigned numPlayers;
     Entity currentRunner;
     bool userInputEnabled;
     std::vector<Entity> runners, coins, players, links, sparkling;
+    std::vector<Platform> platforms;
 };
 
 #define theSessionSystem SessionSystem::GetInstance()

@@ -45,7 +45,7 @@
 #include <sstream>
 
 static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
-static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex);
+static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc);
 static void updateSessionTransition(const SessionComponent* session, float progress);
 static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc);
 
@@ -101,7 +101,7 @@ void GameStateManager::willEnter(State::Enum from) {
     ADSR(datas->transition)->active = true;
 
     if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
-        RecursiveRunnerGame::startGame(true);
+        RecursiveRunnerGame::startGame(game->level, true);
         MUSIC(datas->transition)->fadeOut = 2;
         MUSIC(datas->transition)->volume = 1;
         MUSIC(datas->transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
@@ -137,7 +137,7 @@ void GameStateManager::enter(State::Enum from) {
     if (from != State::Pause) {
         for (unsigned i=0; i<sc->numPlayers; i++) {
             assert (sc->numPlayers == 1);
-            Entity r = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i);
+            Entity r = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i, sc);
             sc->runners.push_back(r);
             sc->currentRunner = r;
         }
@@ -181,7 +181,7 @@ State::Enum GameStateManager::update(float dt) {
             } else {
                 LOGI("Create runner");
                 // add a new runner
-                sc->currentRunner = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i);
+                sc->currentRunner = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i, sc);
                 sc->runners.push_back(sc->currentRunner);
             }
         }
@@ -280,6 +280,42 @@ State::Enum GameStateManager::update(float dt) {
 #endif
             // check coins
             checkCoinsPickupForRunner(player, e, rc, sc);
+
+            // check platform switch
+            const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
+            for (unsigned k=0; k<sc->platforms.size(); k++) {
+                for (unsigned l=0; l<2; l++) {
+                    if (IntersectionUtil::rectangleRectangle(
+                        collisionZone, TRANSFORM(sc->platforms[k].switches[l].entity))) {
+                        sc->platforms[k].switches[l].owner = e;
+                        if (!sc->platforms[k].switches[l].state) {
+                            sc->platforms[k].switches[l].state = true;
+                            std::cout << e << " activated " << sc->platforms[k].switches[l].entity << std::endl;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // handle platforms
+    {
+        std::vector<Entity> platformers = thePlatformerSystem.RetrieveAllEntityWithComponent();
+        for (unsigned i=0; i<sc->platforms.size(); i++) {
+            Platform& pt = sc->platforms[i];
+            bool active = pt.switches[1].state & pt.switches[1].state & (
+                pt.switches[1].owner == pt.switches[0].owner);
+            if (active != pt.active) {
+                pt.active = active;
+                std::cout << "platform #" << i << " is now : " << active << std::endl;
+                if (active) {
+                    RENDERING(pt.platform)->texture = theRenderingSystem.loadTextureFile("link");
+                } else {
+                    RENDERING(pt.platform)->texture = InvalidTextureRef;
+                }
+                for (unsigned k=0; k<platformers.size(); k++) {
+                    PLATFORMER(platformers[k])->platforms[pt.platform] = active;
+                }
+            }
         }
     }
 
@@ -365,7 +401,7 @@ static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost
     // AUTO_DESTROY(e)->hasTextRendering = true;
 }
 
-static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex) {
+static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc) {
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
     ADD_COMPONENT(e, Transformation);
@@ -386,8 +422,10 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, Platformer);
     PLATFORMER(e)->offset = Vector2(0, TRANSFORM(e)->size.Y * -0.5);
-    PLATFORMER(e)->platforms.push_back(game->ground);
-    
+    PLATFORMER(e)->platforms.insert(std::make_pair(game->ground, true));
+    for (unsigned i=0; i<sc->platforms.size(); i++) {
+        PLATFORMER(e)->platforms.insert(std::make_pair(sc->platforms[i].platform, sc->platforms[i].active));
+    }
     std::cout <<" add runner: " << e << " - " << TimeUtil::getTime()  << "(pos: " << TRANSFORM(e)->position << ")" << RUNNER(e)->speed << std::endl;
     #if 0
     do {
@@ -435,10 +473,7 @@ static void updateSessionTransition(const SessionComponent* session, float progr
         RENDERING(session->coins[i])->color.a = progress;
     }
     for (unsigned i=0; i<session->links.size(); i++) {
-        if (i % 2)
-            RENDERING(session->links[i])->color.a = progress * 0.2;
-        else
-            RENDERING(session->links[i])->color.a = progress * 0.65;
+        RENDERING(session->links[i])->color.a = progress * 0.65;
     }
 }
 
