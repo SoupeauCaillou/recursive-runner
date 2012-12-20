@@ -23,6 +23,7 @@
 #include <sqlite3.h>
 #endif
 #include "base/Log.h"
+#include "base/MathUtil.h"
 #include "Callback.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -122,6 +123,8 @@ void StorageAPILinuxImpl::init() {
 		checkInTable(dbPath, "sound", "(null)", "on");
 		checkInTable(dbPath, "gameb4Ads", "2", "2");
 	}
+    #else
+    muted = false;
 	#endif
 }
 
@@ -141,17 +144,15 @@ void StorageAPILinuxImpl::submitScore(Score inScr) {
 	request(dbPath, tmp.str().c_str(), 0, 0);
 
 	#else
-	for (unsigned i = 0; i < 5; i++) {
-		if ((scores[i].points == 0 || inScr.points > scores[i].points) {
-
-			for (unsigned j = 4; j != i; j--) {
-				scores[j] = scores[j-1];
-			}
-
-			scores[i] = inScr;
-			break;
-		}
-	}
+    int count = MathUtil::Min(5, (int)scores.size());
+    for (int i=0; i<count; i++) {
+        if (inScr.points > scores[i].points) {
+            scores.insert(scores.begin() + i, inScr);
+            return;
+        }
+    }
+    if (count < 5)
+        scores.push_back(inScr);
 	#endif
 }
 
@@ -160,15 +161,8 @@ std::vector<StorageAPI::Score> StorageAPILinuxImpl::getScores(float& outAvg) {
 
 	#ifndef EMSCRIPTEN
 	request(dbPath, "select * from score order by points desc limit 5", &result, callbackScore);
-
-   #else
-	for (unsigned i = 0; i < 5; i++) {
-		if (scores[i].points == 0) {
-			break;
-		} else {
-			result.push_back(scores[i]);
-		}
-	}
+    #else
+    return scores;
 	#endif
 
 	outAvg = -1;
@@ -219,7 +213,11 @@ bool StorageAPILinuxImpl::isMuted() const {
 }
 
 void StorageAPILinuxImpl::setMuted(bool b) {
+    #ifndef EMSCRIPTEN
     std::stringstream req;
     req << "UPDATE info SET value='" << (b ? "off" : "on") << "' where opt='sound'";
     request(dbPath, req.str(),0, 0);
+    #else
+    muted = b;
+    #endif
 }
