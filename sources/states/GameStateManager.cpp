@@ -201,7 +201,7 @@ State::Enum GameStateManager::update(float dt) {
                     if (!theTouchInputManager.wasTouched(j)) {
                         if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
                             rc->jumpTimes.push_back(rc->elapsed);
-                            rc->jumpDurations.push_back(0.001);
+                            rc->jumpDurations.push_back(dt);
                         }
                     } else if (!rc->jumpTimes.empty()) {
                         float& d = *(rc->jumpDurations.rbegin());
