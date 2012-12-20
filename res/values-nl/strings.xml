@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="tap_screen_to_start">"Voel de scherm om te spelen"</string>
+	<string name="tap_screen_to_restart">"Voel de scherm om opnieuw te spelen"</string>
+	<string name="how_to_play">"Hoe spel je ? (Voel de scherm om door te gaan)"</string>
+	<string name="this_is_you">"Dit bent jij"</string>
+	<string name="tap_jump">"Druk op de scherm om te springen"</string>
+	<string name="turn_on">"Zet de licht aan om punten te scoren"</string>
+	<string name="longer_press">"Een lange druk op de scherm maak je hooger springen"</string>
+	<string name="run_edge">"Je rent tot de rand van de scherm"</string>
+	<string name="new_hero">"Dan is er een nieuwe jij"</string>
+	<string name="previous_hero_replay">"Jouw vorige rent tegen je"</string>
+	<string name="avoid_him">"Vermijd hem : hij scoort nog steeds punten!"</string>
+	<string name="ten_heroes">"Wat vor score kunt je maken in 5 keer heen en terug ?"</string>
+	<string name="good_luck">"Good luck!"</string>
+	<string name="high_quality_gfx_summ">"Enable high quality graphics (requires to restart the game)"</string>
+	<string name="low_quality_gfx_summ">"Enable low quality graphics (requires to restart the game)"</string>
+</resources>
