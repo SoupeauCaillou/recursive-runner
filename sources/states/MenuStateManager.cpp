@@ -317,6 +317,9 @@ void MenuStateManager::exit(State::Enum) {
 }
 
 static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game) {
+#ifndef ANDROID
+    RENDERING(btn)->hide = true;
+#else
      int giftizState = game->communicationAPI->giftizGetButtonState();
     switch (giftizState) {
         case 0: 
@@ -335,4 +338,5 @@ static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game) {
             RENDERING(btn)->texture = theRenderingSystem.loadTextureFile("giftiz_warning");
             break;
     }
+#endif
 }
