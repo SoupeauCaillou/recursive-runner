@@ -553,7 +553,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
     }
 
-    level = Level::Level2;
+    level = Level::Level1;
     initGame(storageAPI);
     updateBestScore();
 
@@ -805,15 +805,20 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
             createCoins(generateCoinsCoordinates(20, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
             break;
         case Level::Level2:
-            createCoins(generateCoinsCoordinates(10, PlacementHelper::GimpYToScreen(600), PlacementHelper::GimpYToScreen(600)), sc, transition);
+            createCoins(generateCoinsCoordinates(10, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
+            int index[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
             // use created coins as platforms switches
-            for (unsigned i=0; i<(sc->coins.size() - 1); i++) {
+            for (unsigned i=0; i<9; i++) {
                 Platform pf;
-                pf.switches[0].entity = sc->coins[i];
-                pf.switches[1].entity = sc->coins[i+1];
-                pf.platform = sc->links[i+1];
+                pf.switches[0].entity = sc->coins[index[i]];
+                pf.switches[1].entity = sc->coins[index[i]+1];
+                pf.platform = sc->links[index[i]+1];
                 RENDERING(pf.platform)->texture = InvalidTextureRef;
                 sc->platforms.push_back(pf);
+                TRANSFORM(pf.switches[0].entity)->position.Y = 
+                TRANSFORM(pf.switches[1].entity)->position.Y = 
+                TRANSFORM(pf.platform)->position.Y = PlacementHelper::GimpYToScreen(600);
+                TRANSFORM(pf.platform)->rotation = 0;
             }
             createCoins(generateCoinsCoordinates(15, PlacementHelper::GimpYToScreen(400), PlacementHelper::GimpYToScreen(150)), sc, transition);
             
