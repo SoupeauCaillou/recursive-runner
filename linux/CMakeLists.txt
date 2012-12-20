@@ -16,7 +16,7 @@ if (EMSCRIPTEN_BUILD)
 	target_link_libraries(recursiveRunner.bc recursiveRunnercommon sac GLEW glfw openal sqlite3  vorbisfile vorbis z png)
 	add_custom_command(TARGET recursiveRunner.bc
 		POST_BUILD
-		COMMAND EMCC_DEBUG=1 emcc -s WARN_ON_UNDEFINED_SYMBOLS=1 -O2 --llvm-lto 1 ${CMAKE_BINARY_DIR}/linux/recursiveRunner.bc -o /tmp/recursiveRunner.html --preload-file assets
+		COMMAND emcc -s ALLOW_MEMORY_GROWTH=1 -O2 ${CMAKE_BINARY_DIR}/linux/recursiveRunner.bc -o /tmp/recursiveRunner.html --preload-file assets
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR} 
 		COMMENT "Building emscripten HTML")	
 else ()

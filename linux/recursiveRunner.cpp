@@ -79,7 +79,9 @@ RecursiveRunnerGame* game;
 NameInputAPILinuxImpl* nameInput;
 Entity globalFTW = 0;
 
+#ifndef EMSCRIPTEN
 Recorder *record;
+#endif
 
 class MouseNativeTouchState: public NativeTouchState {
 	public:
@@ -255,21 +257,9 @@ static void* callback_thread(void *){
 
 #else
 static void updateAndRender() {
-       static float prevTime = TimeUtil::getTime();
-       static float leftOver = 0;
-       float t = TimeUtil::getTime();
-       float dt = t - prevTime + leftOver;
-        SDL_PumpEvents();
-       game->tick(dt);
-       /*
-       while (dt > DT) {
-               game->tick(DT);
-               dt -= DT;
-       }*/
-       leftOver = 0;
-        theRenderingSystem.render();
-        //SDL_GL_SwapBuffers( );
-       prevTime = t;
+    SDL_PumpEvents();
+    game->step();
+    game->render();
 }
 
 #endif
@@ -287,7 +277,6 @@ int main(int argc, char** argv) {
 	}
 
 	SDL_Surface *ecran = SDL_SetVideoMode(reso->X, reso->Y, 16, SDL_OPENGL ); /* Double Buffering */
-    __log_enabled = false;
 #else
 	if (!glfwInit())
 		return 1;
@@ -308,7 +297,7 @@ int main(int argc, char** argv) {
 	TimeUtil::init();
 	uint8_t* state = 0;
 	int size = 0;
-	#if 1
+    #ifndef EMSCRIPTEN
 	if (restore) {
 		FILE* file = fopen("/tmp/rr.bin", "r+b");
 		if (file) {
@@ -381,10 +370,12 @@ int main(int argc, char** argv) {
 		record->record();
 	}
 #else
-	emscripten_set_main_loop(updateAndRender, 60);
+	emscripten_set_main_loop(updateAndRender, 60, 0);
 #endif
 
-	delete game;
+#ifndef EMSCRIPTEN
+    delete game;
     delete record;
+#endif
 	return 0;
 }

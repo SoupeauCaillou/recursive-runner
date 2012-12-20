@@ -4,7 +4,7 @@ project(TILEMATCH)
 
 SET(CMAKE_C_FLAGS "-O0 -g -W -Wall")
 if (EMSCRIPTEN_BUILD)
-SET(CMAKE_CXX_FLAGS "-O0 -W -Wall")
+SET(CMAKE_CXX_FLAGS "-O2 -W -Wall")
 else ()
 SET(CMAKE_CXX_FLAGS "-O0 -g -W -Wall -DDEBUG -DENABLE_PROFILING -DINGAME_EDITORS -DDATADIR=\\\"${CMAKE_SOURCE_DIR}/assets/\\\"  -fvisibility=hidden")
 endif()
