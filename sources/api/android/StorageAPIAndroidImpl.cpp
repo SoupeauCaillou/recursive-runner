@@ -38,8 +38,11 @@ struct StorageAPIAndroidImpl::StorageAPIAndroidImplDatas {
 	jmethodID getGameCountBeforeNextAd;
 	jmethodID setGameCountBeforeNextAd;
 
-    jmethodID isMuted;
-    jmethodID setMuted;
+	jmethodID isFirstGame;
+	jmethodID incrementGameCount;
+
+	jmethodID isMuted;
+	jmethodID setMuted;
 
 	bool initialized;
 };
@@ -71,8 +74,11 @@ void StorageAPIAndroidImpl::init(JNIEnv* pEnv) {
 	datas->getGameCountBeforeNextAd = jniMethodLookup(env, datas->cls, "getGameCountBeforeNextAd", "()I");
 	datas->setGameCountBeforeNextAd = jniMethodLookup(env, datas->cls, "setGameCountBeforeNextAd", "(I)V");
 
-    datas->isMuted = jniMethodLookup(env, datas->cls, "isMuted", "()Z");
-    datas->setMuted = jniMethodLookup(env, datas->cls, "setMuted", "(Z)V");
+	datas->isFirstGame = jniMethodLookup(env, datas->cls, "isFirstGame", "()Z");
+	datas->incrementGameCount = jniMethodLookup(env, datas->cls, "incrementGameCount", "()V");
+
+	datas->isMuted = jniMethodLookup(env, datas->cls, "isMuted", "()Z");
+	datas->setMuted = jniMethodLookup(env, datas->cls, "setMuted", "(Z)V");
 
 	datas->initialized = true;
 }
@@ -137,6 +143,14 @@ int StorageAPIAndroidImpl::getGameCountBeforeNextAd() {
 
 void StorageAPIAndroidImpl::setGameCountBeforeNextAd(int inCount) {
 	env->CallStaticVoidMethod(datas->cls, datas->setGameCountBeforeNextAd, inCount);
+}
+
+bool StorageAPIAndroidImpl::isFirstGame() {
+	return env->CallStaticBooleanMethod(datas->cls, datas->isFirstGame);
+}
+
+void StorageAPIAndroidImpl::incrementGameCount() {
+	return env->CallStaticVoidMethod(datas->cls, datas->incrementGameCount);
 }
 
 bool StorageAPIAndroidImpl::isMuted() const {

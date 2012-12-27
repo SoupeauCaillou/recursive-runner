@@ -33,6 +33,9 @@ class StorageAPIAndroidImpl : public StorageAPI {
 
 		int getCoinsCount();
 
+		bool isFirstGame();
+		void incrementGameCount();
+
 		int getGameCountBeforeNextAd();
 		void setGameCountBeforeNextAd(int inCount);
 

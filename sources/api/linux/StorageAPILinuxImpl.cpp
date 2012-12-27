@@ -119,9 +119,14 @@ void StorageAPILinuxImpl::init() {
 		request(dbPath, "create table score(points number(7) default '0', coins number(7) default '0', name varchar2(11) default 'Anonymous')", 0, 0);
 		request(dbPath, "create table info(opt varchar2(8), value varchar2(11), constraint f1 primary key(opt,value))", 0, 0);
 
-
 		checkInTable(dbPath, "sound", "(null)", "on");
 		checkInTable(dbPath, "gameb4Ads", "2", "2");
+		checkInTable(dbPath, "gameCount", "(null)", "0");
+
+		//reset gameCount if there is no score in table (no coins collected)
+		if (getCoinsCount() == 0) {
+			request(dbPath, "update info set value='0' where opt='gameCount'", 0, 0);
+		}
 	}
     #else
     muted = false;
@@ -172,10 +177,17 @@ std::vector<StorageAPI::Score> StorageAPILinuxImpl::getScores(float& outAvg) {
 int StorageAPILinuxImpl::getCoinsCount() {
 	#ifndef EMSCRIPTEN
 	std::string s;
+
+	//check the table is not empty before
+	request(dbPath, "select * from score", &s, 0);
+	if (s.empty())
+		return 0;
+
 	request(dbPath, "select sum(coins), count(coins) from score", &s, 0);
 
 	int coins, scoreCount;
 	sscanf(s.c_str(), "%d, %d", &coins, &scoreCount);
+	LOGE("%d, %d", coins, scoreCount);
 
 	return ((coins - scoreCount) / 2.);
 	#else
@@ -201,6 +213,18 @@ void StorageAPILinuxImpl::setGameCountBeforeNextAd(int inCount) {
 	#endif
 }
 
+bool StorageAPILinuxImpl::isFirstGame() {
+    #ifndef EMSCRIPTEN
+    std::string s;
+
+    request(dbPath, "select value from info where opt like 'gameCount'", &s, 0);
+
+    return (s == "1");
+    #else
+    return false;
+    #endif
+}
+
 bool StorageAPILinuxImpl::isMuted() const {
     #ifndef EMSCRIPTEN
     std::string s;
@@ -219,4 +243,14 @@ void StorageAPILinuxImpl::setMuted(bool b) {
     #else
     muted = b;
     #endif
+}
+void StorageAPILinuxImpl::incrementGameCount() {
+	std::string gameCount;
+	request(dbPath, "select value from info where opt='gameCount'", &gameCount, 0);
+	LOGE("%s", gameCount.c_str());
+	std::stringstream ss;
+	ss << atoi(gameCount.c_str()) + 1;
+
+	std::cout << gameCount.c_str() << "->" << ss.str().c_str() << std::endl;
+	request(dbPath, "update info set value='" + ss.str() + "' where opt='gameCount'", 0, 0);
 }
