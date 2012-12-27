@@ -123,7 +123,7 @@ void MenuStateManager::setup() {
     TEXT_RENDERING(subtitleText)->cameraBitMask = 0x1;
     TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
     TEXT_RENDERING(subtitleText)->flags = TextRenderingComponent::AdjustHeightToFillWidthBit;
-std::cout << "TEXT:'" << TEXT_RENDERING(subtitleText)->text << "'" << std::endl;
+
     Entity swarmBtn = datas->swarmBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(swarmBtn, Transformation);
     TRANSFORM(swarmBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm"));

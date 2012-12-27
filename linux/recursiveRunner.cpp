@@ -339,7 +339,7 @@ int main(int argc, char** argv) {
 
 #ifndef EMSCRIPTEN
     setlocale( LC_ALL, "" );
-    
+
     glfwSetCharCallback(myCharCallback);
     glfwSetKeyCallback(myKeyCallback);
 #endif

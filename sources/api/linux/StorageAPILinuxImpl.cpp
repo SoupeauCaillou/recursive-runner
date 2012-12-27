@@ -205,7 +205,6 @@ bool StorageAPILinuxImpl::isMuted() const {
     #ifndef EMSCRIPTEN
     std::string s;
     request(dbPath, "select value from info where opt like 'sound'", &s, 0);
-    std::cout << "sound : '" << s << "'" << std::endl;
     return (s == "off");
     #else
     return true;
