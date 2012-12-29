@@ -27,13 +27,11 @@ INSTANCE_IMPL(CameraTargetSystem);
 
 CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetComponent>("CameraTarget") {
     CameraTargetComponent tc;
-    componentSerializer.add(new Property(OFFSET(cameraIndex, tc), sizeof(int)));
-    componentSerializer.add(new EpsilonProperty<float>(OFFSET(offset.X, tc), 0.001));
-    componentSerializer.add(new EpsilonProperty<float>(OFFSET(offset.Y, tc), 0.001));
-    componentSerializer.add(new EpsilonProperty<float>(OFFSET(maxCameraSpeed, tc), 0.001));
-    componentSerializer.add(new Property(OFFSET(enabled, tc), sizeof(bool)));
-    componentSerializer.add(new EpsilonProperty<float>(OFFSET(cameraSpeed.X, tc), 0.001));
-    componentSerializer.add(new EpsilonProperty<float>(OFFSET(cameraSpeed.Y, tc), 0.001));
+    componentSerializer.add(new Property<int>(OFFSET(cameraIndex, tc)));
+    componentSerializer.add(new Property<Vector2>(OFFSET(offset, tc), Vector2(0.001, 0)));
+    componentSerializer.add(new Property<float>(OFFSET(maxCameraSpeed, tc), 0.001));
+    componentSerializer.add(new Property<bool>(OFFSET(enabled, tc)));
+    componentSerializer.add(new Property<Vector2>(OFFSET(cameraSpeed.X, tc), Vector2(0.001, 0)));
 }
 
 void CameraTargetSystem::DoUpdate(float dt) {
