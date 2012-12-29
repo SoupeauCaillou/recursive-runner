@@ -120,7 +120,6 @@ void StorageAPILinuxImpl::init() {
 		request(dbPath, "create table info(opt varchar2(8), value varchar2(11), constraint f1 primary key(opt,value))", 0, 0);
 
 		checkInTable(dbPath, "sound", "(null)", "on");
-		checkInTable(dbPath, "gameb4Ads", "2", "2");
 		checkInTable(dbPath, "gameCount", "(null)", "0");
 
 		//reset gameCount if there is no score in table (no coins collected)
@@ -192,24 +191,6 @@ int StorageAPILinuxImpl::getCoinsCount() {
 	return ((coins - scoreCount) / 2.);
 	#else
 	return 0;
-	#endif
-}
-
-int StorageAPILinuxImpl::getGameCountBeforeNextAd() {
-	#ifndef EMSCRIPTEN
-	std::string s;
-	request(dbPath, "select value from info where opt='gameb4Ads'", &s, 0);
-	return std::atoi(s.c_str());
-	#else
-	return 0;
-	#endif
-}
-
-void StorageAPILinuxImpl::setGameCountBeforeNextAd(int inCount) {
-	#ifndef EMSCRIPTEN
-	std::stringstream s;
-	s << "update info set value='" << inCount << "' where opt='gameb4Ads'";
-	request(dbPath, s.str(),0, 0);
 	#endif
 }
 

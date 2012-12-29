@@ -34,10 +34,7 @@ class StorageAPIAndroidImpl : public StorageAPI {
 		int getCoinsCount();
 
 		bool isFirstGame();
-		void incrementGameCount();
-
-		int getGameCountBeforeNextAd();
-		void setGameCountBeforeNextAd(int inCount);
+		void incrementGameCount();;
 
         bool isMuted() const;
         void setMuted(bool b);

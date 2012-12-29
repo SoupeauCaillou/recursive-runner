@@ -34,7 +34,6 @@ public class StorageAPI {
 	// -------------------------------------------------------------------------
 	// StorageAPI
 	// -------------------------------------------------------------------------
-	static final String GameCountBeforeAds = "GameCountBeforeAds";
 	static final String SoundMutedPref = "SoundMutedPref";
 
 	static public void submitScore(final int points, final int coins, final String name) {
@@ -117,20 +116,6 @@ public class StorageAPI {
 		return ((coins - scoreCount) / 2);
 	}
 
-	static public int getGameCountBeforeNextAd() {
-		SharedPreferences preferences = SacJNILib.activity
-				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
-		return preferences.getInt(GameCountBeforeAds, 10);
-	}
-
-	static public void setGameCountBeforeNextAd(int value) {
-		SharedPreferences preferences = SacJNILib.activity
-				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
-		Editor ed = preferences.edit();
-		ed.putInt(GameCountBeforeAds, value);
-		ed.commit();
-	}
-
 	static public boolean isMuted() {
 		SharedPreferences preferences = SacJNILib.activity
 				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
@@ -144,6 +129,4 @@ public class StorageAPI {
 		ed.putBoolean(SoundMutedPref, b);
 		ed.commit();
 	}
-
-
 }

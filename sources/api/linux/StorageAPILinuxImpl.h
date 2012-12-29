@@ -29,9 +29,6 @@ class StorageAPILinuxImpl : public StorageAPI {
 
 		int getCoinsCount();
 
-		int getGameCountBeforeNextAd();
-		void setGameCountBeforeNextAd(int inCount);
-
 		bool isFirstGame();
 		void incrementGameCount();
 

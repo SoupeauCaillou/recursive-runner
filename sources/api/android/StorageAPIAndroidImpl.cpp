@@ -35,9 +35,6 @@ struct StorageAPIAndroidImpl::StorageAPIAndroidImplDatas {
 
 	jmethodID getCoinsCount;
 
-	jmethodID getGameCountBeforeNextAd;
-	jmethodID setGameCountBeforeNextAd;
-
 	jmethodID isFirstGame;
 	jmethodID incrementGameCount;
 
@@ -70,9 +67,6 @@ void StorageAPIAndroidImpl::init(JNIEnv* pEnv) {
 	datas->getScores = jniMethodLookup(env, datas->cls, "getScores", "([I[I[Ljava/lang/String;)I");
 
 	datas->getCoinsCount = jniMethodLookup(env, datas->cls, "getCoinsCount", "()I");
-
-	datas->getGameCountBeforeNextAd = jniMethodLookup(env, datas->cls, "getGameCountBeforeNextAd", "()I");
-	datas->setGameCountBeforeNextAd = jniMethodLookup(env, datas->cls, "setGameCountBeforeNextAd", "(I)V");
 
 	datas->isFirstGame = jniMethodLookup(env, datas->cls, "isFirstGame", "()Z");
 	datas->incrementGameCount = jniMethodLookup(env, datas->cls, "incrementGameCount", "()V");
@@ -135,14 +129,6 @@ std::vector<StorageAPI::Score> StorageAPIAndroidImpl::getScores(float& outAverag
 
 int StorageAPIAndroidImpl::getCoinsCount() {
 	return env->CallStaticIntMethod(datas->cls, datas->getCoinsCount);
-}
-
-int StorageAPIAndroidImpl::getGameCountBeforeNextAd() {
-	return env->CallStaticIntMethod(datas->cls, datas->getGameCountBeforeNextAd);
-}
-
-void StorageAPIAndroidImpl::setGameCountBeforeNextAd(int inCount) {
-	env->CallStaticVoidMethod(datas->cls, datas->setGameCountBeforeNextAd, inCount);
 }
 
 bool StorageAPIAndroidImpl::isFirstGame() {
