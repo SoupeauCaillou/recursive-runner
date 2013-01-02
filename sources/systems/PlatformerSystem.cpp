@@ -35,7 +35,7 @@ PlatformerSystem::PlatformerSystem() : ComponentSystemImpl<PlatformerComponent>(
     componentSerializer.add(new VectorProperty<Entity>(OFFSET(platforms, tc)));
 }
 
-void PlatformerSystem::DoUpdate(float dt) {
+void PlatformerSystem::DoUpdate(float) {
     FOR_EACH_ENTITY_COMPONENT(Platformer, entity, pltf)
         PhysicsComponent* pc = PHYSICS(entity);
         TransformationComponent* tc = TRANSFORM(entity);
@@ -51,7 +51,7 @@ void PlatformerSystem::DoUpdate(float dt) {
                     continue;
                 TransformationComponent* pltfTC = TRANSFORM(it->first);
                 if (IntersectionUtil::lineLine(
-                    pltf->previousPosition, newPosition, 
+                    pltf->previousPosition, newPosition,
                     pltfTC->worldPosition + Vector2::Rotate(Vector2(pltfTC->size.X * 0.5, pltfTC->size.Y * 0.5), pltfTC->worldRotation),
                     pltfTC->worldPosition + Vector2::Rotate(Vector2(-pltfTC->size.X * 0.5, pltfTC->size.Y * 0.5), pltfTC->worldRotation),
                     0)) {

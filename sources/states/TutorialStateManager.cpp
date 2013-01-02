@@ -166,7 +166,7 @@ void TutorialStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void TutorialStateManager::willEnter(State::Enum from) {
+void TutorialStateManager::willEnter(State::Enum) {
     #define INSTANCIATE_STEP(step) \
         datas->step2mgr[Tutorial:: step] = new step##TutorialStep
     INSTANCIATE_STEP(Title);
@@ -251,7 +251,7 @@ bool TutorialStateManager::transitionCanEnter(State::Enum from) {
     return (adsr->value == adsr->sustainValue) && gameCanEnter;
 }
 
-void TutorialStateManager::enter(State::Enum from) {
+void TutorialStateManager::enter(State::Enum) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     session->userInputEnabled = false;
     TEXT_RENDERING(datas->entities.text)->hide = false;

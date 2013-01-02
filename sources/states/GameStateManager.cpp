@@ -220,7 +220,7 @@ State::Enum GameStateManager::update(float dt) {
     {
         std::vector<TransformationComponent*> activesColl;
         std::vector<int> direction;
-        
+
         for (unsigned i=0; i<sc->numPlayers; i++) {
             for (unsigned j=0; j<sc->runners.size(); j++) {
                 const Entity r = sc->runners[j];
@@ -362,7 +362,7 @@ bool GameStateManager::transitionCanExit(State::Enum to) {
     return progress <= ADSR(datas->transition)->idleValue;
 }
 
-void GameStateManager::exit(State::Enum to) {
+void GameStateManager::exit(State::Enum) {
     RENDERING(datas->pauseButton)->hide = true;
 }
 
