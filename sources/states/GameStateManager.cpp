@@ -159,6 +159,11 @@ State::Enum GameStateManager::update(float dt) {
     }
     RENDERING(datas->pauseButton)->color = BUTTON(datas->pauseButton)->mouseOver ? Color("gray") : Color();
 
+    // Manage piano's volume depending on the distance from the current runner to the piano
+    double distanceAbs = MathUtil::Abs(TRANSFORM(sc->currentRunner)->position.X -
+    TRANSFORM(game->pianist)->position.X) / (PlacementHelper::ScreenWidth * param::LevelSize);
+    MUSIC(datas->transition)->volume = 0.2 + 0.8 * (1 - distanceAbs);
+
     // Manage player's current runner
     for (unsigned i=0; i<sc->numPlayers; i++) {
         CAM_TARGET(sc->currentRunner)->enabled = true;
@@ -297,6 +302,7 @@ State::Enum GameStateManager::update(float dt) {
             }
         }
     }
+
     // handle platforms
     {
         std::vector<Entity> platformers = thePlatformerSystem.RetrieveAllEntityWithComponent();
@@ -319,12 +325,12 @@ State::Enum GameStateManager::update(float dt) {
         }
     }
 
+    // Show the score(s)
     for (unsigned i=0; i<sc->players.size(); i++) {
         std::stringstream a;
         a << PLAYER(sc->players[i])->score;
         TEXT_RENDERING(game->scoreText)->text = a.str();
     }
-
 
     thePlatformerSystem.Update(dt);
     thePlayerSystem.Update(dt);
