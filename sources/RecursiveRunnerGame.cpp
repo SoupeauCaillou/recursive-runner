@@ -473,11 +473,6 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
         theRenderingSystem.cameras.push_back(cam);
     }
     decor(storageAPI);
-    
-    ground = theEntityManager.CreateEntity();
-    ADD_COMPONENT(ground, Transformation);
-    TRANSFORM(ground)->size = Vector2(PlacementHelper::ScreenWidth * param::LevelSize, 0);
-    TRANSFORM(ground)->position = Vector2(0, baseLine);
 
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);
@@ -551,10 +546,23 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         theRenderingSystem.restoreInternalState(&in[index], sSize);
         index += sSize;
         std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
+        std::vector<Entity> all = theTransformationSystem.RetrieveAllEntityWithComponent();
+        for (unsigned i=0; i<all.size(); i++) {
+            if (TRANSFORM(all[i])->size.X > PlacementHelper::ScreenWidth * param::LevelSize) {
+                ground = all[i];
+                break;
+            }
+        }
     }
 
     level = Level::Level1;
     initGame(storageAPI);
+    if (in == 0 || size == 0) {
+        ground = theEntityManager.CreateEntity(EntityType::Persistent);
+        ADD_COMPONENT(ground, Transformation);
+        TRANSFORM(ground)->size = Vector2(PlacementHelper::ScreenWidth * (param::LevelSize + 1), 0);
+        TRANSFORM(ground)->position = Vector2(0, baseLine);
+    }
     updateBestScore();
 
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
