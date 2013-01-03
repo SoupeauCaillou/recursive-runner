@@ -34,7 +34,7 @@ import android.widget.EditText;
 public class RecursiveRunnerActivity extends SacActivity {
 	static { 
         System.loadLibrary("recursiveRunner");
-    }
+    } 
 	@Override
 	public boolean canShowAppRater() {
 		return false;

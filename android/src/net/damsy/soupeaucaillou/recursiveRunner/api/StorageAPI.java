@@ -134,7 +134,7 @@ public class StorageAPI {
 	static public boolean isFirstGame() {
 		SharedPreferences preferences = SacJNILib.activity
 				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
-		return preferences.getInt(GameCountPref, 0) == 0;
+		return preferences.getInt(GameCountPref, 0) == 1;
 	}
 	
 	static public void incrementGameCount() {
