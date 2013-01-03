@@ -756,6 +756,8 @@ void RecursiveRunnerGame::updateBestScore() {
 }
 
 int RecursiveRunnerGame::saveState(uint8_t** out) {
+    if (currentState == State::Game)
+        currentState = State::Pause;
     if (currentState != State::Pause)
         return 0;
     /* save all entities/components */
