@@ -313,7 +313,11 @@ int main(int argc, char** argv) {
 	#endif
 
 	LocalizeAPILinuxImpl* loc = new LocalizeAPILinuxImpl();
-    loc->init();
+    {
+        char* lang = strdup(getenv("LANG"));
+        lang[2] = '\0';
+        loc->init(lang);
+    }
 	nameInput = new NameInputAPILinuxImpl();
 
 	StorageAPILinuxImpl* storage = new StorageAPILinuxImpl();

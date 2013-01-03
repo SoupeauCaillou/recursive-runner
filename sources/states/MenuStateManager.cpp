@@ -278,20 +278,7 @@ State::Enum MenuStateManager::update(float) {
     }
     RENDERING(datas->helpBtn)->color = BUTTON(datas->helpBtn)->mouseOver ? Color("gray") : Color();
 
-<<<<<<< HEAD
-    // Start game ?
-=======
-    // Handle success button
-    if (!game->ignoreClick) {
-        if (BUTTON(datas->successBtn)->clicked) {
-            return State::Success;
-        }
-        game->ignoreClick = BUTTON(datas->successBtn)->mouseOver;
-    }
-    RENDERING(datas->successBtn)->color = BUTTON(datas->successBtn)->mouseOver ? Color("gray") : Color();
-
     // Start game ? (tutorial if no game done)
->>>>>>> 27e71f1... launch tutorial on first launch
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
         game->storageAPI->incrementGameCount();
         if (game->storageAPI->isFirstGame()) {
