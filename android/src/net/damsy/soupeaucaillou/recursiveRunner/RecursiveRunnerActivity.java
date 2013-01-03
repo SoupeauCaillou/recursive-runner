@@ -19,8 +19,10 @@
 package net.damsy.soupeaucaillou.recursiveRunner;
 
 import net.damsy.soupeaucaillou.SacActivity;
+import net.damsy.soupeaucaillou.SacJNILib;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -34,7 +36,7 @@ import android.widget.EditText;
 public class RecursiveRunnerActivity extends SacActivity {
 	static { 
         System.loadLibrary("recursiveRunner");
-    } 
+    }  
 	@Override
 	public boolean canShowAppRater() {
 		return false;
@@ -90,11 +92,11 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public View getNameInputView() {
 		return null;//findViewById(R.id.enter_name);
 	}
-
-	static public final String Tag = "RecursiveRunnerJ";
+ 
+	static public final String Tag = "sac";
 	static final String TILEMATCH_BUNDLE_KEY = "plop";
 	static public final String HERISWAP_SHARED_PREF = "RecursiveRunnerPref";
-     
+
 	byte[] renderingSystemState;
 	 
 	static public RecursiveRunnerStorage.OptionsOpenHelper optionsOpenHelper;
@@ -106,7 +108,7 @@ public class RecursiveRunnerActivity extends SacActivity {
    
 	@Override 
     protected void onCreate(Bundle savedInstanceState) {
-		// android.util.Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
+		android.util.Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
    
         /*        
@@ -118,7 +120,7 @@ public class RecursiveRunnerActivity extends SacActivity {
         RecursiveRunnerActivity.scoreOpenHelper = new RecursiveRunnerStorage.ScoreOpenHelper(this);
         RecursiveRunnerActivity.optionsOpenHelper = new RecursiveRunnerStorage.OptionsOpenHelper(this);
 	}
-  
+ 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -137,7 +139,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 		item.setTitleCondensed(item.getTitle());
 		return true;
 	}
-
+ 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.low_quality) {
@@ -158,28 +160,50 @@ public class RecursiveRunnerActivity extends SacActivity {
 			return true;
 		} else {
 			return super.onOptionsItemSelected(item);
-		}
+		} 
 	}
  
 	public void preNameInputViewShow() {
-	}   
-
+	}  
+	
 	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		Log.i(RecursiveRunnerActivity.Tag, "onConfigurationChanged : " + newConfig.orientation);
+	}
+
+	@Override 
 	protected void onDestroy() {
+		Log.i(RecursiveRunnerActivity.Tag, "onDestroy : " + isFinishing());
 		RecursiveRunnerActivity.scoreOpenHelper.close();
 		RecursiveRunnerActivity.optionsOpenHelper.close();
-		if (isFinishing()) {
+		if (true || isFinishing()) {
 			// MusicAPI.DumbAndroid.killAllMusic();
 			isRunning = false;
 			
 			synchronized (mutex) {
 			}
-			synchronized (renderer.gameThread) {
-				renderer.gameThread.notifyAll();
+			if (renderer.gameThread != null) {
+				synchronized (renderer.gameThread) {
+					renderer.gameThread.notifyAll();
+				}
+			} else {
+				SacJNILib.destroyGame(game);
 			}
 			// android.util.Log.i("sac", "pouet");
 		}
+		synchronized (mutex) {
+			while (renderer.gameThread != null) {
+				try {
+					android.util.Log.i("sac", "Wait mutex");
+					mutex.wait();
+				}catch (InterruptedException exc) {
+					
+				}
+			}
+		}
 		super.onDestroy();
+		Log.i(RecursiveRunnerActivity.Tag, "onDestroy done");
 	}
 	
 }
