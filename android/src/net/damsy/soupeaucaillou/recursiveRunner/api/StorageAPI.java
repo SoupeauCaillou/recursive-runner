@@ -35,6 +35,7 @@ public class StorageAPI {
 	// StorageAPI
 	// -------------------------------------------------------------------------
 	static final String SoundMutedPref = "SoundMutedPref";
+	static final String GameCountPref = "GameCountPref";
 
 	static public void submitScore(final int points, final int coins, final String name) {
 		SQLiteDatabase db = RecursiveRunnerActivity.scoreOpenHelper
@@ -127,6 +128,21 @@ public class StorageAPI {
 				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
 		Editor ed = preferences.edit();
 		ed.putBoolean(SoundMutedPref, b);
+		ed.commit();
+	}
+	
+	static public boolean isFirstGame() {
+		SharedPreferences preferences = SacJNILib.activity
+				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
+		return preferences.getInt(GameCountPref, 0) == 0;
+	}
+	
+	static public void incrementGameCount() {
+		SharedPreferences preferences = SacJNILib.activity
+				.getSharedPreferences(RecursiveRunnerActivity.HERISWAP_SHARED_PREF, 0);
+		int c = preferences.getInt(GameCountPref, 0) + 1;
+		Editor ed = preferences.edit();
+		ed.putInt(GameCountPref, c);
 		ed.commit();
 	}
 }
