@@ -320,7 +320,7 @@ State::Enum TutorialStateManager::update(float dt) {
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
 void TutorialStateManager::willExit(State::Enum to) {
-    ADSR(datas->titleGroup)->active = true;
+    ADSR(datas->titleGroup)->active = false;
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     session->userInputEnabled = false;
     RENDERING(datas->title)->hide = true;
@@ -328,25 +328,17 @@ void TutorialStateManager::willExit(State::Enum to) {
     TEXT_RENDERING(datas->entities.text)->hide = true;
     datas->gameStateMgr->willExit(to);
 
+
     RENDERING(game->muteBtn)->hide = RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = false;
 }
 
 bool TutorialStateManager::transitionCanExit(State::Enum to) {
-
-    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
-    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
-    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
-    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
-    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
-    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
-    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
-    /*
     ADSRComponent* adsr = ADSR(datas->titleGroup);
 
     TRANSFORM(datas->titleGroup)->position.Y = adsr->value;
+LOGE("%f %f", adsr->value,   RENDERING(game->muteBtn)->color.a);
+    RENDERING(game->muteBtn)->color.a = (adsr->sustainValue - adsr->value) / (adsr->sustainValue - adsr->idleValue);
 
-    RENDERING(game->muteBtn)->color.a = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
-    */
     return datas->gameStateMgr->transitionCanExit(to);
 }
 

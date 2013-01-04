@@ -626,19 +626,17 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
-    if (BUTTON(muteBtn)->enabled) {
-        if (BUTTON(muteBtn)->clicked) {
-            bool muted = !storageAPI->isMuted();
-            storageAPI->setMuted(muted);
-            RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
-            theSoundSystem.mute = muted;
-            theMusicSystem.toggleMute(muted);
+    if (BUTTON(muteBtn)->clicked) {
+        bool muted = !storageAPI->isMuted();
+        storageAPI->setMuted(muted);
+        RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
+        theSoundSystem.mute = muted;
+        theMusicSystem.toggleMute(muted);
 
-            ignoreClick = true;
-        } else {
-            ignoreClick = BUTTON(muteBtn)->mouseOver;
-            RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color("gray") : Color();
-        }
+        ignoreClick = true;
+    } else {
+        ignoreClick = BUTTON(muteBtn)->mouseOver;
+        RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color("gray") : Color();
     }
 
     {
