@@ -174,7 +174,7 @@ void MenuStateManager::setup() {
 void MenuStateManager::willEnter(State::Enum from) {
     std::vector<Entity> temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
     std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
-    
+
     // activate animation
     ADSR(datas->titleGroup)->active = ADSR(datas->subtitle)->active = true;
 
@@ -321,13 +321,14 @@ void MenuStateManager::exit(State::Enum) {
     RENDERING(datas->swarmBtn)->hide = RENDERING(datas->giftizBtn)->hide = RENDERING(datas->helpBtn)->hide = true;
 }
 
-static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game) {
 #ifndef ANDROID
+static void updateGiftizButton(Entity btn, RecursiveRunnerGame*) {
     RENDERING(btn)->hide = true;
 #else
+static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game) {
      int giftizState = game->communicationAPI->giftizGetButtonState();
     switch (giftizState) {
-        case 0: 
+        case 0:
             RENDERING(btn)->hide = true;
             break;
         case 1:

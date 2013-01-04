@@ -70,7 +70,7 @@ class StateManager {
             bool transitionCanExit(State::Enum from);\
             bool transitionCanEnter(State::Enum to);\
         private:\
-            class state##StateManagerDatas;\
+            struct state##StateManagerDatas;\
             state##StateManagerDatas* datas;\
     };\
 

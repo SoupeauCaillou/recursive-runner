@@ -34,7 +34,7 @@
 #include "states/StateManager.h"
 
 class NameInputAPI;
-class SessionComponent;
+struct SessionComponent;
 class LocalizeAPI;
 
 namespace CameraMode {
