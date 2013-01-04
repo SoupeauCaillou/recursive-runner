@@ -24,6 +24,7 @@
 #include "systems/RenderingSystem.h"
 #include "systems/AnimationSystem.h"
 #include "systems/ADSRSystem.h"
+#include "systems/ButtonSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/SessionSystem.h"
 #include "systems/PhysicsSystem.h"
@@ -130,13 +131,13 @@ void TutorialStateManager::setup() {
     ADD_COMPONENT(hideText, Transformation);
     TRANSFORM(hideText)->size = PlacementHelper::GimpSizeToScreen(Vector2(776, 102));
     TRANSFORM(hideText)->parent = title;
-    TRANSFORM(hideText)->position = (Vector2(-0.5, 0.5) + Vector2(41, -72) / theRenderingSystem.getTextureSize("titre")) * 
+    TRANSFORM(hideText)->position = (Vector2(-0.5, 0.5) + Vector2(41, -72) / theRenderingSystem.getTextureSize("titre")) *
         TRANSFORM(title)->size + TRANSFORM(hideText)->size * Vector2(0.5, -0.5);
     TRANSFORM(hideText)->z = 0.01;
     ADD_COMPONENT(hideText, Rendering);
     RENDERING(hideText)->color = Color(130.0/255, 116.0/255, 117.0/255);
     RENDERING(hideText)->cameraBitMask = 0x3;
-    
+
     Entity text = datas->entities.text = theEntityManager.CreateEntity();
     ADD_COMPONENT(text, Transformation);
     TRANSFORM(text)->size = TRANSFORM(hideText)->size;
@@ -233,6 +234,8 @@ void TutorialStateManager::willEnter(State::Enum) {
     PlacementHelper::GimpWidth = 1280;
     TEXT_RENDERING(datas->entities.text)->text = game->localizeAPI->text("how_to_play", "How to play? (tap to continue)");
     TEXT_RENDERING(datas->entities.text)->hide = true;
+
+    BUTTON(game->muteBtn)->enabled = false;
 }
 
 bool TutorialStateManager::transitionCanEnter(State::Enum from) {
@@ -248,6 +251,8 @@ bool TutorialStateManager::transitionCanEnter(State::Enum from) {
 
     ADSRComponent* adsr = ADSR(datas->titleGroup);
     TRANSFORM(datas->titleGroup)->position.Y = adsr->value;
+    RENDERING(game->muteBtn)->color.a = 1. - (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
+
     return (adsr->value == adsr->sustainValue) && gameCanEnter;
 }
 
@@ -260,7 +265,7 @@ void TutorialStateManager::enter(State::Enum) {
     datas->waitingClick = true;
     datas->currentStep = Tutorial::Title;
     datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
-    RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
+    RENDERING(game->muteBtn)->hide = RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = true;
 }
 
 
@@ -272,13 +277,12 @@ void TutorialStateManager::backgroundUpdate(float) {
 
 State::Enum TutorialStateManager::update(float dt) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-
     if (datas->waitingClick) {
         if (datas->flecheAccum >= 0) {
             datas->flecheAccum += dt * 2;
             RENDERING(datas->entities.anim)->hide = (((int)datas->flecheAccum) % 2);
         }
-            
+
         if (!game->ignoreClick && theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
             datas->waitingClick = false;
             datas->step2mgr[datas->currentStep]->exit(session, &datas->entities);
@@ -296,7 +300,7 @@ State::Enum TutorialStateManager::update(float dt) {
     } else {
         datas->flecheAccum += dt * 3;
         TEXT_RENDERING(datas->entities.text)->hide = (((int)datas->flecheAccum) % 2);
-        
+
         if (datas->step2mgr[datas->currentStep]->mustUpdateGame(session, &datas->entities)) {
             datas->gameStateMgr->update(dt);
         }
@@ -323,11 +327,26 @@ void TutorialStateManager::willExit(State::Enum to) {
     RENDERING(datas->hideText)->hide = true;
     TEXT_RENDERING(datas->entities.text)->hide = true;
     datas->gameStateMgr->willExit(to);
-    RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = false;
+
+    RENDERING(game->muteBtn)->hide = RENDERING(game->scorePanel)->hide = TEXT_RENDERING(game->scoreText)->hide = false;
 }
 
 bool TutorialStateManager::transitionCanExit(State::Enum to) {
-    TRANSFORM(datas->titleGroup)->position.Y = ADSR(datas->titleGroup)->value;
+
+    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
+    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
+    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
+    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
+    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
+    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
+    /*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*BUG*|*\
+    /*
+    ADSRComponent* adsr = ADSR(datas->titleGroup);
+
+    TRANSFORM(datas->titleGroup)->position.Y = adsr->value;
+
+    RENDERING(game->muteBtn)->color.a = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
+    */
     return datas->gameStateMgr->transitionCanExit(to);
 }
 
@@ -341,5 +360,6 @@ void TutorialStateManager::exit(State::Enum to) {
         delete it->second;
     }
     datas->step2mgr.clear();
+    BUTTON(game->muteBtn)->enabled = true;
 }
 

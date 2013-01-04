@@ -300,7 +300,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         {Vector2(12, 0), Vector2(169, 0), Vector2(344, 0), Vector2::Zero},
         {Vector2(8, 0), Vector2::Zero, Vector2::Zero, Vector2::Zero},
         {Vector2(8, 0), Vector2(249, 0), Vector2(573, 69), Vector2::Zero},
-        
+
     };
     for (int i=0; i<count; i++) {
     	const Decor& bdef = def[i];
@@ -351,7 +351,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
                 TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
                 Vector2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
                 ratio.Y = 1 - ratio.Y;
-                TRANSFORM(bb)->position = 
+                TRANSFORM(bb)->position =
                     size * (Vector2(-0.5) + ratio) + TRANSFORM(bb)->size * Vector2(0.5, -0.5);
                 if (bdef.mirrorUV)
                     TRANSFORM(bb)->position.X = -TRANSFORM(bb)->position.X;
@@ -429,10 +429,10 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
     PlacementHelper::ScreenWidth /= 3;
-    
+
     buttonSpacing.H = PlacementHelper::GimpWidthToScreen(94);
     buttonSpacing.V = PlacementHelper::GimpHeightToScreen(76);
-    
+
     muteBtn = theEntityManager.CreateEntity();
     ADD_COMPONENT(muteBtn, Transformation);
     TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("son-off"));
@@ -489,7 +489,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);
     TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
-    theTransformationSystem.setPosition(TRANSFORM(scorePanel), 
+    theTransformationSystem.setPosition(TRANSFORM(scorePanel),
         Vector2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TransformationSystem::N);
     TRANSFORM(scorePanel)->z = 0.8;
     TRANSFORM(scorePanel)->rotation = 0.04;
@@ -627,17 +627,19 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
-    if (BUTTON(muteBtn)->clicked) {
-        bool muted = !storageAPI->isMuted();
-        storageAPI->setMuted(muted);
-        RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
-        theSoundSystem.mute = muted;
-        theMusicSystem.toggleMute(muted);
-        
-        ignoreClick = true;
-    } else {
-        ignoreClick = BUTTON(muteBtn)->mouseOver;
-        RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color("gray") : Color();
+    if (BUTTON(muteBtn)->enabled) {
+        if (BUTTON(muteBtn)->clicked) {
+            bool muted = !storageAPI->isMuted();
+            storageAPI->setMuted(muted);
+            RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
+            theSoundSystem.mute = muted;
+            theMusicSystem.toggleMute(muted);
+
+            ignoreClick = true;
+        } else {
+            ignoreClick = BUTTON(muteBtn)->mouseOver;
+            RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color("gray") : Color();
+        }
     }
 
     {
@@ -735,7 +737,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
 
             TEXT_RENDERING(scoreText)->hide = false;
             TEXT_RENDERING(scoreText)->positioning = TextRenderingComponent::CENTER;
-            
+
             for (unsigned i=0; i<1; i++) {
                 theRenderingSystem.cameras[1 + i].worldPosition.X = leftMostCameraPos.X;
                     //TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
@@ -838,13 +840,13 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
                 pf.platform = sc->links[index[i]+1];
                 RENDERING(pf.platform)->texture = InvalidTextureRef;
                 sc->platforms.push_back(pf);
-                TRANSFORM(pf.switches[0].entity)->position.Y = 
-                TRANSFORM(pf.switches[1].entity)->position.Y = 
+                TRANSFORM(pf.switches[0].entity)->position.Y =
+                TRANSFORM(pf.switches[1].entity)->position.Y =
                 TRANSFORM(pf.platform)->position.Y = PlacementHelper::GimpYToScreen(600);
                 TRANSFORM(pf.platform)->rotation = 0;
             }
             createCoins(generateCoinsCoordinates(15, PlacementHelper::GimpYToScreen(400), PlacementHelper::GimpYToScreen(150)), sc, transition);
-            
+
             break;
     }
 }
