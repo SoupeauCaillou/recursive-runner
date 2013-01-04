@@ -904,7 +904,7 @@ void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, S
     for (unsigned i=0; i<coordinates.size(); i++) {
         Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
         ADD_COMPONENT(e, Transformation);
-        TRANSFORM(e)->size = Vector2(0.3, 0.3) * param::CoinScale;
+        TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("ampoule")) * param::CoinScale;
         TRANSFORM(e)->position = coordinates[i];
         TRANSFORM(e)->rotation = -0.1 + MathUtil::RandomFloat() * 0.2;
         TRANSFORM(e)->z = 0.75;

@@ -23,7 +23,7 @@
 namespace param {
     const int LevelSize = 3;
 
-    const int CoinScale = 3;
+    const float CoinScale = 0.6;
 
 	//nombre d'aller-retour (defaut = 10)
 	const int runner = 10;

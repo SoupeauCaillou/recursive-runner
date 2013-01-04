@@ -411,7 +411,9 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
     ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->size = Vector2(0.85, 0.85) * 2.5;
+    TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("run_l2r_0000")) * 0.68;
+    //Vector2(0.85, 0.85) * 2.5;
+    
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);

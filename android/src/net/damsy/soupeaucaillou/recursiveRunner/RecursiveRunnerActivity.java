@@ -114,7 +114,7 @@ public class RecursiveRunnerActivity extends SacActivity {
     protected void onCreate(Bundle savedInstanceState) {
 		android.util.Log.i(RecursiveRunnerActivity.Tag, "-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
-   
+        
         /*        
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.parent_frame);
         playerNameInputView = findViewById(R.id.enter_name);
@@ -168,7 +168,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 	}
  
 	public void preNameInputViewShow() {
-	}  
+	}
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
