@@ -68,6 +68,10 @@ public class RecursiveRunnerActivity extends SacActivity {
 	public int getLayoutId() {
 		return R.layout.main;
 	} 
+	@Override
+	public String getRevMobAppId() {
+		return RecursiveRunnerSecret.RM_appId;
+	}
 	
 	@Override
 	public String getCharboostAppId() {
