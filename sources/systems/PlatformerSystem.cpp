@@ -32,7 +32,9 @@ INSTANCE_IMPL(PlatformerSystem);
 PlatformerSystem::PlatformerSystem() : ComponentSystemImpl<PlatformerComponent>("Platformer") {
     PlatformerComponent tc;
     componentSerializer.add(new Property<Vector2>(OFFSET(previousPosition, tc), Vector2(0.001, 0)));
-    componentSerializer.add(new VectorProperty<Entity>(OFFSET(platforms, tc)));
+    componentSerializer.add(new Property<Vector2>(OFFSET(offset, tc), Vector2(0.001, 0)));
+    componentSerializer.add(new EntityProperty(OFFSET(onPlatform, tc)));
+    componentSerializer.add(new MapProperty<Entity, bool>(OFFSET(platforms, tc)));
 }
 
 void PlatformerSystem::DoUpdate(float) {

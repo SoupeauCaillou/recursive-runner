@@ -122,7 +122,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
         "jump_l2r_0006", "jump_l2r_0007", "jump_l2r_0008",
         "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
     std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015", "jump_l2r_0016"};
-    std::string disappear[] = { "D1", "D2", "D3", "D4", "D5", "D6"};
     std::string disappear2[] = { "e1", "e2", "e3", "e4", "e5", "e4", "e5", "e4", "e5"};
     std::string piano1[] = { "P2", "P3", "P6", "P7", "P8", "P9"};
     std::string piano2[] = { "P8", "P7", "P6", "P3"};
@@ -133,7 +132,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 5, 20, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[5], 3, 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 4, 30, Interval<int>(0, 0), "runL2R");
-    theAnimationSystem.registerAnim("disappear", disappear, 6 , 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("disappear2", disappear2, 9 , 15, Interval<int>(0, 0));
     theAnimationSystem.registerAnim("piano", piano1, 6 , 8, Interval<int>(0, 0), "piano2");
     theAnimationSystem.registerAnim("piano2", piano2, 4 , 8, Interval<int>(0, 0), "piano");
@@ -461,23 +459,32 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
         Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
         baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
 
-    theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
     // 3 cameras
     // Default camera (UI)
     if (theRenderingSystem.cameras.size() < 3) {
+        LOGI("Creating cameras");
+        theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
         RenderingSystem::Camera cam = theRenderingSystem.cameras[0];
         cam.enable = false;
         // 1st player
         theRenderingSystem.cameras.push_back(cam);
         // 2nd player
         theRenderingSystem.cameras.push_back(cam);
+    } else {
+        LOGI("%lu cameras already exist", theRenderingSystem.cameras.size() );
+        for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
+            const RenderingSystem::Camera& cam = theRenderingSystem.cameras[i];
+            LOGI("\t - cam #%d : {%.3f,%.3f} {%.3f,%.3f} {%.3f,%.3f} {%.3f,%.3f} %d %d",
+                i,
+                cam.worldPosition.X, cam.worldPosition.Y,
+                cam.worldSize.X, cam.worldSize.Y,
+                cam.screenPosition.X, cam.screenPosition.Y,
+                cam.screenSize.X, cam.screenSize.Y,
+                cam.enable, cam.mirrorY
+                );
+        }
     }
     decor(storageAPI);
-    
-    ground = theEntityManager.CreateEntity();
-    ADD_COMPONENT(ground, Transformation);
-    TRANSFORM(ground)->size = Vector2(PlacementHelper::ScreenWidth * param::LevelSize, 0);
-    TRANSFORM(ground)->position = Vector2(0, baseLine);
 
     scorePanel = theEntityManager.CreateEntity();
     ADD_COMPONENT(scorePanel, Transformation);
@@ -551,10 +558,23 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         theRenderingSystem.restoreInternalState(&in[index], sSize);
         index += sSize;
         std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
+        std::vector<Entity> all = theTransformationSystem.RetrieveAllEntityWithComponent();
+        for (unsigned i=0; i<all.size(); i++) {
+            if (TRANSFORM(all[i])->size.X > PlacementHelper::ScreenWidth * param::LevelSize) {
+                ground = all[i];
+                break;
+            }
+        }
     }
 
     level = Level::Level1;
     initGame(storageAPI);
+    if (in == 0 || size == 0) {
+        ground = theEntityManager.CreateEntity(EntityType::Persistent);
+        ADD_COMPONENT(ground, Transformation);
+        TRANSFORM(ground)->size = Vector2(PlacementHelper::ScreenWidth * (param::LevelSize + 1), 0);
+        TRANSFORM(ground)->position = Vector2(0, baseLine);
+    }
     updateBestScore();
 
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
@@ -671,7 +691,6 @@ void RecursiveRunnerGame::tick(float dt) {
     // limit cam pos
     for (unsigned i=1; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
         float& camPosX = theRenderingSystem.cameras[i].worldPosition.X;
-
         if (camPosX < - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
             camPosX = - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5);
         } else if (camPosX > PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
@@ -704,6 +723,7 @@ static void updateFps(float dt) {
 void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
     switch (mode) {
         case CameraMode::Single:
+            LOGI("Setup camera : Single");
             theRenderingSystem.cameras[0].enable = false;
             theRenderingSystem.cameras[1].enable = true;
             theRenderingSystem.cameras[2].enable = false;
@@ -722,6 +742,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
             }
             break;
         case CameraMode::Menu:
+            LOGI("Setup camera : Menu");
             theRenderingSystem.cameras[0].enable = true;
             theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
             for (unsigned i=1; i<theRenderingSystem.cameras.size(); i++) {
@@ -748,6 +769,8 @@ void RecursiveRunnerGame::updateBestScore() {
 }
 
 int RecursiveRunnerGame::saveState(uint8_t** out) {
+    if (currentState == State::Game)
+        currentState = State::Pause;
     if (currentState != State::Pause)
         return 0;
     /* save all entities/components */

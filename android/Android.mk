@@ -6,11 +6,11 @@ APP_DIR := $(LOCAL_PATH)
 
 LOCAL_MODULE := recursiveRunner
 
-LOCAL_CFLAGS := -DANDROID_NDK  \
+LOCAL_CFLAGS := -DANDROID_NDK -DENABLE_LOG -DDEBUG  \
                 -DDISABLE_IMPORTGL \
 				-I$(LOCAL_PATH)/..
 
-LOCAL_CXXFLAGS := -DANDROID_NDK \
+LOCAL_CXXFLAGS := -DANDROID_NDK -DENABLE_LOG  -DDEBUG\
                 -DDISABLE_IMPORTGL  -fvisibility=hidden \
             -I$(LOCAL_PATH)/../sources \
 				-I$(LOCAL_PATH)/.. \

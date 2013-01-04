@@ -22,7 +22,7 @@ android:installLocation="auto">
 	<!-- Our activity is the built-in NativeActivity framework class.
 	This will take care of integrating with our NDK code. -->
 	<activity android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity"
-	android:launchMode="singleInstance" android:label="RecursiveRunner" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
+	android:label="RecursiveRunner" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
 	    <intent-filter>
 		<action android:name="android.intent.action.MAIN" />
 		<category android:name="android.intent.category.LAUNCHER" />
@@ -35,14 +35,6 @@ android:installLocation="auto">
 	    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
 	    android:windowSoftInputMode="stateHidden" />
 	<service android:name="com.swarmconnect.NotificationService" android:process=":swarm"/>
-
-	<!--Chartboost-->
-	<activity android:name="com.chartboost.sdk.CBDialogActivity"
-	    android:configChanges="orientation|keyboard|keyboardHidden"
-	    android:windowSoftInputMode="adjustResize"
-	    android:theme="@android:style/Theme.Translucent"
-	    android:launchMode="singleTop" android:screenOrientation="landscape">
-	</activity>
 
 	<!--Revmob-->
 	<activity android:name="com.revmob.ads.fullscreen.FullscreenActivity"
