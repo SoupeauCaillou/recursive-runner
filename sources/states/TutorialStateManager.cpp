@@ -320,10 +320,8 @@ State::Enum TutorialStateManager::update(float dt) {
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
 void TutorialStateManager::willExit(State::Enum to) {
-    ADSR(datas->titleGroup)->active = false;
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     session->userInputEnabled = false;
-    RENDERING(datas->title)->hide = true;
     RENDERING(datas->hideText)->hide = true;
     TEXT_RENDERING(datas->entities.text)->hide = true;
     datas->gameStateMgr->willExit(to);
@@ -333,16 +331,20 @@ void TutorialStateManager::willExit(State::Enum to) {
 }
 
 bool TutorialStateManager::transitionCanExit(State::Enum to) {
+
     ADSRComponent* adsr = ADSR(datas->titleGroup);
+    adsr->active = false;
 
     TRANSFORM(datas->titleGroup)->position.Y = adsr->value;
-LOGE("%f %f", adsr->value,   RENDERING(game->muteBtn)->color.a);
+
     RENDERING(game->muteBtn)->color.a = (adsr->sustainValue - adsr->value) / (adsr->sustainValue - adsr->idleValue);
 
     return datas->gameStateMgr->transitionCanExit(to);
 }
 
 void TutorialStateManager::exit(State::Enum to) {
+    RENDERING(datas->title)->hide = true;
+
     TEXT_RENDERING(datas->entities.text)->hide = true;
     RENDERING(datas->entities.anim)->hide = true;
     datas->gameStateMgr->exit(to);
