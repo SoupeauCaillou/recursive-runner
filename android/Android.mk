@@ -28,7 +28,6 @@ LOCAL_SRC_FILES := \
     ../sources/states/GameStateManager.cpp \
     ../sources/states/MenuStateManager.cpp \
     ../sources/states/PauseStateManager.cpp \
-    ../sources/states/SuccessStateManager.cpp \
     ../sources/states/RateStateManager.cpp \
     ../sources/states/AdStateManager.cpp \
     ../sources/states/RestartGameStateManager.cpp \
@@ -40,7 +39,6 @@ LOCAL_SRC_FILES := \
     ../sources/systems/RangeFollowerSystem.cpp \
     ../sources/systems/PlatformerSystem.cpp \
     ../sources/systems/SessionSystem.cpp \
-    ../sources/systems/PlatformerSystem.cpp \
     ../sources/api/android/StorageAPIAndroidImpl.cpp \
     ../sac/android/sacjnilib.cpp
 
