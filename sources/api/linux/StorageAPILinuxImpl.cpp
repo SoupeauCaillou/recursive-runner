@@ -121,11 +121,6 @@ void StorageAPILinuxImpl::init() {
 
 		checkInTable(dbPath, "sound", "(null)", "on");
 		checkInTable(dbPath, "gameCount", "(null)", "0");
-
-		//reset gameCount if there is no score in table (no coins collected)
-		if (getCoinsCount() == 0) {
-			request(dbPath, "update info set value='0' where opt='gameCount'", 0, 0);
-		}
 	}
     #else
     muted = false;
