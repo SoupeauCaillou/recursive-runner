@@ -2,22 +2,22 @@
 
 struct BestScoreTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         TEXT_RENDERING(entities->text)->text = loc->text("ten_heroes", "10 heroes, 5 roundtrips: try to get the best score!");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
-        return (TRANSFORM(sc->currentRunner)->position.X > -15);
+        return (TRANSFORM(sc->currentRunner)->position.x > -15);
     }
     bool canExit(SessionComponent* sc, TutorialEntities* entities) {
-        if (TRANSFORM(sc->currentRunner)->position.X <= -15) {
+        if (TRANSFORM(sc->currentRunner)->position.x <= -15) {
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
-            TEXT_RENDERING(entities->text)->hide = false;
+            TEXT_RENDERING(entities->text)->show = true;
             return true;
         }
         return false;
     }
     void exit(SessionComponent* sc, TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         ANIMATION(sc->currentRunner)->playbackSpeed = 1.1;
     }
 };

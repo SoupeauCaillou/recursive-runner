@@ -2,14 +2,14 @@
 
 struct AvoidYourselfTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         TEXT_RENDERING(entities->text)->text = loc->text("avoid_him", "Avoid him: he'll keep scoring points!");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
-        if (Vector2::Distance(TRANSFORM(sc->runners[0])->position, TRANSFORM(sc->runners[1])->position) > 4) {
+        if (glm::distance(TRANSFORM(sc->runners[0])->position, TRANSFORM(sc->runners[1])->position) > 4) {
             return true;
         } else {
-            TEXT_RENDERING(entities->text)->hide = false;
+            TEXT_RENDERING(entities->text)->show = true;
             ANIMATION(sc->runners[0])->playbackSpeed = 0;
             ANIMATION(sc->runners[1])->playbackSpeed = 0;
             return false;
@@ -19,7 +19,7 @@ struct AvoidYourselfTutorialStep : public TutorialStep {
         return (ANIMATION(sc->currentRunner)->playbackSpeed == 0);
     }
     void exit(SessionComponent* sc, TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         RUNNER(sc->currentRunner)->jumpTimes.push_back(RUNNER(sc->currentRunner)->elapsed);
         RUNNER(sc->currentRunner)->jumpDurations.push_back(RunnerSystem::MaxJumpDuration * 0.8);
         ANIMATION(sc->runners[0])->playbackSpeed = ANIMATION(sc->runners[1])->playbackSpeed = 1.1;

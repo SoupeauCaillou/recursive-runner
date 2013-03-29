@@ -1,24 +1,26 @@
 #pragma once
 
+#include <glm/gtx/vector_angle.hpp>
+
 struct NewHeroTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* sc, TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         TEXT_RENDERING(entities->text)->text = loc->text("new_hero", "This is the your new hero");
 
-        RENDERING(entities->anim)->hide = false;
+        RENDERING(entities->anim)->show = true;
         TRANSFORM(entities->anim)->position = TRANSFORM(sc->currentRunner)->worldPosition +
-            TRANSFORM(sc->currentRunner)->size * Vector2(-0.5, 1);
-        TRANSFORM(entities->anim)->rotation = MathUtil::AngleFromVector(
-             TRANSFORM(sc->currentRunner)->worldPosition - TRANSFORM(entities->anim)->position);
+            TRANSFORM(sc->currentRunner)->size * glm::vec2(-0.5, 1);
+        TRANSFORM(entities->anim)->rotation = glm::angle(
+             TRANSFORM(sc->currentRunner)->worldPosition, TRANSFORM(entities->anim)->position);
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
         if (sc->runners.size() == 1) {
             return true;
-        } else if (TRANSFORM(sc->currentRunner)->position.X > 29) {
+        } else if (TRANSFORM(sc->currentRunner)->position.x > 29) {
             RUNNER(sc->runners[0])->startTime = 0;
             return true;
         } else {
-            TEXT_RENDERING(entities->text)->hide = false;
+            TEXT_RENDERING(entities->text)->show = true;
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
             return false;
         }

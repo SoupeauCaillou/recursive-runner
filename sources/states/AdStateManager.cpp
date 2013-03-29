@@ -58,9 +58,9 @@ bool AdStateManager::transitionCanEnter(State::Enum ) {
 }
 
 void AdStateManager::enter(State::Enum) {
-   LOGI("%s : %d game(s) left", __PRETTY_FUNCTION__, datas->gamesb4Ad);
+   LOGI(datas->gamesb4Ad << " game(s) left")
 
-   float timeSinceLAstAd = TimeUtil::getTime() - datas->lastAdTime;
+   float timeSinceLAstAd = TimeUtil::GetTime() - datas->lastAdTime;
 
    //anticheating?
    if (datas->gamesb4Ad > 3) {
@@ -76,8 +76,8 @@ void AdStateManager::enter(State::Enum) {
    // must show an ad
    else if (datas->gamesb4Ad == 0) {
        //try to launch the ad
-        if (game->adAPI->showAd()) {
-            datas->lastAdTime = TimeUtil::getTime();
+        if (game->gameThreadContext->adAPI->showAd()) {
+            datas->lastAdTime = TimeUtil::GetTime();
         //if not ready, retry next game
         } else {
            LOGI("no ad ready, will retry next game!");
@@ -96,8 +96,8 @@ void AdStateManager::backgroundUpdate(float) {
 State::Enum AdStateManager::update(float) {
     if (datas->gamesb4Ad > 0) {
         return State::Game;
-    } else if(game->adAPI->done()) {
-        datas->waitAfterAdDisplay = TimeUtil::getTime();
+    } else if(game->gameThreadContext->adAPI->done()) {
+        datas->waitAfterAdDisplay = TimeUtil::GetTime();
         return State::Game;
     }
     return State::Ad;
@@ -113,7 +113,7 @@ void AdStateManager::willExit(State::Enum) {
 bool AdStateManager::transitionCanExit(State::Enum) {
     if (datas->gamesb4Ad == 0) {
        //wait 1 sec after the ad was showed
-        return (TimeUtil::getTime() - datas->waitAfterAdDisplay >= 1.0);
+        return (TimeUtil::GetTime() - datas->waitAfterAdDisplay >= 1.0);
     } else {
         return true;
     }

@@ -1,0 +1,14 @@
+[meta]
+speed=8
+loop=2,5
+num_frames=3
+next_anim=fumee_end
+
+[frame0]
+texture=fumee5b
+
+[frame1]
+texture=fumee5c
+
+[frame2]
+texture=fumee5

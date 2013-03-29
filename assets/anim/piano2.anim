@@ -1,0 +1,17 @@
+[meta]
+speed=8
+loop=1
+num_frames=4
+next_anim=piano
+
+[frame0]
+texture=P8
+
+[frame1]
+texture=P7
+
+[frame2]
+texture=P6
+
+[frame3]
+texture=P3

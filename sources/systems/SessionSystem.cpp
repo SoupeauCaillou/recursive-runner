@@ -36,3 +36,6 @@ void SessionSystem::DoUpdate(float) {
     // nothing
 }
 
+#ifdef SAC_INGAME_EDITORS
+void SessionSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
+#endif

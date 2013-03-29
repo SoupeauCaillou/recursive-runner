@@ -1,0 +1,10 @@
+[meta]
+speed=0.1
+loop=infinite
+num_frames=1
+
+[frame0]
+texture=J1
+
+[frame1]
+texture=J2

@@ -1,18 +1,31 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 
-project(TILEMATCH)
+project(RecursiveRunner)
 
-SET(CMAKE_C_FLAGS "-O0 -g -W -Wall")
-if (EMSCRIPTEN_BUILD)
-SET(CMAKE_CXX_FLAGS "-O2 -W -Wall")
-else ()
-SET(CMAKE_CXX_FLAGS "-O0 -g -W -Wall -DDEBUG -DENABLE_PROFILING -DENABLE_LOG -DINGAME_EDITORS -DDATADIR=\\\"${CMAKE_SOURCE_DIR}/assets/\\\"  -fvisibility=hidden")
+#list of the supported OS
+SET(SUPPORTED_TARGETS linux android emscripten windows mac)
+
+#check that target has been set
+if (NOT TARGET)
+    message(SEND_ERROR "No target defined! Aborting. Targets available: ${SUPPORTED_TARGETS}.
+    Example: cmake . -DTARGET=linux")
+    return()
 endif()
 
-add_subdirectory(sources)
 
-add_subdirectory(linux)
-if (EMSCRIPTEN_BUILD)
-else ()
+string (TOLOWER "${TARGET}" varplatform)
+string (TOUPPER "${TARGET}" VARPLATFORM)
+
+LIST(FIND SUPPORTED_TARGETS ${varplatform} target_in_list)
+#check it's supported yet
+if (target_in_list EQUAL -1)
+    message(SEND_ERROR "${varplatform} not in supported targets: ${SUPPORTED_TARGETS}")
+    return()
 endif()
-add_subdirectory(sac/build/cmake)
+
+message ("Building for ${varplatform}")
+add_definitions(-DSAC_${VARPLATFORM})
+
+
+include(sac/build/cmake/toolchains/${varplatform}.cmake)
+include(sac/build/cmake/CMakeLists.txt)

@@ -1,0 +1,13 @@
+[meta]
+speed=15
+loop=1
+num_frames=3
+
+[frame0]
+texture=jump_l2r_0009
+
+[frame1]
+texture=jump_l2r_0010
+
+[frame2]
+texture=jump_l2r_0011

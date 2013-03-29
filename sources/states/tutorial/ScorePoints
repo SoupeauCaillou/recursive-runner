@@ -2,13 +2,13 @@
 
 struct ScorePointsTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         TEXT_RENDERING(entities->text)->text = loc->text("turn_on", "Turn on lights to score points");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) {
-        if (PHYSICS(sc->currentRunner)->linearVelocity.Y < 0) { // check coins instead
+        if (PHYSICS(sc->currentRunner)->linearVelocity.y < 0) { // check coins instead
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
-            TEXT_RENDERING(entities->text)->hide = false;
+            TEXT_RENDERING(entities->text)->show = true;
             PHYSICS(sc->currentRunner)->mass = 0;
             return false;
         } else {

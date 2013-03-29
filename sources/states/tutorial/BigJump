@@ -2,11 +2,11 @@
 
 struct BigJumpTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         TEXT_RENDERING(entities->text)->text = loc->text("longer_press", "Do longer press to make higher jumps");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
-        if (TRANSFORM(sc->currentRunner)->position.X < 0) {
+        if (TRANSFORM(sc->currentRunner)->position.x < 0) {
             return true;
         } else {
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
@@ -14,8 +14,8 @@ struct BigJumpTutorialStep : public TutorialStep {
         }
     }
     bool canExit(SessionComponent* sc, TutorialEntities* entities) {
-        if (TRANSFORM(sc->currentRunner)->position.X >= 0) {
-            TEXT_RENDERING(entities->text)->hide = false;
+        if (TRANSFORM(sc->currentRunner)->position.x >= 0) {
+            TEXT_RENDERING(entities->text)->show = true;
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
             return true;
         }

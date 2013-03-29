@@ -17,7 +17,6 @@
 	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "CameraTargetSystem.h"
-#include "base/MathUtil.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "util/IntersectionUtil.h"
@@ -27,27 +26,30 @@ INSTANCE_IMPL(CameraTargetSystem);
 
 CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetComponent>("CameraTarget") {
     CameraTargetComponent tc;
-    componentSerializer.add(new Property<int>(OFFSET(cameraIndex, tc)));
-    componentSerializer.add(new Property<Vector2>(OFFSET(offset, tc), Vector2(0.001, 0)));
+    componentSerializer.add(new Property<Entity>(OFFSET(camera, tc)));
+    componentSerializer.add(new Property<glm::vec2>(OFFSET(offset, tc), glm::vec2(0.001, 0)));
     componentSerializer.add(new Property<float>(OFFSET(maxCameraSpeed, tc), 0.001));
     componentSerializer.add(new Property<bool>(OFFSET(enabled, tc)));
-    componentSerializer.add(new Property<Vector2>(OFFSET(cameraSpeed.X, tc), Vector2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(OFFSET(cameraSpeed, tc), glm::vec2(0.001, 0)));
 }
 
 void CameraTargetSystem::DoUpdate(float dt) {
     FOR_EACH_ENTITY_COMPONENT(CameraTarget, a, ctc)
         if (!ctc->enabled)
             continue;
-        Vector2 target (TRANSFORM(a)->position + ctc->offset);
-        Vector2 force = SteeringBehavior::arrive(
-            theRenderingSystem.cameras[ctc->cameraIndex].worldPosition,
+        glm::vec2 target (TRANSFORM(a)->position + ctc->offset);
+        glm::vec2 force = SteeringBehavior::arrive(
+            TRANSFORM(ctc->camera)->worldPosition,
             ctc->cameraSpeed,
             target,
             ctc->maxCameraSpeed,
-            0.3) * 10;
+            0.3) * 10.0f;
         // accel = force
         ctc->cameraSpeed += force * dt;
-        theRenderingSystem.cameras[ctc->cameraIndex].worldPosition.X += ctc->cameraSpeed.X * dt;
+        TRANSFORM(ctc->camera)->position.x += ctc->cameraSpeed.x * dt;
     }
 }
 
+#ifdef SAC_INGAME_EDITORS
+void CameraTargetSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
+#endif

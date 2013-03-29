@@ -18,6 +18,7 @@
 */
 #include "StateManager.h"
 
+#include "base/TouchInputManager.h"
 #include "base/PlacementHelper.h"
 #include "systems/AnimationSystem.h"
 #include "systems/TransformationSystem.h"
@@ -64,23 +65,22 @@ GameStateManager::~GameStateManager() {
 }
 
 void GameStateManager::setup() {
-    Entity pauseButton = datas->pauseButton = theEntityManager.CreateEntity();
+    Entity pauseButton = datas->pauseButton = theEntityManager.CreateEntity("pause_buttton");
     ADD_COMPONENT(pauseButton, Transformation);
     TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("pause"));
     TRANSFORM(pauseButton)->parent = game->cameraEntity;
     TRANSFORM(pauseButton)->position =
-        theRenderingSystem.cameras[0].worldSize * Vector2(0.5, 0.5)
-        - Vector2(game->buttonSpacing.H, game->buttonSpacing.V);
+        TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
+        - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
     TRANSFORM(pauseButton)->z = 0.95;
     ADD_COMPONENT(pauseButton, Rendering);
     RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
-    RENDERING(pauseButton)->hide = true;
-    RENDERING(pauseButton)->cameraBitMask = 0x3;
+    RENDERING(pauseButton)->show = false;
     ADD_COMPONENT(pauseButton, Button);
     BUTTON(pauseButton)->enabled = false;
     BUTTON(pauseButton)->overSize = 1.2;
 
-    Entity transition = datas->transition = theEntityManager.CreateEntity();
+    Entity transition = datas->transition = theEntityManager.CreateEntity("transition_helper");
     ADD_COMPONENT(transition, ADSR);
     ADSR(transition)->idleValue = 0;
     ADSR(transition)->sustainValue = 1;
@@ -114,7 +114,7 @@ void GameStateManager::willEnter(State::Enum from) {
         MUSIC(datas->transition)->control = MusicControl::Play;
     }
     if (from != State::Tutorial) {
-        RENDERING(datas->pauseButton)->hide = false;
+        RENDERING(datas->pauseButton)->show = true;
         RENDERING(datas->pauseButton)->color = Color(1,1,1,0);
     }
 }
@@ -160,25 +160,25 @@ State::Enum GameStateManager::update(float dt) {
     RENDERING(datas->pauseButton)->color = BUTTON(datas->pauseButton)->mouseOver ? Color("gray") : Color();
 
     // Manage piano's volume depending on the distance from the current runner to the piano
-    double distanceAbs = MathUtil::Abs(TRANSFORM(sc->currentRunner)->position.X -
-    TRANSFORM(game->pianist)->position.X) / (PlacementHelper::ScreenWidth * param::LevelSize);
+    double distanceAbs = glm::abs(TRANSFORM(sc->currentRunner)->position.x -
+    TRANSFORM(game->pianist)->position.x) / (PlacementHelper::ScreenWidth * param::LevelSize);
     MUSIC(datas->transition)->volume = 0.2 + 0.8 * (1 - distanceAbs);
 
     // Manage player's current runner
     for (unsigned i=0; i<sc->numPlayers; i++) {
         CAM_TARGET(sc->currentRunner)->enabled = true;
-        CAM_TARGET(sc->currentRunner)->offset = Vector2(
+        CAM_TARGET(sc->currentRunner)->offset = glm::vec2(
             ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth,
-            0 - TRANSFORM(sc->currentRunner)->position.Y);
+            0 - TRANSFORM(sc->currentRunner)->position.y);
 
         // If current runner has reached the edge of the screen
         if (RUNNER(sc->currentRunner)->finished) {
-            LOGI("%lu finished, add runner or end game", sc->currentRunner);
+            LOGI(sc->currentRunner << " finished, add runner or end game");
             CAM_TARGET(sc->currentRunner)->enabled = false;
 
             if (PLAYER(sc->players[i])->runnersCount == param::runner) {
                 // Game is finished, show either Rate Menu or Main Menu
-                  if (0 && game->communicationAPI->mustShowRateDialog()) {
+                  if (0 && game->gameThreadContext->communicationAPI->mustShowRateDialog()) {
                      return State::Rate;
                   } else {
                    return State::Menu;
@@ -195,22 +195,22 @@ State::Enum GameStateManager::update(float dt) {
             for (int j=0; j<1; j++) {
                 if (theTouchInputManager.isTouched(j)) {
                     if (sc->numPlayers == 2) {
-                        const Vector2& ppp = theTouchInputManager.getTouchLastPosition(j);
-                        if (i == 0 && ppp.Y < 0)
+                        const glm::vec2& ppp = theTouchInputManager.getTouchLastPosition(j);
+                        if (i == 0 && ppp.y < 0)
                             continue;
-                        if (i == 1 && ppp.Y > 0)
+                        if (i == 1 && ppp.y > 0)
                             continue;
                     }
                     PhysicsComponent* pc = PHYSICS(sc->currentRunner);
                     RunnerComponent* rc = RUNNER(sc->currentRunner);
                     if (!theTouchInputManager.wasTouched(j)) {
-                        if (rc->jumpingSince <= 0 && pc->linearVelocity.Y == 0) {
+                        if (rc->jumpingSince <= 0 && pc->linearVelocity.y == 0) {
                             rc->jumpTimes.push_back(rc->elapsed);
                             rc->jumpDurations.push_back(dt);
                         }
                     } else if (!rc->jumpTimes.empty()) {
                         float& d = *(rc->jumpDurations.rbegin());
-                        d = MathUtil::Min(d + dt, RunnerSystem::MaxJumpDuration);
+                        d = glm::min(d + dt, RunnerSystem::MaxJumpDuration);
                     }
                     break;
                 }
@@ -218,7 +218,7 @@ State::Enum GameStateManager::update(float dt) {
         }
 
         TransformationComponent* tc = TRANSFORM(sc->currentRunner);
-        CAM_TARGET(sc->currentRunner)->offset.Y = 0 - tc->position.Y;
+        CAM_TARGET(sc->currentRunner)->offset.y = 0 - tc->position.y;
     }
 
     // Manage runner-runner collisions
@@ -369,12 +369,12 @@ bool GameStateManager::transitionCanExit(State::Enum to) {
 }
 
 void GameStateManager::exit(State::Enum) {
-    RENDERING(datas->pauseButton)->hide = true;
+    RENDERING(datas->pauseButton)->show = false;
 }
 
 
 static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
-    Entity e = theEntityManager.CreateEntity();
+    Entity e = theEntityManager.CreateEntity("gain");
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->position = TRANSFORM(parent)->position;
     TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
@@ -383,23 +383,10 @@ static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost
     ADD_COMPONENT(e, Rendering);
     RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
     RENDERING(e)->color = color;
-    RENDERING(e)->hide = false;
+    RENDERING(e)->show = true;
 
     PARTICULE(parent)->duration = 0.1;
     PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
-#if 0
-    ADD_COMPONENT(e, TextRendering);
-    std::stringstream a;
-    a << gain;
-    TEXT_RENDERING(e)->text = a.str();
-    TEXT_RENDERING(e)->charHeight = 0.5;
-    TEXT_RENDERING(e)->color = Color(1, 1, 0);
-    TEXT_RENDERING(e)->hide = false;
-    TEXT_RENDERING(e)->cameraBitMask = (0x3 << 1);
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    PHYSICS(e)->gravity = Vector2(0, 6);
-#endif
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
     AUTO_DESTROY(e)->params.lifetime.value = 3.5;
@@ -409,32 +396,31 @@ static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost
 
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc) {
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
-    Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
+    Entity e = theEntityManager.CreateEntity("runner", EntityType::Persistent);
     ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("run_l2r_0000")) * 0.68;
+    TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("run_l2r_0000")) * 0.68f;
     //Vector2(0.85, 0.85) * 2.5;
     
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->hide = false;
-    RENDERING(e)->cameraBitMask = (0x3 << 1);
+    RENDERING(e)->show = true;
     RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
     ADD_COMPONENT(e, Runner);
     theTransformationSystem.setPosition(TRANSFORM(e),
-        Vector2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, game->baseLine), TransformationSystem::S);
+        glm::vec2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.x) * 0.5, game->baseLine), TransformationSystem::S);
     RUNNER(e)->startPoint = TRANSFORM(e)->position;
-    RUNNER(e)->endPoint = Vector2(direction * (param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.X) * 0.5, 0);
+    RUNNER(e)->endPoint = glm::vec2(direction * (param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.x) * 0.5, 0);
     RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
     ADD_COMPONENT(e, Platformer);
-    PLATFORMER(e)->offset = Vector2(0, TRANSFORM(e)->size.Y * -0.5);
+    PLATFORMER(e)->offset = glm::vec2(0, TRANSFORM(e)->size.y * -0.5);
     PLATFORMER(e)->platforms.insert(std::make_pair(game->ground, true));
     for (unsigned i=0; i<sc->platforms.size(); i++) {
         PLATFORMER(e)->platforms.insert(std::make_pair(sc->platforms[i].platform, sc->platforms[i].active));
     }
-    std::cout <<" add runner: " << e << " - " << TimeUtil::getTime()  << "(pos: " << TRANSFORM(e)->position << ")" << RUNNER(e)->speed << std::endl;
+    std::cout <<" add runner: " << e << " - " << "(pos: " << TRANSFORM(e)->position.x << ',' << TRANSFORM(e)->position.y << ")" << RUNNER(e)->speed << std::endl;
     #if 0
     do {
         Color c(Color::random());
@@ -447,12 +433,12 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
         }
     } while (true);
     #else
-    int idx = MathUtil::RandomInt(p->colors.size());
+    int idx = (int)glm::linearRand(0.0f, (float)p->colors.size());
     RUNNER(e)->color = p->colors[idx];
     p->colors.erase(p->colors.begin() + idx);
     #endif
     ADD_COMPONENT(e, CameraTarget);
-    CAM_TARGET(e)->cameraIndex = 1 + playerIndex;
+    CAM_TARGET(e)->camera = game->cameraEntity;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
     ADD_COMPONENT(e, Physics);
     PHYSICS(e)->mass = 1;
@@ -461,18 +447,18 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     ANIMATION(e)->playbackSpeed = 1.1;
     RENDERING(e)->mirrorH = (direction < 0);
 
-    Entity collisionZone = theEntityManager.CreateEntity(EntityType::Persistent);
+    Entity collisionZone = theEntityManager.CreateEntity("collision_zone", EntityType::Persistent);
     ADD_COMPONENT(collisionZone, Transformation);
     TRANSFORM(collisionZone)->parent = e;
     TRANSFORM(collisionZone)->z = 0.01;
-    #if 0
+    #if 1
     ADD_COMPONENT(collisionZone, Rendering);
-    RENDERING(collisionZone)->hide = false;
+    RENDERING(collisionZone)->show = true;
     RENDERING(collisionZone)->color = Color(1,0,0,1);
     #endif
     RUNNER(e)->collisionZone = collisionZone;
     p->runnersCount++;
- LOGI("Add runner %lu at pos : {%.2f, %.2f}, speed: %.2f (player=%lu)", e, TRANSFORM(e)->position.X, TRANSFORM(e)->position.Y, RUNNER(e)->speed, player);
+     LOGI("Add runner " << e << " at pos : {" << TRANSFORM(e)->position.x << ", " << TRANSFORM(e)->position.y << "}, speed: " << RUNNER(e)->speed << " (player=" << player << ')')
     return e;
 }
 
@@ -496,7 +482,7 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
             const TransformationComponent* tCoin = TRANSFORM(coin);
             if (IntersectionUtil::rectangleRectangle(
                 collisionZone->worldPosition, collisionZone->size, collisionZone->worldRotation,
-                tCoin->worldPosition, tCoin->size * Vector2(0.5, 0.6), tCoin->worldRotation)) {
+                tCoin->worldPosition, tCoin->size * glm::vec2(0.5, 0.6), tCoin->worldRotation)) {
                 if (!rc->coins.empty()) {
                  int linkIdx = (rc->speed > 0) ? idx : end - idx;
                     if (rc->coins.back() == prev) {

@@ -2,15 +2,15 @@
 
 struct TheEndTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         TEXT_RENDERING(entities->text)->text = loc->text("good_luck", "Good luck!");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
-        return (TRANSFORM(sc->currentRunner)->position.X > -29);
+        return (TRANSFORM(sc->currentRunner)->position.x > -29);
     }
     bool canExit(SessionComponent* sc, TutorialEntities* entities) {
-        if (TRANSFORM(sc->currentRunner)->position.X <= -29) {
-            TEXT_RENDERING(entities->text)->hide = false;
+        if (TRANSFORM(sc->currentRunner)->position.x <= -29) {
+            TEXT_RENDERING(entities->text)->show = true;
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
             return true;
         }

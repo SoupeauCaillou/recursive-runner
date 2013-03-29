@@ -1,0 +1,17 @@
+[meta]
+speed=30
+loop=1
+num_frames=3
+next_anim=runL2R
+
+[frame0]
+texture=jump_l2r_0012
+
+[frame1]
+texture=jump_l2r_0013
+
+[frame2]
+texture=jump_l2r_0015
+
+[frame3]
+texture=jump_l2r_0016

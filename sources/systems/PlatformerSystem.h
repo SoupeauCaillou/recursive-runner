@@ -19,11 +19,11 @@
 #pragma once
 
 #include "systems/System.h"
-#include "base/Vector2.h"
+#include <glm/glm.hpp>
 
 struct PlatformerComponent {
-    PlatformerComponent() : previousPosition(Vector2::Zero), onPlatform(0) {}
-    Vector2 previousPosition, offset;
+    PlatformerComponent() : previousPosition(0.0f), onPlatform(0) {}
+    glm::vec2 previousPosition, offset;
     Entity onPlatform;
     std::map<Entity, bool> platforms;
 };

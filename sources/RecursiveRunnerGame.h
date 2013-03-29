@@ -21,8 +21,7 @@
 #include <string>
 #include <vector>
 #include <map>
-
-#include "base/MathUtil.h"
+#include <glm/glm.hpp>
 #include "base/Game.h"
 
 #include "systems/RenderingSystem.h"
@@ -57,7 +56,7 @@ class RecursiveRunnerGame : public Game {
       static void endGame();
 
    public:
-      RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage, NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exAPI, CommunicationAPI* comAPI, LocalizeAPI* locAPI);
+      RecursiveRunnerGame(StorageAPI* storage);
       ~RecursiveRunnerGame();
       void sacInit(int windowW, int windowH);
       void init(const uint8_t* in = 0, int size = 0);
@@ -77,10 +76,6 @@ class RecursiveRunnerGame : public Game {
       std::map<State::Enum, StateManager*> state2manager;
       TransitionStateManager transitionManager;
 
-      AssetAPI* assetAPI;
-      NameInputAPI* nameInputAPI;
-      ExitAPI* exitAPI;
-
       void decor(StorageAPI* storageAPI);
       void initGame(StorageAPI* storageAPI);
 
@@ -90,19 +85,16 @@ class RecursiveRunnerGame : public Game {
       bool ignoreClick;
       Entity silhouette, route, cameraEntity, bestScore;
       std::vector<Entity> decorEntities;
-      CommunicationAPI* communicationAPI;
-      LocalizeAPI* localizeAPI;
       StorageAPI* storageAPI;
-      AdAPI* adAPI;
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;
       Entity muteBtn, ground;
       Entity pianist;
-      Vector2 leftMostCameraPos;
+      glm::vec2 leftMostCameraPos;
       Level::Enum level;
       struct {
         float H, V;
       } buttonSpacing;
 
-      static void createCoins(const std::vector<Vector2>& coordinates, SessionComponent* session, bool transition);
+      static void createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition);
 };

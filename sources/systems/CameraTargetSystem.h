@@ -19,15 +19,15 @@
 #pragma once
 
 #include "systems/System.h"
-#include "base/Vector2.h"
+#include <glm/glm.hpp>
 
 struct CameraTargetComponent {
-    CameraTargetComponent() : cameraIndex(0), enabled(false), cameraSpeed(Vector2::Zero) {}
-    int cameraIndex;
-    Vector2 offset;
+    CameraTargetComponent() : camera(0), enabled(false), cameraSpeed(0.0f) {}
+    Entity camera;
+    glm::vec2 offset;
     float maxCameraSpeed;
     bool enabled;
-    Vector2 cameraSpeed;
+    glm::vec2 cameraSpeed;
 };
 
 #define theCameraTargetSystem CameraTargetSystem::GetInstance()

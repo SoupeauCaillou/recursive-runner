@@ -22,11 +22,11 @@
 
 #include <sstream>
 
-#include <base/Log.h>
-#include <base/TouchInputManager.h>
-#include <base/EntityManager.h>
-#include <base/TimeUtil.h>
-#include <base/PlacementHelper.h>
+#include "base/Log.h"
+#include "base/TouchInputManager.h"
+#include "base/EntityManager.h"
+#include "base/TimeUtil.h"
+#include "base/PlacementHelper.h"
 
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
@@ -37,6 +37,7 @@
 #include "systems/AnimationSystem.h"
 #include "systems/ParticuleSystem.h"
 #include "systems/AutoDestroySystem.h"
+#include "systems/CameraSystem.h"
 
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -45,25 +46,20 @@
 #include "systems/SessionSystem.h"
 #include "systems/PlatformerSystem.h"
 
+#include <glm/gtc/random.hpp>
+#include <glm/gtx/vector_angle.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/core/func_geometric.hpp>
 #include <iomanip>
 
-static void updateFps(float dt);
-
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
-RecursiveRunnerGame::RecursiveRunnerGame(AssetAPI* ast, StorageAPI* storage,
-NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communication, LocalizeAPI* loc) :
+RecursiveRunnerGame::RecursiveRunnerGame(StorageAPI* storage) :
    Game() {
 
-   assetAPI = ast;
    storageAPI = storage;
-   nameInputAPI = nameInput;
-   exitAPI = exit;
-   communicationAPI = communication;
-   localizeAPI = loc;
-   adAPI = ad;
 
    RunnerSystem::CreateInstance();
    CameraTargetSystem::CreateInstance();
@@ -86,7 +82,7 @@ NameInputAPI* nameInput, AdAPI* ad, ExitAPI* exit, CommunicationAPI* communicati
 
 
 RecursiveRunnerGame::~RecursiveRunnerGame() {
-    LOGW("Delete game instance %p %p", this, &theEntityManager);
+    LOGW("Delete game instance " << this << " " << &theEntityManager)
     theEntityManager.deleteAllEntities();
 
     RunnerSystem::DestroyInstance();
@@ -113,60 +109,37 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theRenderingSystem.loadAtlas("fumee", false);
     theRenderingSystem.loadAtlas("logo", true);
 
-    // register 4 animations
-    std::string runL2R[] = { "run_l2r_0002",
-        "run_l2r_0003", "run_l2r_0004", "run_l2r_0005",
-        "run_l2r_0006", "run_l2r_0007", "run_l2r_0008",
-        "run_l2r_0009", "run_l2r_0010", "run_l2r_0000", "run_l2r_0011", "run_l2r_0001"};
-    std::string jumpL2R[] = { "jump_l2r_0004", "jump_l2r_0005",
-        "jump_l2r_0006", "jump_l2r_0007", "jump_l2r_0008",
-        "jump_l2r_0009", "jump_l2r_0010", "jump_l2r_0011"};
-    std::string jumpL2Rtojump[] = { "jump_l2r_0012", "jump_l2r_0013", "jump_l2r_0015", "jump_l2r_0016"};
-    std::string disappear2[] = { "e1", "e2", "e3", "e4", "e5", "e4", "e5", "e4", "e5"};
-    std::string piano1[] = { "P2", "P3", "P6", "P7", "P8", "P9"};
-    std::string piano2[] = { "P8", "P7", "P6", "P3"};
-    std::string pianojournal[] = { "J1", "J2"};
-    // std::string piano3[] = { "P7", "P8", "P9", "P8", "P7"};
-
-    theAnimationSystem.registerAnim("runL2R", runL2R, 12, 15, Interval<int>(-1, -1));
-    theAnimationSystem.registerAnim("jumpL2R_up", jumpL2R, 5, 20, Interval<int>(0, 0));
-    theAnimationSystem.registerAnim("jumpL2R_down", &jumpL2R[5], 3, 15, Interval<int>(0, 0));
-    theAnimationSystem.registerAnim("jumptorunL2R", jumpL2Rtojump, 4, 30, Interval<int>(0, 0), "runL2R");
-    theAnimationSystem.registerAnim("disappear2", disappear2, 9 , 15, Interval<int>(0, 0));
-    theAnimationSystem.registerAnim("piano", piano1, 6 , 8, Interval<int>(0, 0), "piano2");
-    theAnimationSystem.registerAnim("piano2", piano2, 4 , 8, Interval<int>(0, 0), "piano");
-    theAnimationSystem.registerAnim("pianojournal", pianojournal, 1 , 0.1, Interval<int>(-1, -1));
-    //theAnimationSystem.registerAnim("piano2", piano2, 2 , 5, Interval<int>(1, 4), "piano");
-    //theAnimationSystem.registerAnim("piano2b", piano2, 2 , 5, Interval<int>(1, 4), "piano");
-    //theAnimationSystem.registerAnim("piano3", piano3, 5 , 10, Interval<int>(0, 1), "piano2b");
-
-    std::string fumeeStart[] = {"fumee0", "fumee1", "fumee2", "fumee3", "fumee4", "fumee5" };
-    std::string fumeeLoop[] = {"fumee5b", "fumee5c", "fumee5" };
-    std::string fumeeEnd[] = {"fumee6", "fumee7", "fumee8", "fumee9" };
-    theAnimationSystem.registerAnim("fumee_start", fumeeStart, 6, 8, Interval<int>(0, 0), "fumee_loop");
-    theAnimationSystem.registerAnim("fumee_loop", fumeeLoop, 3, 8, Interval<int>(2, 5), "fumee_end");
-    theAnimationSystem.registerAnim("fumee_end", fumeeEnd, 4, 8, Interval<int>(0, 0), "fumee_start", Interval<float>(2, 10));
-
-    glClearColor(148.0/255, 148.0/255, 148.0/255, 1.0);
+    // load anim files
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "disappear2", "disappear2");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "fumee_start", "fumee_start");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "fumee_loop", "fumee_loop");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "fumee_end", "fumee_end");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "jumpL2R_down", "jumpL2R_down");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "jumpL2R_up", "jumpL2R_up");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "jumptorunL2R", "jumptorunL2R");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "piano", "piano");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "piano2", "piano2");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "pianojournal", "pianojournal");
+    theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "runL2R", "runL2R");
 
     // init font
-    loadFont(assetAPI, "typo");
+    loadFont(renderThreadContext->assetAPI, "typo");
 }
 
 void fumee(Entity building) {
-    const Vector2 possible[] = {
-        Vector2(-445 / 942.0, 292 / 594.0),
-        Vector2(-310 / 942.0, 260 / 594.0),
-        Vector2(-52 / 942.0, 255 / 594.0),
-        Vector2(147 / 942.0, 239 / 594.0),
-        Vector2(269 / 942.0, 218 / 594.0),
-        Vector2(442 / 942.0, 239 / 594.0)
+    const glm::vec2 possible[] = {
+        glm::vec2(-445 / 942.0, 292 / 594.0),
+        glm::vec2(-310 / 942.0, 260 / 594.0),
+        glm::vec2(-52 / 942.0, 255 / 594.0),
+        glm::vec2(147 / 942.0, 239 / 594.0),
+        glm::vec2(269 / 942.0, 218 / 594.0),
+        glm::vec2(442 / 942.0, 239 / 594.0)
     };
 
     unsigned count = 6;//MathUtil::RandomIntInRange(1, 4);
     std::vector<int> indexes;
     do {
-        int idx = MathUtil::RandomIntInRange(0, 6);
+        int idx = (int) glm::linearRand(0.f, 6.f);
         if (std::find(indexes.begin(), indexes.end(), idx) == indexes.end()) {
             indexes.push_back(idx);
         }
@@ -174,50 +147,48 @@ void fumee(Entity building) {
 
     for (unsigned i=0; i<indexes.size(); i++) {
         int idx = indexes[i];
-        Entity fumee = theEntityManager.CreateEntity();
+        Entity fumee = theEntityManager.CreateEntity("fumee");
         ADD_COMPONENT(fumee, Transformation);
-        TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * (0.8 - MathUtil::RandomFloat() * 0.3);
+        TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * glm::linearRand(0.5f, 0.8f);
         TRANSFORM(fumee)->parent = building;
-        TRANSFORM(fumee)->position = possible[idx] * TRANSFORM(building)->size + Vector2(0, TRANSFORM(fumee)->size.Y * 0.5);
-        if (RENDERING(building)->mirrorH) TRANSFORM(fumee)->position.X = -TRANSFORM(fumee)->position.X;
+        TRANSFORM(fumee)->position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
+        if (RENDERING(building)->mirrorH) TRANSFORM(fumee)->position.x = -TRANSFORM(fumee)->position.x;
         TRANSFORM(fumee)->z = -0.1;
         ADD_COMPONENT(fumee, Rendering);
-        RENDERING(fumee)->hide = true;
+        RENDERING(fumee)->show = false;
         RENDERING(fumee)->color = Color(1,1,1,0.6);
         RENDERING(fumee)->opaqueType = RenderingComponent::NON_OPAQUE;
         ADD_COMPONENT(fumee, Animation);
         ANIMATION(fumee)->name = "fumee_start";
-        ANIMATION(fumee)->waitAccum = MathUtil::RandomFloat() * 10;
+        ANIMATION(fumee)->waitAccum = glm::linearRand(0.0f, 10.f);
     }
 }
 
 void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
-	silhouette = theEntityManager.CreateEntity();
+	silhouette = theEntityManager.CreateEntity("silhouette");
     ADD_COMPONENT(silhouette, Transformation);
-    TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville")) * 4;
+    TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville")) * 4.0f;
     // TRANSFORM(silhouette)->size.X *= 1.6;
-    theTransformationSystem.setPosition(TRANSFORM(silhouette), Vector2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
+    theTransformationSystem.setPosition(TRANSFORM(silhouette), glm::vec2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
     TRANSFORM(silhouette)->z = 0.01;
     ADD_COMPONENT(silhouette, Rendering);
     RENDERING(silhouette)->texture = theRenderingSystem.loadTextureFile("silhouette_ville");
-    RENDERING(silhouette)->hide = false;
+    RENDERING(silhouette)->show = true;
     RENDERING(silhouette)->opaqueType = RenderingComponent::FULL_OPAQUE;
-    // RENDERING(silhouette)->cameraBitMask = (0x3 << 1);
 
-	route = theEntityManager.CreateEntity();
+	route = theEntityManager.CreateEntity("road");
     ADD_COMPONENT(route, Transformation);
-    TRANSFORM(route)->size = Vector2(PlacementHelper::ScreenWidth, PlacementHelper::GimpHeightToScreen(109));
-    theTransformationSystem.setPosition(TRANSFORM(route), Vector2(0, PlacementHelper::GimpYToScreen(800)), TransformationSystem::S);
+    TRANSFORM(route)->size = glm::vec2(PlacementHelper::ScreenWidth, PlacementHelper::GimpHeightToScreen(109));
+    theTransformationSystem.setPosition(TRANSFORM(route), glm::vec2(0, PlacementHelper::GimpYToScreen(800)), TransformationSystem::S);
     TRANSFORM(route)->z = 0.1;
     ADD_COMPONENT(route, Rendering);
     RENDERING(route)->texture = theRenderingSystem.loadTextureFile("route");
-    RENDERING(route)->hide = false;
+    RENDERING(route)->show = true;
     RENDERING(route)->opaqueType = RenderingComponent::FULL_OPAQUE;
-    // RENDERING(route)->cameraBitMask = (0x3 << 1);
 
-    Entity buildings = theEntityManager.CreateEntity();
+    Entity buildings = theEntityManager.CreateEntity("buildings");
     ADD_COMPONENT(buildings, Transformation);
-    Entity trees = theEntityManager.CreateEntity();
+    Entity trees = theEntityManager.CreateEntity("trees");
     ADD_COMPONENT(trees, Transformation);
 
     PlacementHelper::ScreenWidth *= 3;
@@ -274,55 +245,54 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         Decor(3732, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
     };
     // pour les arbres
-    Vector2 v[5][4] = {
-        {Vector2(71, 123), Vector2(73, 114), Vector2(125, 126), Vector2(92, 216)},
-        {Vector2(116, 153), Vector2(78, 155), Vector2(100, 168), Vector2(44, 46)},
-        {Vector2(69, 178), Vector2(155, 125), Vector2(163, 116), Vector2(206, 93)},
-        {Vector2(152, 160), Vector2(85, 138), Vector2(84, 111), Vector2(168, 171)},
-        {Vector2(115, 67), Vector2(146, 69), Vector2(132, 107), Vector2(124, 130)}
+    glm::vec2 v[5][4] = {
+        {glm::vec2(71, 123), glm::vec2(73, 114), glm::vec2(125, 126), glm::vec2(92, 216)},
+        {glm::vec2(116, 153), glm::vec2(78, 155), glm::vec2(100, 168), glm::vec2(44, 46)},
+        {glm::vec2(69, 178), glm::vec2(155, 125), glm::vec2(163, 116), glm::vec2(206, 93)},
+        {glm::vec2(152, 160), glm::vec2(85, 138), glm::vec2(84, 111), glm::vec2(168, 171)},
+        {glm::vec2(115, 67), glm::vec2(146, 69), glm::vec2(132, 107), glm::vec2(124, 130)}
         };
-    Vector2 o[5][4] = {
-        {Vector2(0, 0), Vector2(313, 0), Vector2(0, 498), Vector2(293, 624-216)},
-        {Vector2(0, 250), Vector2(0, 0), Vector2(137, 244), Vector2(193, 0)},
-        {Vector2(0, 0), Vector2(308, 0), Vector2(300, 510), Vector2(0, 499)},
-        {Vector2(0, 460), Vector2(0, 0), Vector2(438, 0), Vector2(354, 449)},
-        {Vector2(0, 0), Vector2(234, 0), Vector2(248, 259), Vector2(0, 236)}
+    glm::vec2 o[5][4] = {
+        {glm::vec2(0, 0), glm::vec2(313, 0), glm::vec2(0, 498), glm::vec2(293, 624-216)},
+        {glm::vec2(0, 250), glm::vec2(0, 0), glm::vec2(137, 244), glm::vec2(193, 0)},
+        {glm::vec2(0, 0), glm::vec2(308, 0), glm::vec2(300, 510), glm::vec2(0, 499)},
+        {glm::vec2(0, 460), glm::vec2(0, 0), glm::vec2(438, 0), glm::vec2(354, 449)},
+        {glm::vec2(0, 0), glm::vec2(234, 0), glm::vec2(248, 259), glm::vec2(0, 236)}
         };
     // pour les batiments
-    Vector2 vBat[][4] = {
-        {Vector2(901, 44), Vector2(215, 35), Vector2(174, 41), Vector2(265, 37)},
-        {Vector2(143, 55), Vector2(83, 51), Vector2(82, 47), Vector2::Zero},
-        {Vector2(324, 15), Vector2::Zero, Vector2::Zero, Vector2::Zero},
-        {Vector2(124, 233), Vector2(630, 69), Vector2(245, 71), Vector2::Zero},
+    glm::vec2 vBat[][4] = {
+        {glm::vec2(901, 44), glm::vec2(215, 35), glm::vec2(174, 41), glm::vec2(265, 37)},
+        {glm::vec2(143, 55), glm::vec2(83, 51), glm::vec2(82, 47), glm::vec2(0.0f)},
+        {glm::vec2(324, 15), glm::vec2(0.0f), glm::vec2(0.0f), glm::vec2(0.0f)},
+        {glm::vec2(124, 233), glm::vec2(630, 69), glm::vec2(245, 71), glm::vec2(0.0f)},
     };
-    Vector2 oBat[][4] = {
-        {Vector2(43, 0), Vector2(172, 44), Vector2(424, 44), Vector2(629, 44)},
-        {Vector2(12, 0), Vector2(169, 0), Vector2(344, 0), Vector2::Zero},
-        {Vector2(8, 0), Vector2::Zero, Vector2::Zero, Vector2::Zero},
-        {Vector2(8, 0), Vector2(249, 0), Vector2(573, 69), Vector2::Zero},
+    glm::vec2 oBat[][4] = {
+        {glm::vec2(43, 0), glm::vec2(172, 44), glm::vec2(424, 44), glm::vec2(629, 44)},
+        {glm::vec2(12, 0), glm::vec2(169, 0), glm::vec2(344, 0), glm::vec2(0.0f)},
+        {glm::vec2(8, 0), glm::vec2(0.0f), glm::vec2(0.0f), glm::vec2(0.0f)},
+        {glm::vec2(8, 0), glm::vec2(249, 0), glm::vec2(573, 69), glm::vec2(0.0f)},
 
     };
     for (int i=0; i<count; i++) {
     	const Decor& bdef = def[i];
 
- 	    Entity b = theEntityManager.CreateEntity();
+ 	    Entity b = theEntityManager.CreateEntity(bdef.texture);
 	    ADD_COMPONENT(b, Transformation);
 	    TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
-	    theTransformationSystem.setPosition(TRANSFORM(b), Vector2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
+	    theTransformationSystem.setPosition(TRANSFORM(b), glm::vec2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
 	    TRANSFORM(b)->z = bdef.z;
         TRANSFORM(b)->parent = bdef.parent;
 	    ADD_COMPONENT(b, Rendering);
 	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
-	    RENDERING(b)->hide = false;
+	    RENDERING(b)->show = true;
 	    RENDERING(b)->mirrorH = bdef.mirrorUV;
         RENDERING(b)->opaqueType = RenderingComponent::NON_OPAQUE;
-	    // RENDERING(b)->cameraBitMask = (0x3 << 1);
 	    decorEntities.push_back(b);
 
         if (i < 3) {
             fumee(b);
         }
-        Vector2* zPrepassSize = 0, *zPrepassOffset = 0;
+        glm::vec2* zPrepassSize = 0, *zPrepassOffset = 0;
 
         if (bdef.texture.find("arbre") != std::string::npos) {
             int idx = atoi(bdef.texture.substr(5, 1).c_str()) - 1;
@@ -342,19 +312,19 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
             zPrepassOffset = oBat[3];
         }
         if (zPrepassSize) {
-            const Vector2& size = TRANSFORM(b)->size;
+            const glm::vec2& size = TRANSFORM(b)->size;
             for (int j=0; j<4; j++) {
-                if (zPrepassSize[j] == Vector2::Zero)
+                if (zPrepassSize[j] == glm::vec2(0.0f))
                     break;
-                Entity bb = theEntityManager.CreateEntity();
+                Entity bb = theEntityManager.CreateEntity(bdef.texture + "_z_pre-pass");
                 ADD_COMPONENT(bb, Transformation);
                 TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
-                Vector2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
-                ratio.Y = 1 - ratio.Y;
+                glm::vec2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
+                ratio.y = 1 - ratio.y;
                 TRANSFORM(bb)->position =
-                    size * (Vector2(-0.5) + ratio) + TRANSFORM(bb)->size * Vector2(0.5, -0.5);
+                    size * (glm::vec2(-0.5) + ratio) + TRANSFORM(bb)->size * glm::vec2(0.5, -0.5);
                 if (bdef.mirrorUV)
-                    TRANSFORM(bb)->position.X = -TRANSFORM(bb)->position.X;
+                    TRANSFORM(bb)->position.x = -TRANSFORM(bb)->position.x;
                 TRANSFORM(bb)->z = 0;
                 TRANSFORM(bb)->parent = b;
                 ADD_COMPONENT(bb, Rendering);
@@ -369,47 +339,45 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
         }
 	}
 
-    Entity banderolle = theEntityManager.CreateEntity();
+    Entity banderolle = theEntityManager.CreateEntity("banderolle");
     ADD_COMPONENT(banderolle, Transformation);
     TRANSFORM(banderolle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("banderolle"));
-    TRANSFORM(banderolle)->position = Vector2(PlacementHelper::GimpXToScreen(772), PlacementHelper::GimpYToScreen(415));
+    TRANSFORM(banderolle)->position = glm::vec2(PlacementHelper::GimpXToScreen(772), PlacementHelper::GimpYToScreen(415));
     TRANSFORM(banderolle)->z = 0.31;
     TRANSFORM(banderolle)->rotation = 0.1;
     ADD_COMPONENT(banderolle, Rendering);
     RENDERING(banderolle)->texture = theRenderingSystem.loadTextureFile("banderolle");
-    RENDERING(banderolle)->hide = false;
+    RENDERING(banderolle)->show = true;
 
-    bestScore = theEntityManager.CreateEntity();
+    bestScore = theEntityManager.CreateEntity("best_score");
     ADD_COMPONENT(bestScore, Transformation);
     TRANSFORM(bestScore)->parent = banderolle;
     TRANSFORM(bestScore)->z = 0.001;
-    TRANSFORM(bestScore)->position = Vector2(0, PlacementHelper::GimpHeightToScreen(-10));
-    TRANSFORM(bestScore)->size.X = PlacementHelper::GimpWidthToScreen(775);
+    TRANSFORM(bestScore)->position = glm::vec2(0, PlacementHelper::GimpHeightToScreen(-10));
+    TRANSFORM(bestScore)->size.x = PlacementHelper::GimpWidthToScreen(775);
     ADD_COMPONENT(bestScore, TextRendering);
     TEXT_RENDERING(bestScore)->text = "bla";
     TEXT_RENDERING(bestScore)->charHeight = PlacementHelper::GimpHeightToScreen(50);
     TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
-    TEXT_RENDERING(bestScore)->hide = false;
+    TEXT_RENDERING(bestScore)->show = true;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
     const bool muted = storageAPI->isMuted();
-    pianist = theEntityManager.CreateEntity();
+    pianist = theEntityManager.CreateEntity("pianist");
     ADD_COMPONENT(pianist, Transformation);
     TRANSFORM(pianist)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("P1"));
-    TRANSFORM(pianist)->position = Vector2(PlacementHelper::GimpXToScreen(294), PlacementHelper::GimpYToScreen(700));
+    TRANSFORM(pianist)->position = glm::vec2(PlacementHelper::GimpXToScreen(294), PlacementHelper::GimpYToScreen(700));
     TRANSFORM(pianist)->z = 0.5;
     ADD_COMPONENT(pianist, Rendering);
-    RENDERING(pianist)->hide = false;
-    RENDERING(pianist)->cameraBitMask = 0x3;
+    RENDERING(pianist)->show = true;
     RENDERING(pianist)->color.a = 0.8;
     ADD_COMPONENT(pianist, Animation);
     ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
 
-    cameraEntity = theEntityManager.CreateEntity();
-    ADD_COMPONENT(cameraEntity, Transformation);
-    TRANSFORM(cameraEntity)->position = theRenderingSystem.cameras[0].worldPosition;
+    std::vector<Entity> cameras = theCameraSystem.RetrieveAllEntityWithComponent();
+    cameraEntity = cameras[0];
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
-        leftMostCameraPos.X, -leftMostCameraPos.X);
+        leftMostCameraPos.x, -leftMostCameraPos.x);
 
     ADD_COMPONENT(route, RangeFollower);
     RANGE_FOLLOWER(route)->range = RANGE_FOLLOWER(cameraEntity)->range;
@@ -432,17 +400,16 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     buttonSpacing.H = PlacementHelper::GimpWidthToScreen(94);
     buttonSpacing.V = PlacementHelper::GimpHeightToScreen(76);
 
-    muteBtn = theEntityManager.CreateEntity();
+    muteBtn = theEntityManager.CreateEntity("mute_button");
     ADD_COMPONENT(muteBtn, Transformation);
     TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("son-off"));
     TRANSFORM(muteBtn)->parent = cameraEntity;
-    TRANSFORM(muteBtn)->position = theRenderingSystem.cameras[0].worldSize * Vector2(-0.5, 0.5)
-        + Vector2(buttonSpacing.H, -buttonSpacing.V);
+    TRANSFORM(muteBtn)->position = TRANSFORM(cameraEntity)->size * glm::vec2(-0.5, 0.5)
+        + glm::vec2(buttonSpacing.H, -buttonSpacing.V);
     TRANSFORM(muteBtn)->z = 0.95;
     ADD_COMPONENT(muteBtn, Rendering);
     RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
-    RENDERING(muteBtn)->hide = false;
-    RENDERING(muteBtn)->cameraBitMask = 0x3;
+    RENDERING(muteBtn)->show = true;
     ADD_COMPONENT(muteBtn, Button);
     BUTTON(muteBtn)->enabled = true;
     BUTTON(muteBtn)->overSize = 1.2;
@@ -455,52 +422,48 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
     Color::nameColor(Color(0.8, 0.8, 0.8), "gray");
     baseLine = PlacementHelper::GimpYToScreen(800);
     leftMostCameraPos =
-        Vector2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
-        baseLine + theRenderingSystem.cameras[0].worldSize.Y * 0.5);
+        glm::vec2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
+        baseLine + theRenderingSystem.screenH * 0.5);
 
     // 3 cameras
     // Default camera (UI)
-    if (theRenderingSystem.cameras.size() < 3) {
+    /*if (theRenderingSystem.cameras.size() < 3)*/ {
         LOGI("Creating cameras");
-        theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
-        RenderingSystem::Camera cam = theRenderingSystem.cameras[0];
-        cam.enable = false;
+        Entity camera = cameraEntity = theEntityManager.CreateEntity("camera1");
+        ADD_COMPONENT(camera, Transformation);
+        TRANSFORM(camera)->position = leftMostCameraPos;
+        TRANSFORM(camera)->size = glm::vec2(theRenderingSystem.screenW, theRenderingSystem.screenH);
+        TRANSFORM(camera)->z = 0;
+        ADD_COMPONENT(camera, Camera);
+        CAMERA(camera)->clearColor = Color(148.0/255, 148.0/255, 148.0/255, 1.0);
         // 1st player
-        theRenderingSystem.cameras.push_back(cam);
+        // theRenderingSystem.cameras.push_back(cam);
         // 2nd player
-        theRenderingSystem.cameras.push_back(cam);
-    } else {
-        LOGI("%lu cameras already exist", theRenderingSystem.cameras.size() );
+        // theRenderingSystem.cameras.push_back(cam);
+    }/* else {
+        LOGI(theRenderingSystem.cameras.size() << " cameras already exist")
         for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
             const RenderingSystem::Camera& cam = theRenderingSystem.cameras[i];
-            LOGI("\t - cam #%d : {%.3f,%.3f} {%.3f,%.3f} {%.3f,%.3f} {%.3f,%.3f} %d %d",
-                i,
-                cam.worldPosition.X, cam.worldPosition.Y,
-                cam.worldSize.X, cam.worldSize.Y,
-                cam.screenPosition.X, cam.screenPosition.Y,
-                cam.screenSize.X, cam.screenSize.Y,
-                cam.enable, cam.mirrorY
-                );
         }
-    }
+    }*/
     decor(storageAPI);
 
-    scorePanel = theEntityManager.CreateEntity();
+    scorePanel = theEntityManager.CreateEntity("score_panel");
     ADD_COMPONENT(scorePanel, Transformation);
     TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
     theTransformationSystem.setPosition(TRANSFORM(scorePanel),
-        Vector2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TransformationSystem::N);
+        glm::vec2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TransformationSystem::N);
     TRANSFORM(scorePanel)->z = 0.8;
     TRANSFORM(scorePanel)->rotation = 0.04;
     // TRANSFORM(scorePanel)->parent = cameraEntity;
     ADD_COMPONENT(scorePanel, Rendering);
     RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
-    RENDERING(scorePanel)->hide = false;
+    RENDERING(scorePanel)->show = true;
     // RENDERING(scorePanel)->color.a = 0.5;
 
-    scoreText = theEntityManager.CreateEntity();
+    scoreText = theEntityManager.CreateEntity("score_text");
     ADD_COMPONENT(scoreText, Transformation);
-    TRANSFORM(scoreText)->position = Vector2(-0.05, -0.18);
+    TRANSFORM(scoreText)->position = glm::vec2(-0.05, -0.18);
     TRANSFORM(scoreText)->z = 0.13;
     // TRANSFORM(scoreText)->rotation = 0.06;
     TRANSFORM(scoreText)->parent = scorePanel;
@@ -514,8 +477,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
         TEXT_RENDERING(scoreText)->text = "12345";
     }
     TEXT_RENDERING(scoreText)->charHeight = 1.5;
-    TEXT_RENDERING(scoreText)->hide = false;
-    // TEXT_RENDERING(scoreText[i])->cameraBitMask = 0x3 << 1;
+    TEXT_RENDERING(scoreText)->show = true;
     TEXT_RENDERING(scoreText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
     TEXT_RENDERING(scoreText)->flags |= TextRenderingComponent::IsANumberBit;
 
@@ -559,7 +521,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
         std::vector<Entity> all = theTransformationSystem.RetrieveAllEntityWithComponent();
         for (unsigned i=0; i<all.size(); i++) {
-            if (TRANSFORM(all[i])->size.X > PlacementHelper::ScreenWidth * param::LevelSize) {
+            if (TRANSFORM(all[i])->size.x > PlacementHelper::ScreenWidth * param::LevelSize) {
                 ground = all[i];
                 break;
             }
@@ -569,10 +531,10 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     level = Level::Level1;
     initGame(storageAPI);
     if (in == 0 || size == 0) {
-        ground = theEntityManager.CreateEntity(EntityType::Persistent);
+        ground = theEntityManager.CreateEntity("ground", EntityType::Persistent);
         ADD_COMPONENT(ground, Transformation);
-        TRANSFORM(ground)->size = Vector2(PlacementHelper::ScreenWidth * (param::LevelSize + 1), 0);
-        TRANSFORM(ground)->position = Vector2(0, baseLine);
+        TRANSFORM(ground)->size = glm::vec2(PlacementHelper::ScreenWidth * (param::LevelSize + 1), 0);
+        TRANSFORM(ground)->position = glm::vec2(0, baseLine);
     }
     updateBestScore();
 
@@ -661,8 +623,8 @@ void RecursiveRunnerGame::tick(float dt) {
     }
 
     if (theTouchInputManager.isTouched(0)) {
-        ignoreClick |= theTouchInputManager.getTouchLastPosition(0).Y
-            >= (TRANSFORM(muteBtn)->position.Y - TRANSFORM(muteBtn)->size.Y * BUTTON(muteBtn)->overSize * 0.5);
+        ignoreClick |= theTouchInputManager.getTouchLastPosition(0).y
+            >= (TRANSFORM(muteBtn)->position.y - TRANSFORM(muteBtn)->size.y * BUTTON(muteBtn)->overSize * 0.5);
     }
 
     if (overrideNextState != State::Invalid) {
@@ -688,41 +650,27 @@ void RecursiveRunnerGame::tick(float dt) {
     }
 
     // limit cam pos
-    for (unsigned i=1; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
-        float& camPosX = theRenderingSystem.cameras[i].worldPosition.X;
+    for (unsigned i=2; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
+        float& camPosX = TRANSFORM(cameraEntity)->worldPosition.x;
         if (camPosX < - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
             camPosX = - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5);
         } else if (camPosX > PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
             camPosX = PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5);
         }
         // TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
-        TRANSFORM(cameraEntity)->position.X = camPosX;
-        theRenderingSystem.cameras[i].worldPosition.Y = baseLine + theRenderingSystem.cameras[i].worldSize.Y * 0.5;
+        TRANSFORM(cameraEntity)->position.x = camPosX;
+        TRANSFORM(cameraEntity)->position.y = baseLine + TRANSFORM(cameraEntity)->size.y * 0.5;
     }
 
     theRangeFollowerSystem.Update(dt);
-
-    updateFps(dt);
-}
-
-static void updateFps(float dt) {
-    #define COUNT 1000
-    static int frameCount = 0;
-    static float accum = 0, t = 0;
-    frameCount++;
-    accum += dt;
-    if (frameCount == COUNT) {
-         LOGI("%d frames: %.3f s - diff: %.3f s - ms per frame: %.3f", COUNT, accum, TimeUtil::getTime() - t, accum / COUNT);
-         t = TimeUtil::getTime();
-         accum = 0;
-         frameCount = 0;
-     }
 }
 
 void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
+    LOGW("TODO");
     switch (mode) {
         case CameraMode::Single:
             LOGI("Setup camera : Single");
+            #if 0
             theRenderingSystem.cameras[0].enable = false;
             theRenderingSystem.cameras[1].enable = true;
             theRenderingSystem.cameras[2].enable = false;
@@ -732,22 +680,18 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
             theRenderingSystem.cameras[1].screenPosition.Y  = 0;
             theRenderingSystem.cameras[1].mirrorY = false;
 
-            TEXT_RENDERING(scoreText)->hide = false;
+            TEXT_RENDERING(scoreText)->show = true;
             TEXT_RENDERING(scoreText)->positioning = TextRenderingComponent::CENTER;
 
             for (unsigned i=0; i<1; i++) {
-                theRenderingSystem.cameras[1 + i].worldPosition.X = leftMostCameraPos.X;
+                theRenderingSystem.cameras[1 + i].worldPosition.x = leftMostCameraPos.x;
                     //TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
             }
+            #endif
             break;
         case CameraMode::Menu:
             LOGI("Setup camera : Menu");
-            theRenderingSystem.cameras[0].enable = true;
-            theRenderingSystem.cameras[0].worldPosition = leftMostCameraPos;
-            for (unsigned i=1; i<theRenderingSystem.cameras.size(); i++) {
-                theRenderingSystem.cameras[i].enable = false;
-                theRenderingSystem.cameras[i].worldPosition = leftMostCameraPos;
-            }
+            TRANSFORM(cameraEntity)->position = leftMostCameraPos;
             break;
          default:
             break;
@@ -794,19 +738,19 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
     return finalSize;
 }
 
-static std::vector<Vector2> generateCoinsCoordinates(int count, float heightMin, float heightMax);
+static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMin, float heightMax);
 
 void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     assert(theSessionSystem.RetrieveAllEntityWithComponent().empty());
     assert(thePlayerSystem.RetrieveAllEntityWithComponent().empty());
 
     // Create session
-    Entity session = theEntityManager.CreateEntity(EntityType::Persistent);
+    Entity session = theEntityManager.CreateEntity("session", EntityType::Persistent);
     ADD_COMPONENT(session, Session);
     SessionComponent* sc = SESSION(session);
     sc->numPlayers = 1;
     // Create player
-    Entity player = theEntityManager.CreateEntity(EntityType::Persistent);
+    Entity player = theEntityManager.CreateEntity("player", EntityType::Persistent);
     ADD_COMPONENT(player, Player);
     sc->players.push_back(player);
     PlayerComponent* pc = PLAYER(player);
@@ -837,9 +781,9 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
                 pf.platform = sc->links[index[i]+1];
                 RENDERING(pf.platform)->texture = InvalidTextureRef;
                 sc->platforms.push_back(pf);
-                TRANSFORM(pf.switches[0].entity)->position.Y =
-                TRANSFORM(pf.switches[1].entity)->position.Y =
-                TRANSFORM(pf.platform)->position.Y = PlacementHelper::GimpYToScreen(600);
+                TRANSFORM(pf.switches[0].entity)->position.y =
+                TRANSFORM(pf.switches[1].entity)->position.y =
+                TRANSFORM(pf.platform)->position.y = PlacementHelper::GimpYToScreen(600);
                 TRANSFORM(pf.platform)->rotation = 0;
             }
             createCoins(generateCoinsCoordinates(15, PlacementHelper::GimpYToScreen(400), PlacementHelper::GimpYToScreen(150)), sc, transition);
@@ -868,25 +812,23 @@ void RecursiveRunnerGame::endGame() {
 
 
 static bool sortLeftToRight(Entity e, Entity f) {
-    return TRANSFORM(e)->position.X < TRANSFORM(f)->position.X;
+    return TRANSFORM(e)->position.x < TRANSFORM(f)->position.x;
 }
 
-static std::vector<Vector2> generateCoinsCoordinates(int count, float heightMin, float heightMax) {
-    std::vector<Vector2> positions;
+static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMin, float heightMax) {
+    std::vector<glm::vec2> positions;
     for (int i=0; i<count; i++) {
-        Vector2 p;
+        glm::vec2 p;
         bool notFarEnough = true;
         do {
-            p = Vector2(
-                MathUtil::RandomFloatInRange(
+            p = glm::vec2(
+                glm::linearRand(
                     -param::LevelSize * 0.5 * PlacementHelper::ScreenWidth,
                     param::LevelSize * 0.5 * PlacementHelper::ScreenWidth),
-                MathUtil::RandomFloatInRange(
-                    heightMin,
-                    heightMax));
+                glm::linearRand(heightMin, heightMax));
            notFarEnough = false;
            for (unsigned j = 0; j < positions.size() && !notFarEnough; j++) {
-                if (Vector2::Distance(positions[j], p) < 1) {
+                if (glm::distance(positions[j], p) < 1) {
                     notFarEnough = true;
                 }
            }
@@ -896,21 +838,20 @@ static std::vector<Vector2> generateCoinsCoordinates(int count, float heightMin,
     return positions;
 }
 
-void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, SessionComponent* session, bool transition) {
+void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition) {
     LOGI("Coins creation started");
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
-        Entity e = theEntityManager.CreateEntity(EntityType::Persistent);
+        Entity e = theEntityManager.CreateEntity("coin", EntityType::Persistent);
         ADD_COMPONENT(e, Transformation);
         TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("ampoule")) * param::CoinScale;
         TRANSFORM(e)->position = coordinates[i];
-        TRANSFORM(e)->rotation = -0.1 + MathUtil::RandomFloat() * 0.2;
+        TRANSFORM(e)->rotation = glm::linearRand(-0.1f, 0.1f);
         TRANSFORM(e)->z = 0.75;
         ADD_COMPONENT(e, Rendering);
         RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
         RENDERING(e)->color.a = 0.5;
-        // RENDERING(e)->cameraBitMask = (0x3 << 1);
-        RENDERING(e)->hide = false;
+        RENDERING(e)->show = true;
         RENDERING(e)->color.a = (transition ? 0 : 1);
         #ifdef SAC_NETWORK
         ADD_COMPONENT(e, Network);
@@ -919,67 +860,68 @@ void RecursiveRunnerGame::createCoins(const std::vector<Vector2>& coordinates, S
         #endif
         ADD_COMPONENT(e, Particule);
         PARTICULE(e)->emissionRate = 150;
-         PARTICULE(e)->duration = 0;
-         PARTICULE(e)->lifetime = 0.1 * 1;
-         PARTICULE(e)->texture = InvalidTextureRef;
-         PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
-         PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
-         PARTICULE(e)->initialSize = Interval<float>(0.08, 0.16);
-         PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
-         PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
-         PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
-         PARTICULE(e)->moment = Interval<float>(-5, 5);
-         PARTICULE(e)->mass = 0.1;
+        PARTICULE(e)->duration = 0;
+        PARTICULE(e)->lifetime = 0.1 * 1;
+        PARTICULE(e)->texture = InvalidTextureRef;
+        PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
+        PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
+        PARTICULE(e)->initialSize = Interval<float>(0.08, 0.16);
+        PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
+        PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
+        PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
+        PARTICULE(e)->moment = Interval<float>(-5, 5);
+        PARTICULE(e)->mass = 0.1;
         coins.push_back(e);
     }
-    #if 1
-    std::sort(coins.begin(), coins.end(), sortLeftToRight);
-    const Vector2 offset = Vector2(0, PlacementHelper::GimpHeightToScreen(14));
-    Vector2 previous = Vector2(-param::LevelSize * PlacementHelper::ScreenWidth * 0.5, -PlacementHelper::ScreenHeight * 0.2);
-    for (unsigned i = 0; i <= coins.size(); i++) {
-     Vector2 topI;
-     if (i < coins.size()) topI = TRANSFORM(coins[i])->position + Vector2::Rotate(offset, TRANSFORM(coins[i])->rotation);
-     else
-         topI = Vector2(param::LevelSize * PlacementHelper::ScreenWidth * 0.5, 0);
-     Entity link = theEntityManager.CreateEntity(EntityType::Persistent);
-     ADD_COMPONENT(link, Transformation);
-     TRANSFORM(link)->position = (topI + previous) * 0.5;
-     TRANSFORM(link)->size = Vector2((topI - previous).Length(), PlacementHelper::GimpHeightToScreen(54));
-     TRANSFORM(link)->z = 0.6;
-     TRANSFORM(link)->rotation = MathUtil::AngleFromVector(topI - previous);
-     ADD_COMPONENT(link, Rendering);
-     RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
-     RENDERING(link)->hide = false;
-        RENDERING(link)->color.a =  (transition ? 0 : 1);
 
-#if 1
-        Entity link3 = theEntityManager.CreateEntity(EntityType::Persistent);
-        ADD_COMPONENT(link3, Transformation);
-        TRANSFORM(link3)->parent = link;
-        TRANSFORM(link3)->position = Vector2(0, TRANSFORM(link)->size.Y * 0.4);
-        TRANSFORM(link3)->size = TRANSFORM(link)->size * Vector2(1, 0.1);
-        TRANSFORM(link3)->z = 0.2;
-        ADD_COMPONENT(link3, Particule);
-        PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.X * TRANSFORM(link)->size.Y;
-     PARTICULE(link3)->duration = 0;
-     PARTICULE(link3)->lifetime = 0.1 * 1;
-     PARTICULE(link3)->texture = InvalidTextureRef;
-     PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 1), Color(145.0/255, 145.0/255, 145.0/255, 1));
-     PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
-     PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
-     PARTICULE(link3)->finalSize = Interval<float>(0.01, 0.03);
-     PARTICULE(link3)->forceDirection = Interval<float> (0, 6.28);
-     PARTICULE(link3)->forceAmplitude = Interval<float>(5 / 10, 10 / 10);
-     PARTICULE(link3)->moment = Interval<float>(-5, 5);
-     PARTICULE(link3)->mass = 0.01;
-        session->sparkling.push_back(link3);
-#endif
-     previous = topI;
-     session->links.push_back(link);
-    }
-    #endif
-    for (unsigned i=0; i<coins.size(); i++) {
-        session->coins.push_back(coins[i]);
-    }
-    LOGI("Coins creation finished");
+    std::sort(coins.begin(), coins.end(), sortLeftToRight);
+    const glm::vec2 offset = glm::vec2(0, PlacementHelper::GimpHeightToScreen(14));
+    glm::vec2 previous = glm::vec2(-param::LevelSize * PlacementHelper::ScreenWidth * 0.5, -PlacementHelper::ScreenHeight * 0.2);
+    for (unsigned i = 0; i <= coins.size(); i++) {
+       glm::vec2 topI;
+       if (i < coins.size())
+            topI = TRANSFORM(coins[i])->position + glm::rotate(offset, TRANSFORM(coins[i])->rotation);
+       else
+            topI = glm::vec2(param::LevelSize * PlacementHelper::ScreenWidth * 0.5, 0);
+
+       Entity link = theEntityManager.CreateEntity("link", EntityType::Persistent);
+       ADD_COMPONENT(link, Transformation);
+       TRANSFORM(link)->position = (topI + previous) * 0.5f;
+       TRANSFORM(link)->size = glm::vec2(glm::length(topI - previous), PlacementHelper::GimpHeightToScreen(54));
+       TRANSFORM(link)->z = 0.6;
+       TRANSFORM(link)->rotation = -/*glm::radians*/(glm::orientedAngle(glm::normalize(topI - previous), glm::vec2(1.0f, 0.0f)));
+       ADD_COMPONENT(link, Rendering);
+       RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
+       RENDERING(link)->show = true;
+       RENDERING(link)->color.a =  (transition ? 0 : 1);
+
+       Entity link3 = theEntityManager.CreateEntity("link3", EntityType::Persistent);
+       ADD_COMPONENT(link3, Transformation);
+       TRANSFORM(link3)->parent = link;
+       TRANSFORM(link3)->position = glm::vec2(0, TRANSFORM(link)->size.y * 0.4);
+       TRANSFORM(link3)->size = TRANSFORM(link)->size * glm::vec2(1, 0.1);
+       TRANSFORM(link3)->z = 0.2;
+       ADD_COMPONENT(link3, Particule);
+       PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.x * TRANSFORM(link)->size.y;
+       PARTICULE(link3)->duration = 0;
+       PARTICULE(link3)->lifetime = 0.1 * 1;
+       PARTICULE(link3)->texture = InvalidTextureRef;
+       PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 1), Color(145.0/255, 145.0/255, 145.0/255, 1));
+       PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
+       PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
+       PARTICULE(link3)->finalSize = Interval<float>(0.01, 0.03);
+       PARTICULE(link3)->forceDirection = Interval<float> (0, 6.28);
+       PARTICULE(link3)->forceAmplitude = Interval<float>(5 / 10, 10 / 10);
+       PARTICULE(link3)->moment = Interval<float>(-5, 5);
+       PARTICULE(link3)->mass = 0.01;
+       session->sparkling.push_back(link3);
+
+       previous = topI;
+       session->links.push_back(link);
+   }
+
+   for (unsigned i=0; i<coins.size(); i++) {
+    session->coins.push_back(coins[i]);
+}
+LOGI("Coins creation finished");
 }

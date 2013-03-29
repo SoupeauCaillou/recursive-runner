@@ -17,7 +17,6 @@
 	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "RunnerSystem.h"
-#include "base/MathUtil.h"
 #include "base/EntityManager.h"
 #include "systems/TransformationSystem.h"
 #include "systems/PhysicsSystem.h"
@@ -36,8 +35,8 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     RunnerComponent tc;
     componentSerializer.add(new EntityProperty(OFFSET(playerOwner, tc)));
     componentSerializer.add(new EntityProperty(OFFSET(collisionZone, tc)));
-    componentSerializer.add(new Property<Vector2>(OFFSET(startPoint.X, tc), Vector2(0.001, 0)));
-    componentSerializer.add(new Property<Vector2>(OFFSET(endPoint, tc), Vector2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
     componentSerializer.add(new Property<Color>(OFFSET(color, tc)));
     componentSerializer.add(new Property<float>(OFFSET(speed, tc), 0.001));
     componentSerializer.add(new Property<bool>(OFFSET(finished, tc)));
@@ -54,15 +53,14 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
 }
 
 static void killRunner(Entity runner) {
-    RENDERING(runner)->hide = true;
-    Entity e = theEntityManager.CreateEntity();
+    RENDERING(runner)->show = false;
+    Entity e = theEntityManager.CreateEntity("kill_runner_anim");
     ADD_COMPONENT(e, Transformation);
     *TRANSFORM(e) = *TRANSFORM(runner);
-    TRANSFORM(e)->position.Y += TRANSFORM(e)->size.Y * 0.1;
+    TRANSFORM(e)->position.y += TRANSFORM(e)->size.y * 0.1;
     ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->hide = false;
+    RENDERING(e)->show = true;
     RENDERING(e)->texture = RENDERING(runner)->texture;
-    RENDERING(e)->cameraBitMask = (0x3 << 1);
     RENDERING(e)->color.a = 0.5;
     ADD_COMPONENT(e, Animation);
     ANIMATION(e)->name = "disappear2";
@@ -86,7 +84,7 @@ void RunnerSystem::DoUpdate(float dt) {
             ttt->size = tc->size * cz.size;
             ttt->rotation = cz.rotation;
             if (rendc->mirrorH) {
-                ttt->position.X = -ttt->position.X;
+                ttt->position.x = -ttt->position.x;
                 ttt->rotation = -ttt->rotation;
             }
         }
@@ -102,25 +100,25 @@ void RunnerSystem::DoUpdate(float dt) {
         rc->elapsed += dt;
 
         if (rc->elapsed >= rc->startTime) {
-            tc->position.X += rc->speed * dt;
+            tc->position.x += rc->speed * dt;
 
-            if ((tc->position.X > rc->endPoint.X && rc->speed > 0) ||
-                (tc->position.X < rc->endPoint.X && rc->speed < 0)) {
+            if ((tc->position.x > rc->endPoint.x && rc->speed > 0) ||
+                (tc->position.x < rc->endPoint.x && rc->speed < 0)) {
                 if (!rc->ghost)
-                    std::cout << a << " finished! (" << rc->coins.size() << ")" << TimeUtil::getTime() << " (pos=" << tc->position << ") "<< rc->endPoint.X << std::endl;
+                    LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position.x << "," << tc->position.y << ") "<< rc->endPoint.x)
                 ANIMATION(a)->name = "runL2R";
                 rc->finished = true;
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
                 rc->ghost = true;
-                rc->startTime = MathUtil::RandomFloatInRange(0, 2.0f);
+                rc->startTime = glm::linearRand(0.0f, 2.0f);
                 RENDERING(a)->color = Color(27.0/255, 2.0/255, 2.0/255, 0.8);
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
                 rc->currentJump = 0;
 
-                pc->linearVelocity = Vector2::Zero;
-                pc->gravity.Y = 0;
+                pc->linearVelocity =  glm::vec2(0.0f);
+                pc->gravity.y = 0;
                 rc->coins.clear();
             }
         }
@@ -128,10 +126,10 @@ void RunnerSystem::DoUpdate(float dt) {
         if (!rc->jumpTimes.empty() && rc->currentJump < (int)rc->jumpTimes.size()) {
             if ((rc->elapsed - rc->startTime)>= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {
                 // std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
-                Vector2 force = Vector2(0, 1800 * 1.5);
-                pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), RunnerSystem::MinJumpDuration));
+                glm::vec2 force(0, 1800 * 1.5);
+                pc->forces.push_back(std::make_pair(Force(force,  glm::vec2(0.0f)), RunnerSystem::MinJumpDuration));
                 rc->jumpingSince = 0.001;
-                pc->gravity.Y = -50;
+                pc->gravity.y = -50;
                 ANIMATION(a)->name = "jumpL2R_up";
                 RENDERING(a)->mirrorH = (rc->speed < 0);
             } else {
@@ -139,17 +137,17 @@ void RunnerSystem::DoUpdate(float dt) {
                     rc->jumpingSince += dt;
                     if (rc->jumpingSince > rc->jumpDurations[rc->currentJump]) {// && rc->jumpingSince >= MinJumpDuration) {
                         //ANIMATION(a)->name = (rc->speed > 0) ? "jumpL2R_down" : "jumpR2L_down";
-                        pc->gravity.Y = -150;
+                        pc->gravity.y = -150;
                         rc->jumpingSince = 0;
                         rc->currentJump++;
                         } else {
-                        Vector2 force = Vector2(0, 100 * 1);
-                        pc->forces.push_back(std::make_pair(Force(force, Vector2::Zero), dt));
+                         glm::vec2 force(0, 100 * 1);
+                        pc->forces.push_back(std::make_pair(Force(force,  glm::vec2(0.0f)), dt));
                     }
                 }
             }
         }
-        if (pc->gravity.Y < 0 && pc->linearVelocity.Y < -10) {
+        if (pc->gravity.y < 0 && pc->linearVelocity.y < -10) {
             ANIMATION(a)->name = "jumpL2R_down";
             RENDERING(a)->mirrorH = (rc->speed < 0);
         }
@@ -175,3 +173,6 @@ void RunnerSystem::DoUpdate(float dt) {
     }
 }
 
+#ifdef SAC_INGAME_EDITORS
+void RunnerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
+#endif

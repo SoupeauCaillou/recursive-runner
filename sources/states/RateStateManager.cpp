@@ -41,22 +41,21 @@ RateStateManager::~RateStateManager() {
 
 void RateStateManager::setup() {
    Entity entity[4];
-   entity[0] = datas->rateText = theEntityManager.CreateEntity();
-   entity[1] = datas->btnNow = theEntityManager.CreateEntity();
-   entity[2] = datas->btnLater = theEntityManager.CreateEntity();
-   entity[3] = datas->btnNever = theEntityManager.CreateEntity();
+   entity[0] = datas->rateText = theEntityManager.CreateEntity("rate_text");
+   entity[1] = datas->btnNow = theEntityManager.CreateEntity("rate_button_now");
+   entity[2] = datas->btnLater = theEntityManager.CreateEntity("rate_button_later");
+   entity[3] = datas->btnNever = theEntityManager.CreateEntity("rate_button_never");
 
    for (int i = 0; i < 4; i++) {
       ADD_COMPONENT(entity[i], Transformation);
       TRANSFORM(entity[i])->z = 0.9;
       TRANSFORM(entity[i])->parent = game->cameraEntity;
-      TRANSFORM(entity[i])->position = Vector2(0, -i);
+      TRANSFORM(entity[i])->position = glm::vec2(0, -i);
 
       ADD_COMPONENT(entity[i], TextRendering);
       TEXT_RENDERING(entity[i])->charHeight = 1.;
-      TEXT_RENDERING(entity[i])->cameraBitMask = 0x2;
       TEXT_RENDERING(entity[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
-      TEXT_RENDERING(entity[i])->hide = true;
+      TEXT_RENDERING(entity[i])->show = false;
 
       if (i)
          ADD_COMPONENT(entity[i], Button);
@@ -72,12 +71,12 @@ void RateStateManager::willEnter(State::Enum) {
 }
 
 void RateStateManager::enter(State::Enum) {
-   TEXT_RENDERING(datas->rateText)->hide = false;
-   TEXT_RENDERING(datas->btnNow)->hide = false;
+   TEXT_RENDERING(datas->rateText)->show = true;
+   TEXT_RENDERING(datas->btnNow)->show = true;
    BUTTON(datas->btnNow)->enabled = true;
-   TEXT_RENDERING(datas->btnLater)->hide = false;
+   TEXT_RENDERING(datas->btnLater)->show = true;
    BUTTON(datas->btnLater)->enabled = true;
-   TEXT_RENDERING(datas->btnNever)->hide = false;
+   TEXT_RENDERING(datas->btnNever)->show = true;
    BUTTON(datas->btnNever)->enabled = true;
 }
 
@@ -86,13 +85,13 @@ void RateStateManager::backgroundUpdate(float) {
 
 State::Enum RateStateManager::update(float) {
    if (BUTTON(datas->btnNow)->clicked) {
-      game->communicationAPI->rateItNow();
+      game->gameThreadContext->communicationAPI->rateItNow();
       return State::Menu;
    } else if (BUTTON(datas->btnNever)->clicked) {
-      game->communicationAPI->rateItNever();
+      game->gameThreadContext->communicationAPI->rateItNever();
       return State::Menu;
    } else if (BUTTON(datas->btnLater)->clicked) {
-      game->communicationAPI->rateItLater();
+      game->gameThreadContext->communicationAPI->rateItLater();
       return State::Menu;
    }
 
@@ -100,12 +99,12 @@ State::Enum RateStateManager::update(float) {
 }
 
 void RateStateManager::willExit(State::Enum) {
-   TEXT_RENDERING(datas->rateText)->hide = true;
-   TEXT_RENDERING(datas->btnNow)->hide = true;
+   TEXT_RENDERING(datas->rateText)->show = false;
+   TEXT_RENDERING(datas->btnNow)->show = false;
    BUTTON(datas->btnNow)->enabled = false;
-   TEXT_RENDERING(datas->btnLater)->hide = true;
+   TEXT_RENDERING(datas->btnLater)->show = false;
    BUTTON(datas->btnLater)->enabled = false;
-   TEXT_RENDERING(datas->btnNever)->hide = true;
+   TEXT_RENDERING(datas->btnNever)->show = false;
    BUTTON(datas->btnNever)->enabled = false;
 }
 

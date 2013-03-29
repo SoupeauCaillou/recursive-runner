@@ -32,14 +32,18 @@ void RangeFollowerSystem::DoUpdate(float) {
         TransformationComponent* tc = TRANSFORM(a);
         if (rc->parent) {
             RangeFollowerComponent* parentRf = RANGE_FOLLOWER(rc->parent);
-            float t = parentRf->range.position(TRANSFORM(rc->parent)->position.X);
-            tc->position.X = rc->range.lerp(t);
+            float t = parentRf->range.position(TRANSFORM(rc->parent)->position.x);
+            tc->position.x = rc->range.lerp(t);
         } else {
-            if (tc->position.X < rc->range.t1)
-                tc->position.X = rc->range.t1;
-            else if (tc->position.X > rc->range.t2)
-                tc->position.X = rc->range.t2;
+            if (tc->position.x < rc->range.t1)
+                tc->position.x = rc->range.t1;
+            else if (tc->position.x > rc->range.t2)
+                tc->position.x = rc->range.t2;
         }
     }
 }
+
+#ifdef SAC_INGAME_EDITORS
+void RangeFollowerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
+#endif
 

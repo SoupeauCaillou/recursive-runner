@@ -2,16 +2,16 @@
 
 struct RunTilTheEdgeTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
-        TEXT_RENDERING(entities->text)->hide = true;
+        TEXT_RENDERING(entities->text)->show = false;
         TEXT_RENDERING(entities->text)->text = loc->text("run_edge", "Your hero will run until the edge of the screen");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
-        return (TRANSFORM(sc->currentRunner)->position.X < 29);
+        return (TRANSFORM(sc->currentRunner)->position.x < 29);
     }
     bool canExit(SessionComponent* sc, TutorialEntities* entities) {
-        if (TRANSFORM(sc->currentRunner)->position.X >= 29) {
+        if (TRANSFORM(sc->currentRunner)->position.x >= 29) {
             ANIMATION(sc->currentRunner)->playbackSpeed = 0;
-            TEXT_RENDERING(entities->text)->hide = false;
+            TEXT_RENDERING(entities->text)->show = true;
             return true;
         }
         return false;
