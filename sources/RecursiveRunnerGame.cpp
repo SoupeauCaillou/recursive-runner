@@ -366,7 +366,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     ADD_COMPONENT(pianist, Transformation);
     TRANSFORM(pianist)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("P1"));
     TRANSFORM(pianist)->position = glm::vec2(PlacementHelper::GimpXToScreen(294), PlacementHelper::GimpYToScreen(700));
-    TRANSFORM(pianist)->z = 0.5;
+    TRANSFORM(pianist)->z = 0.55;
     ADD_COMPONENT(pianist, Rendering);
     RENDERING(pianist)->show = true;
     RENDERING(pianist)->color.a = 0.8;
