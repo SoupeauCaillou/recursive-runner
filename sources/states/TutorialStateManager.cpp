@@ -33,6 +33,7 @@
 #include "api/LocalizeAPI.h"
 
 #include "../RecursiveRunnerGame.h"
+#include <glm/gtx/compatibility.hpp>
 
 namespace Tutorial {
     enum Enum {
@@ -62,6 +63,11 @@ struct TutorialStep {
     virtual bool mustUpdateGame(SessionComponent* sc, TutorialEntities* entities) = 0;
     virtual bool canExit(SessionComponent* sc, TutorialEntities* entities) = 0;
     virtual void exit(SessionComponent* sc, TutorialEntities* entities) = 0;
+
+    void pointArrowTo(Entity arrow, const glm::vec2& target) const {
+        glm::vec2 v = glm::normalize(target - TRANSFORM(arrow)->position);
+        TRANSFORM(arrow)->rotation = glm::atan2(v.y, v.x);
+    }
 };
 
 #include "tutorial/Title"

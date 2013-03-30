@@ -1,7 +1,6 @@
 #pragma once
 
-#include <glm/gtx/vector_angle.hpp>
-
+#include <glm/gtx/compatibility.hpp>
 struct IntroduceHeroTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc,  SessionComponent* sc, TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->show = false;
@@ -9,8 +8,7 @@ struct IntroduceHeroTutorialStep : public TutorialStep {
         RENDERING(entities->anim)->show = true;
         TRANSFORM(entities->anim)->position = TRANSFORM(sc->currentRunner)->worldPosition +
             TRANSFORM(sc->currentRunner)->size * glm::vec2(0.5, 1);
-        TRANSFORM(entities->anim)->rotation = 
-            glm::angle(TRANSFORM(sc->currentRunner)->worldPosition, TRANSFORM(entities->anim)->position);
+        pointArrowTo(entities->anim, TRANSFORM(sc->currentRunner)->worldPosition);
     }
     bool mustUpdateGame(SessionComponent* , TutorialEntities*) {
         return true;
