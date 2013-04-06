@@ -69,7 +69,7 @@ RecursiveRunnerGame::RecursiveRunnerGame(StorageAPI* storage) :
    PlatformerSystem::CreateInstance();
 
    overrideNextState = State::Invalid;
-   currentState = State::Logo;
+
    state2manager.insert(std::make_pair(State::Logo, new LogoState(this)));
    state2manager.insert(std::make_pair(State::Menu, new MenuState(this)));
    state2manager.insert(std::make_pair(State::Ad, new AdState(this)));
@@ -78,6 +78,7 @@ RecursiveRunnerGame::RecursiveRunnerGame(StorageAPI* storage) :
    state2manager.insert(std::make_pair(State::Game, new GameState(this)));
    state2manager.insert(std::make_pair(State::RestartGame, new RestartGameState(this)));
    state2manager.insert(std::make_pair(State::Tutorial, new TutorialState(this)));
+   state2manager.insert(std::make_pair(State::SocialCenter, new SocialCenterState(this)));
 }
 
 
@@ -557,10 +558,16 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
         it->second->setup();
     }
+
+    //recover
     if (size > 0 && in) {
         currentState = State::Pause;
     } else {
+#if SAC_DEBUG
+        currentState = State::Menu;
+#else
         currentState = State::Logo;
+#endif
     }
     state2manager[currentState]->willEnter(State::Invalid);
     state2manager[currentState]->enter(State::Invalid);
