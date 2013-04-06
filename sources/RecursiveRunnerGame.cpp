@@ -121,6 +121,9 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
+
+    gameThreadContext->storageAPI->init("recursiveRunner");
+
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
     theRenderingSystem.loadAtlas("alphabet", true);
@@ -549,6 +552,8 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         }
     }
 
+    recursiveRunnerStorageAPI->init(gameThreadContext->storageAPI);
+
     level = Level::Level1;
     initGame();
     if (in == 0 || size == 0) {
@@ -727,7 +732,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
 
 void RecursiveRunnerGame::updateBestScore() {
     float f;
-    std::vector<StorageAPI::Score> scores = gameThreadContext->storageAPI->getScores(f);
+    std::vector<RecursiveRunnerStorageAPI::Score> scores = recursiveRunnerStorageAPI->getScores(f);
     if (!scores.empty()) {
         std::stringstream best;
         best << "Best: " << scores[0].points;

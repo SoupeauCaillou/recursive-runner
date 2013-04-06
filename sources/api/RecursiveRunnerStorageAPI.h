@@ -20,8 +20,24 @@
 
 #include <vector>
 #include <string>
+
+#include "api/StorageAPI.h"
 	
 class RecursiveRunnerStorageAPI {
 	public:
+		struct Score {
+			int points;
+			int coins;
+			std::string name;
+
+			Score(int inPts = 0, int inCo = 0, std::string inName = "me") : points(inPts), coins(inCo), name(inName) { }
+		};
+
+		//only used for linux yet
+		virtual void init(StorageAPI* storage) = 0;
+
 		virtual int getCoinsCount() = 0;
+
+		virtual void submitScore(Score inScore) = 0;
+		virtual std::vector<Score> getScores(float& outAverage) = 0; 
 };

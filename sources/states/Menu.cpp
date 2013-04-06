@@ -186,7 +186,7 @@ void MenuState::willEnter(State::Enum from) {
         std::stringstream a;
         a << PLAYER(players[0])->score << " points - " << game->gameThreadContext->localizeAPI->text("tap_screen_to_restart", "tap screen to restart");;
         TEXT_RENDERING(datas->subtitleText)->text = a.str();
-        game->gameThreadContext->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
+        game->recursiveRunnerStorageAPI->submitScore(RecursiveRunnerStorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
         game->updateBestScore();
 
         if (PLAYER(players[0])->score >= 15000) {

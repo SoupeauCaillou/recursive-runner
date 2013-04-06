@@ -20,12 +20,25 @@
 
 #include "api/RecursiveRunnerStorageAPI.h"
 
-//class StorageAPILinuxImpl;
+class StorageAPILinuxImpl;
 
 class RecursiveRunnerStorageAPILinuxImpl : public RecursiveRunnerStorageAPI {
 	public:
-		//RecursiveRunnerStorageAPILinuxImpl(StorageAPILinuxImpl* storage) : _storageAPI(storage) {}
+		RecursiveRunnerStorageAPILinuxImpl() : _initialized(false) {}
+		
+		//must be called before anything else
+		void init(StorageAPI* storage);
+
 		int getCoinsCount();
+
+		void submitScore(Score inScore);
+		std::vector<Score> getScores(float& outAverage);
+
 	private:
-//		StorageAPILinuxImpl* _storageAPI;
+#if SAC_EMSCRIPTEN
+        std::vector<Score> _scores;
+#else
+        bool _initialized;
+#endif
+		StorageAPILinuxImpl* _storageAPI;
 };
