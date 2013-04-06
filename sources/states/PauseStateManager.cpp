@@ -18,6 +18,7 @@
 */
 #include "StateManager.h"
 
+#include "base/EntityManager.h"
 #include "systems/TransformationSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/MusicSystem.h"

@@ -18,6 +18,7 @@
 */
 #include "StateManager.h"
 
+#include "base/EntityManager.h"
 #include "base/PlacementHelper.h"
 #include "base/TouchInputManager.h"
 #include "systems/TransformationSystem.h"
@@ -249,7 +250,8 @@ State::Enum MenuStateManager::update(float) {
     // Handle Swarm button
     if (!game->ignoreClick) {
         if (BUTTON(datas->swarmBtn)->clicked) {
-            game->gameThreadContext->communicationAPI->swarmRegistering();
+            LOGW("TODO : handle Swarm")
+            // game->gameThreadContext->communicationAPI->swarmRegistering();
         }
         game->ignoreClick = BUTTON(datas->swarmBtn)->mouseOver;
     }

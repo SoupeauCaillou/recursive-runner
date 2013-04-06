@@ -98,6 +98,22 @@ RecursiveRunnerGame::~RecursiveRunnerGame() {
     state2manager.clear();
 }
 
+bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
+    switch (api) {
+        case ContextAPI::Ad:
+        case ContextAPI::Asset:
+        case ContextAPI::Communication:
+        case ContextAPI::Exit:
+        case ContextAPI::Localize:
+        case ContextAPI::Music:
+        case ContextAPI::Sound:
+        case ContextAPI::Vibrate:
+            return true;
+        default:
+            return false;
+    }
+}
+
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
 	PlacementHelper::GimpWidth = 1280;

@@ -18,6 +18,7 @@
 */
 #include "StateManager.h"
 
+#include "base/EntityManager.h"
 #include "base/TouchInputManager.h"
 #include "base/PlacementHelper.h"
 #include "systems/AnimationSystem.h"
@@ -451,7 +452,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     ADD_COMPONENT(collisionZone, Transformation);
     TRANSFORM(collisionZone)->parent = e;
     TRANSFORM(collisionZone)->z = 0.01;
-    #if 1
+    #if 0
     ADD_COMPONENT(collisionZone, Rendering);
     RENDERING(collisionZone)->show = true;
     RENDERING(collisionZone)->color = Color(1,0,0,1);

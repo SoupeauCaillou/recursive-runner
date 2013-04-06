@@ -18,6 +18,7 @@
 */
 #include "StateManager.h"
 
+#include "base/EntityManager.h"
 #include "base/PlacementHelper.h"
 #include "base/TouchInputManager.h"
 #include "systems/TransformationSystem.h"

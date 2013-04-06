@@ -6,6 +6,7 @@ position_in_atlas=912,826
 size_in_atlas=89,86
 crop_offset=8,18
 rotated=1
+opaque_rect=37,55,7,2
 [image1]
 name=arbre1
 original_size=383,624
@@ -13,6 +14,7 @@ position_in_atlas=1,453
 size_in_atlas=611,371
 crop_offset=5,10
 rotated=1
+opaque_rect=200,453,2,48
 [image2]
 name=arbre2
 original_size=237,442
@@ -20,6 +22,7 @@ position_in_atlas=619,1
 size_in_atlas=224,431
 crop_offset=7,8
 rotated=0
+opaque_rect=119,284,1,31
 [image3]
 name=arbre3
 original_size=463,626
@@ -27,6 +30,7 @@ position_in_atlas=1,1
 size_in_atlas=616,450
 crop_offset=5,6
 rotated=1
+opaque_rect=298,250,30,2
 [image4]
 name=arbre4
 original_size=522,620
@@ -34,6 +38,7 @@ position_in_atlas=1,826
 size_in_atlas=610,506
 crop_offset=8,5
 rotated=1
+opaque_rect=250,327,4,34
 [image5]
 name=arbre5
 original_size=380,366
@@ -41,6 +46,7 @@ position_in_atlas=614,453
 size_in_atlas=363,351
 crop_offset=7,11
 rotated=0
+opaque_rect=172,206,2,53
 [image6]
 name=bench_cat
 original_size=138,86
@@ -48,6 +54,7 @@ position_in_atlas=613,960
 size_in_atlas=138,86
 crop_offset=0,0
 rotated=0
+opaque_rect=46,37,88,2
 [image7]
 name=bench
 original_size=138,66
@@ -55,6 +62,7 @@ position_in_atlas=753,960
 size_in_atlas=138,66
 crop_offset=0,0
 rotated=0
+opaque_rect=46,17,88,2
 [image8]
 name=J1
 original_size=153,136
@@ -62,6 +70,7 @@ position_in_atlas=613,826
 size_in_atlas=148,132
 crop_offset=3,2
 rotated=0
+opaque_rect=35,60,12,7
 [image9]
 name=J2
 original_size=153,136
@@ -69,6 +78,7 @@ position_in_atlas=845,300
 size_in_atlas=149,132
 crop_offset=2,2
 rotated=0
+opaque_rect=83,75,29,2
 [image10]
 name=lampadaire1
 original_size=40,301
@@ -76,6 +86,7 @@ position_in_atlas=886,1
 size_in_atlas=36,297
 crop_offset=3,4
 rotated=0
+opaque_rect=21,174,1,28
 [image11]
 name=lampadaire2
 original_size=43,301
@@ -83,6 +94,7 @@ position_in_atlas=924,1
 size_in_atlas=37,296
 crop_offset=4,4
 rotated=0
+opaque_rect=22,180,1,22
 [image12]
 name=lampadaire3
 original_size=43,300
@@ -90,6 +102,7 @@ position_in_atlas=845,1
 size_in_atlas=39,297
 crop_offset=2,2
 rotated=0
+opaque_rect=14,278,9,2
 [image13]
 name=link
 original_size=577,54
@@ -97,6 +110,7 @@ position_in_atlas=1,1334
 size_in_atlas=574,21
 crop_offset=1,4
 rotated=0
+opaque_rect=317,1,38,1
 [image14]
 name=lumiere
 original_size=99,107
@@ -104,6 +118,7 @@ position_in_atlas=891,1186
 size_in_atlas=86,85
 crop_offset=8,22
 rotated=0
+opaque_rect=42,37,9,3
 [image15]
 name=P1
 original_size=153,136
@@ -111,6 +126,7 @@ position_in_atlas=277,1357
 size_in_atlas=135,132
 crop_offset=16,2
 rotated=0
+opaque_rect=69,75,29,2
 [image16]
 name=P2
 original_size=153,136
@@ -118,6 +134,7 @@ position_in_atlas=763,826
 size_in_atlas=147,132
 crop_offset=4,2
 rotated=0
+opaque_rect=81,75,29,2
 [image17]
 name=P3
 original_size=153,136
@@ -125,6 +142,7 @@ position_in_atlas=891,1048
 size_in_atlas=132,136
 crop_offset=15,2
 rotated=1
+opaque_rect=70,75,29,2
 [image18]
 name=P4
 original_size=153,136
@@ -132,6 +150,7 @@ position_in_atlas=613,1048
 size_in_atlas=137,132
 crop_offset=14,2
 rotated=0
+opaque_rect=71,75,29,2
 [image19]
 name=P5
 original_size=153,136
@@ -139,6 +158,7 @@ position_in_atlas=752,1048
 size_in_atlas=137,132
 crop_offset=14,2
 rotated=0
+opaque_rect=71,75,29,2
 [image20]
 name=P6
 original_size=153,136
@@ -146,6 +166,7 @@ position_in_atlas=613,1182
 size_in_atlas=137,132
 crop_offset=14,2
 rotated=0
+opaque_rect=71,75,29,2
 [image21]
 name=P7
 original_size=153,136
@@ -153,6 +174,7 @@ position_in_atlas=1,1357
 size_in_atlas=136,132
 crop_offset=15,2
 rotated=0
+opaque_rect=70,75,29,2
 [image22]
 name=P8
 original_size=153,136
@@ -160,6 +182,7 @@ position_in_atlas=752,1182
 size_in_atlas=137,132
 crop_offset=14,2
 rotated=0
+opaque_rect=47,110,7,10
 [image23]
 name=P9
 original_size=153,136
@@ -167,3 +190,4 @@ position_in_atlas=139,1357
 size_in_atlas=136,132
 crop_offset=15,2
 rotated=0
+opaque_rect=70,75,29,2

@@ -1,7 +1,7 @@
 [meta]
 speed=30
 loop=1
-num_frames=3
+num_frames=4
 next_anim=runL2R
 
 [frame0]

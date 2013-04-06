@@ -5,7 +5,7 @@ folders="decor alphabet fumee logo dummy arbre"
 for folder in $folders
 do
     echo "Building '$folder' atlas"
-    ./generate_atlas.sh $folder
+    ../sac/tools/generate_atlas.sh $folder
 done
 
 echo "Removing unneeded alphabet color"

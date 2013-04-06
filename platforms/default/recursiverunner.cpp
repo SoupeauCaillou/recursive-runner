@@ -32,9 +32,6 @@ int main(int argc, char** argv) {
 
     return launchGame(
         new RecursiveRunnerGame(storage),
-        CONTEXT_WANT_AD_API | CONTEXT_WANT_ASSET_API | CONTEXT_WANT_COMM_API |
-        CONTEXT_WANT_EXIT_API | CONTEXT_WANT_LOCALIZE_API | CONTEXT_WANT_MUSIC_API |
-        CONTEXT_WANT_SOUND_API | CONTEXT_WANT_VIBRATE_API,
         argc,
         argv);
 }

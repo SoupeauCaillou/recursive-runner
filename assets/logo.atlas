@@ -6,7 +6,7 @@ position_in_atlas=847,1
 size_in_atlas=49,40
 crop_offset=0,0
 rotated=0
-opaque_rect=0,0,48,38
+opaque_rect=0,0,49,40
 [image1]
 name=soupe_logo3_365_331
 original_size=49,40
@@ -14,7 +14,7 @@ position_in_atlas=898,1
 size_in_atlas=49,40
 crop_offset=0,0
 rotated=0
-opaque_rect=0,0,48,38
+opaque_rect=0,0,49,40
 [image2]
 name=soupe_logo
 original_size=800,869
@@ -22,3 +22,4 @@ position_in_atlas=1,1
 size_in_atlas=844,700
 crop_offset=48,11
 rotated=1
+opaque_rect=248,317,162,86

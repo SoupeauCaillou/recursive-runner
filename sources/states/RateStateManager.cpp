@@ -19,7 +19,7 @@
 #include "StateManager.h"
 
 #include "base/PlacementHelper.h"
-
+#include "base/EntityManager.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/TextRenderingSystem.h"
