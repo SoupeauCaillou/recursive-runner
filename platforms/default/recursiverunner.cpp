@@ -18,7 +18,7 @@
 */
 #include "RecursiveRunnerGame.h"
 #include "app/AppSetup.h"
-#include "StorageAPILinuxImpl.h"
+#include "api/StorageAPILinuxImpl.h"
 
 int main(int argc, char** argv) {
     if (initGame("Recursive Runner")) {
