@@ -32,9 +32,9 @@ namespace State {
       Ad,
       Rate,
       RestartGame,
+      SocialCenter,
    };
 }
-
 class StateManager {
     public:
         StateManager(State::Enum _state, RecursiveRunnerGame* _game) : state(_state), game(_game) {}
@@ -55,11 +55,11 @@ class StateManager {
         RecursiveRunnerGame* game;
 };
 
-#define DEF_STATE_MANAGER(state) \
-    class state##StateManager : public StateManager {\
+#define DEF_NEW_STATE(state) \
+    class state##State : public StateManager {\
         public:\
-            state##StateManager(RecursiveRunnerGame* _game);\
-            ~state##StateManager();\
+            state##State(RecursiveRunnerGame* _game);\
+            ~state##State();\
             void setup();\
             void willEnter(State::Enum from);\
             void enter(State::Enum from);\
@@ -70,9 +70,9 @@ class StateManager {
             bool transitionCanExit(State::Enum from);\
             bool transitionCanEnter(State::Enum to);\
         private:\
-            struct state##StateManagerDatas;\
-            state##StateManagerDatas* datas;\
-    };\
+            struct state##StateDatas;\
+            state##StateDatas* datas;\
+    };
 
 class TransitionStateManager {
     public:
@@ -83,11 +83,11 @@ class TransitionStateManager {
         StateManager* from, *to;
 };
 
-DEF_STATE_MANAGER(Logo)
-DEF_STATE_MANAGER(Menu)
-DEF_STATE_MANAGER(Game)
-DEF_STATE_MANAGER(Tutorial)
-DEF_STATE_MANAGER(Pause)
-DEF_STATE_MANAGER(Rate)
-DEF_STATE_MANAGER(Ad)
-DEF_STATE_MANAGER(RestartGame)
+DEF_NEW_STATE(Logo)
+DEF_NEW_STATE(Menu)
+DEF_NEW_STATE(Game)
+DEF_NEW_STATE(Tutorial)
+DEF_NEW_STATE(Pause)
+DEF_NEW_STATE(Rate)
+DEF_NEW_STATE(Ad)
+DEF_NEW_STATE(RestartGame)

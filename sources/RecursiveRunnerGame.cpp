@@ -70,14 +70,14 @@ RecursiveRunnerGame::RecursiveRunnerGame(StorageAPI* storage) :
 
    overrideNextState = State::Invalid;
    currentState = State::Logo;
-   state2manager.insert(std::make_pair(State::Logo, new LogoStateManager(this)));
-   state2manager.insert(std::make_pair(State::Menu, new MenuStateManager(this)));
-   state2manager.insert(std::make_pair(State::Ad, new AdStateManager(this)));
-   state2manager.insert(std::make_pair(State::Pause, new PauseStateManager(this)));
-   state2manager.insert(std::make_pair(State::Rate, new RateStateManager(this)));
-   state2manager.insert(std::make_pair(State::Game, new GameStateManager(this)));
-   state2manager.insert(std::make_pair(State::RestartGame, new RestartGameStateManager(this)));
-   state2manager.insert(std::make_pair(State::Tutorial, new TutorialStateManager(this)));
+   state2manager.insert(std::make_pair(State::Logo, new LogoState(this)));
+   state2manager.insert(std::make_pair(State::Menu, new MenuState(this)));
+   state2manager.insert(std::make_pair(State::Ad, new AdState(this)));
+   state2manager.insert(std::make_pair(State::Pause, new PauseState(this)));
+   state2manager.insert(std::make_pair(State::Rate, new RateState(this)));
+   state2manager.insert(std::make_pair(State::Game, new GameState(this)));
+   state2manager.insert(std::make_pair(State::RestartGame, new RestartGameState(this)));
+   state2manager.insert(std::make_pair(State::Tutorial, new TutorialState(this)));
 }
 
 

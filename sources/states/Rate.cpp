@@ -18,8 +18,8 @@
 */
 #include "StateManager.h"
 
-#include "base/PlacementHelper.h"
 #include "base/EntityManager.h"
+#include "base/PlacementHelper.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/TextRenderingSystem.h"
@@ -27,19 +27,19 @@
 
 #include "../RecursiveRunnerGame.h"
 
-struct RateStateManager::RateStateManagerDatas {
+struct RateState::RateStateDatas {
    Entity rateText, btnNow, btnLater, btnNever;
 };
 
-RateStateManager::RateStateManager(RecursiveRunnerGame* game) : StateManager(State::Rate, game) {
-   datas = new RateStateManagerDatas;
+RateState::RateState(RecursiveRunnerGame* game) : StateManager(State::Rate, game) {
+   datas = new RateStateDatas;
 }
 
-RateStateManager::~RateStateManager() {
+RateState::~RateState() {
    delete datas;
 }
 
-void RateStateManager::setup() {
+void RateState::setup() {
    Entity entity[4];
    entity[0] = datas->rateText = theEntityManager.CreateEntity("rate_text");
    entity[1] = datas->btnNow = theEntityManager.CreateEntity("rate_button_now");
@@ -67,10 +67,10 @@ void RateStateManager::setup() {
 
 }
 
-void RateStateManager::willEnter(State::Enum) {
+void RateState::willEnter(State::Enum) {
 }
 
-void RateStateManager::enter(State::Enum) {
+void RateState::enter(State::Enum) {
    TEXT_RENDERING(datas->rateText)->show = true;
    TEXT_RENDERING(datas->btnNow)->show = true;
    BUTTON(datas->btnNow)->enabled = true;
@@ -80,10 +80,10 @@ void RateStateManager::enter(State::Enum) {
    BUTTON(datas->btnNever)->enabled = true;
 }
 
-void RateStateManager::backgroundUpdate(float) {
+void RateState::backgroundUpdate(float) {
 }
 
-State::Enum RateStateManager::update(float) {
+State::Enum RateState::update(float) {
    if (BUTTON(datas->btnNow)->clicked) {
       game->gameThreadContext->communicationAPI->rateItNow();
       return State::Menu;
@@ -98,7 +98,7 @@ State::Enum RateStateManager::update(float) {
    return State::Rate;
 }
 
-void RateStateManager::willExit(State::Enum) {
+void RateState::willExit(State::Enum) {
    TEXT_RENDERING(datas->rateText)->show = false;
    TEXT_RENDERING(datas->btnNow)->show = false;
    BUTTON(datas->btnNow)->enabled = false;
@@ -108,13 +108,13 @@ void RateStateManager::willExit(State::Enum) {
    BUTTON(datas->btnNever)->enabled = false;
 }
 
-void RateStateManager::exit(State::Enum) {
+void RateState::exit(State::Enum) {
 }
 
-bool RateStateManager::transitionCanExit(State::Enum) {
+bool RateState::transitionCanExit(State::Enum) {
    return true;
 }
 
-bool RateStateManager::transitionCanEnter(State::Enum) {
+bool RateState::transitionCanEnter(State::Enum) {
    return true;
 }

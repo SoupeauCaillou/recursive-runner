@@ -83,8 +83,8 @@ struct TutorialStep {
 #include "tutorial/BestScore"
 #include "tutorial/TheEnd"
 
-struct TutorialStateManager::TutorialStateManagerDatas {
-    GameStateManager* gameStateMgr;
+struct TutorialState::TutorialStateDatas {
+    GameState* gameStateMgr;
     float waitBeforeEnterExit;
     TutorialEntities entities;
     Entity titleGroup, title, hideText;
@@ -94,18 +94,18 @@ struct TutorialStateManager::TutorialStateManagerDatas {
     float flecheAccum;
 };
 
-TutorialStateManager::TutorialStateManager(RecursiveRunnerGame* game) : StateManager(State::Tutorial, game) {
-   datas = new TutorialStateManagerDatas;
-   datas->gameStateMgr = new GameStateManager(game);
+TutorialState::TutorialState(RecursiveRunnerGame* game) : StateManager(State::Tutorial, game) {
+   datas = new TutorialStateDatas;
+   datas->gameStateMgr = new GameState(game);
 }
 
-TutorialStateManager::~TutorialStateManager() {
+TutorialState::~TutorialState() {
     delete datas->gameStateMgr;
 
     delete datas;
 }
 
-void TutorialStateManager::setup() {
+void TutorialState::setup() {
     // setup game
     datas->gameStateMgr->setup();
     // setup tutorial
@@ -170,7 +170,7 @@ void TutorialStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void TutorialStateManager::willEnter(State::Enum) {
+void TutorialState::willEnter(State::Enum) {
     #define INSTANCIATE_STEP(step) \
         datas->step2mgr[Tutorial:: step] = new step##TutorialStep
     INSTANCIATE_STEP(Title);
@@ -241,7 +241,7 @@ void TutorialStateManager::willEnter(State::Enum) {
     BUTTON(game->muteBtn)->enabled = false;
 }
 
-bool TutorialStateManager::transitionCanEnter(State::Enum from) {
+bool TutorialState::transitionCanEnter(State::Enum from) {
    bool gameCanEnter = datas->gameStateMgr->transitionCanEnter(from);
 
     if (TimeUtil::GetTime() - datas->waitBeforeEnterExit < ADSR(datas->titleGroup)->attackTiming) {
@@ -259,7 +259,7 @@ bool TutorialStateManager::transitionCanEnter(State::Enum from) {
     return (adsr->value == adsr->sustainValue) && gameCanEnter;
 }
 
-void TutorialStateManager::enter(State::Enum) {
+void TutorialState::enter(State::Enum) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     session->userInputEnabled = false;
     TEXT_RENDERING(datas->entities.text)->show = true;
@@ -275,10 +275,10 @@ void TutorialStateManager::enter(State::Enum) {
 ///----------------------------------------------------------------------------//
 ///--------------------- UPDATE SECTION ---------------------------------------//
 ///----------------------------------------------------------------------------//
-void TutorialStateManager::backgroundUpdate(float) {
+void TutorialState::backgroundUpdate(float) {
 }
 
-State::Enum TutorialStateManager::update(float dt) {
+State::Enum TutorialState::update(float dt) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     if (datas->waitingClick) {
         if (datas->flecheAccum >= 0) {
@@ -322,7 +322,7 @@ State::Enum TutorialStateManager::update(float dt) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void TutorialStateManager::willExit(State::Enum to) {
+void TutorialState::willExit(State::Enum to) {
     SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     session->userInputEnabled = false;
     RENDERING(datas->hideText)->show = false;
@@ -333,7 +333,7 @@ void TutorialStateManager::willExit(State::Enum to) {
     RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = true;
 }
 
-bool TutorialStateManager::transitionCanExit(State::Enum to) {
+bool TutorialState::transitionCanExit(State::Enum to) {
 
     ADSRComponent* adsr = ADSR(datas->titleGroup);
     adsr->active = false;
@@ -345,7 +345,7 @@ bool TutorialStateManager::transitionCanExit(State::Enum to) {
     return datas->gameStateMgr->transitionCanExit(to);
 }
 
-void TutorialStateManager::exit(State::Enum to) {
+void TutorialState::exit(State::Enum to) {
     RENDERING(datas->title)->show = false;
 
     TEXT_RENDERING(datas->entities.text)->show = false;

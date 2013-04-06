@@ -19,11 +19,12 @@
 #include "StateManager.h"
 
 #include "base/EntityManager.h"
+#include "base/TouchInputManager.h"
+
 #include "systems/TransformationSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/MusicSystem.h"
 #include "systems/AnimationSystem.h"
-#include "base/TouchInputManager.h"
 #include "systems/PhysicsSystem.h"
 #include "systems/ButtonSystem.h"
 
@@ -34,21 +35,21 @@
 #include "../systems/SessionSystem.h"
 #include "../systems/CameraTargetSystem.h"
 
-struct PauseStateManager::PauseStateManagerDatas {
+struct PauseState::PauseStateDatas {
     Entity title, pauseText;
     Entity continueButton, restartButton, stopButton;
     std::vector<Entity> pausedMusic;
 };
 
-PauseStateManager::PauseStateManager(RecursiveRunnerGame* game) : StateManager(State::Pause, game) {
-    datas = new PauseStateManagerDatas;
+PauseState::PauseState(RecursiveRunnerGame* game) : StateManager(State::Pause, game) {
+    datas = new PauseStateDatas;
 }
 
-PauseStateManager::~PauseStateManager() {
+PauseState::~PauseState() {
     delete datas;
 }
 
-void PauseStateManager::setup() {
+void PauseState::setup() {
     Entity title = datas->title = theEntityManager.CreateEntity("pause_title");
     ADD_COMPONENT(title, Transformation);
     TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("menu-pause"));
@@ -94,11 +95,11 @@ void PauseStateManager::setup() {
     }
 }
 
-void PauseStateManager::willEnter(State::Enum) {
+void PauseState::willEnter(State::Enum) {
     // TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = true;
 }
 
-void PauseStateManager::enter(State::Enum) {
+void PauseState::enter(State::Enum) {
 
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
     // disable physics for runners
@@ -131,7 +132,7 @@ void PauseStateManager::enter(State::Enum) {
     }
 }
 
-State::Enum PauseStateManager::update(float) {
+State::Enum PauseState::update(float) {
     RENDERING(datas->continueButton)->color = BUTTON(datas->continueButton)->mouseOver ? Color("gray") : Color();
     RENDERING(datas->restartButton)->color = BUTTON(datas->restartButton)->mouseOver ? Color("gray") : Color();
     RENDERING(datas->stopButton)->color = BUTTON(datas->stopButton)->mouseOver ? Color("gray") : Color();
@@ -150,11 +151,11 @@ State::Enum PauseStateManager::update(float) {
     return State::Pause;
 }
 
-void PauseStateManager::backgroundUpdate(float) {
+void PauseState::backgroundUpdate(float) {
 
 }
 
-void PauseStateManager::willExit(State::Enum) {
+void PauseState::willExit(State::Enum) {
     TEXT_RENDERING(datas->pauseText)->show = false;
     RENDERING(datas->continueButton)->show = false;
     BUTTON(datas->continueButton)->enabled = false;
@@ -169,7 +170,7 @@ void PauseStateManager::willExit(State::Enum) {
     
 }
 
-void PauseStateManager::exit(State::Enum to) {
+void PauseState::exit(State::Enum to) {
     std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
     if (!sessions.empty()) {
         const SessionComponent* session = SESSION(sessions.front());
@@ -192,10 +193,10 @@ void PauseStateManager::exit(State::Enum to) {
     datas->pausedMusic.clear();
 }
 
-bool PauseStateManager::transitionCanExit(State::Enum) {
+bool PauseState::transitionCanExit(State::Enum) {
     return true;
 }
 
-bool PauseStateManager::transitionCanEnter(State::Enum) {
+bool PauseState::transitionCanEnter(State::Enum) {
     return true;
 }

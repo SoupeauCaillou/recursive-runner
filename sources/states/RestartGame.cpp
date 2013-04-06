@@ -27,19 +27,19 @@
 
 #include "../RecursiveRunnerGame.h"
 
-struct RestartGameStateManager::RestartGameStateManagerDatas {
+struct RestartGameState::RestartGameStateDatas {
 
 };
 
-RestartGameStateManager::RestartGameStateManager(RecursiveRunnerGame* game) : StateManager(State::RestartGame, game) {
-   datas = new RestartGameStateManagerDatas;
+RestartGameState::RestartGameState(RecursiveRunnerGame* game) : StateManager(State::RestartGame, game) {
+   datas = new RestartGameStateDatas;
 }
 
-RestartGameStateManager::~RestartGameStateManager() {
+RestartGameState::~RestartGameState() {
    delete datas;
 }
 
-void RestartGameStateManager::setup() {
+void RestartGameState::setup() {
    
 }
 
@@ -47,14 +47,14 @@ void RestartGameStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void RestartGameStateManager::willEnter(State::Enum ) {
+void RestartGameState::willEnter(State::Enum ) {
 }
 
-bool RestartGameStateManager::transitionCanEnter(State::Enum ) {
+bool RestartGameState::transitionCanEnter(State::Enum ) {
    return true;
 }
 
-void RestartGameStateManager::enter(State::Enum) {
+void RestartGameState::enter(State::Enum) {
    
 }
 
@@ -62,10 +62,10 @@ void RestartGameStateManager::enter(State::Enum) {
 ///----------------------------------------------------------------------------//
 ///--------------------- UPDATE SECTION ---------------------------------------//
 ///----------------------------------------------------------------------------//
-void RestartGameStateManager::backgroundUpdate(float) {
+void RestartGameState::backgroundUpdate(float) {
 }
 
-State::Enum RestartGameStateManager::update(float) {
+State::Enum RestartGameState::update(float) {
    return State::Game;
 }
 
@@ -73,14 +73,14 @@ State::Enum RestartGameStateManager::update(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void RestartGameStateManager::willExit(State::Enum) {
+void RestartGameState::willExit(State::Enum) {
 
 }
 
-bool RestartGameStateManager::transitionCanExit(State::Enum) {
+bool RestartGameState::transitionCanExit(State::Enum) {
    return true;
 }
 
-void RestartGameStateManager::exit(State::Enum) {
+void RestartGameState::exit(State::Enum) {
 
 }

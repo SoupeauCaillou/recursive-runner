@@ -27,22 +27,22 @@
 
 #include "../RecursiveRunnerGame.h"
 
-struct AdStateManager::AdStateManagerDatas {
+struct AdState::AdStateDatas {
    int gamesb4Ad;
    float lastAdTime;
    float waitAfterAdDisplay;
 };
 
-AdStateManager::AdStateManager(RecursiveRunnerGame* game) : StateManager(State::Ad, game) {
-   datas = new AdStateManagerDatas;
+AdState::AdState(RecursiveRunnerGame* game) : StateManager(State::Ad, game) {
+   datas = new AdStateDatas;
    datas->gamesb4Ad = 1;
 }
 
-AdStateManager::~AdStateManager() {
+AdState::~AdState() {
    delete datas;
 }
 
-void AdStateManager::setup() {
+void AdState::setup() {
    datas->lastAdTime = -30.;
 }
 
@@ -50,14 +50,14 @@ void AdStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void AdStateManager::willEnter(State::Enum ) {
+void AdState::willEnter(State::Enum ) {
 }
 
-bool AdStateManager::transitionCanEnter(State::Enum ) {
+bool AdState::transitionCanEnter(State::Enum ) {
    return true;
 }
 
-void AdStateManager::enter(State::Enum) {
+void AdState::enter(State::Enum) {
    LOGI(datas->gamesb4Ad << " game(s) left")
 
    float timeSinceLAstAd = TimeUtil::GetTime() - datas->lastAdTime;
@@ -90,10 +90,10 @@ void AdStateManager::enter(State::Enum) {
 ///----------------------------------------------------------------------------//
 ///--------------------- UPDATE SECTION ---------------------------------------//
 ///----------------------------------------------------------------------------//
-void AdStateManager::backgroundUpdate(float) {
+void AdState::backgroundUpdate(float) {
 }
 
-State::Enum AdStateManager::update(float) {
+State::Enum AdState::update(float) {
     if (datas->gamesb4Ad > 0) {
         return State::Game;
     } else if(game->gameThreadContext->adAPI->done()) {
@@ -107,10 +107,10 @@ State::Enum AdStateManager::update(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void AdStateManager::willExit(State::Enum) {
+void AdState::willExit(State::Enum) {
 }
 
-bool AdStateManager::transitionCanExit(State::Enum) {
+bool AdState::transitionCanExit(State::Enum) {
     if (datas->gamesb4Ad == 0) {
        //wait 1 sec after the ad was showed
         return (TimeUtil::GetTime() - datas->waitAfterAdDisplay >= 1.0);
@@ -119,7 +119,7 @@ bool AdStateManager::transitionCanExit(State::Enum) {
     }
 }
 
-void AdStateManager::exit(State::Enum) {
+void AdState::exit(State::Enum) {
    //decrease gamesb4Ad (-=1 if >0 else =3)
     datas->gamesb4Ad = (datas->gamesb4Ad + 3) % 4;
 }

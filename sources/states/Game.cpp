@@ -51,21 +51,21 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 static void updateSessionTransition(const SessionComponent* session, float progress);
 static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc);
 
-struct GameStateManager::GameStateManagerDatas {
+struct GameState::GameStateDatas {
     Entity pauseButton;
     Entity session;
     Entity transition;
 };
 
-GameStateManager::GameStateManager(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
-    datas = new GameStateManagerDatas();
+GameState::GameState(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
+    datas = new GameStateDatas();
 }
 
-GameStateManager::~GameStateManager() {
+GameState::~GameState() {
     delete datas;
 }
 
-void GameStateManager::setup() {
+void GameState::setup() {
     Entity pauseButton = datas->pauseButton = theEntityManager.CreateEntity("pause_buttton");
     ADD_COMPONENT(pauseButton, Transformation);
     TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("pause"));
@@ -98,7 +98,7 @@ void GameStateManager::setup() {
 ///----------------------------------------------------------------------------//
 ///--------------------- ENTER SECTION ----------------------------------------//
 ///----------------------------------------------------------------------------//
-void GameStateManager::willEnter(State::Enum from) {
+void GameState::willEnter(State::Enum from) {
     ADSR(datas->transition)->active = true;
 
     if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
@@ -120,7 +120,7 @@ void GameStateManager::willEnter(State::Enum from) {
     }
 }
 
-bool GameStateManager::transitionCanEnter(State::Enum) {
+bool GameState::transitionCanEnter(State::Enum) {
     const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
 
     float progress = ADSR(datas->transition)->value;
@@ -131,7 +131,7 @@ bool GameStateManager::transitionCanEnter(State::Enum) {
     return progress >= ADSR(datas->transition)->sustainValue;
 }
 
-void GameStateManager::enter(State::Enum from) {
+void GameState::enter(State::Enum from) {
     datas->session = theSessionSystem.RetrieveAllEntityWithComponent().front();
     SessionComponent* sc = SESSION(datas->session);
     // only do this on first enter (ie: not when unpausing)
@@ -152,7 +152,7 @@ void GameStateManager::enter(State::Enum from) {
 ///----------------------------------------------------------------------------//
 ///--------------------- UPDATE SECTION ---------------------------------------//
 ///----------------------------------------------------------------------------//
-State::Enum GameStateManager::update(float dt) {
+State::Enum GameState::update(float dt) {
     SessionComponent* sc = SESSION(datas->session);
 
     if (BUTTON(datas->pauseButton)->clicked) {
@@ -341,7 +341,7 @@ State::Enum GameStateManager::update(float dt) {
     return State::Game;
 }
 
-void GameStateManager::backgroundUpdate(float) {
+void GameState::backgroundUpdate(float) {
 
 }
 
@@ -349,14 +349,14 @@ void GameStateManager::backgroundUpdate(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void GameStateManager::willExit(State::Enum to) {
+void GameState::willExit(State::Enum to) {
     BUTTON(datas->pauseButton)->enabled = false;
     if (to != State::Pause) {
         ADSR(datas->transition)->active = false;
     }
 }
 
-bool GameStateManager::transitionCanExit(State::Enum to) {
+bool GameState::transitionCanExit(State::Enum to) {
     if (to == State::Pause) {
         return true;
     }
@@ -369,7 +369,7 @@ bool GameStateManager::transitionCanExit(State::Enum to) {
     return progress <= ADSR(datas->transition)->idleValue;
 }
 
-void GameStateManager::exit(State::Enum) {
+void GameState::exit(State::Enum) {
     RENDERING(datas->pauseButton)->show = false;
 }
 
