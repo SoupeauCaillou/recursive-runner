@@ -19,10 +19,11 @@
 #pragma once
 
 #include "api/RecursiveRunnerStorageAPI.h"
+#include "api/linux/CommunicationAPILinuxImpl.h"
 
 class StorageAPILinuxImpl;
 
-class RecursiveRunnerStorageAPILinuxImpl : public RecursiveRunnerStorageAPI {
+class RecursiveRunnerStorageAPILinuxImpl : public RecursiveRunnerStorageAPI, public CommunicationAPI::ScoreHandler {
 	public:
 		RecursiveRunnerStorageAPILinuxImpl() : _initialized(false) {}
 		
@@ -33,6 +34,11 @@ class RecursiveRunnerStorageAPILinuxImpl : public RecursiveRunnerStorageAPI {
 
 		void submitScore(Score inScore);
 		std::vector<Score> getScores(float& outAverage);
+
+		std::list<CommunicationAPI::Achievement> getAllAchievements();
+		std::list<CommunicationAPI::Score> getScores(unsigned leaderboardID,
+			CommunicationAPI::Score::Visibility visibility, unsigned startRank, unsigned count);
+		void submitScore(unsigned leaderboardID, CommunicationAPI::Score score);
 
 	private:
 #if SAC_EMSCRIPTEN

@@ -56,7 +56,7 @@ static void startMenuMusic(Entity title) {
 }
 
 struct MenuState::MenuStateDatas {
-    Entity titleGroup, title, subtitle, subtitleText, helpBtn, socialCenterBtn, giftizBtn;
+    Entity titleGroup, title, subtitle, subtitleText, helpBtn, goToSocialCenterBtn, giftizBtn;
 };
 
 MenuState::MenuState(RecursiveRunnerGame* game) : StateManager(State::Menu, game) {
@@ -126,26 +126,25 @@ void MenuState::setup() {
     TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
     TEXT_RENDERING(subtitleText)->flags = TextRenderingComponent::AdjustHeightToFillWidthBit;
 
-    Entity socialCenterBtn = datas->socialCenterBtn = theEntityManager.CreateEntity("swarm_button");
-    ADD_COMPONENT(socialCenterBtn, Transformation);
-    TRANSFORM(socialCenterBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm"));
-    TRANSFORM(socialCenterBtn)->parent = game->cameraEntity;
-    TRANSFORM(socialCenterBtn)->position =
+    Entity goToSocialCenterBtn = datas->goToSocialCenterBtn = theEntityManager.CreateEntity("goToSocialCenter_button");
+    ADD_COMPONENT(goToSocialCenterBtn, Transformation);
+    TRANSFORM(goToSocialCenterBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm"));
+    TRANSFORM(goToSocialCenterBtn)->parent = game->cameraEntity;
+    TRANSFORM(goToSocialCenterBtn)->position =
         TRANSFORM(game->cameraEntity)->size * glm::vec2(-0.5, -0.5)
         + glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-
-    TRANSFORM(socialCenterBtn)->z = 0.95;
-    ADD_COMPONENT(socialCenterBtn, Rendering);
-    RENDERING(socialCenterBtn)->texture = theRenderingSystem.loadTextureFile("swarm");
-    RENDERING(socialCenterBtn)->show = true;
-    ADD_COMPONENT(socialCenterBtn, Button);
-    BUTTON(socialCenterBtn)->overSize = 1.2;
+    TRANSFORM(goToSocialCenterBtn)->z = 0.95;
+    ADD_COMPONENT(goToSocialCenterBtn, Rendering);
+    RENDERING(goToSocialCenterBtn)->texture = theRenderingSystem.loadTextureFile("swarm");
+    RENDERING(goToSocialCenterBtn)->show = true;
+    ADD_COMPONENT(goToSocialCenterBtn, Button);
+    BUTTON(goToSocialCenterBtn)->overSize = 1.2;
 
     Entity giftizBtn = datas->giftizBtn = theEntityManager.CreateEntity("giftiz_button");
     ADD_COMPONENT(giftizBtn, Transformation);
     TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("giftiz"));
-    TRANSFORM(giftizBtn)->parent = socialCenterBtn;
-    TRANSFORM(giftizBtn)->position = glm::vec2(0, (TRANSFORM(socialCenterBtn)->size.y) * 0.5 + game->buttonSpacing.V);
+    TRANSFORM(giftizBtn)->parent = goToSocialCenterBtn;
+    TRANSFORM(giftizBtn)->position = glm::vec2(0, (TRANSFORM(goToSocialCenterBtn)->size.y) * 0.5 + game->buttonSpacing.V);
     TRANSFORM(giftizBtn)->z = 0;
     ADD_COMPONENT(giftizBtn, Rendering);
     RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz");
@@ -194,12 +193,12 @@ void MenuState::willEnter(State::Enum from) {
         }
     }
     // start music if not muted
-    if (!theMusicSystem.isMuted()) {
+    if (!theMusicSystem.isMuted() && MUSIC(datas->title)->control == MusicControl::Stop) {
         startMenuMusic(datas->title);
     }
     // unhide UI
-    RENDERING(datas->socialCenterBtn)->show = RENDERING(datas->giftizBtn)->show = RENDERING(datas->helpBtn)->show = true;
-    RENDERING(datas->socialCenterBtn)->color = RENDERING(datas->giftizBtn)->color = RENDERING(datas->helpBtn)->color = Color(1,1,1,0);
+    RENDERING(datas->goToSocialCenterBtn)->show = RENDERING(datas->giftizBtn)->show = RENDERING(datas->helpBtn)->show = true;
+    RENDERING(datas->goToSocialCenterBtn)->color = RENDERING(datas->giftizBtn)->color = RENDERING(datas->helpBtn)->color = Color(1,1,1,0);
     updateGiftizButton(datas->giftizBtn, game);
 }
 
@@ -207,7 +206,7 @@ bool MenuState::transitionCanEnter(State::Enum) {
     // check if adsr is complete
     ADSRComponent* adsr = ADSR(datas->titleGroup);
     float progress = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
-    RENDERING(datas->socialCenterBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = progress;
+    RENDERING(datas->goToSocialCenterBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = progress;
     return (adsr->value == adsr->sustainValue);
 }
 
@@ -215,8 +214,8 @@ bool MenuState::transitionCanEnter(State::Enum) {
 void MenuState::enter(State::Enum) {
     RecursiveRunnerGame::endGame();
     // enable UI
-    BUTTON(datas->socialCenterBtn)->enabled = BUTTON(datas->giftizBtn)->enabled = BUTTON(datas->helpBtn)->enabled = true;
-    RENDERING(datas->socialCenterBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = 1;
+    BUTTON(datas->goToSocialCenterBtn)->enabled = BUTTON(datas->giftizBtn)->enabled = BUTTON(datas->helpBtn)->enabled = true;
+    RENDERING(datas->goToSocialCenterBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = 1;
 }
 
 
@@ -250,15 +249,15 @@ State::Enum MenuState::update(float) {
     }
     updateGiftizButton(datas->giftizBtn, game);
 
-    // Handle Swarm button
+    // Handle SocialCenter button
     if (!game->ignoreClick) {
-        if (BUTTON(datas->socialCenterBtn)->clicked) {
+        if (BUTTON(datas->goToSocialCenterBtn)->clicked) {
             return State::SocialCenter;
             //game->gameThreadContext->communicationAPI->openGameCenter();
         }
-        game->ignoreClick = BUTTON(datas->socialCenterBtn)->mouseOver;
+        game->ignoreClick = BUTTON(datas->goToSocialCenterBtn)->mouseOver;
     }
-    RENDERING(datas->socialCenterBtn)->color = BUTTON(datas->socialCenterBtn)->mouseOver ? Color("gray") : Color();
+    RENDERING(datas->goToSocialCenterBtn)->color = BUTTON(datas->goToSocialCenterBtn)->mouseOver ? Color("gray") : Color();
 
     // Handle Giftiz button
     if (!game->ignoreClick) {
@@ -294,12 +293,14 @@ State::Enum MenuState::update(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-void MenuState::willExit(State::Enum) {
-    // stop menu music
-    MUSIC(datas->title)->control = MusicControl::Stop;
+void MenuState::willExit(State::Enum to) {
+    if (to != State::SocialCenter) {
+        // stop menu music
+        MUSIC(datas->title)->control = MusicControl::Stop;
+    }
 
     // disable button interaction
-    BUTTON(datas->socialCenterBtn)->enabled = false;
+    BUTTON(datas->goToSocialCenterBtn)->enabled = false;
     BUTTON(datas->giftizBtn)->enabled = false;
     BUTTON(datas->helpBtn)->enabled = false;
 
@@ -312,13 +313,13 @@ bool MenuState::transitionCanExit(State::Enum) {
     float progress = (adsr->value - adsr->attackValue) /
             (adsr->idleValue - adsr->attackValue);
 
-    RENDERING(datas->socialCenterBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = 1 - progress;
+    RENDERING(datas->goToSocialCenterBtn)->color.a = RENDERING(datas->giftizBtn)->color.a = RENDERING(datas->helpBtn)->color.a = 1 - progress;
     // check if animation is finished
     return (adsr->value >= adsr->idleValue);
 }
 
 void MenuState::exit(State::Enum) {
-    RENDERING(datas->socialCenterBtn)->show = RENDERING(datas->giftizBtn)->show = RENDERING(datas->helpBtn)->show = false;
+    RENDERING(datas->goToSocialCenterBtn)->show = RENDERING(datas->giftizBtn)->show = RENDERING(datas->helpBtn)->show = false;
 }
 
 #ifndef ANDROID

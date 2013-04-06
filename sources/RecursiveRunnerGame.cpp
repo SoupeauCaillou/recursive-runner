@@ -118,11 +118,14 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
             return false;
     }
 }
+#include "../platforms/default/api/RecursiveRunnerStorageAPILinuxImpl.h"
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
 
     gameThreadContext->storageAPI->init("recursiveRunner");
+    //tobechanged
+    gameThreadContext->communicationAPI->init((CommunicationAPI::ScoreHandler*)static_cast<RecursiveRunnerStorageAPILinuxImpl*>(recursiveRunnerStorageAPI));
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;

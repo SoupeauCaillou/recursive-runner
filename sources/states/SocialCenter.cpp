@@ -21,7 +21,8 @@
 #include <sstream>
 #include <vector>
 
-#include <base/EntityManager.h>
+#include "base/EntityManager.h"
+#include "base/PlacementHelper.h"
 
 #include <systems/TransformationSystem.h>
 #include <systems/ButtonSystem.h>
@@ -31,7 +32,7 @@
 #include <api/CommunicationAPI.h>
 
 struct SocialCenterState::SocialCenterStateDatas {
-    Entity menuBtn;
+    Entity goToMenuBtn;
 };
 
 SocialCenterState::SocialCenterState(RecursiveRunnerGame* game) : StateManager(State::SocialCenter, game) {
@@ -43,13 +44,20 @@ SocialCenterState::~SocialCenterState() {
 }
 
 void SocialCenterState::setup() {
-    Entity menuBtn = datas->menuBtn = theEntityManager.CreateEntity("menuBtn");
-    ADD_COMPONENT(menuBtn, Transformation);
-    TRANSFORM(menuBtn)->z = .9;
-    TRANSFORM(menuBtn)->position = glm::vec2(9., -5);
-    ADD_COMPONENT(menuBtn, Button);
-    ADD_COMPONENT(menuBtn, Rendering);
-    RENDERING(menuBtn)->color = Color::random();
+    Entity goToMenuBtn = datas->goToMenuBtn = theEntityManager.CreateEntity("goToMenu_button");
+    ADD_COMPONENT(goToMenuBtn, Transformation);
+    TRANSFORM(goToMenuBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("reprendre")); //to change
+    TRANSFORM(goToMenuBtn)->parent = game->cameraEntity;
+    TRANSFORM(goToMenuBtn)->position =
+        TRANSFORM(game->cameraEntity)->size * glm::vec2(-0.5, -0.5)
+        + glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
+    TRANSFORM(goToMenuBtn)->z = 0.95;
+    ADD_COMPONENT(goToMenuBtn, Rendering);
+    RENDERING(goToMenuBtn)->texture = theRenderingSystem.loadTextureFile("reprendre");
+    RENDERING(goToMenuBtn)->show = true;
+    RENDERING(goToMenuBtn)->mirrorH = true;
+    ADD_COMPONENT(goToMenuBtn, Button);
+    BUTTON(goToMenuBtn)->overSize = 1.2;
 }
 
 
@@ -59,10 +67,16 @@ void SocialCenterState::setup() {
 ///----------------------------------------------------------------------------//
 void SocialCenterState::willEnter(State::Enum) {
     if (game->gameThreadContext->communicationAPI != 0) {
-        /*for (Score::Struct score : game->gameThreadContext->communicationAPI->getScores(0, Score::ALL, 1, 10)) {
-            LOGI(score);
-        }*/
+        LOGI("Achievements list:");
+        for (auto entry : game->gameThreadContext->communicationAPI->getAllAchievements()) {
+            LOGI("\t" << entry);
+        }
+        LOGI("Scores list:");
+        for (auto entry : game->gameThreadContext->communicationAPI->getScores(0, CommunicationAPI::Score::ALL, 1, 10)) {
+            LOGI("\t" << entry);
+        }
     }
+    RENDERING(datas->goToMenuBtn)->show = true;
 }
 
 bool SocialCenterState::transitionCanEnter(State::Enum) {
@@ -71,8 +85,7 @@ bool SocialCenterState::transitionCanEnter(State::Enum) {
 
 
 void SocialCenterState::enter(State::Enum) {
-    BUTTON(datas->menuBtn)->enabled =
-    RENDERING(datas->menuBtn)->show = true;
+    BUTTON(datas->goToMenuBtn)->enabled = true;
 }
 
 
@@ -83,7 +96,7 @@ void SocialCenterState::backgroundUpdate(float) {
 }
 
 State::Enum SocialCenterState::update(float) {
-    if (BUTTON(datas->menuBtn)->clicked)
+    if (BUTTON(datas->goToMenuBtn)->clicked)
         return State::Menu;
     return State::SocialCenter;
 }
@@ -93,7 +106,7 @@ State::Enum SocialCenterState::update(float) {
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
 void SocialCenterState::willExit(State::Enum) {
-
+    BUTTON(datas->goToMenuBtn)->enabled = false;
 }
 
 bool SocialCenterState::transitionCanExit(State::Enum) {
@@ -101,6 +114,5 @@ bool SocialCenterState::transitionCanExit(State::Enum) {
 }
 
 void SocialCenterState::exit(State::Enum) {
-    BUTTON(datas->menuBtn)->enabled =
-    RENDERING(datas->menuBtn)->show = false;
+    RENDERING(datas->goToMenuBtn)->show = false;
 }
