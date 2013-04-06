@@ -52,14 +52,17 @@
 #include <glm/core/func_geometric.hpp>
 #include <iomanip>
 
-extern std::map<TextureRef, CollisionZone> texture2Collision;
+#include "api/StorageAPI.h"
+#include "api/RecursiveRunnerStorageAPI.h"
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
-RecursiveRunnerGame::RecursiveRunnerGame(StorageAPI* storage) :
+extern std::map<TextureRef, CollisionZone> texture2Collision;
+
+RecursiveRunnerGame::RecursiveRunnerGame(RecursiveRunnerStorageAPI* rrStorage) :
    Game() {
 
-   storageAPI = storage;
+   recursiveRunnerStorageAPI = rrStorage;
 
    RunnerSystem::CreateInstance();
    CameraTargetSystem::CreateInstance();
@@ -108,6 +111,7 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
         case ContextAPI::Localize:
         case ContextAPI::Music:
         case ContextAPI::Sound:
+        case ContextAPI::Storage:
         case ContextAPI::Vibrate:
             return true;
         default:
@@ -181,7 +185,7 @@ void fumee(Entity building) {
     }
 }
 
-void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
+void RecursiveRunnerGame::decor() {
 	silhouette = theEntityManager.CreateEntity("silhouette");
     ADD_COMPONENT(silhouette, Transformation);
     TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville")) * 4.0f;
@@ -378,7 +382,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
     TEXT_RENDERING(bestScore)->show = true;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
-    const bool muted = storageAPI->isMuted();
+    const bool muted = gameThreadContext->storageAPI->isMuted();
     pianist = theEntityManager.CreateEntity("pianist");
     ADD_COMPONENT(pianist, Transformation);
     TRANSFORM(pianist)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("P1"));
@@ -435,7 +439,7 @@ void RecursiveRunnerGame::decor(StorageAPI* storageAPI) {
     theMusicSystem.toggleMute(muted);
 }
 
-void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
+void RecursiveRunnerGame::initGame() {
     Color::nameColor(Color(0.8, 0.8, 0.8), "gray");
     baseLine = PlacementHelper::GimpYToScreen(800);
     leftMostCameraPos =
@@ -463,7 +467,7 @@ void RecursiveRunnerGame::initGame(StorageAPI* storageAPI) {
             const RenderingSystem::Camera& cam = theRenderingSystem.cameras[i];
         }
     }*/
-    decor(storageAPI);
+    decor();
 
     scorePanel = theEntityManager.CreateEntity("score_panel");
     ADD_COMPONENT(scorePanel, Transformation);
@@ -546,7 +550,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     }
 
     level = Level::Level1;
-    initGame(storageAPI);
+    initGame();
     if (in == 0 || size == 0) {
         ground = theEntityManager.CreateEntity("ground", EntityType::Persistent);
         ADD_COMPONENT(ground, Transformation);
@@ -612,8 +616,8 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 
 void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
-        bool muted = !storageAPI->isMuted();
-        storageAPI->setMuted(muted);
+        bool muted = !gameThreadContext->storageAPI->isMuted();
+        gameThreadContext->storageAPI->setMuted(muted);
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
@@ -723,7 +727,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
 
 void RecursiveRunnerGame::updateBestScore() {
     float f;
-    std::vector<StorageAPI::Score> scores = storageAPI->getScores(f);
+    std::vector<StorageAPI::Score> scores = gameThreadContext->storageAPI->getScores(f);
     if (!scores.empty()) {
         std::stringstream best;
         best << "Best: " << scores[0].points;

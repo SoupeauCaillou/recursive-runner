@@ -59,9 +59,9 @@ void SocialCenterState::setup() {
 ///----------------------------------------------------------------------------//
 void SocialCenterState::willEnter(State::Enum) {
     if (game->gameThreadContext->communicationAPI != 0) {
-        for (Score::Struct score : game->gameThreadContext->communicationAPI->getScores(0, Score::ALL, 1, 10)) {
+        /*for (Score::Struct score : game->gameThreadContext->communicationAPI->getScores(0, Score::ALL, 1, 10)) {
             LOGI(score);
-        }
+        }*/
     }
 }
 

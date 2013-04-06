@@ -28,7 +28,7 @@
 
 #include "api/AdAPI.h"
 #include "api/ExitAPI.h"
-#include "api/StorageAPI.h"
+#include "api/RecursiveRunnerStorageAPI.h"
 #include "api/CommunicationAPI.h"
 #include "states/StateManager.h"
 
@@ -56,7 +56,7 @@ class RecursiveRunnerGame : public Game {
       static void endGame();
 
    public:
-      RecursiveRunnerGame(StorageAPI* storage);
+      RecursiveRunnerGame(RecursiveRunnerStorageAPI* rrStorage);
       ~RecursiveRunnerGame();
       bool wantsAPI(ContextAPI::Enum api) const;
       void sacInit(int windowW, int windowH);
@@ -77,8 +77,8 @@ class RecursiveRunnerGame : public Game {
       std::map<State::Enum, StateManager*> state2manager;
       TransitionStateManager transitionManager;
 
-      void decor(StorageAPI* storageAPI);
-      void initGame(StorageAPI* storageAPI);
+      void decor();
+      void initGame();
 
    public:
       // shared/global vars
@@ -86,7 +86,8 @@ class RecursiveRunnerGame : public Game {
       bool ignoreClick;
       Entity silhouette, route, cameraEntity, bestScore;
       std::vector<Entity> decorEntities;
-      StorageAPI* storageAPI;
+
+      RecursiveRunnerStorageAPI* recursiveRunnerStorageAPI;
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;
       Entity muteBtn, ground;

@@ -31,9 +31,12 @@
 #include "systems/PlayerSystem.h"
 #include "systems/ParticuleSystem.h"
 #include "systems/AutoDestroySystem.h"
+
 #include "../systems/SessionSystem.h"
 #include "../systems/RunnerSystem.h"
+
 #include "api/LocalizeAPI.h"
+#include "api/StorageAPI.h"
 
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
@@ -183,7 +186,7 @@ void MenuState::willEnter(State::Enum from) {
         std::stringstream a;
         a << PLAYER(players[0])->score << " points - " << game->gameThreadContext->localizeAPI->text("tap_screen_to_restart", "tap screen to restart");;
         TEXT_RENDERING(datas->subtitleText)->text = a.str();
-        game->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
+        game->gameThreadContext->storageAPI->submitScore(StorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
         game->updateBestScore();
 
         if (PLAYER(players[0])->score >= 15000) {
@@ -277,8 +280,8 @@ State::Enum MenuState::update(float) {
 
     // Start game ? (tutorial if no game done)
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
-        game->storageAPI->incrementGameCount();
-        if (game->storageAPI->isFirstGame()) {
+        game->gameThreadContext->storageAPI->incrementGameCount();
+        if (game->gameThreadContext->storageAPI->isFirstGame()) {
             return State::Tutorial;
         } else {
             return State::Ad;
