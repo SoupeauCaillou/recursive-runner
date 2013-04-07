@@ -22,7 +22,7 @@
 #include <glm/glm.hpp>
 
 struct PlatformerComponent {
-    PlatformerComponent() : previousPosition(0.0f), onPlatform(0) {}
+    PlatformerComponent() : previousPosition(0.0f), offset(0.0f), onPlatform(0) {}
     glm::vec2 previousPosition, offset;
     Entity onPlatform;
     std::map<Entity, bool> platforms;
