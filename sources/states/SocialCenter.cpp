@@ -54,7 +54,6 @@ void SocialCenterState::setup() {
     TRANSFORM(goToMenuBtn)->z = 0.95;
     ADD_COMPONENT(goToMenuBtn, Rendering);
     RENDERING(goToMenuBtn)->texture = theRenderingSystem.loadTextureFile("reprendre");
-    RENDERING(goToMenuBtn)->show = true;
     RENDERING(goToMenuBtn)->mirrorH = true;
     ADD_COMPONENT(goToMenuBtn, Button);
     BUTTON(goToMenuBtn)->overSize = 1.2;
