@@ -123,7 +123,7 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
 
-    gameThreadContext->storageAPI->init("recursiveRunner");
+    //gameThreadContext->storageAPI->init("recursiveRunner");
     //tobechanged
     gameThreadContext->communicationAPI->init((CommunicationAPI::ScoreHandler*)static_cast<RecursiveRunnerStorageAPILinuxImpl*>(recursiveRunnerStorageAPI));
 
@@ -388,7 +388,7 @@ void RecursiveRunnerGame::decor() {
     TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
     TEXT_RENDERING(bestScore)->show = true;
     TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
-    const bool muted = gameThreadContext->storageAPI->isMuted();
+    const bool muted = true;//gameThreadContext->storageAPI->isMuted();
     pianist = theEntityManager.CreateEntity("pianist");
     ADD_COMPONENT(pianist, Transformation);
     TRANSFORM(pianist)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("P1"));
@@ -555,7 +555,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         }
     }
 
-    recursiveRunnerStorageAPI->init(gameThreadContext->storageAPI);
+    // recursiveRunnerStorageAPI->init(gameThreadContext->storageAPI);
 
     level = Level::Level1;
     initGame();
@@ -624,8 +624,8 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 
 void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
-        bool muted = !gameThreadContext->storageAPI->isMuted();
-        gameThreadContext->storageAPI->setMuted(muted);
+        bool muted = true;//!gameThreadContext->storageAPI->isMuted();
+        // gameThreadContext->storageAPI->setMuted(muted);
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
@@ -735,7 +735,7 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
 
 void RecursiveRunnerGame::updateBestScore() {
     float f;
-    std::vector<RecursiveRunnerStorageAPI::Score> scores = recursiveRunnerStorageAPI->getScores(f);
+    std::vector<RecursiveRunnerStorageAPI::Score> scores; // = recursiveRunnerStorageAPI->getScores(f);
     if (!scores.empty()) {
         std::stringstream best;
         best << "Best: " << scores[0].points;

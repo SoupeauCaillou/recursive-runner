@@ -34,15 +34,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 void RecursiveRunnerStorageAPILinuxImpl::init(StorageAPI* storage) {
+#if !SAC_EMSCRIPTEN
 	_initialized = true;
 	_storageAPI = (StorageAPILinuxImpl*) storage;
-	_storageAPI->request("create table score(points number(7) default '0', coins number(7) default '0', name varchar2(11) default 'Anonymous')", 0, 0);
+	// _storageAPI->request("create table score(points number(7) default '0', coins number(7) default '0', name varchar2(11) default 'Anonymous')", 0, 0);
+#endif
 }
 
 int RecursiveRunnerStorageAPILinuxImpl::getCoinsCount() {
 #ifdef EMSCRIPTEN
 	return 0;
-#else
+#elif 0
 	LOGF_IF(!_initialized, "Didn't initialized RecursiveRunnerStorageAPI");
 
 	//check the table is not empty before
@@ -64,7 +66,7 @@ int RecursiveRunnerStorageAPILinuxImpl::getCoinsCount() {
 
 void RecursiveRunnerStorageAPILinuxImpl::submitScore(Score inScr) {
 #if SAC_EMSCRIPTEN
-    int count = MathUtil::Min(5, (int)_scores.size());
+    int count = std::min(5, (int)_scores.size());
     for (int i=0; i<count; i++) {
         if (inScr.points > _scores[i].points) {
             _scores.insert(_scores.begin() + i, inScr);
@@ -74,7 +76,7 @@ void RecursiveRunnerStorageAPILinuxImpl::submitScore(Score inScr) {
     if (count < 5)
         _scores.push_back(inScr);
 
-#else
+#elif 0
 	LOGF_IF(!_initialized, "Didn't initialized RecursiveRunnerStorageAPI");
 
     //check that the player isn't cheating (adding himself coins) (max is number of coints * runnerCount * runnerghost)
@@ -94,7 +96,7 @@ void RecursiveRunnerStorageAPILinuxImpl::submitScore(Score inScr) {
 std::vector<RecursiveRunnerStorageAPI::Score> RecursiveRunnerStorageAPILinuxImpl::getScores(float& outAvg) {
 #if SAC_EMSCRIPTEN
     return _scores;
-#else
+#elif 0
 	LOGF_IF(!_initialized, "Didn't initialized RecursiveRunnerStorageAPI");
 
     std::vector<RecursiveRunnerStorageAPI::Score> result;

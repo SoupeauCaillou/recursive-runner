@@ -25,7 +25,11 @@ class StorageAPILinuxImpl;
 
 class RecursiveRunnerStorageAPILinuxImpl : public RecursiveRunnerStorageAPI, public CommunicationAPI::ScoreHandler {
 	public:
-		RecursiveRunnerStorageAPILinuxImpl() : _initialized(false) {}
+		RecursiveRunnerStorageAPILinuxImpl()
+		#if ! SAC_EMSCRIPTEN
+			: _initialized(false) 
+		#endif
+		{}
 		
 		//must be called before anything else
 		void init(StorageAPI* storage);
