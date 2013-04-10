@@ -235,7 +235,7 @@ void TutorialState::willEnter(State::Enum) {
 
     PlacementHelper::ScreenWidth = 20;
     PlacementHelper::GimpWidth = 1280;
-    TEXT_RENDERING(datas->entities.text)->text = game->gameThreadContext->localizeAPI->text("how_to_play", "How to play? (tap to continue)");
+    TEXT_RENDERING(datas->entities.text)->text = game->gameThreadContext->localizeAPI->text("how_to_play");
     TEXT_RENDERING(datas->entities.text)->show = false;
 
     BUTTON(game->muteBtn)->enabled = false;

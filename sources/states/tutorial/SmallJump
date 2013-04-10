@@ -3,7 +3,7 @@
 struct SmallJumpTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->show = false;
-        TEXT_RENDERING(entities->text)->text = loc->text("tap_jump", "Tap the screen to jump");
+        TEXT_RENDERING(entities->text)->text = loc->text("tap_jump");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities*) {
         if (TRANSFORM(sc->currentRunner)->position.x < -15) {

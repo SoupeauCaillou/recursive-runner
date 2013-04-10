@@ -3,7 +3,7 @@
 struct RunTilTheEdgeTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->show = false;
-        TEXT_RENDERING(entities->text)->text = loc->text("run_edge", "Your hero will run until the edge of the screen");
+        TEXT_RENDERING(entities->text)->text = loc->text("run_edge");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
         return (TRANSFORM(sc->currentRunner)->position.x < 29);

@@ -120,7 +120,7 @@ void MenuState::setup() {
     TRANSFORM(subtitleText)->position = glm::vec2(0, -PlacementHelper::GimpHeightToScreen(25));
     TRANSFORM(subtitleText)->size = glm::vec2(PlacementHelper::GimpWidthToScreen(790), 1);
     ADD_COMPONENT(subtitleText, TextRendering);
-    TEXT_RENDERING(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start", "Tap screen to start");
+    TEXT_RENDERING(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
     TEXT_RENDERING(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
     TEXT_RENDERING(subtitleText)->show = true;
     TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
@@ -183,7 +183,7 @@ void MenuState::willEnter(State::Enum from) {
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty() && from == State::Game) {
         std::stringstream a;
-        a << PLAYER(players[0])->score << " points - " << game->gameThreadContext->localizeAPI->text("tap_screen_to_restart", "tap screen to restart");;
+        a << PLAYER(players[0])->score << " points - " << game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
         TEXT_RENDERING(datas->subtitleText)->text = a.str();
         game->recursiveRunnerStorageAPI->submitScore(RecursiveRunnerStorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
         game->updateBestScore();
@@ -279,12 +279,15 @@ State::Enum MenuState::update(float) {
 
     // Start game ? (tutorial if no game done)
     if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
+        return State::Ad;
+        #if 0
         game->gameThreadContext->storageAPI->incrementGameCount();
         if (game->gameThreadContext->storageAPI->isFirstGame()) {
             return State::Tutorial;
         } else {
             return State::Ad;
         }
+        #endif
     }
     return State::Menu;
 }

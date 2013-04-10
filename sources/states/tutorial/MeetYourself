@@ -5,7 +5,7 @@
 struct MeetYourselfTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* sc, TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->show = false;
-        TEXT_RENDERING(entities->text)->text = loc->text("previous_hero_replay", "Your previous hero is replaying its run");
+        TEXT_RENDERING(entities->text)->text = loc->text("previous_hero_replay");
     
         RENDERING(entities->anim)->show = true;
         TRANSFORM(entities->anim)->position = TRANSFORM(sc->runners[0])->worldPosition +

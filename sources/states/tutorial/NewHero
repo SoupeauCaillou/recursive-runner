@@ -5,7 +5,7 @@
 struct NewHeroTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* sc, TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->show = false;
-        TEXT_RENDERING(entities->text)->text = loc->text("new_hero", "This is the your new hero");
+        TEXT_RENDERING(entities->text)->text = loc->text("new_hero");
 
         RENDERING(entities->anim)->show = true;
         TRANSFORM(entities->anim)->position = TRANSFORM(sc->currentRunner)->worldPosition +

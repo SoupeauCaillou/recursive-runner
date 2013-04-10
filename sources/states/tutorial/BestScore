@@ -3,7 +3,7 @@
 struct BestScoreTutorialStep : public TutorialStep {
     void enter(LocalizeAPI* loc, SessionComponent* , TutorialEntities* entities) {
         TEXT_RENDERING(entities->text)->show = false;
-        TEXT_RENDERING(entities->text)->text = loc->text("ten_heroes", "10 heroes, 5 roundtrips: try to get the best score!");
+        TEXT_RENDERING(entities->text)->text = loc->text("ten_heroes");
     }
     bool mustUpdateGame(SessionComponent* sc, TutorialEntities* ) {
         return (TRANSFORM(sc->currentRunner)->position.x > -15);
