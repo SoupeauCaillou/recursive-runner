@@ -451,28 +451,16 @@ void RecursiveRunnerGame::initGame() {
     leftMostCameraPos =
         glm::vec2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
         baseLine + theRenderingSystem.screenH * 0.5);
-
-    // 3 cameras
-    // Default camera (UI)
-    /*if (theRenderingSystem.cameras.size() < 3)*/ {
         LOGI("Creating cameras");
         Entity camera = cameraEntity = theEntityManager.CreateEntity("camera1");
-        ADD_COMPONENT(camera, Transformation);
-        TRANSFORM(camera)->position = leftMostCameraPos;
-        TRANSFORM(camera)->size = glm::vec2(theRenderingSystem.screenW, theRenderingSystem.screenH);
-        TRANSFORM(camera)->z = 0;
-        ADD_COMPONENT(camera, Camera);
-        CAMERA(camera)->clearColor = Color(148.0/255, 148.0/255, 148.0/255, 1.0);
-        // 1st player
-        // theRenderingSystem.cameras.push_back(cam);
-        // 2nd player
-        // theRenderingSystem.cameras.push_back(cam);
-    }/* else {
-        LOGI(theRenderingSystem.cameras.size() << " cameras already exist")
-        for (unsigned i=0; i<theRenderingSystem.cameras.size(); i++) {
-            const RenderingSystem::Camera& cam = theRenderingSystem.cameras[i];
-        }
-    }*/
+
+    ADD_COMPONENT(camera, Transformation);
+    TRANSFORM(camera)->position = leftMostCameraPos;
+    TRANSFORM(camera)->size = glm::vec2(theRenderingSystem.screenW, theRenderingSystem.screenH);
+    TRANSFORM(camera)->z = 0;
+    ADD_COMPONENT(camera, Camera);
+    CAMERA(camera)->clearColor = Color(148.0/255, 148.0/255, 148.0/255, 1.0);
+        
     decor();
 
     scorePanel = theEntityManager.CreateEntity("score_panel");
@@ -624,6 +612,8 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 
 void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
+        theRenderingSystem.textureLibrary.reloadAll();
+
         bool muted = true;//!gameThreadContext->storageAPI->isMuted();
         // gameThreadContext->storageAPI->setMuted(muted);
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
@@ -705,24 +695,6 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
     switch (mode) {
         case CameraMode::Single:
             LOGI("Setup camera : Single");
-            #if 0
-            theRenderingSystem.cameras[0].enable = false;
-            theRenderingSystem.cameras[1].enable = true;
-            theRenderingSystem.cameras[2].enable = false;
-            theRenderingSystem.cameras[1].worldSize.Y = PlacementHelper::ScreenHeight;
-            theRenderingSystem.cameras[1].worldPosition.Y = 0;
-            theRenderingSystem.cameras[1].screenSize.Y = 1;
-            theRenderingSystem.cameras[1].screenPosition.Y  = 0;
-            theRenderingSystem.cameras[1].mirrorY = false;
-
-            TEXT_RENDERING(scoreText)->show = true;
-            TEXT_RENDERING(scoreText)->positioning = TextRenderingComponent::CENTER;
-
-            for (unsigned i=0; i<1; i++) {
-                theRenderingSystem.cameras[1 + i].worldPosition.x = leftMostCameraPos.x;
-                    //TRANSFORM(sc->currentRunner)->position.X + PlacementHelper::ScreenWidth * 0.5;
-            }
-            #endif
             break;
         case CameraMode::Menu:
             LOGI("Setup camera : Menu");
