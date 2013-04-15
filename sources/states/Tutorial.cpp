@@ -16,7 +16,7 @@
    You should have received a copy of the GNU General Public License
    along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "StateManager.h"
+#include "base/StateMachine.h"
 
 #include "base/EntityManager.h"
 #include "base/PlacementHelper.h"
@@ -83,8 +83,9 @@ struct TutorialStep {
 #include "tutorial/BestScore"
 #include "tutorial/TheEnd"
 
-struct TutorialState::TutorialStateDatas {
-    GameState* gameStateMgr;
+class TutorialScene : public StateHandler<Scene::Enum> {
+    RecursiveRunnerGame* game;
+    // GameState* gameStateMgr;
     float waitBeforeEnterExit;
     TutorialEntities entities;
     Entity titleGroup, title, hideText;
@@ -92,271 +93,275 @@ struct TutorialState::TutorialStateDatas {
     bool waitingClick;
     std::map<Tutorial::Enum, TutorialStep*> step2mgr;
     float flecheAccum;
-};
 
-TutorialState::TutorialState(RecursiveRunnerGame* game) : StateManager(State::Tutorial, game) {
-   datas = new TutorialStateDatas;
-   datas->gameStateMgr = new GameState(game);
-}
+public:
 
-TutorialState::~TutorialState() {
-    delete datas->gameStateMgr;
-
-    delete datas;
-}
-
-void TutorialState::setup() {
-    // setup game
-    datas->gameStateMgr->setup();
-    // setup tutorial
-    Entity titleGroup = datas->titleGroup  = theEntityManager.CreateEntity("tuto_title_group");
-    ADD_COMPONENT(titleGroup, Transformation);
-    TRANSFORM(titleGroup)->z = 0.7;
-    TRANSFORM(titleGroup)->rotation = 0.036;
-    TRANSFORM(titleGroup)->parent = game->cameraEntity;
-    ADD_COMPONENT(titleGroup, ADSR);
-    ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenHeight + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.6;
-    ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.5
-        + PlacementHelper::GimpHeightToScreen(35);
-    ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
-    ADSR(titleGroup)->attackTiming = 1;
-    ADSR(titleGroup)->decayTiming = 0.1;
-    ADSR(titleGroup)->releaseTiming = 0.3;
-    TRANSFORM(titleGroup)->position = glm::vec2(0, ADSR(titleGroup)->idleValue);
-
-    Entity title = datas->title = theEntityManager.CreateEntity("tuto_title");
-    ADD_COMPONENT(title, Transformation);
-    TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
-    TRANSFORM(title)->parent = titleGroup;
-    TRANSFORM(title)->position = glm::vec2(0.0f);
-    TRANSFORM(title)->z = 0.15;
-    ADD_COMPONENT(title, Rendering);
-    RENDERING(title)->texture = theRenderingSystem.loadTextureFile("taptostart");
-
-    Entity hideText = datas->hideText = theEntityManager.CreateEntity("tuto_hide_text");
-    ADD_COMPONENT(hideText, Transformation);
-    TRANSFORM(hideText)->size = PlacementHelper::GimpSizeToScreen(glm::vec2(776, 102));
-    TRANSFORM(hideText)->parent = title;
-    TRANSFORM(hideText)->position = (glm::vec2(-0.5, 0.5) + glm::vec2(41, -72) / theRenderingSystem.getTextureSize("titre")) *
-        TRANSFORM(title)->size + TRANSFORM(hideText)->size * glm::vec2(0.5, -0.5);
-    TRANSFORM(hideText)->z = 0.01;
-    ADD_COMPONENT(hideText, Rendering);
-    RENDERING(hideText)->color = Color(130.0/255, 116.0/255, 117.0/255);
-
-    Entity text = datas->entities.text = theEntityManager.CreateEntity("tuto_text");
-    ADD_COMPONENT(text, Transformation);
-    TRANSFORM(text)->size = TRANSFORM(hideText)->size;
-    TRANSFORM(text)->parent = hideText;
-    TRANSFORM(text)->z = 0.02;
-    TRANSFORM(text)->rotation = 0.004;
-    ADD_COMPONENT(text, TextRendering);
-    TEXT_RENDERING(text)->charHeight = PlacementHelper::GimpHeightToScreen(50);
-    TEXT_RENDERING(text)->show = false;
-    TEXT_RENDERING(text)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
-    TEXT_RENDERING(text)->positioning = TextRenderingComponent::CENTER;
-    TEXT_RENDERING(text)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
-
-    Entity anim = datas->entities.anim = theEntityManager.CreateEntity("tuto_fleche");
-    ADD_COMPONENT(anim, Transformation);
-    TRANSFORM(anim)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fleche"));
-    TRANSFORM(anim)->z = 0.9;
-    ADD_COMPONENT(anim, Rendering);
-    RENDERING(anim)->texture = theRenderingSystem.loadTextureFile("fleche");
-    RENDERING(anim)->show = false;
-    // ADD_COMPONENT(anim, Animation);
-}
-
-
-///----------------------------------------------------------------------------//
-///--------------------- ENTER SECTION ----------------------------------------//
-///----------------------------------------------------------------------------//
-void TutorialState::willEnter(State::Enum) {
-    #define INSTANCIATE_STEP(step) \
-        datas->step2mgr[Tutorial:: step] = new step##TutorialStep
-    INSTANCIATE_STEP(Title);
-    INSTANCIATE_STEP(IntroduceHero);
-    INSTANCIATE_STEP(SmallJump);
-    INSTANCIATE_STEP(ScorePoints);
-    INSTANCIATE_STEP(BigJump);
-    INSTANCIATE_STEP(RunTilTheEdge);
-    INSTANCIATE_STEP(NewHero);
-    INSTANCIATE_STEP(MeetYourself);
-    INSTANCIATE_STEP(AvoidYourself);
-    INSTANCIATE_STEP(BestScore);
-    INSTANCIATE_STEP(TheEnd);
-    assert(datas->step2mgr.size() == (int)Tutorial::Count);
-
-    datas->flecheAccum = -1;
-    bool isMuted = theMusicSystem.isMuted();
-    theMusicSystem.toggleMute(true);
-    datas->gameStateMgr->willEnter(State::Tutorial);
-    theMusicSystem.toggleMute(isMuted);
-
-    datas->waitBeforeEnterExit = TimeUtil::GetTime();
-    RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = false;
-
-    // hack lights/links
-    SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-    std::for_each(session->coins.begin(), session->coins.end(), deleteEntityFunctor);
-    session->coins.clear();
-    std::for_each(session->links.begin(), session->links.end(), deleteEntityFunctor);
-    session->links.clear();
-    std::for_each(session->sparkling.begin(), session->sparkling.end(), deleteEntityFunctor);
-    session->sparkling.clear();
-
-    PlacementHelper::ScreenWidth = 60;
-    PlacementHelper::GimpWidth = 3840;
-    glm::vec2 c[] = {
-        PlacementHelper::GimpPositionToScreen(glm::vec2(184, 568)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(316, 448)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(432, 612)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(844, 600)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(910, 450)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(1046, 630)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(1244, 564)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(1340, 508)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(1568, 460)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(1820, 450)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(1872, 580)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(2096, 464)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(2380, 584)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(2540, 472)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(2692, 572)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(2916, 500)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(3044, 568)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(3560, 492)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(3684, 566)),
-        PlacementHelper::GimpPositionToScreen(glm::vec2(3776, 470))
-    };
-    std::vector<glm::vec2> coords;
-    coords.resize(20);
-    std::copy(c, &c[20], coords.begin());
-    RecursiveRunnerGame::createCoins(coords, session, true);
-
-    PlacementHelper::ScreenWidth = 20;
-    PlacementHelper::GimpWidth = 1280;
-    TEXT_RENDERING(datas->entities.text)->text = game->gameThreadContext->localizeAPI->text("how_to_play");
-    TEXT_RENDERING(datas->entities.text)->show = false;
-
-    BUTTON(game->muteBtn)->enabled = false;
-}
-
-bool TutorialState::transitionCanEnter(State::Enum from) {
-   bool gameCanEnter = datas->gameStateMgr->transitionCanEnter(from);
-
-    if (TimeUtil::GetTime() - datas->waitBeforeEnterExit < ADSR(datas->titleGroup)->attackTiming) {
-        return false;
+    TutorialScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
+       this->game = game;
+       // gameStateMgr = new GameState(game);
     }
-    // TRANSFORM(datas->titleGroup)->position.X = theRenderingSystem.cameras[1].worldPosition.X;
-    ADSR(datas->titleGroup)->active = true;
-    RENDERING(datas->title)->show = true;
-    //RENDERING(datas->hideText)->show = true;
 
-    ADSRComponent* adsr = ADSR(datas->titleGroup);
-    TRANSFORM(datas->titleGroup)->position.y = adsr->value;
-    RENDERING(game->muteBtn)->color.a = 1. - (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
+    ~TutorialScene() {
+        // delete gameStateMgr;
+    }
 
-    return (adsr->value == adsr->sustainValue) && gameCanEnter;
-}
+    void setup() {
+        // setup game
+        // gameStateMgr->setup();
+        // setup tutorial
+        titleGroup  = theEntityManager.CreateEntity("tuto_title_group");
+        ADD_COMPONENT(titleGroup, Transformation);
+        TRANSFORM(titleGroup)->z = 0.7;
+        TRANSFORM(titleGroup)->rotation = 0.036;
+        TRANSFORM(titleGroup)->parent = game->cameraEntity;
+        ADD_COMPONENT(titleGroup, ADSR);
+        ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenHeight + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.6;
+        ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.5
+            + PlacementHelper::GimpHeightToScreen(35);
+        ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
+        ADSR(titleGroup)->attackTiming = 1;
+        ADSR(titleGroup)->decayTiming = 0.1;
+        ADSR(titleGroup)->releaseTiming = 0.3;
+        TRANSFORM(titleGroup)->position = glm::vec2(0, ADSR(titleGroup)->idleValue);
 
-void TutorialState::enter(State::Enum) {
-    SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-    session->userInputEnabled = false;
-    TEXT_RENDERING(datas->entities.text)->show = true;
+        title = theEntityManager.CreateEntity("tuto_title");
+        ADD_COMPONENT(title, Transformation);
+        TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
+        TRANSFORM(title)->parent = titleGroup;
+        TRANSFORM(title)->position = glm::vec2(0.0f);
+        TRANSFORM(title)->z = 0.15;
+        ADD_COMPONENT(title, Rendering);
+        RENDERING(title)->texture = theRenderingSystem.loadTextureFile("taptostart");
 
-    datas->gameStateMgr->enter(State::Tutorial);
-    datas->waitingClick = true;
-    datas->currentStep = Tutorial::Title;
-    datas->step2mgr[datas->currentStep]->enter(game->gameThreadContext->localizeAPI, session, &datas->entities);
-    RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = false;
-}
+        hideText = theEntityManager.CreateEntity("tuto_hide_text");
+        ADD_COMPONENT(hideText, Transformation);
+        TRANSFORM(hideText)->size = PlacementHelper::GimpSizeToScreen(glm::vec2(776, 102));
+        TRANSFORM(hideText)->parent = title;
+        TRANSFORM(hideText)->position = (glm::vec2(-0.5, 0.5) + glm::vec2(41, -72) / theRenderingSystem.getTextureSize("titre")) *
+            TRANSFORM(title)->size + TRANSFORM(hideText)->size * glm::vec2(0.5, -0.5);
+        TRANSFORM(hideText)->z = 0.01;
+        ADD_COMPONENT(hideText, Rendering);
+        RENDERING(hideText)->color = Color(130.0/255, 116.0/255, 117.0/255);
+
+        entities.text = theEntityManager.CreateEntity("tuto_text");
+        ADD_COMPONENT(entities.text, Transformation);
+        TRANSFORM(entities.text)->size = TRANSFORM(hideText)->size;
+        TRANSFORM(entities.text)->parent = hideText;
+        TRANSFORM(entities.text)->z = 0.02;
+        TRANSFORM(entities.text)->rotation = 0.004;
+        ADD_COMPONENT(entities.text, TextRendering);
+        TEXT_RENDERING(entities.text)->charHeight = PlacementHelper::GimpHeightToScreen(50);
+        TEXT_RENDERING(entities.text)->show = false;
+        TEXT_RENDERING(entities.text)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
+        TEXT_RENDERING(entities.text)->positioning = TextRenderingComponent::CENTER;
+        TEXT_RENDERING(entities.text)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
+
+        entities.anim = theEntityManager.CreateEntity("tuto_fleche");
+        ADD_COMPONENT(entities.anim, Transformation);
+        TRANSFORM(entities.anim)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fleche"));
+        TRANSFORM(entities.anim)->z = 0.9;
+        ADD_COMPONENT(entities.anim, Rendering);
+        RENDERING(entities.anim)->texture = theRenderingSystem.loadTextureFile("fleche");
+        RENDERING(entities.anim)->show = false;
+        LOGW("TODO : use Animation for tutorial arrow blinking")
+    }
 
 
-///----------------------------------------------------------------------------//
-///--------------------- UPDATE SECTION ---------------------------------------//
-///----------------------------------------------------------------------------//
-void TutorialState::backgroundUpdate(float) {
-}
+    ///----------------------------------------------------------------------------//
+    ///--------------------- ENTER SECTION ----------------------------------------//
+    ///----------------------------------------------------------------------------//
+    void onPreEnter(Scene::Enum) {
+        #define INSTANCIATE_STEP(step) \
+            step2mgr[Tutorial:: step] = new step##TutorialStep
+        INSTANCIATE_STEP(Title);
+        INSTANCIATE_STEP(IntroduceHero);
+        INSTANCIATE_STEP(SmallJump);
+        INSTANCIATE_STEP(ScorePoints);
+        INSTANCIATE_STEP(BigJump);
+        INSTANCIATE_STEP(RunTilTheEdge);
+        INSTANCIATE_STEP(NewHero);
+        INSTANCIATE_STEP(MeetYourself);
+        INSTANCIATE_STEP(AvoidYourself);
+        INSTANCIATE_STEP(BestScore);
+        INSTANCIATE_STEP(TheEnd);
+        assert(step2mgr.size() == (int)Tutorial::Count);
 
-State::Enum TutorialState::update(float dt) {
-    SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-    if (datas->waitingClick) {
-        if (datas->flecheAccum >= 0) {
-            datas->flecheAccum += dt * 2;
-            RENDERING(datas->entities.anim)->show = !(((int)datas->flecheAccum) % 2);
+        flecheAccum = -1;
+        bool isMuted = theMusicSystem.isMuted();
+        theMusicSystem.toggleMute(true);
+        // gameStateMgr->willEnter(Scene::Tutorial);
+        theMusicSystem.toggleMute(isMuted);
+
+        waitBeforeEnterExit = TimeUtil::GetTime();
+        RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = false;
+
+        // hack lights/links
+        SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+        std::for_each(session->coins.begin(), session->coins.end(), deleteEntityFunctor);
+        session->coins.clear();
+        std::for_each(session->links.begin(), session->links.end(), deleteEntityFunctor);
+        session->links.clear();
+        std::for_each(session->sparkling.begin(), session->sparkling.end(), deleteEntityFunctor);
+        session->sparkling.clear();
+
+        PlacementHelper::ScreenWidth = 60;
+        PlacementHelper::GimpWidth = 3840;
+        glm::vec2 c[] = {
+            PlacementHelper::GimpPositionToScreen(glm::vec2(184, 568)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(316, 448)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(432, 612)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(844, 600)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(910, 450)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(1046, 630)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(1244, 564)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(1340, 508)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(1568, 460)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(1820, 450)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(1872, 580)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(2096, 464)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(2380, 584)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(2540, 472)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(2692, 572)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(2916, 500)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(3044, 568)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(3560, 492)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(3684, 566)),
+            PlacementHelper::GimpPositionToScreen(glm::vec2(3776, 470))
+        };
+        std::vector<glm::vec2> coords;
+        coords.resize(20);
+        std::copy(c, &c[20], coords.begin());
+        RecursiveRunnerGame::createCoins(coords, session, true);
+
+        PlacementHelper::ScreenWidth = 20;
+        PlacementHelper::GimpWidth = 1280;
+        TEXT_RENDERING(entities.text)->text = game->gameThreadContext->localizeAPI->text("how_to_play");
+        TEXT_RENDERING(entities.text)->show = false;
+
+        BUTTON(game->muteBtn)->enabled = false;
+    }
+
+    bool updatePreEnter(Scene::Enum from, float) {
+       // bool gameCanEnter = gameStateMgr->transitionCanEnter(from);
+
+        if (TimeUtil::GetTime() - waitBeforeEnterExit < ADSR(titleGroup)->attackTiming) {
+            return false;
         }
+        // TRANSFORM(titleGroup)->position.X = theRenderingSystem.cameras[1].worldPosition.X;
+        ADSR(titleGroup)->active = true;
+        RENDERING(title)->show = true;
+        //RENDERING(hideText)->show = true;
 
-        if (!game->ignoreClick && theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
-            datas->waitingClick = false;
-            datas->step2mgr[datas->currentStep]->exit(session, &datas->entities);
-            if (datas->currentStep == Tutorial::TheEnd) {
-                return State::Menu;
-            } else {
-                datas->currentStep = (Tutorial::Enum) (datas->currentStep + 1);
-                // datas->step2mgr[datas->currentStep]->enter(game->localizeAPI, session, &datas->entities);
-                TEXT_RENDERING(datas->entities.text)->show = true;
-                TEXT_RENDERING(datas->entities.text)->text = ". . .";
-                RENDERING(datas->entities.anim)->show = false;
-                datas->flecheAccum = 0;
+        ADSRComponent* adsr = ADSR(titleGroup);
+        TRANSFORM(titleGroup)->position.y = adsr->value;
+        RENDERING(game->muteBtn)->color.a = 1. - (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
+
+        // return (adsr->value == adsr->sustainValue) && gameCanEnter;
+    }
+
+    void onEnter(Scene::Enum) {
+        SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+        session->userInputEnabled = false;
+        TEXT_RENDERING(entities.text)->show = true;
+
+        // gameStateMgr->enter(Scene::Tutorial);
+        waitingClick = true;
+        currentStep = Tutorial::Title;
+        step2mgr[currentStep]->enter(game->gameThreadContext->localizeAPI, session, &entities);
+        RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = false;
+    }
+
+
+    ///----------------------------------------------------------------------------//
+    ///--------------------- UPDATE SECTION ---------------------------------------//
+    ///----------------------------------------------------------------------------//
+
+    Scene::Enum update(float dt) {
+        SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+        if (waitingClick) {
+            if (flecheAccum >= 0) {
+                flecheAccum += dt * 2;
+                RENDERING(entities.anim)->show = !(((int)flecheAccum) % 2);
+            }
+
+            if (!game->ignoreClick && theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
+                waitingClick = false;
+                step2mgr[currentStep]->exit(session, &entities);
+                if (currentStep == Tutorial::TheEnd) {
+                    return Scene::Menu;
+                } else {
+                    currentStep = (Tutorial::Enum) (currentStep + 1);
+                    // step2mgr[currentStep]->enter(game->localizeAPI, session, &entities);
+                    TEXT_RENDERING(entities.text)->show = true;
+                    TEXT_RENDERING(entities.text)->text = ". . .";
+                    RENDERING(entities.anim)->show = false;
+                    flecheAccum = 0;
+                }
+            }
+        } else {
+            flecheAccum += dt * 3;
+            TEXT_RENDERING(entities.text)->show = !(((int)flecheAccum) % 2);
+
+            if (step2mgr[currentStep]->mustUpdateGame(session, &entities)) {
+                // gameStateMgr->update(dt);
+            }
+            if (step2mgr[currentStep]->canExit(session, &entities)) {
+                // this is not a bug, enter method need to be renamed
+                step2mgr[currentStep]->enter(game->gameThreadContext->localizeAPI, session, &entities);
+                TEXT_RENDERING(entities.text)->show = true;
+                flecheAccum = RENDERING(entities.anim)->show ? 0 : -1;
+                waitingClick = true;
             }
         }
-    } else {
-        datas->flecheAccum += dt * 3;
-        TEXT_RENDERING(datas->entities.text)->show = !(((int)datas->flecheAccum) % 2);
-
-        if (datas->step2mgr[datas->currentStep]->mustUpdateGame(session, &datas->entities)) {
-            datas->gameStateMgr->update(dt);
-        }
-        if (datas->step2mgr[datas->currentStep]->canExit(session, &datas->entities)) {
-            // this is not a bug, enter method need to be renamed
-            datas->step2mgr[datas->currentStep]->enter(game->gameThreadContext->localizeAPI, session, &datas->entities);
-            TEXT_RENDERING(datas->entities.text)->show = true;
-            datas->flecheAccum = RENDERING(datas->entities.anim)->show ? 0 : -1;
-            datas->waitingClick = true;
-        }
+        return Scene::Tutorial;
     }
-    return State::Tutorial;
-}
 
 
-///----------------------------------------------------------------------------//
-///--------------------- EXIT SECTION -----------------------------------------//
-///----------------------------------------------------------------------------//
-void TutorialState::willExit(State::Enum to) {
-    SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-    session->userInputEnabled = false;
-    RENDERING(datas->hideText)->show = false;
-    TEXT_RENDERING(datas->entities.text)->show = false;
-    datas->gameStateMgr->willExit(to);
+    ///----------------------------------------------------------------------------//
+    ///--------------------- EXIT SECTION -----------------------------------------//
+    ///----------------------------------------------------------------------------//
+    void onPreExit(Scene::Enum to) {
+        SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+        session->userInputEnabled = false;
+        RENDERING(hideText)->show = false;
+        TEXT_RENDERING(entities.text)->show = false;
+        // gameStateMgr->willExit(to);
 
 
-    RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = true;
-}
-
-bool TutorialState::transitionCanExit(State::Enum to) {
-
-    ADSRComponent* adsr = ADSR(datas->titleGroup);
-    adsr->active = false;
-
-    TRANSFORM(datas->titleGroup)->position.y = adsr->value;
-
-    RENDERING(game->muteBtn)->color.a = (adsr->sustainValue - adsr->value) / (adsr->sustainValue - adsr->idleValue);
-
-    return datas->gameStateMgr->transitionCanExit(to);
-}
-
-void TutorialState::exit(State::Enum to) {
-    RENDERING(datas->title)->show = false;
-
-    TEXT_RENDERING(datas->entities.text)->show = false;
-    RENDERING(datas->entities.anim)->show = false;
-    datas->gameStateMgr->exit(to);
-    for(std::map<Tutorial::Enum, TutorialStep*>::iterator it=datas->step2mgr.begin();
-        it!=datas->step2mgr.end();
-        ++it) {
-        delete it->second;
+        RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = true;
     }
-    datas->step2mgr.clear();
-    BUTTON(game->muteBtn)->enabled = true;
+
+    bool updatePreExit(Scene::Enum to, float) {
+
+        ADSRComponent* adsr = ADSR(titleGroup);
+        adsr->active = false;
+
+        TRANSFORM(titleGroup)->position.y = adsr->value;
+
+        RENDERING(game->muteBtn)->color.a = (adsr->sustainValue - adsr->value) / (adsr->sustainValue - adsr->idleValue);
+
+        // return gameStateMgr->transitionCanExit(to);
+    }
+
+    void onExit(Scene::Enum to) {
+        RENDERING(title)->show = false;
+
+        TEXT_RENDERING(entities.text)->show = false;
+        RENDERING(entities.anim)->show = false;
+        // gameStateMgr->exit(to);
+        for(std::map<Tutorial::Enum, TutorialStep*>::iterator it=step2mgr.begin();
+            it!=step2mgr.end();
+            ++it) {
+            delete it->second;
+        }
+        step2mgr.clear();
+        BUTTON(game->muteBtn)->enabled = true;
+    }
+};
+
+namespace Scene {
+    StateHandler<Scene::Enum>* CreateTutorialSceneHandler(RecursiveRunnerGame* game) {
+        return new TutorialScene(game);
+    }
 }
 

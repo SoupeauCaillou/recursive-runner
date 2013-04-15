@@ -16,7 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "StateManager.h"
+#include "base/StateMachine.h"
 
 #include "base/EntityManager.h"
 #include "base/TouchInputManager.h"
@@ -51,327 +51,327 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 static void updateSessionTransition(const SessionComponent* session, float progress);
 static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc);
 
-struct GameState::GameStateDatas {
+class GameScene : public StateHandler<Scene::Enum> {
+    RecursiveRunnerGame* game;
     Entity pauseButton;
     Entity session;
     Entity transition;
+
+public:
+        GameScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
+            this->game = game;
+        }
+
+        void setup() {
+            pauseButton = theEntityManager.CreateEntity("pause_buttton");
+            ADD_COMPONENT(pauseButton, Transformation);
+            TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("pause"));
+            TRANSFORM(pauseButton)->parent = game->cameraEntity;
+            TRANSFORM(pauseButton)->position =
+                TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
+                - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
+            TRANSFORM(pauseButton)->z = 0.95;
+            ADD_COMPONENT(pauseButton, Rendering);
+            RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
+            RENDERING(pauseButton)->show = false;
+            ADD_COMPONENT(pauseButton, Button);
+            BUTTON(pauseButton)->enabled = false;
+            BUTTON(pauseButton)->overSize = 1.2;
+
+            transition = theEntityManager.CreateEntity("transition_helper");
+            ADD_COMPONENT(transition, ADSR);
+            ADSR(transition)->idleValue = 0;
+            ADSR(transition)->sustainValue = 1;
+            ADSR(transition)->attackValue = 1;
+            ADSR(transition)->attackTiming = 1;
+            ADSR(transition)->decayTiming = 0.;
+            ADSR(transition)->releaseTiming = 0.5;
+            ADD_COMPONENT(transition, Music);
+            MUSIC(transition)->fadeOut = 2;
+            MUSIC(transition)->fadeIn = 1;
+        }
+
+
+        ///----------------------------------------------------------------------------//
+        ///--------------------- ENTER SECTION ----------------------------------------//
+        ///----------------------------------------------------------------------------//
+        void onPreEnter(Scene::Enum from) {
+            ADSR(transition)->active = true;
+
+            if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
+                RecursiveRunnerGame::startGame(game->level, true);
+                MUSIC(transition)->fadeOut = 2;
+                MUSIC(transition)->volume = 1;
+                MUSIC(transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
+                ADSR(transition)->value = ADSR(transition)->idleValue;
+                ADSR(transition)->activationTime = 0;
+            }
+            if (theMusicSystem.isMuted()) {
+                MUSIC(transition)->control = MusicControl::Stop;
+            } else {
+                MUSIC(transition)->control = MusicControl::Play;
+            }
+            if (from != Scene::Tutorial) {
+                RENDERING(pauseButton)->show = true;
+                RENDERING(pauseButton)->color = Color(1,1,1,0);
+            }
+        }
+
+        bool updatePreEnter(Scene::Enum, float) {
+            const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+
+            float progress = ADSR(transition)->value;
+            updateSessionTransition(session, progress);
+            RENDERING(pauseButton)->color.a = progress;
+            PLAYER(session->players[0])->ready = true;
+
+            return progress >= ADSR(transition)->sustainValue;
+        }
+
+        void onEnter(Scene::Enum from) {
+            session = theSessionSystem.RetrieveAllEntityWithComponent().front();
+            SessionComponent* sc = SESSION(session);
+            // only do this on first enter (ie: not when unpausing)
+            if (from != Scene::Pause) {
+                for (unsigned i=0; i<sc->numPlayers; i++) {
+                    assert (sc->numPlayers == 1);
+                    Entity r = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i, sc);
+                    sc->runners.push_back(r);
+                    sc->currentRunner = r;
+                }
+                game->setupCamera(CameraMode::Single);
+            }
+            if (from != Scene::Tutorial)
+                BUTTON(pauseButton)->enabled = true;
+        }
+
+
+        ///----------------------------------------------------------------------------//
+        ///--------------------- UPDATE SECTION ---------------------------------------//
+        ///----------------------------------------------------------------------------//
+        Scene::Enum update(float dt) {
+            SessionComponent* sc = SESSION(session);
+
+            if (BUTTON(pauseButton)->clicked) {
+                return Scene::Pause;
+            }
+            RENDERING(pauseButton)->color = BUTTON(pauseButton)->mouseOver ? Color("gray") : Color();
+
+            // Manage piano's volume depending on the distance from the current runner to the piano
+            double distanceAbs = glm::abs(TRANSFORM(sc->currentRunner)->position.x -
+            TRANSFORM(game->pianist)->position.x) / (PlacementHelper::ScreenWidth * param::LevelSize);
+            MUSIC(transition)->volume = 0.2 + 0.8 * (1 - distanceAbs);
+
+            // Manage player's current runner
+            for (unsigned i=0; i<sc->numPlayers; i++) {
+                CAM_TARGET(sc->currentRunner)->enabled = true;
+                CAM_TARGET(sc->currentRunner)->offset = glm::vec2(
+                    ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth,
+                    0 - TRANSFORM(sc->currentRunner)->position.y);
+
+                // If current runner has reached the edge of the screen
+                if (RUNNER(sc->currentRunner)->finished) {
+                    LOGI(sc->currentRunner << " finished, add runner or end game");
+                    CAM_TARGET(sc->currentRunner)->enabled = false;
+
+                    if (PLAYER(sc->players[i])->runnersCount == param::runner) {
+                        // Game is finished, show either Rate Menu or Main Menu
+                          if (0 && game->gameThreadContext->communicationAPI->mustShowRateDialog()) {
+                             return Scene::Rate;
+                          } else {
+                           return Scene::Menu;
+                        }
+                    } else {
+                        LOGI("Create runner");
+                        // add a new runner
+                        sc->currentRunner = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i, sc);
+                        sc->runners.push_back(sc->currentRunner);
+                    }
+                }
+                if (!game->ignoreClick && sc->userInputEnabled) {
+                    // Input (jump) handling
+                    for (int j=0; j<1; j++) {
+                        if (theTouchInputManager.isTouched(j)) {
+                            if (sc->numPlayers == 2) {
+                                const glm::vec2& ppp = theTouchInputManager.getTouchLastPosition(j);
+                                if (i == 0 && ppp.y < 0)
+                                    continue;
+                                if (i == 1 && ppp.y > 0)
+                                    continue;
+                            }
+                            PhysicsComponent* pc = PHYSICS(sc->currentRunner);
+                            RunnerComponent* rc = RUNNER(sc->currentRunner);
+                            if (!theTouchInputManager.wasTouched(j)) {
+                                if (rc->jumpingSince <= 0 && pc->linearVelocity.y == 0) {
+                                    rc->jumpTimes.push_back(rc->elapsed);
+                                    rc->jumpDurations.push_back(dt);
+                                }
+                            } else if (!rc->jumpTimes.empty()) {
+                                float& d = *(rc->jumpDurations.rbegin());
+                                d = glm::min(d + dt, RunnerSystem::MaxJumpDuration);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                TransformationComponent* tc = TRANSFORM(sc->currentRunner);
+                CAM_TARGET(sc->currentRunner)->offset.y = 0 - tc->position.y;
+            }
+
+            // Manage runner-runner collisions
+            {
+                std::vector<TransformationComponent*> activesColl;
+                std::vector<int> direction;
+
+                for (unsigned i=0; i<sc->numPlayers; i++) {
+                    for (unsigned j=0; j<sc->runners.size(); j++) {
+                        const Entity r = sc->runners[j];
+                        const RunnerComponent* rc = RUNNER(r);
+                        if (rc->ghost)
+                            continue;
+                        activesColl.push_back(TRANSFORM(rc->collisionZone));
+                        direction.push_back(rc->speed > 0 ? 1 : -1);
+                    }
+                }
+                const unsigned count = activesColl.size();
+                for (unsigned i=0; i<sc->numPlayers; i++) {
+                    for (unsigned j=0; j<sc->runners.size(); j++) {
+                        Entity ghost = sc->runners[j];
+                        RunnerComponent* rc = RUNNER(ghost);
+                        if (!rc->ghost || rc->killed)
+                            continue;
+                        TransformationComponent* ghostColl = TRANSFORM(rc->collisionZone);
+                        for (unsigned k=0; k<count; k++) {
+                            // we can only hit guys with opposite direction
+                            if (rc->speed * direction[k] > 0)
+                                continue;
+                            if (rc->elapsed < 0.25)
+                                continue;
+                            if (IntersectionUtil::rectangleRectangle(ghostColl, activesColl[k])) {
+                                rc->killed = true;
+                                sc->runners.erase(sc->runners.begin() + j);
+                                j--;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (unsigned i=0; i<sc->numPlayers; i++) {
+                PlayerComponent* player = PLAYER(sc->players[i]);
+                for (unsigned j=0; j<sc->runners.size(); j++) {
+                    Entity e = sc->runners[j];
+                    RunnerComponent* rc = RUNNER(e);
+                    if (rc->killed)
+                        continue;
+        #if 0
+                    PhysicsComponent* pc = PHYSICS(e);
+                    // check jumps
+                    if (pc->gravity.Y < 0) {
+                        TransformationComponent* tc = TRANSFORM(e);
+                        // landing management
+                        if ((tc->position.Y - tc->size.Y * 0.5) <= game->baseLine) {
+                            pc->gravity.Y = 0;
+                            pc->linearVelocity = Vector2::Zero;
+                            tc->position.Y = game->baseLine + tc->size.Y * 0.5;
+                            ANIMATION(e)->name = "jumptorunL2R";
+                            RENDERING(e)->mirrorH = (rc->speed < 0);
+                        }
+                    }
+        #endif
+                    // check coins
+                    checkCoinsPickupForRunner(player, e, rc, sc);
+
+                    // check platform switch
+                    const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
+                    for (unsigned k=0; k<sc->platforms.size(); k++) {
+                        for (unsigned l=0; l<2; l++) {
+                            if (IntersectionUtil::rectangleRectangle(
+                                collisionZone, TRANSFORM(sc->platforms[k].switches[l].entity))) {
+                                sc->platforms[k].switches[l].owner = e;
+                                if (!sc->platforms[k].switches[l].state) {
+                                    sc->platforms[k].switches[l].state = true;
+                                    std::cout << e << " activated " << sc->platforms[k].switches[l].entity << std::endl;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // handle platforms
+            {
+                std::vector<Entity> platformers = thePlatformerSystem.RetrieveAllEntityWithComponent();
+                for (unsigned i=0; i<sc->platforms.size(); i++) {
+                    Platform& pt = sc->platforms[i];
+                    bool active = pt.switches[1].state & pt.switches[1].state & (
+                        pt.switches[1].owner == pt.switches[0].owner);
+                    if (active != pt.active) {
+                        pt.active = active;
+                        std::cout << "platform #" << i << " is now : " << active << std::endl;
+                        if (active) {
+                            RENDERING(pt.platform)->texture = theRenderingSystem.loadTextureFile("link");
+                        } else {
+                            RENDERING(pt.platform)->texture = InvalidTextureRef;
+                        }
+                        for (unsigned k=0; k<platformers.size(); k++) {
+                            PLATFORMER(platformers[k])->platforms[pt.platform] = active;
+                        }
+                    }
+                }
+            }
+
+            // Show the score(s)
+            for (unsigned i=0; i<sc->players.size(); i++) {
+                std::stringstream a;
+                a << PLAYER(sc->players[i])->score;
+                TEXT_RENDERING(game->scoreText)->text = a.str();
+            }
+
+            thePlatformerSystem.Update(dt);
+            thePlayerSystem.Update(dt);
+            theRunnerSystem.Update(dt);
+            theCameraTargetSystem.Update(dt);
+
+            return Scene::Game;
+        }
+
+        ///----------------------------------------------------------------------------//
+        ///--------------------- EXIT SECTION -----------------------------------------//
+        ///----------------------------------------------------------------------------//
+        void onPreExit(Scene::Enum to) {
+            BUTTON(pauseButton)->enabled = false;
+            if (to != Scene::Pause) {
+                ADSR(transition)->active = false;
+            }
+        }
+
+        bool updatePreExit(Scene::Enum to, float) {
+            if (to == Scene::Pause) {
+                return true;
+            }
+            const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
+
+            float progress = ADSR(transition)->value;
+            updateSessionTransition(session, progress);
+            RENDERING(pauseButton)->color.a = progress;
+
+            return progress <= ADSR(transition)->idleValue;
+        }
+
+        void onExit(Scene::Enum) {
+            RENDERING(pauseButton)->show = false;
+        }
 };
 
-GameState::GameState(RecursiveRunnerGame* game) : StateManager(State::Game, game) {
-    datas = new GameStateDatas();
-}
-
-GameState::~GameState() {
-    delete datas;
-}
-
-void GameState::setup() {
-    Entity pauseButton = datas->pauseButton = theEntityManager.CreateEntity("pause_buttton");
-    ADD_COMPONENT(pauseButton, Transformation);
-    TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("pause"));
-    TRANSFORM(pauseButton)->parent = game->cameraEntity;
-    TRANSFORM(pauseButton)->position =
-        TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
-        - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-    TRANSFORM(pauseButton)->z = 0.95;
-    ADD_COMPONENT(pauseButton, Rendering);
-    RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
-    RENDERING(pauseButton)->show = false;
-    ADD_COMPONENT(pauseButton, Button);
-    BUTTON(pauseButton)->enabled = false;
-    BUTTON(pauseButton)->overSize = 1.2;
-
-    Entity transition = datas->transition = theEntityManager.CreateEntity("transition_helper");
-    ADD_COMPONENT(transition, ADSR);
-    ADSR(transition)->idleValue = 0;
-    ADSR(transition)->sustainValue = 1;
-    ADSR(transition)->attackValue = 1;
-    ADSR(transition)->attackTiming = 1;
-    ADSR(transition)->decayTiming = 0.;
-    ADSR(transition)->releaseTiming = 0.5;
-    ADD_COMPONENT(transition, Music);
-    MUSIC(transition)->fadeOut = 2;
-    MUSIC(transition)->fadeIn = 1;
-}
-
-
-///----------------------------------------------------------------------------//
-///--------------------- ENTER SECTION ----------------------------------------//
-///----------------------------------------------------------------------------//
-void GameState::willEnter(State::Enum from) {
-    ADSR(datas->transition)->active = true;
-
-    if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
-        RecursiveRunnerGame::startGame(game->level, true);
-        MUSIC(datas->transition)->fadeOut = 2;
-        MUSIC(datas->transition)->volume = 1;
-        MUSIC(datas->transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
-        ADSR(datas->transition)->value = ADSR(datas->transition)->idleValue;
-        ADSR(datas->transition)->activationTime = 0;
-    }
-    if (theMusicSystem.isMuted()) {
-        MUSIC(datas->transition)->control = MusicControl::Stop;
-    } else {
-        MUSIC(datas->transition)->control = MusicControl::Play;
-    }
-    if (from != State::Tutorial) {
-        RENDERING(datas->pauseButton)->show = true;
-        RENDERING(datas->pauseButton)->color = Color(1,1,1,0);
+namespace Scene {
+    StateHandler<Scene::Enum>* CreateGameSceneHandler(RecursiveRunnerGame* game) {
+        return new GameScene(game);
     }
 }
 
-bool GameState::transitionCanEnter(State::Enum) {
-    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-
-    float progress = ADSR(datas->transition)->value;
-    updateSessionTransition(session, progress);
-    RENDERING(datas->pauseButton)->color.a = progress;
-    PLAYER(session->players[0])->ready = true;
-
-    return progress >= ADSR(datas->transition)->sustainValue;
-}
-
-void GameState::enter(State::Enum from) {
-    datas->session = theSessionSystem.RetrieveAllEntityWithComponent().front();
-    SessionComponent* sc = SESSION(datas->session);
-    // only do this on first enter (ie: not when unpausing)
-    if (from != State::Pause) {
-        for (unsigned i=0; i<sc->numPlayers; i++) {
-            assert (sc->numPlayers == 1);
-            Entity r = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i, sc);
-            sc->runners.push_back(r);
-            sc->currentRunner = r;
-        }
-        game->setupCamera(CameraMode::Single);
-    }
-    if (from != State::Tutorial)
-        BUTTON(datas->pauseButton)->enabled = true;
-}
-
-
-///----------------------------------------------------------------------------//
-///--------------------- UPDATE SECTION ---------------------------------------//
-///----------------------------------------------------------------------------//
-State::Enum GameState::update(float dt) {
-    SessionComponent* sc = SESSION(datas->session);
-
-    if (BUTTON(datas->pauseButton)->clicked) {
-        return State::Pause;
-    }
-    RENDERING(datas->pauseButton)->color = BUTTON(datas->pauseButton)->mouseOver ? Color("gray") : Color();
-
-    // Manage piano's volume depending on the distance from the current runner to the piano
-    double distanceAbs = glm::abs(TRANSFORM(sc->currentRunner)->position.x -
-    TRANSFORM(game->pianist)->position.x) / (PlacementHelper::ScreenWidth * param::LevelSize);
-    MUSIC(datas->transition)->volume = 0.2 + 0.8 * (1 - distanceAbs);
-
-    // Manage player's current runner
-    for (unsigned i=0; i<sc->numPlayers; i++) {
-        CAM_TARGET(sc->currentRunner)->enabled = true;
-        CAM_TARGET(sc->currentRunner)->offset = glm::vec2(
-            ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth,
-            0 - TRANSFORM(sc->currentRunner)->position.y);
-
-        // If current runner has reached the edge of the screen
-        if (RUNNER(sc->currentRunner)->finished) {
-            LOGI(sc->currentRunner << " finished, add runner or end game");
-            CAM_TARGET(sc->currentRunner)->enabled = false;
-
-            if (PLAYER(sc->players[i])->runnersCount == param::runner) {
-                // Game is finished, show either Rate Menu or Main Menu
-                  if (0 && game->gameThreadContext->communicationAPI->mustShowRateDialog()) {
-                     return State::Rate;
-                  } else {
-                   return State::Menu;
-                }
-            } else {
-                LOGI("Create runner");
-                // add a new runner
-                sc->currentRunner = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i, sc);
-                sc->runners.push_back(sc->currentRunner);
-            }
-        }
-        if (!game->ignoreClick && sc->userInputEnabled) {
-            // Input (jump) handling
-            for (int j=0; j<1; j++) {
-                if (theTouchInputManager.isTouched(j)) {
-                    if (sc->numPlayers == 2) {
-                        const glm::vec2& ppp = theTouchInputManager.getTouchLastPosition(j);
-                        if (i == 0 && ppp.y < 0)
-                            continue;
-                        if (i == 1 && ppp.y > 0)
-                            continue;
-                    }
-                    PhysicsComponent* pc = PHYSICS(sc->currentRunner);
-                    RunnerComponent* rc = RUNNER(sc->currentRunner);
-                    if (!theTouchInputManager.wasTouched(j)) {
-                        if (rc->jumpingSince <= 0 && pc->linearVelocity.y == 0) {
-                            rc->jumpTimes.push_back(rc->elapsed);
-                            rc->jumpDurations.push_back(dt);
-                        }
-                    } else if (!rc->jumpTimes.empty()) {
-                        float& d = *(rc->jumpDurations.rbegin());
-                        d = glm::min(d + dt, RunnerSystem::MaxJumpDuration);
-                    }
-                    break;
-                }
-            }
-        }
-
-        TransformationComponent* tc = TRANSFORM(sc->currentRunner);
-        CAM_TARGET(sc->currentRunner)->offset.y = 0 - tc->position.y;
-    }
-
-    // Manage runner-runner collisions
-    {
-        std::vector<TransformationComponent*> activesColl;
-        std::vector<int> direction;
-
-        for (unsigned i=0; i<sc->numPlayers; i++) {
-            for (unsigned j=0; j<sc->runners.size(); j++) {
-                const Entity r = sc->runners[j];
-                const RunnerComponent* rc = RUNNER(r);
-                if (rc->ghost)
-                    continue;
-                activesColl.push_back(TRANSFORM(rc->collisionZone));
-                direction.push_back(rc->speed > 0 ? 1 : -1);
-            }
-        }
-        const unsigned count = activesColl.size();
-        for (unsigned i=0; i<sc->numPlayers; i++) {
-            for (unsigned j=0; j<sc->runners.size(); j++) {
-                Entity ghost = sc->runners[j];
-                RunnerComponent* rc = RUNNER(ghost);
-                if (!rc->ghost || rc->killed)
-                    continue;
-                TransformationComponent* ghostColl = TRANSFORM(rc->collisionZone);
-                for (unsigned k=0; k<count; k++) {
-                    // we can only hit guys with opposite direction
-                    if (rc->speed * direction[k] > 0)
-                        continue;
-                    if (rc->elapsed < 0.25)
-                        continue;
-                    if (IntersectionUtil::rectangleRectangle(ghostColl, activesColl[k])) {
-                        rc->killed = true;
-                        sc->runners.erase(sc->runners.begin() + j);
-                        j--;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    for (unsigned i=0; i<sc->numPlayers; i++) {
-        PlayerComponent* player = PLAYER(sc->players[i]);
-        for (unsigned j=0; j<sc->runners.size(); j++) {
-            Entity e = sc->runners[j];
-            RunnerComponent* rc = RUNNER(e);
-            if (rc->killed)
-                continue;
-#if 0
-            PhysicsComponent* pc = PHYSICS(e);
-            // check jumps
-            if (pc->gravity.Y < 0) {
-                TransformationComponent* tc = TRANSFORM(e);
-                // landing management
-                if ((tc->position.Y - tc->size.Y * 0.5) <= game->baseLine) {
-                    pc->gravity.Y = 0;
-                    pc->linearVelocity = Vector2::Zero;
-                    tc->position.Y = game->baseLine + tc->size.Y * 0.5;
-                    ANIMATION(e)->name = "jumptorunL2R";
-                    RENDERING(e)->mirrorH = (rc->speed < 0);
-                }
-            }
-#endif
-            // check coins
-            checkCoinsPickupForRunner(player, e, rc, sc);
-
-            // check platform switch
-            const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
-            for (unsigned k=0; k<sc->platforms.size(); k++) {
-                for (unsigned l=0; l<2; l++) {
-                    if (IntersectionUtil::rectangleRectangle(
-                        collisionZone, TRANSFORM(sc->platforms[k].switches[l].entity))) {
-                        sc->platforms[k].switches[l].owner = e;
-                        if (!sc->platforms[k].switches[l].state) {
-                            sc->platforms[k].switches[l].state = true;
-                            std::cout << e << " activated " << sc->platforms[k].switches[l].entity << std::endl;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // handle platforms
-    {
-        std::vector<Entity> platformers = thePlatformerSystem.RetrieveAllEntityWithComponent();
-        for (unsigned i=0; i<sc->platforms.size(); i++) {
-            Platform& pt = sc->platforms[i];
-            bool active = pt.switches[1].state & pt.switches[1].state & (
-                pt.switches[1].owner == pt.switches[0].owner);
-            if (active != pt.active) {
-                pt.active = active;
-                std::cout << "platform #" << i << " is now : " << active << std::endl;
-                if (active) {
-                    RENDERING(pt.platform)->texture = theRenderingSystem.loadTextureFile("link");
-                } else {
-                    RENDERING(pt.platform)->texture = InvalidTextureRef;
-                }
-                for (unsigned k=0; k<platformers.size(); k++) {
-                    PLATFORMER(platformers[k])->platforms[pt.platform] = active;
-                }
-            }
-        }
-    }
-
-    // Show the score(s)
-    for (unsigned i=0; i<sc->players.size(); i++) {
-        std::stringstream a;
-        a << PLAYER(sc->players[i])->score;
-        TEXT_RENDERING(game->scoreText)->text = a.str();
-    }
-
-    thePlatformerSystem.Update(dt);
-    thePlayerSystem.Update(dt);
-    theRunnerSystem.Update(dt);
-    theCameraTargetSystem.Update(dt);
-
-    return State::Game;
-}
-
-void GameState::backgroundUpdate(float) {
-
-}
-
-
-///----------------------------------------------------------------------------//
-///--------------------- EXIT SECTION -----------------------------------------//
-///----------------------------------------------------------------------------//
-void GameState::willExit(State::Enum to) {
-    BUTTON(datas->pauseButton)->enabled = false;
-    if (to != State::Pause) {
-        ADSR(datas->transition)->active = false;
-    }
-}
-
-bool GameState::transitionCanExit(State::Enum to) {
-    if (to == State::Pause) {
-        return true;
-    }
-    const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
-
-    float progress = ADSR(datas->transition)->value;
-    updateSessionTransition(session, progress);
-    RENDERING(datas->pauseButton)->color.a = progress;
-
-    return progress <= ADSR(datas->transition)->idleValue;
-}
-
-void GameState::exit(State::Enum) {
-    RENDERING(datas->pauseButton)->show = false;
-}
 
 
 static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
@@ -401,7 +401,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("run_l2r_0000")) * 0.68f;
     //Vector2(0.85, 0.85) * 2.5;
-    
+
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
     ADD_COMPONENT(e, Rendering);

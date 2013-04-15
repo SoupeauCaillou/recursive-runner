@@ -71,17 +71,15 @@ RecursiveRunnerGame::RecursiveRunnerGame(RecursiveRunnerStorageAPI* rrStorage) :
    SessionSystem::CreateInstance();
    PlatformerSystem::CreateInstance();
 
-   overrideNextState = State::Invalid;
-
-   state2manager.insert(std::make_pair(State::Logo, new LogoState(this)));
-   state2manager.insert(std::make_pair(State::Menu, new MenuState(this)));
-   state2manager.insert(std::make_pair(State::Ad, new AdState(this)));
-   state2manager.insert(std::make_pair(State::Pause, new PauseState(this)));
-   state2manager.insert(std::make_pair(State::Rate, new RateState(this)));
-   state2manager.insert(std::make_pair(State::Game, new GameState(this)));
-   state2manager.insert(std::make_pair(State::RestartGame, new RestartGameState(this)));
-   state2manager.insert(std::make_pair(State::Tutorial, new TutorialState(this)));
-   state2manager.insert(std::make_pair(State::SocialCenter, new SocialCenterState(this)));
+   sceneStateMachine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(this), "Scene::Logo");
+   sceneStateMachine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(this), "Scene::Menu");
+   sceneStateMachine.registerState(Scene::Ad, Scene::CreateAdSceneHandler(this), "Scene::Ad");
+   sceneStateMachine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(this), "Scene::Pause");
+   sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this), "Scene::Rate");
+   sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
+   sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this), "Scene::RestartGame");
+   sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
+   sceneStateMachine.registerState(Scene::SocialCenter, Scene::CreateSocialCenterSceneHandler(this), "Scene::SocialCenter");
 }
 
 
@@ -95,11 +93,6 @@ RecursiveRunnerGame::~RecursiveRunnerGame() {
     RangeFollowerSystem::DestroyInstance();
     SessionSystem::DestroyInstance();
     PlatformerSystem::DestroyInstance();
-
-    for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
-        delete it->second;
-    }
-    state2manager.clear();
 }
 
 bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
@@ -555,58 +548,48 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     }
     updateBestScore();
 
-    for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
-        it->second->setup();
-    }
-
     //recover
     if (size > 0 && in) {
-        currentState = State::Pause;
+        sceneStateMachine.setup(Scene::Pause);
     } else {
-#if SAC_DEBUG
-        currentState = State::Menu;
-#else
-        currentState = State::Logo;
-#endif
+        sceneStateMachine.setup(Scene::Logo);
     }
-    state2manager[currentState]->willEnter(State::Invalid);
-    state2manager[currentState]->enter(State::Invalid);
+    sceneStateMachine.reEnterCurrentState();
 }
 
 void RecursiveRunnerGame::quickInit() {
     // we just need to make sure current state is properly initiated
-    state2manager[currentState]->willEnter(State::Invalid);
-    state2manager[currentState]->enter(State::Invalid);
-}
-
-void RecursiveRunnerGame::changeState(State::Enum newState) {
-    if (newState == currentState)
-        return;
-    state2manager[currentState]->willExit(newState);
-    state2manager[currentState]->exit(newState);
-    state2manager[newState]->willEnter(currentState);
-    state2manager[newState]->enter(currentState);
-    currentState = newState;
+    sceneStateMachine.reEnterCurrentState();
 }
 
 bool RecursiveRunnerGame::willConsumeBackEvent() {
-    if (currentState == State::Menu)
-        return false;
-    return true;
+    switch (sceneStateMachine.getCurrentState()) {
+        case Scene::Menu:
+            return false;
+        default:
+            return true;
+    }
 }
 
 void RecursiveRunnerGame::backPressed() {
-    if (currentState == State::Game)
-        overrideNextState = State::Pause;
-    else if (currentState == State::Pause)
-        overrideNextState = State::Menu;
-    else if (currentState == State::Tutorial)
-        overrideNextState = State::Menu;
+    switch (sceneStateMachine.getCurrentState()) {
+        case Scene::Game:
+            sceneStateMachine.forceNewState(Scene::Pause);
+            break;
+        case Scene::Pause:
+            sceneStateMachine.forceNewState(Scene::Menu);
+            break;
+        case Scene::Tutorial:
+            sceneStateMachine.forceNewState(Scene::Menu);
+            break;
+        default:
+            break;
+    }
 }
 
 void RecursiveRunnerGame::togglePause(bool pause) {
-    if (currentState == State::Game && pause) {
-        changeState(State::Pause);
+    if (sceneStateMachine.getCurrentState() == Scene::Game && pause) {
+        sceneStateMachine.forceNewState(Scene::Pause);
     }
 }
 
@@ -652,27 +635,7 @@ void RecursiveRunnerGame::tick(float dt) {
             >= (TRANSFORM(muteBtn)->position.y - TRANSFORM(muteBtn)->size.y * BUTTON(muteBtn)->overSize * 0.5);
     }
 
-    if (overrideNextState != State::Invalid) {
-        changeState(overrideNextState);
-        overrideNextState = State::Invalid;
-    }
-
-    if (State::Transition != currentState) {
-        State::Enum newState = state2manager[currentState]->update(dt);
-
-        if (newState != currentState) {
-            state2manager[currentState]->willExit(newState);
-            transitionManager.enter(state2manager[currentState], state2manager[newState]);
-            currentState = State::Transition;
-        }
-    } else if (transitionManager.transitionFinished(&currentState)) {
-        transitionManager.exit();
-        state2manager[currentState]->enter(transitionManager.from->state);
-    }
-
-    for(std::map<State::Enum, StateManager*>::iterator it=state2manager.begin(); it!=state2manager.end(); ++it) {
-        it->second->backgroundUpdate(dt);
-    }
+    sceneStateMachine.update(dt);
 
     // limit cam pos
     for (unsigned i=2; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
@@ -719,10 +682,15 @@ void RecursiveRunnerGame::updateBestScore() {
 }
 
 int RecursiveRunnerGame::saveState(uint8_t** out) {
-    if (currentState == State::Game)
-        currentState = State::Pause;
-    if (currentState != State::Pause)
-        return 0;
+    switch (sceneStateMachine.getCurrentState()) {
+        case Scene::Game:
+            sceneStateMachine.forceNewState(Scene::Pause);
+        case Scene::Pause:
+            break;
+        default:
+            return 0;
+    }
+
     /* save all entities/components */
     uint8_t* entities = 0;
     int eSize = theEntityManager.serialize(&entities);

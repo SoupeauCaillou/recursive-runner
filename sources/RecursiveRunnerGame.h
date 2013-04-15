@@ -30,8 +30,9 @@
 #include "api/ExitAPI.h"
 #include "api/RecursiveRunnerStorageAPI.h"
 #include "api/CommunicationAPI.h"
-#include "states/StateManager.h"
+#include "states/Scenes.h"
 
+#include "base/StateMachine.h"
 class NameInputAPI;
 struct SessionComponent;
 class LocalizeAPI;
@@ -64,7 +65,6 @@ class RecursiveRunnerGame : public Game {
       void quickInit();
       void tick(float dt);
       void backPressed();
-      void changeState(State::Enum newState);
       bool willConsumeBackEvent();
       void togglePause(bool pause);
 
@@ -73,12 +73,9 @@ class RecursiveRunnerGame : public Game {
       void updateBestScore();
 
    private:
-      State::Enum currentState, overrideNextState;
-      std::map<State::Enum, StateManager*> state2manager;
-      TransitionStateManager transitionManager;
-
       void decor();
       void initGame();
+      StateMachine<Scene::Enum> sceneStateMachine;
 
    public:
       // shared/global vars
