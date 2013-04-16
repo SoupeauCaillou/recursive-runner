@@ -581,7 +581,6 @@ class TutorialScene : public StateHandler<Scene::Enum> {
     Tutorial::Enum currentStep;
     bool waitingClick;
     std::map<Tutorial::Enum, TutorialStep*> step2mgr;
-    float flecheAccum;
 
 public:
 
@@ -647,7 +646,9 @@ public:
         ADD_COMPONENT(entities.anim, Rendering);
         RENDERING(entities.anim)->texture = theRenderingSystem.loadTextureFile("fleche");
         RENDERING(entities.anim)->show = false;
-        LOGW("TODO : use Animation for tutorial arrow blinking")
+        ADD_COMPONENT(entities.anim, Animation);
+        ANIMATION(entities.anim)->name = "arrow_tuto";
+        theAnimationSystem.loadAnim(game->gameThreadContext->assetAPI, "arrow_tuto", "arrow_tuto");
     }
 
 
@@ -670,7 +671,6 @@ public:
         INSTANCIATE_STEP(TheEnd);
         assert(step2mgr.size() == (int)Tutorial::Count);
 
-        flecheAccum = -1;
         bool isMuted = theMusicSystem.isMuted();
         theMusicSystem.toggleMute(true);
         gameScene.onPreEnter(Scene::Tutorial);
@@ -763,11 +763,6 @@ public:
     Scene::Enum update(float dt) {
         SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
         if (waitingClick) {
-            if (flecheAccum >= 0) {
-                flecheAccum += dt * 2;
-                RENDERING(entities.anim)->show = !(((int)flecheAccum) % 2);
-            }
-
             if (!game->ignoreClick && theTouchInputManager.wasTouched(0) && !theTouchInputManager.isTouched(0)) {
                 waitingClick = false;
                 step2mgr[currentStep]->exit(session, &entities);
@@ -779,13 +774,13 @@ public:
                     TEXT_RENDERING(entities.text)->show = true;
                     TEXT_RENDERING(entities.text)->text = ". . .";
                     RENDERING(entities.anim)->show = false;
-                    flecheAccum = 0;
+                    // Setup blinking
+                    ANIMATION(entities.anim)->accum = ANIMATION(entities.anim)->frameIndex = 0;
+                    TEXT_RENDERING(entities.text)->blink.offDuration =
+                        TEXT_RENDERING(entities.text)->blink.onDuration = 0.5;
                 }
             }
         } else {
-            flecheAccum += dt * 3;
-            TEXT_RENDERING(entities.text)->show = !(((int)flecheAccum) % 2);
-
             if (step2mgr[currentStep]->mustUpdateGame(session, &entities)) {
                 gameScene.update(dt);
             }
@@ -793,7 +788,8 @@ public:
                 // this is not a bug, enter method need to be renamed
                 step2mgr[currentStep]->enter(game->gameThreadContext->localizeAPI, session, &entities);
                 TEXT_RENDERING(entities.text)->show = true;
-                flecheAccum = RENDERING(entities.anim)->show ? 0 : -1;
+                TEXT_RENDERING(entities.text)->blink.offDuration =
+                        TEXT_RENDERING(entities.text)->blink.onDuration = 0;
                 waitingClick = true;
             }
         }
