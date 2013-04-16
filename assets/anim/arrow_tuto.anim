@@ -1,0 +1,9 @@
+[meta]
+speed=2.0
+num_frames=1
+loop=1
+wait_before_next_anim=0.5
+next_anim=arrow_tuto
+
+[frame0]
+texture=fleche

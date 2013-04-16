@@ -557,6 +557,8 @@ struct TutorialStep {
     void pointArrowTo(Entity arrow, const glm::vec2& target) const {
         glm::vec2 v = glm::normalize(target - TRANSFORM(arrow)->position);
         TRANSFORM(arrow)->rotation = glm::atan2(v.y, v.x);
+        ANIMATION(arrow)->accum = ANIMATION(arrow)->frameIndex = 0;
+        ANIMATION(arrow)->playbackSpeed = 1.0;
     }
 };
 
@@ -774,8 +776,7 @@ public:
                     TEXT_RENDERING(entities.text)->show = true;
                     TEXT_RENDERING(entities.text)->text = ". . .";
                     RENDERING(entities.anim)->show = false;
-                    // Setup blinking
-                    ANIMATION(entities.anim)->accum = ANIMATION(entities.anim)->frameIndex = 0;
+                    ANIMATION(entities.anim)->playbackSpeed = 0;
                     TEXT_RENDERING(entities.text)->blink.offDuration =
                         TEXT_RENDERING(entities.text)->blink.onDuration = 0.5;
                 }
