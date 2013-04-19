@@ -2,8 +2,6 @@
 
 #include "base/Log.h"
 
-#include "api/linux/StorageAPILinuxImpl.h"
-
 #include <sstream>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,7 +104,7 @@ std::vector<RecursiveRunnerStorageAPI::Score> RecursiveRunnerStorageAPILinuxImpl
 #endif
 }
 
- 
+
 std::list<CommunicationAPI::Achievement> RecursiveRunnerStorageAPILinuxImpl::getAllAchievements() {
 	std::list<CommunicationAPI::Achievement> list;
 	LOGW("TODO");
@@ -115,16 +113,16 @@ std::list<CommunicationAPI::Achievement> RecursiveRunnerStorageAPILinuxImpl::get
 
 std::list<CommunicationAPI::Score> RecursiveRunnerStorageAPILinuxImpl::getScores(unsigned /*leaderboardID*/,
 	CommunicationAPI::Score::Visibility /*visibility*/, unsigned startRank, unsigned count) {
-	
+
 	std::list<CommunicationAPI::Score> list;
 
 	float avg; //wont be used
 	unsigned rank = 0;
 	for (auto entry : getScores(avg)) {
 		++rank;
-		if (rank < startRank) 
+		if (rank < startRank)
 			continue;
-		else if (rank - startRank > count) 
+		else if (rank - startRank > count)
 			break;
 
 		list.push_back(CommunicationAPI::Score(entry.name, entry.points, rank, CommunicationAPI::Score::ME));
@@ -139,7 +137,7 @@ void RecursiveRunnerStorageAPILinuxImpl::submitScore(unsigned /*leaderboardID*/,
 	newScore.name = score._name;
 	newScore.coins = 0;
 
-	submitScore(newScore);	
+	submitScore(newScore);
 }
 
 

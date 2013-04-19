@@ -21,6 +21,7 @@
 #include "base/EntityManager.h"
 #include "base/TouchInputManager.h"
 #include "base/PlacementHelper.h"
+#include "base/StateMachine.h"
 
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
@@ -37,14 +38,34 @@ enum LogoStep {
     LogoStep4,
     LogoStep5,
     LogoStep6,
+    LogoStep7,
+};
+
+struct LogoTimeBasedStateHandler : public StateHandler<LogoStep> {
+    LogoStep self;
+    float elapsed, duration;
+    std::function<void(void)> onExitC;
+    LogoTimeBasedStateHandler(LogoStep pSelf, float pDuration,
+        const std::function<void(void)>& pOnExit = [] () {} ) :
+            self(pSelf), elapsed(0), duration(pDuration), onExitC(pOnExit) {}
+    void setup() {}
+    LogoStep update(float dt) {
+        elapsed += dt;
+        if (elapsed >= duration) {
+            return (LogoStep)(self + 1);
+        } else {
+            return self;
+        }
+    }
+    void onExit(LogoStep) {
+        onExitC();
+    }
 };
 
 class LogoScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
     Entity logo, animLogo, logobg, logofade;
-    float duration;
-
-    LogoStep step;
+    StateMachine<LogoStep>* logoSM;
 
 public:
 
@@ -99,13 +120,46 @@ public:
     ///----------------------------------------------------------------------------//
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
-    #define FADE 0.5
+    #define FADE 0.5f
     void onEnter(Scene::Enum) {
-        duration = 0;
         RENDERING(logo)->show = RENDERING(logobg)->show = RENDERING(logofade)->show = true;
         // preload sound
         theSoundSystem.loadSoundFile("son_monte.ogg");
-        step = LogoStep0;
+
+        // setup state machine
+        logoSM = new StateMachine<LogoStep>();
+        logoSM->registerState(LogoStep0,
+            new LogoTimeBasedStateHandler(LogoStep0, FADE, [this] () {
+                RENDERING(logofade)->show = false;
+            }), "BlackToLogoFade");
+        logoSM->registerState(LogoStep1,
+            new LogoTimeBasedStateHandler(LogoStep1, 0.8, [this] () {
+                RENDERING(animLogo)->show = true;
+                SOUND(animLogo)->sound = theSoundSystem.loadSoundFile("son_monte.ogg");
+            }), "WaitBeforeBlink");
+        logoSM->registerState(LogoStep2,
+            new LogoTimeBasedStateHandler(LogoStep2, 0.05, [this] () {
+                RENDERING(animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo3_365_331");
+            }), "LogoStep2");
+        logoSM->registerState(LogoStep3,
+            new LogoTimeBasedStateHandler(LogoStep3, 0.25, [this] () {
+                RENDERING(animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo2_365_331");
+            }), "LogoStep3");
+        logoSM->registerState(LogoStep4,
+            new LogoTimeBasedStateHandler(LogoStep4, 0.05, [this] () {
+                RENDERING(animLogo)->show = false;
+            }), "LogoStep4");
+        logoSM->registerState(LogoStep5,
+            new LogoTimeBasedStateHandler(LogoStep5, 0.6, [this] () {
+                RENDERING(logofade)->show = true;
+            }), "LogoStep5");
+        logoSM->registerState(LogoStep6,
+            new LogoTimeBasedStateHandler(LogoStep6, FADE),
+            "FadeToBlack");
+        logoSM->registerState(LogoStep7,
+            new LogoTimeBasedStateHandler(LogoStep7, 10),
+            "LogoStep7");
+        logoSM->setup(LogoStep0);
     }
 
 
@@ -113,59 +167,21 @@ public:
     ///--------------------- UPDATE SECTION ---------------------------------------//
     ///----------------------------------------------------------------------------//
     Scene::Enum update(float dt) {
-        duration += dt;
+        logoSM->update(dt);
 
-        switch (step) {
+        const float elapsed = (static_cast<LogoTimeBasedStateHandler*> (logoSM->getCurrentHandler()))->elapsed;
+
+        switch (logoSM->getCurrentState()) {
             case LogoStep0:
-                RENDERING(logofade)->color.a = 1 - (duration / FADE);
-                if (duration > FADE) {
-                    duration = 0;
-                    RENDERING(logofade)->show = false;
-                    step = LogoStep1;
-                }
-                break;
-            case LogoStep1:
-                if (duration > 0.8) {
-                    duration = 0;
-                    RENDERING(animLogo)->show = true;
-                    SOUND(animLogo)->sound = theSoundSystem.loadSoundFile("son_monte.ogg");
-                    step = LogoStep2;
-                }
-                break;
-            case LogoStep2:
-                if (duration > 0.05) {
-                    duration = 0;
-                    RENDERING(animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo3_365_331");
-                    step = LogoStep3;
-                }
-                break;
-            case LogoStep3:
-                if (duration > 0.25) {
-                    duration = 0;
-                    RENDERING(animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo2_365_331");
-                    step = LogoStep4;
-                }
-                break;
-            case LogoStep4:
-                if (duration > 0.05) {
-                    duration = 0;
-                    RENDERING(animLogo)->show = false;
-                    step = LogoStep5;
-                }
-                break;
-            case LogoStep5:
-                if (duration > 0.6) {
-                    duration = 0;
-                    RENDERING(logofade)->show = true;
-                    step = LogoStep6;
-                }
+                RENDERING(logofade)->color.a = 1 - elapsed / FADE;
                 break;
             case LogoStep6:
-                RENDERING(logofade)->color.a = (duration / FADE);
-                if (duration > FADE) {
-                    duration = 0;
-                    return Scene::Menu;
-                }
+                RENDERING(logofade)->color.a = elapsed / FADE;
+                break;
+            case LogoStep7:
+                return Scene::Menu;
+            default:
+                break;
         }
         return Scene::Logo;
     }
@@ -179,6 +195,7 @@ public:
         theEntityManager.DeleteEntity(animLogo);
         theEntityManager.DeleteEntity(logofade);
         theRenderingSystem.unloadAtlas("logo");
+        delete logoSM;
     }
 };
 
