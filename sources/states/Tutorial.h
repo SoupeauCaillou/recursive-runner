@@ -136,7 +136,6 @@ class TutorialScene : public StateHandler<Scene::Enum> {
     float waitBeforeEnterExit;
     TutorialEntities entities;
     Entity titleGroup, title, hideText;
-    Tutorial::Enum currentStep;
     bool waitingClick;
     StateMachine<Tutorial::Enum> tutorialStateMachine;
 

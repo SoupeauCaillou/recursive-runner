@@ -18,30 +18,27 @@
 */
 #pragma once
 
-#include "../StorageAPI.h"
-#include <jni.h>
+#include "util/StorageProxy.h"
 
-class StorageAPIAndroidImpl : public StorageAPI {
-	public:
-		StorageAPIAndroidImpl();
-		~StorageAPIAndroidImpl();
-		void init(JNIEnv* env);
-		void uninit();
+#include <queue>
+#include <string>
 
-		void submitScore(Score inScr);
-		std::vector<Score> getScores(float& outAverage);
+//to be moved
+struct Score {
+    int points;
+    int coins;
+    std::string name;
 
-		int getCoinsCount();
+    Score() {}
+    Score(int inScore, int inCoins, const std::string& inName) : points(inScore), coins(inCoins), name(inName) {}
+};
 
-		bool isFirstGame();
-		void incrementGameCount();;
 
-        bool isMuted() const;
-        void setMuted(bool b);
+class ScoreStorageProxy : public StorageProxy<Score> {
+    public:
+        ScoreStorageProxy();
 
-	private:
-		class StorageAPIAndroidImplDatas;
-		StorageAPIAndroidImplDatas* datas;
-	public:
-		JNIEnv* env;
+        std::string getValue(const std::string& columnName);
+
+        void setValue(const std::string& columnName, const std::string& value, bool pushNewElement = true);
 };

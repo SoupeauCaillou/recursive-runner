@@ -17,10 +17,11 @@
 	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "base/StateMachine.h"
-
+#include "base/ObjectSerializer.h"
 #include "base/EntityManager.h"
 #include "base/PlacementHelper.h"
 #include "base/TouchInputManager.h"
+
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/ButtonSystem.h"
@@ -37,6 +38,7 @@
 
 #include "api/LocalizeAPI.h"
 #include "api/StorageAPI.h"
+#include "util/ScoreStorageProxy.h"
 
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
@@ -182,12 +184,19 @@ class MenuScene : public StateHandler<Scene::Enum> {
             std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
             if (!players.empty() && from == Scene::Game) {
                 std::stringstream a;
-                a << PLAYER(players[0])->score << " points - " << game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
+                a << PLAYER(players[0])->points << " points - " << game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
                 TEXT_RENDERING(subtitleText)->text = a.str();
-                game->recursiveRunnerStorageAPI->submitScore(RecursiveRunnerStorageAPI::Score(PLAYER(players[0])->score, PLAYER(players[0])->coins, "rzehtrtyBg"));
+
+                //save the score in DB
+                ScoreStorageProxy ssp;
+                ssp.setValue("points", ObjectSerializer<int>::object2string(PLAYER(players[0])->points), true); // ask to create a new score
+                ssp.setValue("coins", ObjectSerializer<int>::object2string(PLAYER(players[0])->coins), false);
+                ssp.setValue("name", "rzehtrtyBg", false);
+                game->gameThreadContext->storageAPI->saveEntries(&ssp);
+
                 game->updateBestScore();
 
-                if (PLAYER(players[0])->score >= 15000) {
+                if (PLAYER(players[0])->points >= 15000) {
                     game->gameThreadContext->communicationAPI->giftizMissionDone();
                 }
             }
@@ -277,16 +286,16 @@ void backgroundUpdate(float) {
 
             // Start game ? (tutorial if no game done)
             if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
-                LOGW("Restore Tutorial startup code")
-                return Scene::Ad;
-                #if 0
-                game->gameThreadContext->storageAPI->incrementGameCount();
-                if (game->gameThreadContext->storageAPI->isFirstGame()) {
-                    return State::Tutorial;
+                std::istringstream iss (game->gameThreadContext->storageAPI->getOption("gameCount"));
+                int current = 0;
+                iss >> current;
+                game->gameThreadContext->storageAPI->setOption("gameCount", ObjectSerializer<int>::object2string(current + 1), "0");
+
+                if (current == 0) {
+                    return Scene::Tutorial;
                 } else {
-                    return State::Ad;
+                    return Scene::Ad;
                 }
-                #endif
             }
             return Scene::Menu;
         }

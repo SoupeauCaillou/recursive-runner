@@ -27,6 +27,7 @@
 #include "base/EntityManager.h"
 #include "base/TimeUtil.h"
 #include "base/PlacementHelper.h"
+#include "base/ObjectSerializer.h"
 
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
@@ -46,23 +47,21 @@
 #include "systems/SessionSystem.h"
 #include "systems/PlatformerSystem.h"
 
+#include "api/StorageAPI.h"
+#include "util/ScoreStorageProxy.h"
+
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/core/func_geometric.hpp>
 #include <iomanip>
 
-#include "api/StorageAPI.h"
-#include "api/RecursiveRunnerStorageAPI.h"
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
-RecursiveRunnerGame::RecursiveRunnerGame(RecursiveRunnerStorageAPI* rrStorage) :
-   Game() {
-
-   recursiveRunnerStorageAPI = rrStorage;
+RecursiveRunnerGame::RecursiveRunnerGame() {
 
    RunnerSystem::CreateInstance();
    CameraTargetSystem::CreateInstance();
@@ -111,7 +110,6 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
             return false;
     }
 }
-#include "../platforms/default/api/RecursiveRunnerStorageAPILinuxImpl.h"
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
@@ -119,9 +117,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     gameThreadContext->storageAPI->init(gameThreadContext->assetAPI, "RecursiveRunner");
     gameThreadContext->storageAPI->setOption("sound", std::string(), "on");
     gameThreadContext->storageAPI->setOption("gameCount", std::string(), "0");
-
-    //tobechanged
-    gameThreadContext->communicationAPI->init((CommunicationAPI::ScoreHandler*)static_cast<RecursiveRunnerStorageAPILinuxImpl*>(recursiveRunnerStorageAPI));
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
@@ -481,9 +476,7 @@ void RecursiveRunnerGame::initGame() {
     ADD_COMPONENT(scoreText, TextRendering);
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty()) {
-        std::stringstream a;
-        a << PLAYER(players[0])->score;
-        TEXT_RENDERING(scoreText)->text = a.str();
+        TEXT_RENDERING(scoreText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points);
     } else {
         TEXT_RENDERING(scoreText)->text = "12345";
     }
@@ -539,7 +532,8 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         }
     }
 
-    // recursiveRunnerStorageAPI->init(gameThreadContext->storageAPI);
+    ScoreStorageProxy ssp;
+    gameThreadContext->storageAPI->createTable(&ssp);
 
     level = Level::Level1;
     initGame();
@@ -672,11 +666,11 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
 }
 
 void RecursiveRunnerGame::updateBestScore() {
-    float f;
-    std::vector<RecursiveRunnerStorageAPI::Score> scores; // = recursiveRunnerStorageAPI->getScores(f);
-    if (!scores.empty()) {
+    ScoreStorageProxy ssp;
+    gameThreadContext->storageAPI->loadEntries(&ssp, "points", "order by points desc limit 1");
+    if (! ssp.isEmpty()) {
         std::stringstream best;
-        best << "Best: " << scores[0].points;
+        best << "Best: " << ssp._queue.front().points;
         TEXT_RENDERING(bestScore)->text = best.str();
     } else {
         LOGW("No best score found (?!)");

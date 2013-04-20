@@ -92,7 +92,7 @@ class AdScene : public StateHandler<Scene::Enum> {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-    bool updatePreExit(Scene::Enum) {
+    bool updatePreExit(Scene::Enum, float) {
         if (gamesb4Ad == 0) {
            //wait 1 sec after the ad was showed
             return (TimeUtil::GetTime() - waitAfterAdDisplay >= 1.0);

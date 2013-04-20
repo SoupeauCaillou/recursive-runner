@@ -22,8 +22,8 @@
 #include "base/Color.h"
 
 struct PlayerComponent {
-    PlayerComponent() : score(0), coins(0), runnersCount(0), ready(true) {}
-    int score, coins;
+    PlayerComponent() : points(0), coins(0), runnersCount(0), ready(true) {}
+    int points, coins;
     int runnersCount;
     bool ready;
     std::vector<Color> colors;

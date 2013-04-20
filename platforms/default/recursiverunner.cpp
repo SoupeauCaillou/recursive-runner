@@ -18,7 +18,6 @@
 */
 #include "RecursiveRunnerGame.h"
 #include "app/AppSetup.h"
-#include "api/RecursiveRunnerStorageAPILinuxImpl.h"
 
 int main(int argc, char** argv) {
     if (initGame("Recursive Runner", glm::ivec2(800, 600))) {
@@ -26,11 +25,8 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Init game specific API
-    RecursiveRunnerStorageAPILinuxImpl* storage = new RecursiveRunnerStorageAPILinuxImpl();
-
     return launchGame(
-        new RecursiveRunnerGame(storage),
+        new RecursiveRunnerGame(),
         argc,
         argv);
 }

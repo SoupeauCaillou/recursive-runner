@@ -327,7 +327,7 @@ public:
             // Show the score(s)
             for (unsigned i=0; i<sc->players.size(); i++) {
                 std::stringstream a;
-                a << PLAYER(sc->players[i])->score;
+                a << PLAYER(sc->players[i])->points;
                 TEXT_RENDERING(game->scoreText)->text = a.str();
             }
 
@@ -511,7 +511,7 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                 }
                 rc->coins.push_back(coin);
                 int gain = 10 * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
-                player->score += gain;
+                player->points += gain;
 
                 //coins++ only for player, not his ghosts
                 if (sc->currentRunner == e)
