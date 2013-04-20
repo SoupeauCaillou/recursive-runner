@@ -116,7 +116,10 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
 
-    //gameThreadContext->storageAPI->init("recursiveRunner");
+    gameThreadContext->storageAPI->init(gameThreadContext->assetAPI, "RecursiveRunner");
+    gameThreadContext->storageAPI->setOption("sound", std::string(), "on");
+    gameThreadContext->storageAPI->setOption("gameCount", std::string(), "0");
+
     //tobechanged
     gameThreadContext->communicationAPI->init((CommunicationAPI::ScoreHandler*)static_cast<RecursiveRunnerStorageAPILinuxImpl*>(recursiveRunnerStorageAPI));
 
@@ -453,7 +456,7 @@ void RecursiveRunnerGame::initGame() {
     TRANSFORM(camera)->z = 0;
     ADD_COMPONENT(camera, Camera);
     CAMERA(camera)->clearColor = Color(148.0/255, 148.0/255, 148.0/255, 1.0);
-        
+
     decor();
 
     scorePanel = theEntityManager.CreateEntity("score_panel");

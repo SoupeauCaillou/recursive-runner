@@ -22,14 +22,14 @@ INSTANCE_IMPL(SessionSystem);
 
 SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session") {
     SessionComponent tc;
-    componentSerializer.add(new Property<int>(OFFSET(numPlayers, tc)));
-    componentSerializer.add(new EntityProperty(OFFSET(currentRunner, tc)));
-    componentSerializer.add(new Property<bool>(OFFSET(userInputEnabled, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(OFFSET(runners, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(OFFSET(coins, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(OFFSET(players, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(OFFSET(links, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(OFFSET(sparkling, tc)));
+    componentSerializer.add(new Property<int>("numPlayers", OFFSET(numPlayers, tc)));
+    componentSerializer.add(new EntityProperty("currentRunner", OFFSET(currentRunner, tc)));
+    componentSerializer.add(new Property<bool>("userInputEnabled", OFFSET(userInputEnabled, tc)));
+    componentSerializer.add(new VectorProperty<Entity>("runners", OFFSET(runners, tc)));
+    componentSerializer.add(new VectorProperty<Entity>("coins", OFFSET(coins, tc)));
+    componentSerializer.add(new VectorProperty<Entity>("players", OFFSET(players, tc)));
+    componentSerializer.add(new VectorProperty<Entity>("links", OFFSET(links, tc)));
+    componentSerializer.add(new VectorProperty<Entity>("sparkling", OFFSET(sparkling, tc)));
 }
 
 void SessionSystem::DoUpdate(float) {

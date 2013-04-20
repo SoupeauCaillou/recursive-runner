@@ -33,23 +33,23 @@ float RunnerSystem::MaxJumpDuration = 0.2;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     RunnerComponent tc;
-    componentSerializer.add(new EntityProperty(OFFSET(playerOwner, tc)));
-    componentSerializer.add(new EntityProperty(OFFSET(collisionZone, tc)));
-    componentSerializer.add(new Property<glm::vec2>(OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<glm::vec2>(OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<Color>(OFFSET(color, tc)));
-    componentSerializer.add(new Property<float>(OFFSET(speed, tc), 0.001));
-    componentSerializer.add(new Property<bool>(OFFSET(finished, tc)));
-    componentSerializer.add(new Property<bool>(OFFSET(ghost, tc)));
-    componentSerializer.add(new Property<bool>(OFFSET(killed, tc)));
-    componentSerializer.add(new Property<float>(OFFSET(elapsed, tc), 0.001));
-    componentSerializer.add(new Property<float>(OFFSET(jumpingSince, tc), 0.001));
-    componentSerializer.add(new Property<bool>(OFFSET(currentJump, tc)));
-    componentSerializer.add(new Property<int>(OFFSET(oldNessBonus, tc)));
-    componentSerializer.add(new Property<int>(OFFSET(coinSequenceBonus, tc)));
-    componentSerializer.add(new VectorProperty<float>(OFFSET(jumpTimes, tc)));
-    componentSerializer.add(new VectorProperty<float>(OFFSET(jumpDurations, tc)));
-    componentSerializer.add(new VectorProperty<float>(OFFSET(coins, tc)));
+    componentSerializer.add(new EntityProperty("playerOwner", OFFSET(playerOwner, tc)));
+    componentSerializer.add(new EntityProperty("collisionZone", OFFSET(collisionZone, tc)));
+    componentSerializer.add(new Property<glm::vec2>("startPoint.x", OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>("endPoint", OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<Color>("color", OFFSET(color, tc)));
+    componentSerializer.add(new Property<float>("speœ", OFFSET(speed, tc), 0.001));
+    componentSerializer.add(new Property<bool>("finished", OFFSET(finished, tc)));
+    componentSerializer.add(new Property<bool>("ghost", OFFSET(ghost, tc)));
+    componentSerializer.add(new Property<bool>("killed", OFFSET(killed, tc)));
+    componentSerializer.add(new Property<float>("elapsed", OFFSET(elapsed, tc), 0.001));
+    componentSerializer.add(new Property<float>("jumpingSince", OFFSET(jumpingSince, tc), 0.001));
+    componentSerializer.add(new Property<bool>("currentJump", OFFSET(currentJump, tc)));
+    componentSerializer.add(new Property<int>("oldNessBonus", OFFSET(oldNessBonus, tc)));
+    componentSerializer.add(new Property<int>("coinSequenceBonus", OFFSET(coinSequenceBonus, tc)));
+    componentSerializer.add(new VectorProperty<float>("jumpTimes", OFFSET(jumpTimes, tc)));
+    componentSerializer.add(new VectorProperty<float>("jumpDurations", OFFSET(jumpDurations, tc)));
+    componentSerializer.add(new VectorProperty<float>("coins", OFFSET(coins, tc)));
 }
 
 static void killRunner(Entity runner) {

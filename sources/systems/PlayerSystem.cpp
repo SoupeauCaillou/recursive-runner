@@ -23,10 +23,10 @@ INSTANCE_IMPL(PlayerSystem);
 
 PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
     PlayerComponent tc;
-    componentSerializer.add(new Property<int>(OFFSET(score, tc)));
-    componentSerializer.add(new Property<int>(OFFSET(runnersCount, tc)));
-    componentSerializer.add(new Property<bool>(OFFSET(ready, tc)));
-    componentSerializer.add(new VectorProperty<Color>(OFFSET(colors, tc)));
+    componentSerializer.add(new Property<int>("score", OFFSET(score, tc)));
+    componentSerializer.add(new Property<int>("runnersCount", OFFSET(runnersCount, tc)));
+    componentSerializer.add(new Property<bool>("ready", OFFSET(ready, tc)));
+    componentSerializer.add(new VectorProperty<Color>("colors", OFFSET(colors, tc)));
 }
 
 void PlayerSystem::DoUpdate(float) {
