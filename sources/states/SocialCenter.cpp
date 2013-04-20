@@ -18,7 +18,6 @@
 */
 #include "base/StateMachine.h"
 
-#include <sstream>
 #include <vector>
 
 #include "base/EntityManager.h"

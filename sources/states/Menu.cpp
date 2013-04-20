@@ -43,7 +43,6 @@
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
 
-#include <sstream>
 #include <vector>
 
 static void updateTitleSubTitle(Entity title, Entity subtitle);
@@ -183,9 +182,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // save score if any
             std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
             if (!players.empty() && from == Scene::Game) {
-                std::stringstream a;
-                a << PLAYER(players[0])->points << " points - " << game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
-                TEXT_RENDERING(subtitleText)->text = a.str();
+                TEXT_RENDERING(subtitleText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points)
+                + " points - " + game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
 
                 //save the score in DB
                 ScoreStorageProxy ssp;
@@ -286,9 +284,7 @@ void backgroundUpdate(float) {
 
             // Start game ? (tutorial if no game done)
             if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
-                std::istringstream iss (game->gameThreadContext->storageAPI->getOption("gameCount"));
-                int current = 0;
-                iss >> current;
+                int current = ObjectSerializer<int>::string2object(game->gameThreadContext->storageAPI->getOption("gameCount"));
                 game->gameThreadContext->storageAPI->setOption("gameCount", ObjectSerializer<int>::object2string(current + 1), "0");
 
                 if (current == 0) {

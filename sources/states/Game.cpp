@@ -20,6 +20,7 @@
 
 #include "base/EntityManager.h"
 #include "base/TouchInputManager.h"
+#include "base/ObjectSerializer.h"
 #include "base/PlacementHelper.h"
 #include "systems/AnimationSystem.h"
 #include "systems/TransformationSystem.h"
@@ -45,7 +46,6 @@
 #include "../Parameters.h"
 #include <glm/gtx/compatibility.hpp>
 #include <cmath>
-#include <sstream>
 
 static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc);
@@ -326,9 +326,7 @@ public:
 
             // Show the score(s)
             for (unsigned i=0; i<sc->players.size(); i++) {
-                std::stringstream a;
-                a << PLAYER(sc->players[i])->points;
-                TEXT_RENDERING(game->scoreText)->text = a.str();
+                TEXT_RENDERING(game->scoreText)->text = ObjectSerializer<int>::object2string(PLAYER(sc->players[i])->points);
             }
 
             thePlatformerSystem.Update(dt);

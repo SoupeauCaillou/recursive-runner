@@ -26,11 +26,11 @@ namespace param {
     const float CoinScale = 0.6;
 
 	//nombre d'aller-retour (defaut = 10)
-	const int runner = 1;
+	const int runner = 10;
 
 	//vitesse de base (defaut = 0.7)
 	const float speedConst = COMPUTE_SPEED_FROM_GAME_DURATION(90.5); //6.9; //0.8;
 
-	//vitesse proportionnel au nombre de ghost (defaut = 0.1)
+	//vitesse proportionnel au nombre de ghost (defaut = 0)
 	const float speedCoeff = 0; // 0.08;
 }

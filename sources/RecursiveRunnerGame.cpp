@@ -669,9 +669,7 @@ void RecursiveRunnerGame::updateBestScore() {
     ScoreStorageProxy ssp;
     gameThreadContext->storageAPI->loadEntries(&ssp, "points", "order by points desc limit 1");
     if (! ssp.isEmpty()) {
-        std::stringstream best;
-        best << "Best: " << ssp._queue.front().points;
-        TEXT_RENDERING(bestScore)->text = best.str();
+        TEXT_RENDERING(bestScore)->text = "Best: " + ObjectSerializer<int>::object2string(ssp._queue.front().points);
     } else {
         LOGW("No best score found (?!)");
         TEXT_RENDERING(bestScore)->text = "";
