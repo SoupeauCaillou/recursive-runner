@@ -50,6 +50,6 @@ void CameraTargetSystem::DoUpdate(float dt) {
     }
 }
 
-#ifdef SAC_INGAME_EDITORS
+#if SAC_INGAME_EDITORS
 void CameraTargetSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
 #endif

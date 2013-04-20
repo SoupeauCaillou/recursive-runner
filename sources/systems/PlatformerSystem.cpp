@@ -105,6 +105,6 @@ static bool onPlatform(const glm::vec2& position, float yEpsilon, Entity platfor
         0);
 }
 
-#ifdef SAC_INGAME_EDITORS
+#if SAC_INGAME_EDITORS
 void PlatformerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
 #endif

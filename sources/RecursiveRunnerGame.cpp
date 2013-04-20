@@ -823,7 +823,7 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
         RENDERING(e)->color.a = 0.5;
         RENDERING(e)->show = true;
         RENDERING(e)->color.a = (transition ? 0 : 1);
-        #ifdef SAC_NETWORK
+        #if SAC_NETWORK
         ADD_COMPONENT(e, Network);
         NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
         NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;

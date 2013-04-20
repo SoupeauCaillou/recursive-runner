@@ -173,6 +173,6 @@ void RunnerSystem::DoUpdate(float dt) {
     }
 }
 
-#ifdef SAC_INGAME_EDITORS
+#if SAC_INGAME_EDITORS
 void RunnerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
 #endif
