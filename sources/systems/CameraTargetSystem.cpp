@@ -28,9 +28,9 @@ CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetCompo
     CameraTargetComponent tc;
     componentSerializer.add(new Property<Entity>("camera", OFFSET(camera, tc)));
     componentSerializer.add(new Property<glm::vec2>("offset", OFFSET(offset, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<float>("maxCameraSpeed", OFFSET(maxCameraSpeed, tc), 0.001));
+    componentSerializer.add(new Property<float>("max_camera_speed", OFFSET(maxCameraSpeed, tc), 0.001));
     componentSerializer.add(new Property<bool>("enabled", OFFSET(enabled, tc)));
-    componentSerializer.add(new Property<glm::vec2>("cameraSpeed", OFFSET(cameraSpeed, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>("camera_speed", OFFSET(cameraSpeed, tc), glm::vec2(0.001, 0)));
 }
 
 void CameraTargetSystem::DoUpdate(float dt) {

@@ -31,9 +31,9 @@ INSTANCE_IMPL(PlatformerSystem);
 
 PlatformerSystem::PlatformerSystem() : ComponentSystemImpl<PlatformerComponent>("Platformer") {
     PlatformerComponent tc;
-    componentSerializer.add(new Property<glm::vec2>("previousPosition", OFFSET(previousPosition, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>("previous_position", OFFSET(previousPosition, tc), glm::vec2(0.001, 0)));
     componentSerializer.add(new Property<glm::vec2>("offset", OFFSET(offset, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new EntityProperty("onPlatform", OFFSET(onPlatform, tc)));
+    componentSerializer.add(new EntityProperty("on_platform", OFFSET(onPlatform, tc)));
     componentSerializer.add(new MapProperty<Entity, bool>("platforms", OFFSET(platforms, tc)));
 }
 

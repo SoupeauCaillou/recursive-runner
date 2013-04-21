@@ -22,9 +22,9 @@ INSTANCE_IMPL(SessionSystem);
 
 SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session") {
     SessionComponent tc;
-    componentSerializer.add(new Property<int>("numPlayers", OFFSET(numPlayers, tc)));
-    componentSerializer.add(new EntityProperty("currentRunner", OFFSET(currentRunner, tc)));
-    componentSerializer.add(new Property<bool>("userInputEnabled", OFFSET(userInputEnabled, tc)));
+    componentSerializer.add(new Property<int>("num_players", OFFSET(numPlayers, tc)));
+    componentSerializer.add(new EntityProperty("current_runner", OFFSET(currentRunner, tc)));
+    componentSerializer.add(new Property<bool>("user_input_enabled", OFFSET(userInputEnabled, tc)));
     componentSerializer.add(new VectorProperty<Entity>("runners", OFFSET(runners, tc)));
     componentSerializer.add(new VectorProperty<Entity>("coins", OFFSET(coins, tc)));
     componentSerializer.add(new VectorProperty<Entity>("players", OFFSET(players, tc)));
