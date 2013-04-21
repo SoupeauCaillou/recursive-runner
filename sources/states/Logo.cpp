@@ -74,22 +74,21 @@ public:
     }
 
     void setup() {
-        logo = theEntityManager.CreateEntity("logo");
+        DataFileParser dfp;
+        FileBuffer fb = game->gameThreadContext->assetAPI->loadAsset("entities/logo.entity");
+        if (!dfp.load(fb)) {
+            LOGF("Unable to parse '" << "entities/logo.entity" << "'")
+        }
+        logo = theEntityManager.CreateEntity("logo", EntityType::Volatile, &dfp);
         logobg = theEntityManager.CreateEntity("logo_bg");
         logofade = theEntityManager.CreateEntity("logo_fade");
         animLogo = theEntityManager.CreateEntity("logo_anim");
 
-        ADD_COMPONENT(logo, Rendering);
-        ADD_COMPONENT(logo, Transformation);
-        TRANSFORM(logo)->position = TRANSFORM(game->cameraEntity)->worldPosition;
-        TRANSFORM(logo)->size = glm::vec2(PlacementHelper::ScreenHeight * 0.8, PlacementHelper::ScreenHeight * 0.8);
         TRANSFORM(logo)->parent = game->cameraEntity;
-        TRANSFORM(logo)->z = DL_Logo - TRANSFORM(game->cameraEntity)->z;
-        RENDERING(logo)->texture = theRenderingSystem.loadTextureFile("soupe_logo");
 
         ADD_COMPONENT(logobg, Rendering);
         ADD_COMPONENT(logobg, Transformation);
-        TRANSFORM(logobg)->position = TRANSFORM(game->cameraEntity)->worldPosition;
+        TRANSFORM(logobg)->position = glm::vec2(0.0);
         TRANSFORM(logobg)->size = glm::vec2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
         RENDERING(logobg)->color = Color(0,0,0);
         TRANSFORM(logobg)->z = DL_BehindLogo - TRANSFORM(game->cameraEntity)->z;
@@ -97,7 +96,7 @@ public:
 
         ADD_COMPONENT(logofade, Rendering);
         ADD_COMPONENT(logofade, Transformation);
-        TRANSFORM(logofade)->position = TRANSFORM(game->cameraEntity)->worldPosition;
+        TRANSFORM(logofade)->position = glm::vec2(0.0);
         TRANSFORM(logofade)->size = glm::vec2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
         RENDERING(logofade)->color = Color(0,0,0);
         TRANSFORM(logofade)->z = 1 - TRANSFORM(game->cameraEntity)->z;

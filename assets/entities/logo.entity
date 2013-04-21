@@ -1,0 +1,7 @@
+[Transformation]
+position = 0, 0
+size%screen_h = 0.8, 0.8
+z = 0.98
+
+[Rendering]
+texture = soupe_logo
