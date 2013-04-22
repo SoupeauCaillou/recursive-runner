@@ -74,12 +74,7 @@ public:
     }
 
     void setup() {
-        DataFileParser dfp;
-        FileBuffer fb = game->gameThreadContext->assetAPI->loadAsset("entities/logo.entity");
-        if (!dfp.load(fb)) {
-            LOGF("Unable to parse '" << "entities/logo.entity" << "'")
-        }
-        logo = theEntityManager.CreateEntity("logo", EntityType::Volatile, &dfp);
+        logo = theEntityManager.CreateEntityFromFile("logo");
         logobg = theEntityManager.CreateEntity("logo_bg");
         logofade = theEntityManager.CreateEntity("logo_fade");
         animLogo = theEntityManager.CreateEntity("logo_anim");
