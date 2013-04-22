@@ -75,18 +75,11 @@ public:
 
     void setup() {
         logo = theEntityManager.CreateEntityFromFile("logo");
-        logobg = theEntityManager.CreateEntity("logo_bg");
+        logobg = theEntityManager.CreateEntityFromFile("logo_bg");
         logofade = theEntityManager.CreateEntity("logo_fade");
         animLogo = theEntityManager.CreateEntity("logo_anim");
 
         TRANSFORM(logo)->parent = game->cameraEntity;
-
-        ADD_COMPONENT(logobg, Rendering);
-        ADD_COMPONENT(logobg, Transformation);
-        TRANSFORM(logobg)->position = glm::vec2(0.0);
-        TRANSFORM(logobg)->size = glm::vec2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
-        RENDERING(logobg)->color = Color(0,0,0);
-        TRANSFORM(logobg)->z = DL_BehindLogo - TRANSFORM(game->cameraEntity)->z;
         TRANSFORM(logobg)->parent = game->cameraEntity;
 
         ADD_COMPONENT(logofade, Rendering);
