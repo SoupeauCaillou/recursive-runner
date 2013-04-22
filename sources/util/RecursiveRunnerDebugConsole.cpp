@@ -14,23 +14,37 @@
 
 #include "base/StateMachine.h"
 
-
 RecursiveRunnerGame* RecursiveRunnerDebugConsole::_game = 0;
 
-/*void RecursiveRunnerDebugConsole::callbackSubmitRandomScore(void* arg) {
-    int count = *(int*)arg;*/
-
-void RecursiveRunnerDebugConsole::callbackFinishGame(void*) {
-    _game->sceneStateMachine.overrideNextState = Scene::Menu;
+void RecursiveRunnerDebugConsole::callbackFinishGame(void* arg) {
+    _game->sceneStateMachine.overrideNextState = *((Scene::Enum*)arg);
     _game->sceneStateMachine.override = true;
 }
 
 void RecursiveRunnerDebugConsole::init(RecursiveRunnerGame* game) {
     _game = game;
 
-    //TwEnumVal numberToGenerate[] = { {1, "1"}, {10, "10"}, {100, "100"} };
-    //REGISTER(SubmitRandomScore, numberToGenerate)
+    TwEnumVal arrivalScene[] = {
+        { Scene::Logo, "Logo" },
+        { Scene::Menu, "Menu" },
+        { Scene::Game, "Game" },
+        { Scene::Tutorial, "Tutorial" },
+        { Scene::Pause, "Pause" },
+        { Scene::Ad, "Ad" },
+        { Scene::Rate, "Rate" },
+        { Scene::RestartGame, "RestartGame" },
+        { Scene::SocialCenter, "SocialCenter" }
+     };
 
-    REGISTER_NO_ARG(FinishGame)
+    REGISTER_ONE_ARG(FinishGame, arrivalScene)
+
+/*
+    static auto lambda = [game](void* arg) {
+        LOGE("called!")
+        game->sceneStateMachine.overrideNextState = Scene::Game;// *((Scene::Enum*)arg);
+        game->sceneStateMachine.override = true;
+    };
+    TwAddButton(DebugConsole::Instance().bar, "test", (TwButtonCallback)&lambda, 0, "");
+*/
 }
 #endif
