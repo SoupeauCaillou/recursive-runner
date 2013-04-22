@@ -51,6 +51,10 @@ namespace Level {
 }
 
 class RecursiveRunnerGame : public Game {
+#ifdef SAC_INGAME_EDITORS
+    friend class RecursiveRunnerDebugConsole;
+#endif
+
    public:
       static void startGame(Level::Enum level, bool transition);
       static void endGame();

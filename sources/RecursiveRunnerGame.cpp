@@ -50,6 +50,8 @@
 #include "api/StorageAPI.h"
 #include "util/ScoreStorageProxy.h"
 
+#include "util/RecursiveRunnerDebugConsole.h"
+
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -534,6 +536,8 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 
     ScoreStorageProxy ssp;
     gameThreadContext->storageAPI->createTable(&ssp);
+
+    RecursiveRunnerDebugConsole::init(this);
 
     level = Level::Level1;
     initGame();
