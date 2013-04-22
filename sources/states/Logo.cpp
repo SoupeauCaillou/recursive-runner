@@ -76,19 +76,13 @@ public:
     void setup() {
         logo = theEntityManager.CreateEntityFromFile("logo");
         logobg = theEntityManager.CreateEntityFromFile("logo_bg");
-        logofade = theEntityManager.CreateEntity("logo_fade");
+        logofade = theEntityManager.CreateEntityFromFile("logo_fade");
         animLogo = theEntityManager.CreateEntity("logo_anim");
 
         TRANSFORM(logo)->parent = game->cameraEntity;
         TRANSFORM(logobg)->parent = game->cameraEntity;
-
-        ADD_COMPONENT(logofade, Rendering);
-        ADD_COMPONENT(logofade, Transformation);
-        TRANSFORM(logofade)->position = glm::vec2(0.0);
-        TRANSFORM(logofade)->size = glm::vec2(PlacementHelper::ScreenWidth, PlacementHelper::ScreenHeight);
-        RENDERING(logofade)->color = Color(0,0,0);
-        TRANSFORM(logofade)->z = 1 - TRANSFORM(game->cameraEntity)->z;
         TRANSFORM(logofade)->parent = game->cameraEntity;
+
 
         ADD_COMPONENT(animLogo, Transformation);
         TRANSFORM(animLogo)->size = TRANSFORM(logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331")
