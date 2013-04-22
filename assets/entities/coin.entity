@@ -1,0 +1,19 @@
+[Transformation]
+rotation = -0.1, 0.1
+z = 0.75
+
+[Rendering]
+texture = ampoule
+
+[Particule]
+emission_rate=150
+duration=0
+lifetime= 0.1, 0.1
+initial_color = 0.529, 0.529,0.529,0.8, 0.568, 0.568,0.568,0.8
+final_color = 0.529, 0.529,0.529,0.8, 0.568, 0.568,0.568,0.8
+initial_size = 0.08, 0.16
+final_size = 0
+force_direction = 0, 6.28
+force_amplitude = 5, 10
+moment = -5, 5
+mass = 0.1

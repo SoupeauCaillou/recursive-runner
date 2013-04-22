@@ -537,7 +537,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     ScoreStorageProxy ssp;
     gameThreadContext->storageAPI->createTable(&ssp);
 
-    RecursiveRunnerDebugConsole::init(this);
+//    RecursiveRunnerDebugConsole::init(this);
 
     level = Level::Level1;
     initGame();
@@ -816,35 +816,29 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
     LOGI("Coins creation started");
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
-        Entity e = theEntityManager.CreateEntity("coin", EntityType::Persistent);
-        ADD_COMPONENT(e, Transformation);
+        Entity e = theEntityManager.CreateEntityFromFile("coin", EntityType::Persistent);
+        // ADD_COMPONENT(e, Transformation);
         TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("ampoule")) * param::CoinScale;
         TRANSFORM(e)->position = coordinates[i];
-        TRANSFORM(e)->rotation = glm::linearRand(-0.1f, 0.1f);
-        TRANSFORM(e)->z = 0.75;
-        ADD_COMPONENT(e, Rendering);
-        RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
-        RENDERING(e)->color.a = 0.5;
+        // TRANSFORM(e)->rotation = glm::linearRand(-0.1f, 0.1f);
+        // TRANSFORM(e)->z = 0.75;
+        // ADD_COMPONENT(e, Rendering);
+        // RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
         RENDERING(e)->show = true;
         RENDERING(e)->color.a = (transition ? 0 : 1);
-        #if SAC_NETWORK
-        ADD_COMPONENT(e, Network);
-        NETWORK(e)->systemUpdatePeriod[theTransformationSystem.getName()] = 0;
-        NETWORK(e)->systemUpdatePeriod[theRenderingSystem.getName()] = 0;
-        #endif
-        ADD_COMPONENT(e, Particule);
-        PARTICULE(e)->emissionRate = 150;
-        PARTICULE(e)->duration = 0;
-        PARTICULE(e)->lifetime = 0.1 * 1;
-        PARTICULE(e)->texture = InvalidTextureRef;
-        PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
-        PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
-        PARTICULE(e)->initialSize = Interval<float>(0.08, 0.16);
-        PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
-        PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
-        PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
-        PARTICULE(e)->moment = Interval<float>(-5, 5);
-        PARTICULE(e)->mass = 0.1;
+        // ADD_COMPONENT(e, Particule);
+        // PARTICULE(e)->emissionRate = 150;
+        // PARTICULE(e)->duration = 0;
+        // PARTICULE(e)->lifetime = 0.1 * 1;
+        // PARTICULE(e)->texture = InvalidTextureRef;
+        // PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
+        // PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
+        // PARTICULE(e)->initialSize = Interval<float>(0.08, 0.16);
+        // PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
+        // PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
+        // PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
+        // PARTICULE(e)->moment = Interval<float>(-5, 5);
+        // PARTICULE(e)->mass = 0.1;
         coins.push_back(e);
     }
 
