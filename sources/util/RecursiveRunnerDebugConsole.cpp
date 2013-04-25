@@ -25,7 +25,6 @@ void RecursiveRunnerDebugConsole::init(RecursiveRunnerGame* game) {
     _game = game;
 
     TwEnumVal arrivalScene[] = {
-        { Scene::Logo, "Logo" },
         { Scene::Menu, "Menu" },
         { Scene::Game, "Game" },
         { Scene::Tutorial, "Tutorial" },
