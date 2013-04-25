@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+package="net.damsy.soupeaucaillou.recursiveRunner"
+android:versionCode="10"
+android:versionName="1.0.1"
+android:installLocation="auto">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+
+    <uses-feature android:glEsVersion="0x00020000" />
+
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="9"/>
+    <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
+
+    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication"
+	android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+
+	<!-- Our activity is the built-in NativeActivity framework class.
+	This will take care of integrating with our NDK code. -->
+	<activity android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity"
+	android:label="RecursiveRunner" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
+	    <intent-filter>
+		<action android:name="android.intent.action.MAIN" />
+		<category android:name="android.intent.category.LAUNCHER" />
+	    </intent-filter>
+	</activity>
+
+	<!--Swarm-->
+	<activity android:name="com.swarmconnect.SwarmMainActivity"
+	    android:configChanges="orientation|keyboardHidden"
+	    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+	    android:windowSoftInputMode="stateHidden" />
+	<service android:name="com.swarmconnect.NotificationService" android:process=":swarm"/>
+
+	<!--Revmob-->
+	<activity android:name="com.revmob.ads.fullscreen.FullscreenActivity"
+	    android:configChanges="keyboardHidden|orientation" >
+	</activity>
+
+	<!--Giftiz-->
+	<meta-data android:name="GIFTIZ_PARTNER_KEY" android:value="6737f427-6ec1-487c-9c3a-2dc21edab887"/>
+	<!--enable log for giftiz-->
+	<meta-data android:name="SHOW_GIFTIZ_LOG" android:value="false" />
+	<activity android:name="com.purplebrain.giftiz.sdk.GiftizWebViewActivity" />
+    </application>
+</manifest>
