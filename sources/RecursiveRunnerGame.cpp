@@ -814,9 +814,10 @@ static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMi
 
 void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition) {
     LOGI("Coins creation started");
+    EntityTemplateRef coinTemplate = theEntityManager.entityTemplateLibrary.load("coin");
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
-        Entity e = theEntityManager.CreateEntityFromFile("coin", EntityType::Persistent);
+        Entity e = theEntityManager.CreateEntity("coin", EntityType::Persistent, coinTemplate);
         // ADD_COMPONENT(e, Transformation);
         TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("ampoule")) * param::CoinScale;
         TRANSFORM(e)->position = coordinates[i];

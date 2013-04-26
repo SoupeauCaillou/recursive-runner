@@ -74,9 +74,9 @@ public:
     }
 
     void setup() {
-        logo = theEntityManager.CreateEntityFromFile("logo");
-        logobg = theEntityManager.CreateEntityFromFile("logo_bg");
-        logofade = theEntityManager.CreateEntityFromFile("logo_fade");
+        logo = theEntityManager.CreateEntity("logo", EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("logo"));
+        logobg = theEntityManager.CreateEntity("logo_bg", EntityType::Volatile, theEntityManager.entityTemplateLibrary.load("logo_bg"));
+        logofade = theEntityManager.CreateEntity("logo_fade", EntityType::Volatile, theEntityManager.entityTemplateLibrary.load("logo_fade"));
         animLogo = theEntityManager.CreateEntity("logo_anim");
 
         TRANSFORM(logo)->parent = game->cameraEntity;
@@ -175,7 +175,7 @@ public:
         theEntityManager.DeleteEntity(logobg);
         theEntityManager.DeleteEntity(animLogo);
         theEntityManager.DeleteEntity(logofade);
-        theRenderingSystem.unloadAtlas("logo");
+        // theRenderingSystem.unloadAtlas("logo");
         delete logoSM;
     }
 };
