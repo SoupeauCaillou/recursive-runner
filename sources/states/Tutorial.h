@@ -205,6 +205,7 @@ public:
         RENDERING(entities.anim)->show = false;
         ADD_COMPONENT(entities.anim, Animation);
         ANIMATION(entities.anim)->name = "arrow_tuto";
+        ANIMATION(entities.anim)->playbackSpeed = 0;
         theAnimationSystem.loadAnim(game->gameThreadContext->assetAPI, "arrow_tuto", "arrow_tuto");
     }
 
