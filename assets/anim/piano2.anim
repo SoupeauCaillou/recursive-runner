@@ -1,6 +1,6 @@
 [meta]
 speed=8
-loop=1
+loop=0
 num_frames=4
 next_anim=piano
 

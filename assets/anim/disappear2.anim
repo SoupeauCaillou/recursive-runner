@@ -1,6 +1,6 @@
 [meta]
 speed=15
-loop=1
+loop=0
 num_frames=9
 
 [frame0]
