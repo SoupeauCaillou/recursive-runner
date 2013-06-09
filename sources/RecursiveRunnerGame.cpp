@@ -465,11 +465,10 @@ void RecursiveRunnerGame::initGame() {
     scorePanel = theEntityManager.CreateEntity("score_panel");
     ADD_COMPONENT(scorePanel, Transformation);
     TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
-    ADD_COMPONENT(scorePanel, Anchor);
-    ANCHOR(scorePanel)->position = AnchorSystem::adjustPositionWithCardinal(
+    TRANSFORM(scorePanel)->position = AnchorSystem::adjustPositionWithCardinal(
         glm::vec2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TRANSFORM(scorePanel)->size, Cardinal::N);
-    ANCHOR(scorePanel)->z = 0.8;
-    ANCHOR(scorePanel)->rotation = 0.04;
+    TRANSFORM(scorePanel)->z = 0.8;
+    TRANSFORM(scorePanel)->rotation = 0.04;
     // TRANSFORM(scorePanel)->parent = cameraEntity;
     ADD_COMPONENT(scorePanel, Rendering);
     RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
