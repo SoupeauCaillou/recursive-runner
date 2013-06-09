@@ -41,7 +41,7 @@ void PlatformerSystem::DoUpdate(float) {
     FOR_EACH_ENTITY_COMPONENT(Platformer, entity, pltf)
         PhysicsComponent* pc = PHYSICS(entity);
         TransformationComponent* tc = TRANSFORM(entity);
-        glm::vec2 newPosition(tc->worldPosition + glm::rotate(pltf->offset, tc->worldRotation));
+        glm::vec2 newPosition(tc->position + glm::rotate(pltf->offset, tc->rotation));
 
         // if going down
         if (pc->linearVelocity.y < 0) {
@@ -54,16 +54,16 @@ void PlatformerSystem::DoUpdate(float) {
                 TransformationComponent* pltfTC = TRANSFORM(it->first);
                 if (IntersectionUtil::lineLine(
                     pltf->previousPosition, newPosition,
-                    pltfTC->worldPosition + glm::rotate(glm::vec2(pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->worldRotation),
-                    pltfTC->worldPosition + glm::rotate(glm::vec2(-pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->worldRotation),
+                    pltfTC->position + glm::rotate(glm::vec2(pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->rotation),
+                    pltfTC->position + glm::rotate(glm::vec2(-pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->rotation),
                     0)) {
                     // We did intersect...
                     pc->gravity.y = 0;
                     pc->linearVelocity = glm::vec2(0.0f);
-                    tc->position.y = pltfTC->worldPosition.y + tc->size.y * 0.5;
+                    tc->position.y = pltfTC->position.y + tc->size.y * 0.5;
                     ANIMATION(entity)->name = "jumptorunL2R";
                     RENDERING(entity)->mirrorH = (RUNNER(entity)->speed < 0);
-                    newPosition = tc->position + glm::rotate(pltf->offset, tc->worldRotation);
+                    newPosition = tc->position + glm::rotate(pltf->offset, tc->rotation);
                     pltf->onPlatform = it->first;
                     break;
                 }
@@ -83,7 +83,7 @@ void PlatformerSystem::DoUpdate(float) {
                     if (!foundNew) {
                         pltf->onPlatform = 0;
                         pc->gravity.y= -150;
-                        LOGV(1, "No on a platform anymore")
+                        LOGV(1, "No on a platform anymore");
                     }
                 } else if (!pltf->platforms[pltf->onPlatform]) {
                     pltf->onPlatform = 0;
@@ -100,11 +100,7 @@ void PlatformerSystem::DoUpdate(float) {
 static bool onPlatform(const glm::vec2& position, float yEpsilon, Entity platform) {
     const TransformationComponent* pltfTC = TRANSFORM(platform);
     return IntersectionUtil::lineLine(position + glm::vec2(0, yEpsilon), position - glm::vec2(0, yEpsilon),
-        pltfTC->worldPosition + glm::rotate(glm::vec2(pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->worldRotation),
-        pltfTC->worldPosition + glm::rotate(glm::vec2(-pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->worldRotation),
+        pltfTC->position + glm::rotate(glm::vec2(pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->rotation),
+        pltfTC->position + glm::rotate(glm::vec2(-pltfTC->size.x * 0.5, pltfTC->size.y * 0.5), pltfTC->rotation),
         0);
 }
-
-#if SAC_INGAME_EDITORS
-void PlatformerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
-#endif

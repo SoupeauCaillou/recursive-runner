@@ -22,6 +22,7 @@
 #include "systems/PhysicsSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/AnimationSystem.h"
+#include "systems/AnchorSystem.h"
 #include "systems/AutoDestroySystem.h"
 #include "util/IntersectionUtil.h"
 std::map<TextureRef, CollisionZone> texture2Collision;
@@ -67,7 +68,7 @@ static void killRunner(Entity runner) {
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
     //AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
-    AUTO_DESTROY(e)->params.lifetime.value = 6 / 18.0;
+    AUTO_DESTROY(e)->params.lifetime.freq.value = 6 / 18.0;
 }
 
 void RunnerSystem::DoUpdate(float dt) {
@@ -78,11 +79,12 @@ void RunnerSystem::DoUpdate(float dt) {
         TransformationComponent* tc = TRANSFORM(a);
         {
             RenderingComponent* rendc = RENDERING(a);
-            TransformationComponent* ttt = TRANSFORM(rc->collisionZone);
+            auto* tta = ANCHOR(rc->collisionZone);
+            auto* ttt = TRANSFORM(rc->collisionZone);
             const CollisionZone& cz = texture2Collision[rendc->texture];
-            ttt->position = tc->size * cz.position;
+            tta->position = tc->size * cz.position;
             ttt->size = tc->size * cz.size;
-            ttt->rotation = cz.rotation;
+            tta->rotation = cz.rotation;
             if (rendc->mirrorH) {
                 ttt->position.x = -ttt->position.x;
                 ttt->rotation = -ttt->rotation;
@@ -105,7 +107,7 @@ void RunnerSystem::DoUpdate(float dt) {
             if ((tc->position.x > rc->endPoint.x && rc->speed > 0) ||
                 (tc->position.x < rc->endPoint.x && rc->speed < 0)) {
                 if (!rc->ghost)
-                    LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position.x << "," << tc->position.y << ") "<< rc->endPoint.x)
+                    LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position.x << "," << tc->position.y << ") "<< rc->endPoint.x);
                 ANIMATION(a)->name = "runL2R";
                 rc->finished = true;
                 rc->oldNessBonus++;
@@ -172,7 +174,3 @@ void RunnerSystem::DoUpdate(float dt) {
         }
     }
 }
-
-#if SAC_INGAME_EDITORS
-void RunnerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
-#endif

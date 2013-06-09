@@ -35,7 +35,3 @@ SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session"
 void SessionSystem::DoUpdate(float) {
     // nothing
 }
-
-#if SAC_INGAME_EDITORS
-void SessionSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
-#endif

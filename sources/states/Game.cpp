@@ -22,6 +22,7 @@
 #include "base/TouchInputManager.h"
 #include "base/ObjectSerializer.h"
 #include "base/PlacementHelper.h"
+#include "systems/AnchorSystem.h"
 #include "systems/AnimationSystem.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
@@ -67,11 +68,12 @@ public:
             pauseButton = theEntityManager.CreateEntity("pause_buttton");
             ADD_COMPONENT(pauseButton, Transformation);
             TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("pause"));
-            TRANSFORM(pauseButton)->parent = game->cameraEntity;
-            TRANSFORM(pauseButton)->position =
+            ADD_COMPONENT(pauseButton, Anchor);
+            ANCHOR(pauseButton)->parent = game->cameraEntity;
+            ANCHOR(pauseButton)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
                 - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            TRANSFORM(pauseButton)->z = 0.95;
+            ANCHOR(pauseButton)->z = 0.95;
             ADD_COMPONENT(pauseButton, Rendering);
             RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
             RENDERING(pauseButton)->show = false;
@@ -389,7 +391,7 @@ static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost
     PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
     ADD_COMPONENT(e, AutoDestroy);
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.value = 3.5;
+    AUTO_DESTROY(e)->params.lifetime.freq.value = 3.5;
     AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
     // AUTO_DESTROY(e)->hasTextRendering = true;
 }
@@ -399,7 +401,6 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     Entity e = theEntityManager.CreateEntity("runner", EntityType::Persistent);
     ADD_COMPONENT(e, Transformation);
     TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("run_l2r_0000")) * 0.68f;
-    //Vector2(0.85, 0.85) * 2.5;
 
     TRANSFORM(e)->rotation = 0;
     TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
@@ -407,8 +408,11 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RENDERING(e)->show = true;
     RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
     ADD_COMPONENT(e, Runner);
-    theTransformationSystem.setPosition(TRANSFORM(e),
-        glm::vec2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.x) * 0.5, game->baseLine), TransformationSystem::S);
+
+    TRANSFORM(e)->position = AnchorSystem::adjustPositionWithCardinal(
+        glm::vec2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.x) * 0.5, game->baseLine),
+        TRANSFORM(e)->size,
+        Cardinal::S);
     RUNNER(e)->startPoint = TRANSFORM(e)->position;
     RUNNER(e)->endPoint = glm::vec2(direction * (param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.x) * 0.5, 0);
     RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
@@ -449,8 +453,9 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 
     Entity collisionZone = theEntityManager.CreateEntity("collision_zone", EntityType::Persistent);
     ADD_COMPONENT(collisionZone, Transformation);
-    TRANSFORM(collisionZone)->parent = e;
-    TRANSFORM(collisionZone)->z = 0.01;
+    ADD_COMPONENT(collisionZone, Anchor);
+    ANCHOR(collisionZone)->parent = e;
+    ANCHOR(collisionZone)->z = 0.01;
     #if 0
     ADD_COMPONENT(collisionZone, Rendering);
     RENDERING(collisionZone)->show = true;
@@ -458,7 +463,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     #endif
     RUNNER(e)->collisionZone = collisionZone;
     p->runnersCount++;
-     LOGI("Add runner " << e << " at pos : {" << TRANSFORM(e)->position.x << ", " << TRANSFORM(e)->position.y << "}, speed: " << RUNNER(e)->speed << " (player=" << player << ')')
+    LOGI("Add runner " << e << " at pos : {" << TRANSFORM(e)->position.x << ", " << TRANSFORM(e)->position.y << "}, speed: " << RUNNER(e)->speed << " (player=" << player << ')');
     return e;
 }
 
@@ -472,7 +477,7 @@ static void updateSessionTransition(const SessionComponent* session, float progr
 }
 
 static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc) {
-    const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
+    const auto* collisionZone = TRANSFORM(rc->collisionZone);
     const int end = sc->coins.size();
     Entity prev = 0;
 
@@ -481,8 +486,8 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
         if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
             const TransformationComponent* tCoin = TRANSFORM(coin);
             if (IntersectionUtil::rectangleRectangle(
-                collisionZone->worldPosition, collisionZone->size, collisionZone->worldRotation,
-                tCoin->worldPosition, tCoin->size * glm::vec2(0.5, 0.6), tCoin->worldRotation)) {
+                collisionZone->position, collisionZone->size, collisionZone->rotation,
+                tCoin->position, tCoin->size * glm::vec2(0.5, 0.6), tCoin->rotation)) {
                 if (!rc->coins.empty()) {
                  int linkIdx = (rc->speed > 0) ? idx : end - idx;
                     if (rc->coins.back() == prev) {

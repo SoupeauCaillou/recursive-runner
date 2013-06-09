@@ -26,6 +26,7 @@
 #include <systems/TransformationSystem.h>
 #include <systems/ButtonSystem.h>
 #include <systems/RenderingSystem.h>
+#include <systems/AnchorSystem.h>
 
 #include "RecursiveRunnerGame.h"
 #include <api/CommunicationAPI.h>
@@ -43,11 +44,12 @@ class SocialCenterScene : public StateHandler<Scene::Enum> {
             goToMenuBtn = theEntityManager.CreateEntity("goToMenu_button");
             ADD_COMPONENT(goToMenuBtn, Transformation);
             TRANSFORM(goToMenuBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("reprendre")); //to change
-            TRANSFORM(goToMenuBtn)->parent = game->cameraEntity;
-            TRANSFORM(goToMenuBtn)->position =
+            ADD_COMPONENT(goToMenuBtn, Anchor);
+            ANCHOR(goToMenuBtn)->parent = game->cameraEntity;
+            ANCHOR(goToMenuBtn)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(-0.5, -0.5)
                 + glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            TRANSFORM(goToMenuBtn)->z = 0.95;
+            ANCHOR(goToMenuBtn)->z = 0.95;
             ADD_COMPONENT(goToMenuBtn, Rendering);
             RENDERING(goToMenuBtn)->texture = theRenderingSystem.loadTextureFile("reprendre");
             RENDERING(goToMenuBtn)->mirrorH = true;

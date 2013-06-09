@@ -24,6 +24,7 @@
 #include "systems/RenderingSystem.h"
 #include "systems/TextRenderingSystem.h"
 #include "systems/ButtonSystem.h"
+#include "systems/AnchorSystem.h"
 
 #include "../RecursiveRunnerGame.h"
 
@@ -46,9 +47,10 @@ class RateScene : public StateHandler<Scene::Enum> {
 
          for (int i = 0; i < 4; i++) {
             ADD_COMPONENT(entity[i], Transformation);
-            TRANSFORM(entity[i])->z = 0.9;
-            TRANSFORM(entity[i])->parent = game->cameraEntity;
-            TRANSFORM(entity[i])->position = glm::vec2(0, -i);
+            ADD_COMPONENT(entity[i], Anchor);
+            ANCHOR(entity[i])->z = 0.9;
+            ANCHOR(entity[i])->parent = game->cameraEntity;
+            ANCHOR(entity[i])->position = glm::vec2(0, -i);
 
             ADD_COMPONENT(entity[i], TextRendering);
             TEXT_RENDERING(entity[i])->charHeight = 1.;

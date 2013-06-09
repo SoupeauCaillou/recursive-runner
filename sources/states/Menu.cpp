@@ -32,6 +32,7 @@
 #include "systems/PlayerSystem.h"
 #include "systems/ParticuleSystem.h"
 #include "systems/AutoDestroySystem.h"
+#include "systems/AnchorSystem.h"
 
 #include "../systems/SessionSystem.h"
 #include "../systems/RunnerSystem.h"
@@ -87,9 +88,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
             title = theEntityManager.CreateEntity("title");
             ADD_COMPONENT(title, Transformation);
             TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre"));
-            TRANSFORM(title)->parent = titleGroup;
-            TRANSFORM(title)->position = glm::vec2(0.0f);
-            TRANSFORM(title)->z = 0.15;
+            ADD_COMPONENT(title, Anchor);
+            ANCHOR(title)->parent = titleGroup;
+            ANCHOR(title)->position = glm::vec2(0.0f);
+            ANCHOR(title)->z = 0.15;
             ADD_COMPONENT(title, Rendering);
             RENDERING(title)->texture = theRenderingSystem.loadTextureFile("titre");
             RENDERING(title)->show = true;
@@ -98,9 +100,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
             subtitle = theEntityManager.CreateEntity("subtitle");
             ADD_COMPONENT(subtitle, Transformation);
             TRANSFORM(subtitle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
-            TRANSFORM(subtitle)->parent = titleGroup;
-            TRANSFORM(subtitle)->position = glm::vec2(-PlacementHelper::GimpWidthToScreen(0), -PlacementHelper::GimpHeightToScreen(150));
-            TRANSFORM(subtitle)->z = -0.1;
+            ADD_COMPONENT(subtitle, Anchor);
+            ANCHOR(subtitle)->parent = titleGroup;
+            ANCHOR(subtitle)->position = glm::vec2(-PlacementHelper::GimpWidthToScreen(0), -PlacementHelper::GimpHeightToScreen(150));
+            ANCHOR(subtitle)->z = -0.1;
             ADD_COMPONENT(subtitle, Rendering);
             RENDERING(subtitle)->texture = theRenderingSystem.loadTextureFile("taptostart");
             RENDERING(subtitle)->show = true;
@@ -114,11 +117,12 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
             subtitleText = theEntityManager.CreateEntity("subtitle_text");
             ADD_COMPONENT(subtitleText, Transformation);
-            TRANSFORM(subtitleText)->parent = subtitle;
-            TRANSFORM(subtitleText)->z = 0.01;
-            TRANSFORM(subtitleText)->rotation = 0.005;
-            TRANSFORM(subtitleText)->position = glm::vec2(0, -PlacementHelper::GimpHeightToScreen(25));
             TRANSFORM(subtitleText)->size = glm::vec2(PlacementHelper::GimpWidthToScreen(790), 1);
+            ADD_COMPONENT(subtitleText, Anchor);
+            ANCHOR(subtitleText)->parent = subtitle;
+            ANCHOR(subtitleText)->z = 0.01;
+            ANCHOR(subtitleText)->rotation = 0.005;
+            ANCHOR(subtitleText)->position = glm::vec2(0, -PlacementHelper::GimpHeightToScreen(25));
             ADD_COMPONENT(subtitleText, TextRendering);
             TEXT_RENDERING(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
             TEXT_RENDERING(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
@@ -129,11 +133,12 @@ class MenuScene : public StateHandler<Scene::Enum> {
             goToSocialCenterBtn = theEntityManager.CreateEntity("goToSocialCenter_button");
             ADD_COMPONENT(goToSocialCenterBtn, Transformation);
             TRANSFORM(goToSocialCenterBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm"));
-            TRANSFORM(goToSocialCenterBtn)->parent = game->cameraEntity;
-            TRANSFORM(goToSocialCenterBtn)->position =
+            ADD_COMPONENT(goToSocialCenterBtn, Anchor);
+            ANCHOR(goToSocialCenterBtn)->parent = game->cameraEntity;
+            ANCHOR(goToSocialCenterBtn)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(-0.5, -0.5)
                 + glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            TRANSFORM(goToSocialCenterBtn)->z = 0.95;
+            ANCHOR(goToSocialCenterBtn)->z = 0.95;
             ADD_COMPONENT(goToSocialCenterBtn, Rendering);
             RENDERING(goToSocialCenterBtn)->texture = theRenderingSystem.loadTextureFile("swarm");
             RENDERING(goToSocialCenterBtn)->show = true;
@@ -143,9 +148,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
             giftizBtn = theEntityManager.CreateEntity("giftiz_button");
             ADD_COMPONENT(giftizBtn, Transformation);
             TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("giftiz"));
-            TRANSFORM(giftizBtn)->parent = goToSocialCenterBtn;
-            TRANSFORM(giftizBtn)->position = glm::vec2(0, (TRANSFORM(goToSocialCenterBtn)->size.y) * 0.5 + game->buttonSpacing.V);
-            TRANSFORM(giftizBtn)->z = 0;
+            ADD_COMPONENT(giftizBtn, Anchor);
+            ANCHOR(giftizBtn)->parent = goToSocialCenterBtn;
+            ANCHOR(giftizBtn)->position = glm::vec2(0, (TRANSFORM(goToSocialCenterBtn)->size.y) * 0.5 + game->buttonSpacing.V);
+            ANCHOR(giftizBtn)->z = 0;
             ADD_COMPONENT(giftizBtn, Rendering);
             RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz");
             RENDERING(giftizBtn)->show = true;
@@ -155,9 +161,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
             helpBtn = theEntityManager.CreateEntity("help_button");
             ADD_COMPONENT(helpBtn, Transformation);
             TRANSFORM(helpBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("aide"));
-            TRANSFORM(helpBtn)->parent = game->muteBtn;
-            TRANSFORM(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
-            TRANSFORM(helpBtn)->z = 0;
+            ADD_COMPONENT(helpBtn, Anchor);
+            ANCHOR(helpBtn)->parent = game->muteBtn;
+            ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
+            ANCHOR(helpBtn)->z = 0;
             ADD_COMPONENT(helpBtn, Rendering);
             RENDERING(helpBtn)->texture = theRenderingSystem.loadTextureFile("aide");
             RENDERING(helpBtn)->show = true;

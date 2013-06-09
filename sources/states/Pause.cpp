@@ -26,6 +26,7 @@
 #include "systems/AnimationSystem.h"
 #include "systems/PhysicsSystem.h"
 #include "systems/ButtonSystem.h"
+#include "systems/AnchorSystem.h"
 
 #include "base/TouchInputManager.h"
 #include "base/PlacementHelper.h"
@@ -51,18 +52,19 @@ class PauseScene : public StateHandler<Scene::Enum> {
         title = theEntityManager.CreateEntity("pause_title");
         ADD_COMPONENT(title, Transformation);
         TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("menu-pause"));
-        TRANSFORM(title)->z = 0.85;
-        TRANSFORM(title)->position = glm::vec2(0, PlacementHelper::ScreenHeight * 0.5 - TRANSFORM(title)->size.y * 0.43);
-        //TRANSFORM(title)->rotation = 0.05;
-        TRANSFORM(title)->parent = game->cameraEntity;
+        ADD_COMPONENT(title, Anchor);
+        ANCHOR(title)->z = 0.85;
+        ANCHOR(title)->position = glm::vec2(0, PlacementHelper::ScreenHeight * 0.5 - TRANSFORM(title)->size.y * 0.43);
+        ANCHOR(title)->parent = game->cameraEntity;
         ADD_COMPONENT(title, Rendering);
         RENDERING(title)->texture = theRenderingSystem.loadTextureFile("menu-pause");
         RENDERING(title)->show = false;
 
         pauseText = theEntityManager.CreateEntity("pause_text");
         ADD_COMPONENT(pauseText, Transformation);
-        TRANSFORM(pauseText)->z = 0.9;
-        TRANSFORM(pauseText)->parent = title;
+        ADD_COMPONENT(pauseText, Anchor);
+        ANCHOR(pauseText)->z = 0.9;
+        ANCHOR(pauseText)->parent = title;
         ADD_COMPONENT(pauseText, TextRendering);
         TEXT_RENDERING(pauseText)->text = "PAUSE";
         TEXT_RENDERING(pauseText)->charHeight = 1.;
@@ -76,15 +78,16 @@ class PauseScene : public StateHandler<Scene::Enum> {
         for (int i = 0; i < 3; ++i) {
             ADD_COMPONENT(buttons[i], Transformation);
             TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i])) * 1.2f;
-            TRANSFORM(buttons[i])->parent = game->cameraEntity;
+            ADD_COMPONENT(buttons[i], Anchor);
+            ANCHOR(buttons[i])->parent = game->cameraEntity;
             int mul = 0;
             if (i == 0) mul = -1;
             else if(i==2) mul=1;
-            TRANSFORM(buttons[i])->position = 
+            ANCHOR(buttons[i])->position =
                 glm::vec2(mul * TRANSFORM(title)->size.x * 0.35,
                 0);//PlacementHelper::ScreenHeight * 0.1);
                 //- (TRANSFORM(title)->size.Y + TRANSFORM(buttons[i])->size.Y) * 0.45);
-            TRANSFORM(buttons[i])->z = 0.9;
+            ANCHOR(buttons[i])->z = 0.9;
             ADD_COMPONENT(buttons[i], Rendering);
             RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile(textures[i]);
             RENDERING(buttons[i])->show = false;
@@ -111,7 +114,7 @@ class PauseScene : public StateHandler<Scene::Enum> {
         RENDERING(stopButton)->show = true;
         BUTTON(stopButton)->enabled = true;
         // RENDERING(title)->hide = false;
-        TRANSFORM(game->scorePanel)->position.x = TRANSFORM(game->cameraEntity)->worldPosition.x;
+        TRANSFORM(game->scorePanel)->position.x = TRANSFORM(game->cameraEntity)->position.x;
         TEXT_RENDERING(game->scoreText)->text = "Pause";
         TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit;
         //mute music
@@ -130,7 +133,7 @@ class PauseScene : public StateHandler<Scene::Enum> {
         RENDERING(continueButton)->color = BUTTON(continueButton)->mouseOver ? Color("gray") : Color();
         RENDERING(restartButton)->color = BUTTON(restartButton)->mouseOver ? Color("gray") : Color();
         RENDERING(stopButton)->color = BUTTON(stopButton)->mouseOver ? Color("gray") : Color();
-     
+
         if (BUTTON(continueButton)->clicked) {
             return Scene::Game;
         } else if (BUTTON(restartButton)->clicked) {
@@ -156,7 +159,7 @@ class PauseScene : public StateHandler<Scene::Enum> {
         // RENDERING(title)->hide = true;
         // TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
         TRANSFORM(game->scorePanel)->position.x = 0;
-        TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit; 
+        TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit;
     }
 
     void onExit(Scene::Enum to) {

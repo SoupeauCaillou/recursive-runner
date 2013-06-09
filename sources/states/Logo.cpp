@@ -23,6 +23,7 @@
 #include "base/PlacementHelper.h"
 #include "base/StateMachine.h"
 
+#include "systems/AnchorSystem.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/SoundSystem.h"
@@ -79,18 +80,19 @@ public:
         logofade = theEntityManager.CreateEntity("logo_fade", EntityType::Volatile, theEntityManager.entityTemplateLibrary.load("logo_fade"));
         animLogo = theEntityManager.CreateEntity("logo_anim");
 
-        TRANSFORM(logo)->parent = game->cameraEntity;
-        TRANSFORM(logobg)->parent = game->cameraEntity;
-        TRANSFORM(logofade)->parent = game->cameraEntity;
+        ANCHOR(logo)->parent = game->cameraEntity;
+        ANCHOR(logobg)->parent = game->cameraEntity;
+        ANCHOR(logofade)->parent = game->cameraEntity;
 
 
         ADD_COMPONENT(animLogo, Transformation);
         TRANSFORM(animLogo)->size = TRANSFORM(logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331")
             * glm::vec2(1.0 / theRenderingSystem.getTextureSize("soupe_logo").x, 1.0 / theRenderingSystem.getTextureSize("soupe_logo").y);
+        ADD_COMPONENT(animLogo, Anchor);
         glm::vec2 offset = glm::vec2(-10 / 800.0, 83/869.0) * TRANSFORM(logo)->size;
-        TRANSFORM(animLogo)->position = TRANSFORM(logo)->position + offset;
-        TRANSFORM(animLogo)->z = DL_LogoAnim - TRANSFORM(game->cameraEntity)->z;
-        TRANSFORM(animLogo)->parent = game->cameraEntity;
+        ANCHOR(animLogo)->position = TRANSFORM(logo)->position + offset;
+        ANCHOR(animLogo)->z = DL_LogoAnim - TRANSFORM(game->cameraEntity)->z;
+        ANCHOR(animLogo)->parent = game->cameraEntity;
         ADD_COMPONENT(animLogo, Rendering);
         RENDERING(animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo2_365_331");
         RENDERING(animLogo)->show = false;

@@ -67,15 +67,15 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
 
     // Setup text/arrow and everything when entering the state
     virtual void onEnter(Tutorial::Enum ) {
-        LOGV(1, "Entering tutorial state: " << self)
+        LOGV(1, "Entering tutorial state: " << self);
         // change text
         setupText(textId);
         // display arrow if needed
         if (runnerPointedByArrow >= 0) {
             RENDERING(entities->anim)->show = true;
-            TRANSFORM(entities->anim)->position = TRANSFORM(sc->runners[runnerPointedByArrow])->worldPosition +
+            ANCHOR(entities->anim)->position = TRANSFORM(sc->runners[runnerPointedByArrow])->position +
                 TRANSFORM(sc->runners[runnerPointedByArrow])->size * arrowOffset;
-            pointArrowTo(entities->anim, TRANSFORM(sc->runners[runnerPointedByArrow])->worldPosition);
+            pointArrowTo(entities->anim, TRANSFORM(sc->runners[runnerPointedByArrow])->position);
         } else {
             RENDERING(entities->anim)->show = false;
             ANIMATION(entities->anim)->playbackSpeed = 0;
@@ -98,7 +98,7 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
 
     // Prepare intermediate state (blinking text, no arrow)
     virtual void onPreExit(Tutorial::Enum ) {
-        LOGV(1, "Will exit tutorial state: " << self)
+        LOGV(1, "Will exit tutorial state: " << self);
         // setup blinking text
         TEXT_RENDERING(entities->text)->show = true;
         TEXT_RENDERING(entities->text)->text = ". . .";
@@ -117,7 +117,7 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
 
     void pointArrowTo(Entity arrow, const glm::vec2& target) const {
         glm::vec2 v = glm::normalize(target - TRANSFORM(arrow)->position);
-        TRANSFORM(arrow)->rotation = glm::atan2(v.y, v.x);
+        ANCHOR(arrow)->rotation = glm::atan2(v.y, v.x);
         ANIMATION(arrow)->accum = ANIMATION(arrow)->frameIndex = 0;
         ANIMATION(arrow)->playbackSpeed = 1.0;
     }
@@ -152,8 +152,9 @@ public:
         titleGroup  = theEntityManager.CreateEntity("tuto_title_group");
         ADD_COMPONENT(titleGroup, Transformation);
         TRANSFORM(titleGroup)->z = 0.7;
-        TRANSFORM(titleGroup)->rotation = 0.036;
-        TRANSFORM(titleGroup)->parent = game->cameraEntity;
+        ADD_COMPONENT(titleGroup, Anchor);
+        ANCHOR(titleGroup)->rotation = 0.036;
+        ANCHOR(titleGroup)->parent = game->cameraEntity;
         ADD_COMPONENT(titleGroup, ADSR);
         ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenHeight + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.6;
         ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.5
@@ -162,33 +163,36 @@ public:
         ADSR(titleGroup)->attackTiming = 1;
         ADSR(titleGroup)->decayTiming = 0.1;
         ADSR(titleGroup)->releaseTiming = 0.3;
-        TRANSFORM(titleGroup)->position = glm::vec2(0, ADSR(titleGroup)->idleValue);
+        ANCHOR(titleGroup)->position = glm::vec2(0, ADSR(titleGroup)->idleValue);
 
         title = theEntityManager.CreateEntity("tuto_title");
         ADD_COMPONENT(title, Transformation);
         TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
-        TRANSFORM(title)->parent = titleGroup;
-        TRANSFORM(title)->position = glm::vec2(0.0f);
-        TRANSFORM(title)->z = 0.15;
+        ADD_COMPONENT(title, Anchor);
+        ANCHOR(title)->parent = titleGroup;
+        ANCHOR(title)->position = glm::vec2(0.0f);
+        ANCHOR(title)->z = 0.15;
         ADD_COMPONENT(title, Rendering);
         RENDERING(title)->texture = theRenderingSystem.loadTextureFile("taptostart");
 
         hideText = theEntityManager.CreateEntity("tuto_hide_text");
         ADD_COMPONENT(hideText, Transformation);
         TRANSFORM(hideText)->size = PlacementHelper::GimpSizeToScreen(glm::vec2(776, 102));
-        TRANSFORM(hideText)->parent = title;
-        TRANSFORM(hideText)->position = (glm::vec2(-0.5, 0.5) + glm::vec2(41, -72) / theRenderingSystem.getTextureSize("titre")) *
+        ADD_COMPONENT(hideText, Anchor);
+        ANCHOR(hideText)->parent = title;
+        ANCHOR(hideText)->position = (glm::vec2(-0.5, 0.5) + glm::vec2(41, -72) / theRenderingSystem.getTextureSize("titre")) *
             TRANSFORM(title)->size + TRANSFORM(hideText)->size * glm::vec2(0.5, -0.5);
-        TRANSFORM(hideText)->z = 0.01;
+        ANCHOR(hideText)->z = 0.01;
         ADD_COMPONENT(hideText, Rendering);
         RENDERING(hideText)->color = Color(130.0/255, 116.0/255, 117.0/255);
 
         entities.text = theEntityManager.CreateEntity("tuto_text");
         ADD_COMPONENT(entities.text, Transformation);
         TRANSFORM(entities.text)->size = TRANSFORM(hideText)->size;
-        TRANSFORM(entities.text)->parent = hideText;
-        TRANSFORM(entities.text)->z = 0.02;
-        TRANSFORM(entities.text)->rotation = 0.004;
+        ADD_COMPONENT(entities.text, Anchor);
+        ANCHOR(entities.text)->parent = hideText;
+        ANCHOR(entities.text)->z = 0.02;
+        ANCHOR(entities.text)->rotation = 0.004;
         ADD_COMPONENT(entities.text, TextRendering);
         TEXT_RENDERING(entities.text)->charHeight = PlacementHelper::GimpHeightToScreen(50);
         TEXT_RENDERING(entities.text)->show = false;
@@ -199,7 +203,8 @@ public:
         entities.anim = theEntityManager.CreateEntity("tuto_fleche");
         ADD_COMPONENT(entities.anim, Transformation);
         TRANSFORM(entities.anim)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fleche"));
-        TRANSFORM(entities.anim)->z = 0.9;
+        ADD_COMPONENT(entities.anim, Anchor);
+        ANCHOR(entities.anim)->z = 0.9;
         ADD_COMPONENT(entities.anim, Rendering);
         RENDERING(entities.anim)->texture = theRenderingSystem.loadTextureFile("fleche");
         RENDERING(entities.anim)->show = false;
@@ -413,7 +418,7 @@ public:
         RENDERING(title)->show = true;
 
         ADSRComponent* adsr = ADSR(titleGroup);
-        TRANSFORM(titleGroup)->position.y = adsr->value;
+        ANCHOR(titleGroup)->position.y = adsr->value;
         RENDERING(game->muteBtn)->color.a = 1. - (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
 
         return (adsr->value == adsr->sustainValue) && gameCanEnter;
@@ -465,7 +470,7 @@ public:
         ADSRComponent* adsr = ADSR(titleGroup);
         adsr->active = false;
 
-        TRANSFORM(titleGroup)->position.y = adsr->value;
+        ANCHOR(titleGroup)->position.y = adsr->value;
 
         RENDERING(game->muteBtn)->color.a = (adsr->sustainValue - adsr->value) / (adsr->sustainValue - adsr->idleValue);
 

@@ -1,6 +1,8 @@
 [Transformation]
-position = 0, 0
 size%screen_h = 0.8, 0.8
+
+[Anchor]
+position = 0, 0
 z = 0.98
 
 [Rendering]

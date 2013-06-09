@@ -32,7 +32,3 @@ PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
 void PlayerSystem::DoUpdate(float) {
 
 }
-
-#if SAC_INGAME_EDITORS
-void PlayerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
-#endif

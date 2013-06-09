@@ -29,6 +29,7 @@
 #include "base/PlacementHelper.h"
 #include "base/ObjectSerializer.h"
 
+#include "systems/AnchorSystem.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/ButtonSystem.h"
@@ -85,7 +86,7 @@ RecursiveRunnerGame::RecursiveRunnerGame() {
 
 
 RecursiveRunnerGame::~RecursiveRunnerGame() {
-    LOGW("Delete game instance " << this << " " << &theEntityManager)
+    LOGW("Delete game instance " << this << " " << &theEntityManager);
     theEntityManager.deleteAllEntities();
 
     RunnerSystem::DestroyInstance();
@@ -122,12 +123,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 
 	PlacementHelper::GimpWidth = 1280;
     PlacementHelper::GimpHeight = 800;
-    theRenderingSystem.loadAtlas("alphabet", true);
-    theRenderingSystem.loadAtlas("dummy", true);
-    theRenderingSystem.loadAtlas("decor", false);
-    theRenderingSystem.loadAtlas("arbre", false);
-    theRenderingSystem.loadAtlas("fumee", false);
-    theRenderingSystem.loadAtlas("logo", true);
 
     // load anim files
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "disappear2", "disappear2");
@@ -143,7 +138,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "runL2R", "runL2R");
 
     // init font
-    loadFont(renderThreadContext->assetAPI, "typo");
+//    loadFont(renderThreadContext->assetAPI, "typo");
 }
 
 void fumee(Entity building) {
@@ -170,10 +165,11 @@ void fumee(Entity building) {
         Entity fumee = theEntityManager.CreateEntity("fumee");
         ADD_COMPONENT(fumee, Transformation);
         TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * glm::linearRand(0.5f, 0.8f);
-        TRANSFORM(fumee)->parent = building;
-        TRANSFORM(fumee)->position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
-        if (RENDERING(building)->mirrorH) TRANSFORM(fumee)->position.x = -TRANSFORM(fumee)->position.x;
-        TRANSFORM(fumee)->z = -0.1;
+        ADD_COMPONENT(fumee, Anchor);
+        ANCHOR(fumee)->parent = building;
+        ANCHOR(fumee)->position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
+        if (RENDERING(building)->mirrorH) ANCHOR(fumee)->position.x = -ANCHOR(fumee)->position.x;
+        ANCHOR(fumee)->z = -0.1;
         ADD_COMPONENT(fumee, Rendering);
         RENDERING(fumee)->show = false;
         RENDERING(fumee)->color = Color(1,1,1,0.6);
@@ -189,7 +185,8 @@ void RecursiveRunnerGame::decor() {
     ADD_COMPONENT(silhouette, Transformation);
     TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville")) * 4.0f;
     // TRANSFORM(silhouette)->size.X *= 1.6;
-    theTransformationSystem.setPosition(TRANSFORM(silhouette), glm::vec2(0, PlacementHelper::GimpYToScreen(0)), TransformationSystem::N);
+    TRANSFORM(silhouette)->position = AnchorSystem::adjustPositionWithCardinal(
+        glm::vec2(0, PlacementHelper::GimpYToScreen(0)), TRANSFORM(silhouette)->size, Cardinal::N);
     TRANSFORM(silhouette)->z = 0.01;
     ADD_COMPONENT(silhouette, Rendering);
     RENDERING(silhouette)->texture = theRenderingSystem.loadTextureFile("silhouette_ville");
@@ -199,7 +196,8 @@ void RecursiveRunnerGame::decor() {
 	route = theEntityManager.CreateEntity("road");
     ADD_COMPONENT(route, Transformation);
     TRANSFORM(route)->size = glm::vec2(PlacementHelper::ScreenWidth, PlacementHelper::GimpHeightToScreen(109));
-    theTransformationSystem.setPosition(TRANSFORM(route), glm::vec2(0, PlacementHelper::GimpYToScreen(800)), TransformationSystem::S);
+    TRANSFORM(route)->position = AnchorSystem::adjustPositionWithCardinal(
+        glm::vec2(0, PlacementHelper::GimpYToScreen(800)), TRANSFORM(route)->size, Cardinal::S);
     TRANSFORM(route)->z = 0.1;
     ADD_COMPONENT(route, Rendering);
     RENDERING(route)->texture = theRenderingSystem.loadTextureFile("route");
@@ -208,8 +206,10 @@ void RecursiveRunnerGame::decor() {
 
     Entity buildings = theEntityManager.CreateEntity("buildings");
     ADD_COMPONENT(buildings, Transformation);
+    TRANSFORM(buildings)->z = 0;
     Entity trees = theEntityManager.CreateEntity("trees");
     ADD_COMPONENT(trees, Transformation);
+    TRANSFORM(trees)->z = 0;
 
     PlacementHelper::ScreenWidth *= 3;
     PlacementHelper::GimpWidth = 1280 * 3;
@@ -217,52 +217,52 @@ void RecursiveRunnerGame::decor() {
     int count = 33;
     struct Decor {
     	float x, y, z;
-    	TransformationSystem::PositionReference ref;
+    	Cardinal::Enum ref;
     	std::string texture;
     	bool mirrorUV;
         Entity parent;
-    	Decor(float _x=0, float _y=0, float _z=0, TransformationSystem::PositionReference _ref=TransformationSystem::C, const std::string& _texture="", bool _mirrorUV=false, Entity _parent=0) :
+    	Decor(float _x=0, float _y=0, float _z=0, Cardinal::Enum _ref=Cardinal::C, const std::string& _texture="", bool _mirrorUV=false, Entity _parent=0) :
     		x(_x), y(_y), z(_z), ref(_ref), texture(_texture), mirrorUV(_mirrorUV), parent(_parent) {}
    	};
 
 	Decor def[] = {
 		// buildings
-		Decor(554, 149, 0.2, TransformationSystem::NE, "immeuble", false, buildings),
-		Decor(1690, 149, 0.2, TransformationSystem::NE, "immeuble", false, buildings),
-		Decor(3173, 139, 0.2, TransformationSystem::NW, "immeuble", false, buildings),
-		Decor(358, 404, 0.25, TransformationSystem::NW, "maison", true, buildings),
-		Decor(2097, 400, 0.25, TransformationSystem::NE, "maison", false, buildings),
-		Decor(2053, 244, 0.29, TransformationSystem::NW, "usine_desaf", false, buildings),
-		Decor(3185, 298, 0.22, TransformationSystem::NE, "usine2", true, buildings),
+		Decor(554, 149, 0.2, Cardinal::NE, "immeuble", false, buildings),
+		Decor(1690, 149, 0.2, Cardinal::NE, "immeuble", false, buildings),
+		Decor(3173, 139, 0.2, Cardinal::NW, "immeuble", false, buildings),
+		Decor(358, 404, 0.25, Cardinal::NW, "maison", true, buildings),
+		Decor(2097, 400, 0.25, Cardinal::NE, "maison", false, buildings),
+		Decor(2053, 244, 0.29, Cardinal::NW, "usine_desaf", false, buildings),
+		Decor(3185, 298, 0.22, Cardinal::NE, "usine2", true, buildings),
 		// trees
-		Decor(152, 780, 0.5, TransformationSystem::S, "arbre3", false, trees),
-		Decor(522, 780, 0.5, TransformationSystem::S, "arbre2", false, trees),
-		Decor(812, 774, 0.45, TransformationSystem::S, "arbre5", false, trees),
-		Decor(1162, 792, 0.5, TransformationSystem::S, "arbre4", false, trees),
-		Decor(1418, 790, 0.45, TransformationSystem::S, "arbre2", false, trees),
-		Decor(1600, 768, 0.42, TransformationSystem::S, "arbre1", false, trees),
-		Decor(1958, 782, 0.5, TransformationSystem::S, "arbre4", true, trees),
-		Decor(2396, 774, 0.44, TransformationSystem::S, "arbre5", false, trees),
-		Decor(2684, 784, 0.45, TransformationSystem::S, "arbre3", false, trees),
-		Decor(3022, 764, 0.42, TransformationSystem::S, "arbre1", false, trees),
-		Decor(3290, 764, 0.41, TransformationSystem::S, "arbre1", true, trees),
-		Decor(3538, 768, 0.44, TransformationSystem::S, "arbre2", false, trees),
-		Decor(3820, 772, 0.5, TransformationSystem::S, "arbre4", false, trees),
+		Decor(152, 780, 0.5, Cardinal::S, "arbre3", false, trees),
+		Decor(522, 780, 0.5, Cardinal::S, "arbre2", false, trees),
+		Decor(812, 774, 0.45, Cardinal::S, "arbre5", false, trees),
+		Decor(1162, 792, 0.5, Cardinal::S, "arbre4", false, trees),
+		Decor(1418, 790, 0.45, Cardinal::S, "arbre2", false, trees),
+		Decor(1600, 768, 0.42, Cardinal::S, "arbre1", false, trees),
+		Decor(1958, 782, 0.5, Cardinal::S, "arbre4", true, trees),
+		Decor(2396, 774, 0.44, Cardinal::S, "arbre5", false, trees),
+		Decor(2684, 784, 0.45, Cardinal::S, "arbre3", false, trees),
+		Decor(3022, 764, 0.42, Cardinal::S, "arbre1", false, trees),
+		Decor(3290, 764, 0.41, Cardinal::S, "arbre1", true, trees),
+		Decor(3538, 768, 0.44, Cardinal::S, "arbre2", false, trees),
+		Decor(3820, 772, 0.5, Cardinal::S, "arbre4", false, trees),
 		// benchs
-		Decor(672, 768, 0.35, TransformationSystem::S, "bench_cat", false, trees),
-		Decor(1090, 764, 0.35, TransformationSystem::S, "bench", false, trees),
-		Decor(2082, 760, 0.35, TransformationSystem::S, "bench", true, trees),
-		Decor(2526, 762, 0.35, TransformationSystem::S, "bench", false, trees),
-		Decor(3464, 758, 0.35, TransformationSystem::S, "bench_cat", false, trees),
-		Decor(3612, 762, 0.6, TransformationSystem::S, "bench", false, trees),
+		Decor(672, 768, 0.35, Cardinal::S, "bench_cat", false, trees),
+		Decor(1090, 764, 0.35, Cardinal::S, "bench", false, trees),
+		Decor(2082, 760, 0.35, Cardinal::S, "bench", true, trees),
+		Decor(2526, 762, 0.35, Cardinal::S, "bench", false, trees),
+		Decor(3464, 758, 0.35, Cardinal::S, "bench_cat", false, trees),
+		Decor(3612, 762, 0.6, Cardinal::S, "bench", false, trees),
         // lampadaire
-        Decor(472, 748, 0.3, TransformationSystem::S, "lampadaire2", false, trees),
-        Decor(970, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
-        Decor(1740, 748, 0.3, TransformationSystem::S, "lampadaire2", false, trees),
-        Decor(2208, 748, 0.3, TransformationSystem::S, "lampadaire1", false, trees),
-        Decor(2620, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
-        Decor(3182, 748, 0.3, TransformationSystem::S, "lampadaire1", false, trees),
-        Decor(3732, 748, 0.3, TransformationSystem::S, "lampadaire3", false, trees),
+        Decor(472, 748, 0.3, Cardinal::S, "lampadaire2", false, trees),
+        Decor(970, 748, 0.3, Cardinal::S, "lampadaire3", false, trees),
+        Decor(1740, 748, 0.3, Cardinal::S, "lampadaire2", false, trees),
+        Decor(2208, 748, 0.3, Cardinal::S, "lampadaire1", false, trees),
+        Decor(2620, 748, 0.3, Cardinal::S, "lampadaire3", false, trees),
+        Decor(3182, 748, 0.3, Cardinal::S, "lampadaire1", false, trees),
+        Decor(3732, 748, 0.3, Cardinal::S, "lampadaire3", false, trees),
     };
     // pour les arbres
     glm::vec2 v[5][4] = {
@@ -298,10 +298,13 @@ void RecursiveRunnerGame::decor() {
 
  	    Entity b = theEntityManager.CreateEntity(bdef.texture);
 	    ADD_COMPONENT(b, Transformation);
-	    TRANSFORM(b)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
-	    theTransformationSystem.setPosition(TRANSFORM(b), glm::vec2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), bdef.ref);
-	    TRANSFORM(b)->z = bdef.z;
-        TRANSFORM(b)->parent = bdef.parent;
+        auto tb = TRANSFORM(b);
+	    tb->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
+        ADD_COMPONENT(b, Anchor);
+	    ANCHOR(b)->position = AnchorSystem::adjustPositionWithCardinal(
+            glm::vec2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), tb->size, bdef.ref);
+	    ANCHOR(b)->z = bdef.z;
+        ANCHOR(b)->parent = bdef.parent;
 	    ADD_COMPONENT(b, Rendering);
 	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
 	    RENDERING(b)->show = true;
@@ -332,7 +335,7 @@ void RecursiveRunnerGame::decor() {
             zPrepassOffset = oBat[3];
         }
         if (zPrepassSize) {
-            const glm::vec2& size = TRANSFORM(b)->size;
+            const glm::vec2& size = tb->size;
             for (int j=0; j<4; j++) {
                 if (zPrepassSize[j] == glm::vec2(0.0f))
                     break;
@@ -341,12 +344,13 @@ void RecursiveRunnerGame::decor() {
                 TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
                 glm::vec2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
                 ratio.y = 1 - ratio.y;
-                TRANSFORM(bb)->position =
+                ADD_COMPONENT(bb, Anchor);
+                ANCHOR(bb)->position =
                     size * (glm::vec2(-0.5) + ratio) + TRANSFORM(bb)->size * glm::vec2(0.5, -0.5);
                 if (bdef.mirrorUV)
-                    TRANSFORM(bb)->position.x = -TRANSFORM(bb)->position.x;
-                TRANSFORM(bb)->z = 0;
-                TRANSFORM(bb)->parent = b;
+                    ANCHOR(bb)->position.x = -ANCHOR(bb)->position.x;
+                ANCHOR(bb)->z = 0;
+                ANCHOR(bb)->parent = b;
                 ADD_COMPONENT(bb, Rendering);
                 *RENDERING(bb) = *RENDERING(b);
                 #if 1
@@ -371,10 +375,11 @@ void RecursiveRunnerGame::decor() {
 
     bestScore = theEntityManager.CreateEntity("best_score");
     ADD_COMPONENT(bestScore, Transformation);
-    TRANSFORM(bestScore)->parent = banderolle;
-    TRANSFORM(bestScore)->z = 0.001;
-    TRANSFORM(bestScore)->position = glm::vec2(0, PlacementHelper::GimpHeightToScreen(-10));
     TRANSFORM(bestScore)->size.x = PlacementHelper::GimpWidthToScreen(775);
+    ADD_COMPONENT(bestScore, Anchor);
+    ANCHOR(bestScore)->parent = banderolle;
+    ANCHOR(bestScore)->z = 0.001;
+    ANCHOR(bestScore)->position = glm::vec2(0, PlacementHelper::GimpHeightToScreen(-10));
     ADD_COMPONENT(bestScore, TextRendering);
     TEXT_RENDERING(bestScore)->text = "bla";
     TEXT_RENDERING(bestScore)->charHeight = PlacementHelper::GimpHeightToScreen(50);
@@ -423,10 +428,11 @@ void RecursiveRunnerGame::decor() {
     muteBtn = theEntityManager.CreateEntity("mute_button");
     ADD_COMPONENT(muteBtn, Transformation);
     TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("son-off"));
-    TRANSFORM(muteBtn)->parent = cameraEntity;
-    TRANSFORM(muteBtn)->position = TRANSFORM(cameraEntity)->size * glm::vec2(-0.5, 0.5)
+    ADD_COMPONENT(muteBtn, Anchor);
+    ANCHOR(muteBtn)->parent = cameraEntity;
+    ANCHOR(muteBtn)->position = TRANSFORM(cameraEntity)->size * glm::vec2(-0.5, 0.5)
         + glm::vec2(buttonSpacing.H, -buttonSpacing.V);
-    TRANSFORM(muteBtn)->z = 0.95;
+    ANCHOR(muteBtn)->z = 0.95;
     ADD_COMPONENT(muteBtn, Rendering);
     RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
     RENDERING(muteBtn)->show = true;
@@ -459,10 +465,11 @@ void RecursiveRunnerGame::initGame() {
     scorePanel = theEntityManager.CreateEntity("score_panel");
     ADD_COMPONENT(scorePanel, Transformation);
     TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
-    theTransformationSystem.setPosition(TRANSFORM(scorePanel),
-        glm::vec2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TransformationSystem::N);
-    TRANSFORM(scorePanel)->z = 0.8;
-    TRANSFORM(scorePanel)->rotation = 0.04;
+    ADD_COMPONENT(scorePanel, Anchor);
+    ANCHOR(scorePanel)->position = AnchorSystem::adjustPositionWithCardinal(
+        glm::vec2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TRANSFORM(scorePanel)->size, Cardinal::N);
+    ANCHOR(scorePanel)->z = 0.8;
+    ANCHOR(scorePanel)->rotation = 0.04;
     // TRANSFORM(scorePanel)->parent = cameraEntity;
     ADD_COMPONENT(scorePanel, Rendering);
     RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
@@ -471,10 +478,10 @@ void RecursiveRunnerGame::initGame() {
 
     scoreText = theEntityManager.CreateEntity("score_text");
     ADD_COMPONENT(scoreText, Transformation);
-    TRANSFORM(scoreText)->position = glm::vec2(-0.05, -0.18);
-    TRANSFORM(scoreText)->z = 0.13;
-    // TRANSFORM(scoreText)->rotation = 0.06;
-    TRANSFORM(scoreText)->parent = scorePanel;
+    ADD_COMPONENT(scoreText, Anchor);
+    ANCHOR(scoreText)->position = glm::vec2(-0.05, -0.18);
+    ANCHOR(scoreText)->z = 0.13;
+    ANCHOR(scoreText)->parent = scorePanel;
     ADD_COMPONENT(scoreText, TextRendering);
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty()) {
@@ -640,7 +647,7 @@ void RecursiveRunnerGame::tick(float dt) {
 
     // limit cam pos
     for (unsigned i=2; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
-        float& camPosX = TRANSFORM(cameraEntity)->worldPosition.x;
+        float& camPosX = TRANSFORM(cameraEntity)->position.x;
         if (camPosX < - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
             camPosX = - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5);
         } else if (camPosX > PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
@@ -866,10 +873,11 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
 
        Entity link3 = theEntityManager.CreateEntity("link3", EntityType::Persistent);
        ADD_COMPONENT(link3, Transformation);
-       TRANSFORM(link3)->parent = link;
-       TRANSFORM(link3)->position = glm::vec2(0, TRANSFORM(link)->size.y * 0.4);
        TRANSFORM(link3)->size = TRANSFORM(link)->size * glm::vec2(1, 0.1);
-       TRANSFORM(link3)->z = 0.2;
+       ADD_COMPONENT(link3, Anchor);
+       ANCHOR(link3)->parent = link;
+       ANCHOR(link3)->position = glm::vec2(0, TRANSFORM(link)->size.y * 0.4);
+       ANCHOR(link3)->z = 0.2;
        ADD_COMPONENT(link3, Particule);
        PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.x * TRANSFORM(link)->size.y;
        PARTICULE(link3)->duration = 0;

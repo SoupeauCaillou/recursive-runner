@@ -21,7 +21,7 @@
 
 int main(int argc, char** argv) {
     if (initGame("Recursive Runner", glm::ivec2(800, 600))) {
-        LOGE("Failed to initialize")
+        LOGE("Failed to initialize");
         return 1;
     }
 

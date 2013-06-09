@@ -42,8 +42,3 @@ void RangeFollowerSystem::DoUpdate(float) {
         }
     }
 }
-
-#if SAC_INGAME_EDITORS
-void RangeFollowerSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
-#endif
-

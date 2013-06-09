@@ -46,7 +46,7 @@ class AdScene : public StateHandler<Scene::Enum> {
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
     void onEnter(Scene::Enum) {
-       LOGI(gamesb4Ad << " game(s) left")
+       LOGI(gamesb4Ad << " game(s) left");
 
        float timeSinceLAstAd = TimeUtil::GetTime() - lastAdTime;
 

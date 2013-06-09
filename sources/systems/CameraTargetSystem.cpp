@@ -39,7 +39,7 @@ void CameraTargetSystem::DoUpdate(float dt) {
             continue;
         glm::vec2 target (TRANSFORM(a)->position + ctc->offset);
         glm::vec2 force = SteeringBehavior::arrive(
-            TRANSFORM(ctc->camera)->worldPosition,
+            TRANSFORM(ctc->camera)->position,
             ctc->cameraSpeed,
             target,
             ctc->maxCameraSpeed,
@@ -49,7 +49,3 @@ void CameraTargetSystem::DoUpdate(float dt) {
         TRANSFORM(ctc->camera)->position.x += ctc->cameraSpeed.x * dt;
     }
 }
-
-#if SAC_INGAME_EDITORS
-void CameraTargetSystem::addEntityPropertiesToBar(unsigned long, CTwBar*) {}
-#endif
