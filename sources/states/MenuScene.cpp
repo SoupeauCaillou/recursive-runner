@@ -264,8 +264,7 @@ void backgroundUpdate(float) {
             // Handle SocialCenter button
             if (!game->ignoreClick) {
                 if (BUTTON(goToSocialCenterBtn)->clicked) {
-                    return Scene::SocialCenter;
-                    //game->gameThreadContext->communicationAPI->openGameCenter();
+                    game->gameThreadContext->communicationAPI->openGameCenter();
                 }
                 game->ignoreClick = BUTTON(goToSocialCenterBtn)->mouseOver;
             }
@@ -308,10 +307,8 @@ void backgroundUpdate(float) {
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
         void onPreExit(Scene::Enum to) {
-            if (to != Scene::SocialCenter) {
-                // stop menu music
-                MUSIC(title)->control = MusicControl::Stop;
-            }
+            // stop menu music
+            MUSIC(title)->control = MusicControl::Stop;
 
             // disable button interaction
             BUTTON(goToSocialCenterBtn)->enabled = false;

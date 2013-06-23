@@ -32,7 +32,6 @@ namespace Scene {
       Ad,
       Rate,
       RestartGame,
-      SocialCenter,
    };
 
 #define DECLARE_SCENE_HANDLER_FACTORY(name) \
