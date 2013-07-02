@@ -261,15 +261,6 @@ void backgroundUpdate(float) {
             }
             updateGiftizButton(giftizBtn, game);
 
-            // Handle SocialCenter button
-            if (!game->ignoreClick) {
-                if (BUTTON(goToSocialCenterBtn)->clicked) {
-                    game->gameThreadContext->communicationAPI->openGameCenter();
-                }
-                game->ignoreClick = BUTTON(goToSocialCenterBtn)->mouseOver;
-            }
-            RENDERING(goToSocialCenterBtn)->color = BUTTON(goToSocialCenterBtn)->mouseOver ? Color("gray") : Color();
-
             // Handle Giftiz button
             if (!game->ignoreClick) {
                 if (BUTTON(giftizBtn)->clicked) {
