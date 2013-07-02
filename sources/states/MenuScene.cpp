@@ -26,7 +26,7 @@
 #include "systems/RenderingSystem.h"
 #include "systems/ButtonSystem.h"
 #include "systems/ADSRSystem.h"
-#include "systems/TextRenderingSystem.h"
+#include "systems/TextSystem.h"
 #include "systems/SoundSystem.h"
 #include "systems/MusicSystem.h"
 #include "systems/PlayerSystem.h"
@@ -74,10 +74,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
             TRANSFORM(titleGroup)->z = 0.7;
             TRANSFORM(titleGroup)->rotation = 0.02;
             ADD_COMPONENT(titleGroup, ADSR);
-            ADSR(titleGroup)->idleValue = PlacementHelper::ScreenHeight + PlacementHelper::GimpYToScreen(400);
+            ADSR(titleGroup)->idleValue = PlacementHelper::ScreenSize.y + PlacementHelper::GimpYToScreen(400);
             ADSR(titleGroup)->sustainValue =
                 game->baseLine +
-                PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y * 0.5
+                PlacementHelper::ScreenSize.y - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y * 0.5
                 + PlacementHelper::GimpHeightToScreen(10);
             ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
             ADSR(titleGroup)->attackTiming = 2;
@@ -123,12 +123,12 @@ class MenuScene : public StateHandler<Scene::Enum> {
             ANCHOR(subtitleText)->z = 0.01;
             ANCHOR(subtitleText)->rotation = 0.005;
             ANCHOR(subtitleText)->position = glm::vec2(0, -PlacementHelper::GimpHeightToScreen(25));
-            ADD_COMPONENT(subtitleText, TextRendering);
-            TEXT_RENDERING(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
-            TEXT_RENDERING(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
-            TEXT_RENDERING(subtitleText)->show = true;
-            TEXT_RENDERING(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
-            TEXT_RENDERING(subtitleText)->flags = TextRenderingComponent::AdjustHeightToFillWidthBit;
+            ADD_COMPONENT(subtitleText, Text);
+            TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
+            TEXT(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
+            TEXT(subtitleText)->show = true;
+            TEXT(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
+            TEXT(subtitleText)->flags = TextComponent::AdjustHeightToFillWidthBit;
 
             goToSocialCenterBtn = theEntityManager.CreateEntity("goToSocialCenter_button");
             ADD_COMPONENT(goToSocialCenterBtn, Transformation);
@@ -189,7 +189,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // save score if any
             std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
             if (!players.empty() && from == Scene::Game) {
-                TEXT_RENDERING(subtitleText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points)
+                TEXT(subtitleText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points)
                 + " points - " + game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
 
                 //save the score in DB
@@ -306,7 +306,7 @@ void backgroundUpdate(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-        void onPreExit(Scene::Enum to) {
+        void onPreExit(Scene::Enum ) {
             // stop menu music
             MUSIC(title)->control = MusicControl::Stop;
 

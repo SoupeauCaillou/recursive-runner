@@ -28,7 +28,7 @@
 #include "systems/RenderingSystem.h"
 #include "systems/ButtonSystem.h"
 #include "systems/ADSRSystem.h"
-#include "systems/TextRenderingSystem.h"
+#include "systems/TextSystem.h"
 #include "systems/SoundSystem.h"
 #include "systems/MusicSystem.h"
 #include "systems/PhysicsSystem.h"
@@ -162,14 +162,14 @@ public:
 
             // Manage piano's volume depending on the distance from the current runner to the piano
             double distanceAbs = glm::abs(TRANSFORM(sc->currentRunner)->position.x -
-            TRANSFORM(game->pianist)->position.x) / (PlacementHelper::ScreenWidth * param::LevelSize);
+            TRANSFORM(game->pianist)->position.x) / (PlacementHelper::ScreenSize.x * param::LevelSize);
             MUSIC(transition)->volume = 0.2 + 0.8 * (1 - distanceAbs);
 
             // Manage player's current runner
             for (unsigned i=0; i<sc->numPlayers; i++) {
                 CAM_TARGET(sc->currentRunner)->enabled = true;
                 CAM_TARGET(sc->currentRunner)->offset = glm::vec2(
-                    ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenWidth,
+                    ((RUNNER(sc->currentRunner)->speed > 0) ? 1 :-1) * 0.4 * PlacementHelper::ScreenSize.x,
                     0 - TRANSFORM(sc->currentRunner)->position.y);
 
                 // If current runner has reached the edge of the screen
@@ -328,7 +328,7 @@ public:
 
             // Show the score(s)
             for (unsigned i=0; i<sc->players.size(); i++) {
-                TEXT_RENDERING(game->scoreText)->text = ObjectSerializer<int>::object2string(PLAYER(sc->players[i])->points);
+                TEXT(game->scoreText)->text = ObjectSerializer<int>::object2string(PLAYER(sc->players[i])->points);
             }
 
             thePlatformerSystem.Update(dt);
@@ -393,7 +393,7 @@ static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost
     AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
     AUTO_DESTROY(e)->params.lifetime.freq.value = 3.5;
     AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
-    // AUTO_DESTROY(e)->hasTextRendering = true;
+    // AUTO_DESTROY(e)->hasText = true;
 }
 
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc) {
@@ -410,11 +410,11 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     ADD_COMPONENT(e, Runner);
 
     TRANSFORM(e)->position = AnchorSystem::adjustPositionWithCardinal(
-        glm::vec2(direction * -(param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.x) * 0.5, game->baseLine),
+        glm::vec2(direction * -(param::LevelSize * PlacementHelper::ScreenSize.x + TRANSFORM(e)->size.x) * 0.5, game->baseLine),
         TRANSFORM(e)->size,
         Cardinal::S);
     RUNNER(e)->startPoint = TRANSFORM(e)->position;
-    RUNNER(e)->endPoint = glm::vec2(direction * (param::LevelSize * PlacementHelper::ScreenWidth + TRANSFORM(e)->size.x) * 0.5, 0);
+    RUNNER(e)->endPoint = glm::vec2(direction * (param::LevelSize * PlacementHelper::ScreenSize.x + TRANSFORM(e)->size.x) * 0.5, 0);
     RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;

@@ -31,7 +31,7 @@ void RecursiveRunnerDebugConsole::init(RecursiveRunnerGame* game) {
         { Scene::Pause, "Pause" },
         { Scene::Ad, "Ad" },
         { Scene::Rate, "Rate" },
-        { Scene::RestartGame, "RestartGame" },
+        { Scene::RestartGame, "RestartGame" }
      };
 
     REGISTER_ONE_ARG(FinishGame, arrivalScene)

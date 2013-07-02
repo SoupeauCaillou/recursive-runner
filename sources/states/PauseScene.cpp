@@ -21,7 +21,7 @@
 #include "base/TouchInputManager.h"
 
 #include "systems/TransformationSystem.h"
-#include "systems/TextRenderingSystem.h"
+#include "systems/TextSystem.h"
 #include "systems/MusicSystem.h"
 #include "systems/AnimationSystem.h"
 #include "systems/PhysicsSystem.h"
@@ -54,7 +54,7 @@ class PauseScene : public StateHandler<Scene::Enum> {
         TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("menu-pause"));
         ADD_COMPONENT(title, Anchor);
         ANCHOR(title)->z = 0.85;
-        ANCHOR(title)->position = glm::vec2(0, PlacementHelper::ScreenHeight * 0.5 - TRANSFORM(title)->size.y * 0.43);
+        ANCHOR(title)->position = glm::vec2(0, PlacementHelper::ScreenSize.y * 0.5 - TRANSFORM(title)->size.y * 0.43);
         ANCHOR(title)->parent = game->cameraEntity;
         ADD_COMPONENT(title, Rendering);
         RENDERING(title)->texture = theRenderingSystem.loadTextureFile("menu-pause");
@@ -65,10 +65,10 @@ class PauseScene : public StateHandler<Scene::Enum> {
         ADD_COMPONENT(pauseText, Anchor);
         ANCHOR(pauseText)->z = 0.9;
         ANCHOR(pauseText)->parent = title;
-        ADD_COMPONENT(pauseText, TextRendering);
-        TEXT_RENDERING(pauseText)->text = "PAUSE";
-        TEXT_RENDERING(pauseText)->charHeight = 1.;
-        TEXT_RENDERING(pauseText)->show = false;
+        ADD_COMPONENT(pauseText, Text);
+        TEXT(pauseText)->text = "PAUSE";
+        TEXT(pauseText)->charHeight = 1.;
+        TEXT(pauseText)->show = false;
 
         std::string textures[] = {"fermer", "recommencer", "reprendre"};
         Entity buttons[3];
@@ -106,7 +106,7 @@ class PauseScene : public StateHandler<Scene::Enum> {
         }
 
         //show text & buttons
-        TEXT_RENDERING(pauseText)->show = true;
+        TEXT(pauseText)->show = true;
         RENDERING(continueButton)->show = true;
         BUTTON(continueButton)->enabled = true;
         RENDERING(restartButton)->show = true;
@@ -115,8 +115,8 @@ class PauseScene : public StateHandler<Scene::Enum> {
         BUTTON(stopButton)->enabled = true;
         // RENDERING(title)->hide = false;
         TRANSFORM(game->scorePanel)->position.x = TRANSFORM(game->cameraEntity)->position.x;
-        TEXT_RENDERING(game->scoreText)->text = "Pause";
-        TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit;
+        TEXT(game->scoreText)->text = "Pause";
+        TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
         //mute music
         if (!theMusicSystem.isMuted()) {
             std::vector<Entity> musics = theMusicSystem.RetrieveAllEntityWithComponent();
@@ -149,7 +149,7 @@ class PauseScene : public StateHandler<Scene::Enum> {
     }
 
     void onPreExit(Scene::Enum) {
-        TEXT_RENDERING(pauseText)->show = false;
+        TEXT(pauseText)->show = false;
         RENDERING(continueButton)->show = false;
         BUTTON(continueButton)->enabled = false;
         RENDERING(restartButton)->show = false;
@@ -157,9 +157,9 @@ class PauseScene : public StateHandler<Scene::Enum> {
         RENDERING(stopButton)->show = false;
         BUTTON(stopButton)->enabled = false;
         // RENDERING(title)->hide = true;
-        // TEXT_RENDERING(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
+        // TEXT(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
         TRANSFORM(game->scorePanel)->position.x = 0;
-        TEXT_RENDERING(game->scoreText)->flags &= ~TextRenderingComponent::IsANumberBit;
+        TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
     }
 
     void onExit(Scene::Enum to) {

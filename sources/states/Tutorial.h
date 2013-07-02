@@ -100,10 +100,10 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
     virtual void onPreExit(Tutorial::Enum ) {
         LOGV(1, "Will exit tutorial state: " << self);
         // setup blinking text
-        TEXT_RENDERING(entities->text)->show = true;
-        TEXT_RENDERING(entities->text)->text = ". . .";
-        TEXT_RENDERING(entities->text)->blink.offDuration =
-        TEXT_RENDERING(entities->text)->blink.onDuration = 0.5;
+        TEXT(entities->text)->show = true;
+        TEXT(entities->text)->text = ". . .";
+        TEXT(entities->text)->blink.offDuration =
+        TEXT(entities->text)->blink.onDuration = 0.5;
         // hide arrow
         RENDERING(entities->anim)->show = false;
         ANIMATION(entities->anim)->playbackSpeed = 0;
@@ -123,10 +123,10 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
     }
 
     void setupText(const std::string& textId) {
-        TEXT_RENDERING(entities->text)->show = true;
-        TEXT_RENDERING(entities->text)->text = loc->text(textId);
-        TEXT_RENDERING(entities->text)->blink.offDuration =
-            TEXT_RENDERING(entities->text)->blink.onDuration = 0;
+        TEXT(entities->text)->show = true;
+        TEXT(entities->text)->text = loc->text(textId);
+        TEXT(entities->text)->blink.offDuration =
+            TEXT(entities->text)->blink.onDuration = 0;
     }
 };
 
@@ -156,8 +156,8 @@ public:
         ANCHOR(titleGroup)->rotation = 0.036;
         ANCHOR(titleGroup)->parent = game->cameraEntity;
         ADD_COMPONENT(titleGroup, ADSR);
-        ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenHeight + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.6;
-        ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenHeight - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.5
+        ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenSize.y + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.6;
+        ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenSize.y - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.5
             + PlacementHelper::GimpHeightToScreen(35);
         ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
         ADSR(titleGroup)->attackTiming = 1;
@@ -193,12 +193,12 @@ public:
         ANCHOR(entities.text)->parent = hideText;
         ANCHOR(entities.text)->z = 0.02;
         ANCHOR(entities.text)->rotation = 0.004;
-        ADD_COMPONENT(entities.text, TextRendering);
-        TEXT_RENDERING(entities.text)->charHeight = PlacementHelper::GimpHeightToScreen(50);
-        TEXT_RENDERING(entities.text)->show = false;
-        TEXT_RENDERING(entities.text)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
-        TEXT_RENDERING(entities.text)->positioning = TextRenderingComponent::CENTER;
-        TEXT_RENDERING(entities.text)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
+        ADD_COMPONENT(entities.text, Text);
+        TEXT(entities.text)->charHeight = PlacementHelper::GimpHeightToScreen(50);
+        TEXT(entities.text)->show = false;
+        TEXT(entities.text)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
+        TEXT(entities.text)->positioning = TextComponent::CENTER;
+        TEXT(entities.text)->flags |= TextComponent::AdjustHeightToFillWidthBit;
 
         entities.anim = theEntityManager.CreateEntity("tuto_fleche");
         ADD_COMPONENT(entities.anim, Transformation);
@@ -227,7 +227,7 @@ public:
         theMusicSystem.toggleMute(isMuted);
 
         waitBeforeEnterExit = TimeUtil::GetTime();
-        RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = false;
+        RENDERING(game->scorePanel)->show = TEXT(game->scoreText)->show = false;
 
         // hack lights/links
         SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
@@ -238,8 +238,8 @@ public:
         std::for_each(session->sparkling.begin(), session->sparkling.end(), deleteEntityFunctor);
         session->sparkling.clear();
 
-        PlacementHelper::ScreenWidth = 60;
-        PlacementHelper::GimpWidth = 3840;
+        PlacementHelper::ScreenSize.x = 60;
+        PlacementHelper::GimpSize.x = 3840;
         glm::vec2 c[] = {
             PlacementHelper::GimpPositionToScreen(glm::vec2(184, 568)),
             PlacementHelper::GimpPositionToScreen(glm::vec2(316, 448)),
@@ -267,10 +267,10 @@ public:
         std::copy(c, &c[20], coords.begin());
         RecursiveRunnerGame::createCoins(coords, session, true);
 
-        PlacementHelper::ScreenWidth = 20;
-        PlacementHelper::GimpWidth = 1280;
-        TEXT_RENDERING(entities.text)->text = game->gameThreadContext->localizeAPI->text("how_to_play");
-        TEXT_RENDERING(entities.text)->show = false;
+        PlacementHelper::ScreenSize.x = 20;
+        PlacementHelper::GimpSize.x = 1280;
+        TEXT(entities.text)->text = game->gameThreadContext->localizeAPI->text("how_to_play");
+        TEXT(entities.text)->show = false;
 
         BUTTON(game->muteBtn)->enabled = false;
 
@@ -427,7 +427,7 @@ public:
     void onEnter(Scene::Enum) {
         SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
         session->userInputEnabled = false;
-        TEXT_RENDERING(entities.text)->show = true;
+        TEXT(entities.text)->show = true;
 
         gameScene.onEnter(Scene::Tutorial);
         waitingClick = true;
@@ -435,7 +435,7 @@ public:
         tutorialStateMachine.setup(Tutorial::Title);
         tutorialStateMachine.reEnterCurrentState();
 
-        RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = false;
+        RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT(game->scoreText)->show = false;
     }
 
 
@@ -458,11 +458,11 @@ public:
         SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
         session->userInputEnabled = false;
         RENDERING(hideText)->show = false;
-        TEXT_RENDERING(entities.text)->show = false;
+        TEXT(entities.text)->show = false;
         gameScene.onPreExit(to);
 
 
-        RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT_RENDERING(game->scoreText)->show = true;
+        RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT(game->scoreText)->show = true;
     }
 
     bool updatePreExit(Scene::Enum to, float dt) {
@@ -480,7 +480,7 @@ public:
     void onExit(Scene::Enum to) {
         RENDERING(title)->show = false;
 
-        TEXT_RENDERING(entities.text)->show = false;
+        TEXT(entities.text)->show = false;
         RENDERING(entities.anim)->show = false;
         gameScene.onExit(to);
         BUTTON(game->muteBtn)->enabled = true;

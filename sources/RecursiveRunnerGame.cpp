@@ -33,7 +33,7 @@
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/ButtonSystem.h"
-#include "systems/TextRenderingSystem.h"
+#include "systems/TextSystem.h"
 #include "systems/SoundSystem.h"
 #include "systems/MusicSystem.h"
 #include "systems/AnimationSystem.h"
@@ -120,8 +120,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     gameThreadContext->storageAPI->setOption("sound", std::string(), "on");
     gameThreadContext->storageAPI->setOption("gameCount", std::string(), "0");
 
-	PlacementHelper::GimpWidth = 1280;
-    PlacementHelper::GimpHeight = 800;
+	PlacementHelper::GimpSize = glm::vec2(1280, 800);
 
     // load anim files
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "disappear2", "disappear2");
@@ -194,7 +193,7 @@ void RecursiveRunnerGame::decor() {
 
 	route = theEntityManager.CreateEntity("road");
     ADD_COMPONENT(route, Transformation);
-    TRANSFORM(route)->size = glm::vec2(PlacementHelper::ScreenWidth, PlacementHelper::GimpHeightToScreen(109));
+    TRANSFORM(route)->size = glm::vec2(PlacementHelper::ScreenSize.x, PlacementHelper::GimpHeightToScreen(109));
     TRANSFORM(route)->position = AnchorSystem::adjustPositionWithCardinal(
         glm::vec2(0, PlacementHelper::GimpYToScreen(800)), TRANSFORM(route)->size, Cardinal::S);
     TRANSFORM(route)->z = 0.1;
@@ -210,9 +209,8 @@ void RecursiveRunnerGame::decor() {
     ADD_COMPONENT(trees, Transformation);
     TRANSFORM(trees)->z = 0;
 
-    PlacementHelper::ScreenWidth *= 3;
-    PlacementHelper::GimpWidth = 1280 * 3;
-    PlacementHelper::GimpHeight = 800;
+    PlacementHelper::ScreenSize.x *= 3;
+    PlacementHelper::GimpSize = glm::vec2(1280 * 3, 800);
     int count = 33;
     struct Decor {
     	float x, y, z;
@@ -379,12 +377,12 @@ void RecursiveRunnerGame::decor() {
     ANCHOR(bestScore)->parent = banderolle;
     ANCHOR(bestScore)->z = 0.001;
     ANCHOR(bestScore)->position = glm::vec2(0, PlacementHelper::GimpHeightToScreen(-10));
-    ADD_COMPONENT(bestScore, TextRendering);
-    TEXT_RENDERING(bestScore)->text = "bla";
-    TEXT_RENDERING(bestScore)->charHeight = PlacementHelper::GimpHeightToScreen(50);
-    TEXT_RENDERING(bestScore)->flags |= TextRenderingComponent::AdjustHeightToFillWidthBit;
-    TEXT_RENDERING(bestScore)->show = true;
-    TEXT_RENDERING(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
+    ADD_COMPONENT(bestScore, Text);
+    TEXT(bestScore)->text = "bla";
+    TEXT(bestScore)->charHeight = PlacementHelper::GimpHeightToScreen(50);
+    TEXT(bestScore)->flags |= TextComponent::AdjustHeightToFillWidthBit;
+    TEXT(bestScore)->show = true;
+    TEXT(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
     const bool muted = true;//gameThreadContext->storageAPI->isMuted();
     pianist = theEntityManager.CreateEntity("pianist");
     ADD_COMPONENT(pianist, Transformation);
@@ -410,16 +408,15 @@ void RecursiveRunnerGame::decor() {
     ADD_COMPONENT(silhouette, RangeFollower);
     RANGE_FOLLOWER(silhouette)->range = Interval<float>(-6, 6);
     /*RANGE_FOLLOWER(silhouette)->range = Interval<float>(
-        -PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.45 - 0.5), PlacementHelper::ScreenWidth * (LEVEL_SIZE * 0.45 - 0.5));*/
+        -PlacementHelper::ScreenSize.x * (LEVEL_SIZE * 0.45 - 0.5), PlacementHelper::ScreenSize.x * (LEVEL_SIZE * 0.45 - 0.5));*/
     RANGE_FOLLOWER(silhouette)->parent = cameraEntity;
 
     ADD_COMPONENT(buildings, RangeFollower);
     RANGE_FOLLOWER(buildings)->range = Interval<float>(-2, 2);
     RANGE_FOLLOWER(buildings)->parent = cameraEntity;
 
-    PlacementHelper::GimpWidth = 1280;
-    PlacementHelper::GimpHeight = 800;
-    PlacementHelper::ScreenWidth /= 3;
+    PlacementHelper::GimpSize = glm::vec2(1280, 800);
+    PlacementHelper::ScreenSize.x /= 3;
 
     buttonSpacing.H = PlacementHelper::GimpWidthToScreen(94);
     buttonSpacing.V = PlacementHelper::GimpHeightToScreen(76);
@@ -447,7 +444,7 @@ void RecursiveRunnerGame::initGame() {
     Color::nameColor(Color(0.8, 0.8, 0.8), "gray");
     baseLine = PlacementHelper::GimpYToScreen(800);
     leftMostCameraPos =
-        glm::vec2(-PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5),
+        glm::vec2(-PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5),
         baseLine + theRenderingSystem.screenH * 0.5);
         LOGI("Creating cameras");
         Entity camera = cameraEntity = theEntityManager.CreateEntity("camera1");
@@ -465,7 +462,7 @@ void RecursiveRunnerGame::initGame() {
     ADD_COMPONENT(scorePanel, Transformation);
     TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
     TRANSFORM(scorePanel)->position = AnchorSystem::adjustPositionWithCardinal(
-        glm::vec2(0, baseLine + PlacementHelper::ScreenHeight + PlacementHelper::GimpHeightToScreen(20)), TRANSFORM(scorePanel)->size, Cardinal::N);
+        glm::vec2(0, baseLine + PlacementHelper::ScreenSize.y + PlacementHelper::GimpHeightToScreen(20)), TRANSFORM(scorePanel)->size, Cardinal::N);
     TRANSFORM(scorePanel)->z = 0.8;
     TRANSFORM(scorePanel)->rotation = 0.04;
     // TRANSFORM(scorePanel)->parent = cameraEntity;
@@ -480,17 +477,17 @@ void RecursiveRunnerGame::initGame() {
     ANCHOR(scoreText)->position = glm::vec2(-0.05, -0.18);
     ANCHOR(scoreText)->z = 0.13;
     ANCHOR(scoreText)->parent = scorePanel;
-    ADD_COMPONENT(scoreText, TextRendering);
+    ADD_COMPONENT(scoreText, Text);
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
     if (!players.empty()) {
-        TEXT_RENDERING(scoreText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points);
+        TEXT(scoreText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points);
     } else {
-        TEXT_RENDERING(scoreText)->text = "12345";
+        TEXT(scoreText)->text = "12345";
     }
-    TEXT_RENDERING(scoreText)->charHeight = 1.5;
-    TEXT_RENDERING(scoreText)->show = true;
-    TEXT_RENDERING(scoreText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
-    TEXT_RENDERING(scoreText)->flags |= TextRenderingComponent::IsANumberBit;
+    TEXT(scoreText)->charHeight = 1.5;
+    TEXT(scoreText)->show = true;
+    TEXT(scoreText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
+    TEXT(scoreText)->flags |= TextComponent::IsANumberBit;
 
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0000")] =  CollisionZone(90,52,28,84,-0.1);
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0001")] =  CollisionZone(91,62,27,78,-0.1);
@@ -532,7 +529,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
         std::vector<Entity> all = theTransformationSystem.RetrieveAllEntityWithComponent();
         for (unsigned i=0; i<all.size(); i++) {
-            if (TRANSFORM(all[i])->size.x > PlacementHelper::ScreenWidth * param::LevelSize) {
+            if (TRANSFORM(all[i])->size.x > PlacementHelper::ScreenSize.x * param::LevelSize) {
                 ground = all[i];
                 break;
             }
@@ -549,7 +546,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     if (in == 0 || size == 0) {
         ground = theEntityManager.CreateEntity("ground", EntityType::Persistent);
         ADD_COMPONENT(ground, Transformation);
-        TRANSFORM(ground)->size = glm::vec2(PlacementHelper::ScreenWidth * (param::LevelSize + 1), 0);
+        TRANSFORM(ground)->size = glm::vec2(PlacementHelper::ScreenSize.x * (param::LevelSize + 1), 0);
         TRANSFORM(ground)->position = glm::vec2(0, baseLine);
     }
     updateBestScore();
@@ -560,12 +557,12 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     } else {
         sceneStateMachine.setup(Scene::Logo);
     }
-    sceneStateMachine.reEnterCurrentState();
+    
 }
 
 void RecursiveRunnerGame::quickInit() {
     // we just need to make sure current state is properly initiated
-    sceneStateMachine.reEnterCurrentState();
+    
 }
 
 bool RecursiveRunnerGame::willConsumeBackEvent() {
@@ -646,10 +643,10 @@ void RecursiveRunnerGame::tick(float dt) {
     // limit cam pos
     for (unsigned i=2; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
         float& camPosX = TRANSFORM(cameraEntity)->position.x;
-        if (camPosX < - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
-            camPosX = - PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5);
-        } else if (camPosX > PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5)) {
-            camPosX = PlacementHelper::ScreenWidth * (param::LevelSize * 0.5 - 0.5);
+        if (camPosX < - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
+            camPosX = - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
+        } else if (camPosX > PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
+            camPosX = PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
         }
         // TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
         TRANSFORM(cameraEntity)->position.x = camPosX;
@@ -678,10 +675,10 @@ void RecursiveRunnerGame::updateBestScore() {
     ScoreStorageProxy ssp;
     gameThreadContext->storageAPI->loadEntries(&ssp, "points", "order by points desc limit 1");
     if (! ssp.isEmpty()) {
-        TEXT_RENDERING(bestScore)->text = "Best: " + ObjectSerializer<int>::object2string(ssp._queue.front().points);
+        TEXT(bestScore)->text = "Best: " + ObjectSerializer<int>::object2string(ssp._queue.front().points);
     } else {
         LOGW("No best score found (?!)");
-        TEXT_RENDERING(bestScore)->text = "";
+        TEXT(bestScore)->text = "";
     }
 }
 
@@ -802,8 +799,8 @@ static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMi
         do {
             p = glm::vec2(
                 glm::linearRand(
-                    -param::LevelSize * 0.5 * PlacementHelper::ScreenWidth,
-                    param::LevelSize * 0.5 * PlacementHelper::ScreenWidth),
+                    -param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x,
+                    param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x),
                 glm::linearRand(heightMin, heightMax));
            notFarEnough = false;
            for (unsigned j = 0; j < positions.size() && !notFarEnough; j++) {
@@ -850,13 +847,13 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
 
     std::sort(coins.begin(), coins.end(), sortLeftToRight);
     const glm::vec2 offset = glm::vec2(0, PlacementHelper::GimpHeightToScreen(14));
-    glm::vec2 previous = glm::vec2(-param::LevelSize * PlacementHelper::ScreenWidth * 0.5, -PlacementHelper::ScreenHeight * 0.2);
+    glm::vec2 previous = glm::vec2(-param::LevelSize * PlacementHelper::ScreenSize.x * 0.5, -PlacementHelper::ScreenSize.y * 0.2);
     for (unsigned i = 0; i <= coins.size(); i++) {
        glm::vec2 topI;
        if (i < coins.size())
             topI = TRANSFORM(coins[i])->position + glm::rotate(offset, TRANSFORM(coins[i])->rotation);
        else
-            topI = glm::vec2(param::LevelSize * PlacementHelper::ScreenWidth * 0.5, 0);
+            topI = glm::vec2(param::LevelSize * PlacementHelper::ScreenSize.x * 0.5, 0);
 
        Entity link = theEntityManager.CreateEntity("link", EntityType::Persistent);
        ADD_COMPONENT(link, Transformation);

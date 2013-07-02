@@ -22,7 +22,7 @@
 #include "base/PlacementHelper.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
-#include "systems/TextRenderingSystem.h"
+#include "systems/TextSystem.h"
 #include "systems/ButtonSystem.h"
 #include "systems/AnchorSystem.h"
 
@@ -52,28 +52,28 @@ class RateScene : public StateHandler<Scene::Enum> {
             ANCHOR(entity[i])->parent = game->cameraEntity;
             ANCHOR(entity[i])->position = glm::vec2(0, -i);
 
-            ADD_COMPONENT(entity[i], TextRendering);
-            TEXT_RENDERING(entity[i])->charHeight = 1.;
-            TEXT_RENDERING(entity[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
-            TEXT_RENDERING(entity[i])->show = false;
+            ADD_COMPONENT(entity[i], Text);
+            TEXT(entity[i])->charHeight = 1.;
+            TEXT(entity[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
+            TEXT(entity[i])->show = false;
 
             if (i)
                ADD_COMPONENT(entity[i], Button);
          }
-         TEXT_RENDERING(entity[0])->text = "Votez !";
-         TEXT_RENDERING(entity[1])->text = "Oui";
-         TEXT_RENDERING(entity[2])->text = "Non";
-         TEXT_RENDERING(entity[3])->text = "Peut-etre";
+         TEXT(entity[0])->text = "Votez !";
+         TEXT(entity[1])->text = "Oui";
+         TEXT(entity[2])->text = "Non";
+         TEXT(entity[3])->text = "Peut-etre";
 
       }
 
       void onEnter(Scene::Enum) {
-         TEXT_RENDERING(rateText)->show = true;
-         TEXT_RENDERING(btnNow)->show = true;
+         TEXT(rateText)->show = true;
+         TEXT(btnNow)->show = true;
          BUTTON(btnNow)->enabled = true;
-         TEXT_RENDERING(btnLater)->show = true;
+         TEXT(btnLater)->show = true;
          BUTTON(btnLater)->enabled = true;
-         TEXT_RENDERING(btnNever)->show = true;
+         TEXT(btnNever)->show = true;
          BUTTON(btnNever)->enabled = true;
       }
 
@@ -93,12 +93,12 @@ class RateScene : public StateHandler<Scene::Enum> {
       }
 
       void onPreExit(Scene::Enum) {
-         TEXT_RENDERING(rateText)->show = false;
-         TEXT_RENDERING(btnNow)->show = false;
+         TEXT(rateText)->show = false;
+         TEXT(btnNow)->show = false;
          BUTTON(btnNow)->enabled = false;
-         TEXT_RENDERING(btnLater)->show = false;
+         TEXT(btnLater)->show = false;
          BUTTON(btnLater)->enabled = false;
-         TEXT_RENDERING(btnNever)->show = false;
+         TEXT(btnNever)->show = false;
          BUTTON(btnNever)->enabled = false;
       }
 };
