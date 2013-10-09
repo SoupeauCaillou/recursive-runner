@@ -107,7 +107,7 @@ public:
     void onEnter(Scene::Enum) {
         RENDERING(logo)->show = RENDERING(logobg)->show = RENDERING(logofade)->show = true;
         // preload sound
-        theSoundSystem.loadSoundFile("son_monte.ogg");
+        theSoundSystem.loadSoundFile("sounds/logo_blink.ogg");
 
         // setup state machine
         logoSM = new StateMachine<LogoStep>();
@@ -118,7 +118,7 @@ public:
         logoSM->registerState(LogoStep1,
             new LogoTimeBasedStateHandler(LogoStep1, 0.8, [this] () {
                 RENDERING(animLogo)->show = true;
-                SOUND(animLogo)->sound = theSoundSystem.loadSoundFile("son_monte.ogg");
+                SOUND(animLogo)->sound = theSoundSystem.loadSoundFile("sounds/logo_blink.ogg");
             }), "WaitBeforeBlink");
         logoSM->registerState(LogoStep2,
             new LogoTimeBasedStateHandler(LogoStep2, 0.05, [this] () {

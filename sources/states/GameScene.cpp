@@ -105,7 +105,7 @@ public:
                 RecursiveRunnerGame::startGame(game->level, true);
                 MUSIC(transition)->fadeOut = 2;
                 MUSIC(transition)->volume = 1;
-                MUSIC(transition)->music = theMusicSystem.loadMusicFile("jeu.ogg");
+                MUSIC(transition)->music = theMusicSystem.loadMusicFile("sounds/jeu.ogg");
                 ADSR(transition)->value = ADSR(transition)->idleValue;
                 ADSR(transition)->activationTime = 0;
             }

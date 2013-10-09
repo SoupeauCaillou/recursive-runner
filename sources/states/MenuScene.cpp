@@ -49,8 +49,8 @@
 static void updateTitleSubTitle(Entity title, Entity subtitle);
 static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game);
 static void startMenuMusic(Entity title) {
-    MUSIC(title)->music = theMusicSystem.loadMusicFile("intro-menu.ogg");
-    MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
+    MUSIC(title)->music = theMusicSystem.loadMusicFile("sounds/intro-menu.ogg");
+    MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("sounds/boucle-menu.ogg");
     MUSIC(title)->loopAt = 4.54;
     MUSIC(title)->volume = 1;
     MUSIC(title)->fadeOut = 2;
@@ -231,7 +231,7 @@ void backgroundUpdate(float) {
                     startMenuMusic(title);
                 } else if (music->loopNext == InvalidMusicRef) {
                     music->loopAt = 21.34;
-                    music->loopNext = theMusicSystem.loadMusicFile("boucle-menu.ogg");
+                    music->loopNext = theMusicSystem.loadMusicFile("sounds/boucle-menu.ogg");
                 }
             } else if (theMusicSystem.isMuted() != theSoundSystem.mute) {
                 // restore music
