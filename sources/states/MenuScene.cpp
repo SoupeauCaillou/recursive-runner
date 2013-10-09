@@ -60,7 +60,7 @@ static void startMenuMusic(Entity title) {
 
 class MenuScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
-    Entity titleGroup, title, subtitle, subtitleText, helpBtn, goToSocialCenterBtn, giftizBtn;
+    Entity titleGroup, title, subtitle, subtitleText, helpBtn, goToSocialCenterBtn;
 
     public:
         MenuScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
@@ -145,19 +145,6 @@ class MenuScene : public StateHandler<Scene::Enum> {
             ADD_COMPONENT(goToSocialCenterBtn, Button);
             BUTTON(goToSocialCenterBtn)->overSize = 1.2;
 
-            giftizBtn = theEntityManager.CreateEntity("giftiz_button");
-            ADD_COMPONENT(giftizBtn, Transformation);
-            TRANSFORM(giftizBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("giftiz"));
-            ADD_COMPONENT(giftizBtn, Anchor);
-            ANCHOR(giftizBtn)->parent = goToSocialCenterBtn;
-            ANCHOR(giftizBtn)->position = glm::vec2(0, (TRANSFORM(goToSocialCenterBtn)->size.y) * 0.5 + game->buttonSpacing.V);
-            ANCHOR(giftizBtn)->z = 0;
-            ADD_COMPONENT(giftizBtn, Rendering);
-            RENDERING(giftizBtn)->texture = theRenderingSystem.loadTextureFile("giftiz");
-            RENDERING(giftizBtn)->show = true;
-            ADD_COMPONENT(giftizBtn, Button);
-            BUTTON(giftizBtn)->overSize = 1.2;
-
             helpBtn = theEntityManager.CreateEntity("help_button");
             ADD_COMPONENT(helpBtn, Transformation);
             TRANSFORM(helpBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("aide"));
@@ -200,19 +187,14 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 game->gameThreadContext->storageAPI->saveEntries(&ssp);
 
                 game->updateBestScore();
-
-                if (PLAYER(players[0])->points >= 15000) {
-                    game->gameThreadContext->communicationAPI->giftizMissionDone();
-                }
             }
             // start music if not muted
             if (!theMusicSystem.isMuted() && MUSIC(title)->control == MusicControl::Stop) {
                 startMenuMusic(title);
             }
             // unhide UI
-            RENDERING(goToSocialCenterBtn)->show = RENDERING(giftizBtn)->show = RENDERING(helpBtn)->show = true;
-            RENDERING(goToSocialCenterBtn)->color = RENDERING(giftizBtn)->color = RENDERING(helpBtn)->color = Color(1,1,1,0);
-            updateGiftizButton(giftizBtn, game);
+            RENDERING(goToSocialCenterBtn)->show = RENDERING(helpBtn)->show = true;
+            RENDERING(goToSocialCenterBtn)->color = RENDERING(helpBtn)->color = Color(1,1,1,0);
         }
 
         bool updatePreEnter(Scene::Enum, float) {
@@ -220,7 +202,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // check if adsr is complete
             ADSRComponent* adsr = ADSR(titleGroup);
             float progress = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
-            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(giftizBtn)->color.a = RENDERING(helpBtn)->color.a = progress;
+            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(helpBtn)->color.a = progress;
             return (adsr->value == adsr->sustainValue);
         }
 
@@ -228,8 +210,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
         void onEnter(Scene::Enum) {
             RecursiveRunnerGame::endGame();
             // enable UI
-            BUTTON(goToSocialCenterBtn)->enabled = BUTTON(giftizBtn)->enabled = BUTTON(helpBtn)->enabled = true;
-            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(giftizBtn)->color.a = RENDERING(helpBtn)->color.a = 1;
+            BUTTON(goToSocialCenterBtn)->enabled = BUTTON(helpBtn)->enabled = true;
+            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(helpBtn)->color.a = 1;
         }
 
 #if 0
@@ -259,16 +241,6 @@ void backgroundUpdate(float) {
                     startMenuMusic(title);
                 }
             }
-            updateGiftizButton(giftizBtn, game);
-
-            // Handle Giftiz button
-            if (!game->ignoreClick) {
-                if (BUTTON(giftizBtn)->clicked) {
-                    game->gameThreadContext->communicationAPI->giftizButtonClicked();
-                }
-                game->ignoreClick = BUTTON(giftizBtn)->mouseOver;
-            }
-            RENDERING(giftizBtn)->color = BUTTON(giftizBtn)->mouseOver ? Color("gray") : Color();
 
             // Handle help button
             if (!game->ignoreClick) {
@@ -303,7 +275,6 @@ void backgroundUpdate(float) {
 
             // disable button interaction
             BUTTON(goToSocialCenterBtn)->enabled = false;
-            BUTTON(giftizBtn)->enabled = false;
             BUTTON(helpBtn)->enabled = false;
 
             // activate animation
@@ -316,13 +287,13 @@ void backgroundUpdate(float) {
             float progress = (adsr->value - adsr->attackValue) /
                     (adsr->idleValue - adsr->attackValue);
 
-            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(giftizBtn)->color.a = RENDERING(helpBtn)->color.a = 1 - progress;
+            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(helpBtn)->color.a = 1 - progress;
             // check if animation is finished
             return (adsr->value >= adsr->idleValue);
         }
 
         void onExit(Scene::Enum) {
-            RENDERING(goToSocialCenterBtn)->show = RENDERING(giftizBtn)->show = RENDERING(helpBtn)->show = false;
+            RENDERING(goToSocialCenterBtn)->show = RENDERING(helpBtn)->show = false;
         }
 };
 

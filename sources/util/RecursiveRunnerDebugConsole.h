@@ -7,7 +7,6 @@ class RecursiveRunnerGame;
 class RecursiveRunnerDebugConsole {
     public:
         static void init(RecursiveRunnerGame* game);
-        static void callbackFinishGame(void* arg);
 
     private:
         //to interact with the game
