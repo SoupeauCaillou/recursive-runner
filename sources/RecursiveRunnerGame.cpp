@@ -360,15 +360,8 @@ void RecursiveRunnerGame::decor() {
         }
 	}
 
-    Entity banderolle = theEntityManager.CreateEntity("banderolle");
-    ADD_COMPONENT(banderolle, Transformation);
-    TRANSFORM(banderolle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("banderolle"));
-    TRANSFORM(banderolle)->position = glm::vec2(PlacementHelper::GimpXToScreen(772), PlacementHelper::GimpYToScreen(415));
-    TRANSFORM(banderolle)->z = 0.31;
-    TRANSFORM(banderolle)->rotation = 0.1;
-    ADD_COMPONENT(banderolle, Rendering);
-    RENDERING(banderolle)->texture = theRenderingSystem.loadTextureFile("banderolle");
-    RENDERING(banderolle)->show = true;
+    Entity banderolle = theEntityManager.CreateEntity("banderolle", 
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/banderolle"));
 
     bestScore = theEntityManager.CreateEntity("best_score");
     ADD_COMPONENT(bestScore, Transformation);
@@ -555,7 +548,11 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     if (size > 0 && in) {
         sceneStateMachine.setup(Scene::Pause);
     } else {
-        sceneStateMachine.setup(Scene::Logo);
+        #if SAC_DEBUG
+            sceneStateMachine.setup(Scene::Menu);
+        #else
+            sceneStateMachine.setup(Scene::Logo);
+        #endif
     }
     
 }
