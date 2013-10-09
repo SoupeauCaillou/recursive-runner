@@ -1,0 +1,12 @@
+[Transformation]
+size%gimp = 153, 136
+position%gimp = 294, 700
+z = 0.55
+
+
+[Rendering]
+show = 1
+opaque_type = 0
+
+[Animation]
+name = pianojournal

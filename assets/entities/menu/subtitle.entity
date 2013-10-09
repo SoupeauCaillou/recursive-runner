@@ -1,0 +1,20 @@
+[Transformation]
+size%gimp = 843, 156
+
+[Anchor]
+parent%name = menu/title_group
+position%gimp_size = 0, -150 
+z = -.1
+             
+[Rendering]
+texture = taptostart
+show = 1
+opaque_type = 0
+
+[ADSR]
+idle_value = 0
+sustain_value%gimp_h = -150
+attack_value%gimp_h = -150
+attack_timing = 2
+decay_timing = 0.1
+release_timing = 1

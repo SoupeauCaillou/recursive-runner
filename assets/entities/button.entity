@@ -1,0 +1,13 @@
+    
+[Transformation]
+size%gimp = 129, 92
+
+[Anchor]
+z = 0.95
+
+[Rendering]
+show = 1
+opaque_type = 0
+
+[Button]
+overSize = 1.2

@@ -160,57 +160,39 @@ void fumee(Entity building) {
 
     for (unsigned i=0; i<indexes.size(); i++) {
         int idx = indexes[i];
-        Entity fumee = theEntityManager.CreateEntity("fumee");
-        ADD_COMPONENT(fumee, Transformation);
+        Entity fumee = theEntityManager.CreateEntity("fumee",
+            EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/fumee"));
         TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * glm::linearRand(0.5f, 0.8f);
-        ADD_COMPONENT(fumee, Anchor);
         ANCHOR(fumee)->parent = building;
         ANCHOR(fumee)->position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
-        if (RENDERING(building)->mirrorH) ANCHOR(fumee)->position.x = -ANCHOR(fumee)->position.x;
-        ANCHOR(fumee)->z = -0.1;
-        ADD_COMPONENT(fumee, Rendering);
-        RENDERING(fumee)->show = false;
-        RENDERING(fumee)->color = Color(1,1,1,0.6);
-        RENDERING(fumee)->opaqueType = RenderingComponent::NON_OPAQUE;
-        ADD_COMPONENT(fumee, Animation);
-        ANIMATION(fumee)->name = "fumee_start";
+        if (RENDERING(building)->mirrorH) 
+            ANCHOR(fumee)->position.x = -ANCHOR(fumee)->position.x;
         ANIMATION(fumee)->waitAccum = glm::linearRand(0.0f, 10.f);
     }
 }
 
 void RecursiveRunnerGame::decor() {
-	silhouette = theEntityManager.CreateEntity("silhouette");
-    ADD_COMPONENT(silhouette, Transformation);
-    TRANSFORM(silhouette)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("silhouette_ville")) * 4.0f;
-    // TRANSFORM(silhouette)->size.X *= 1.6;
-    TRANSFORM(silhouette)->position = AnchorSystem::adjustPositionWithCardinal(
-        glm::vec2(0, PlacementHelper::GimpYToScreen(0)), TRANSFORM(silhouette)->size, Cardinal::N);
-    TRANSFORM(silhouette)->z = 0.01;
-    ADD_COMPONENT(silhouette, Rendering);
-    RENDERING(silhouette)->texture = theRenderingSystem.loadTextureFile("silhouette_ville");
-    RENDERING(silhouette)->show = true;
-    RENDERING(silhouette)->opaqueType = RenderingComponent::FULL_OPAQUE;
-
-	route = theEntityManager.CreateEntity("road");
-    ADD_COMPONENT(route, Transformation);
-    TRANSFORM(route)->size = glm::vec2(PlacementHelper::ScreenSize.x, PlacementHelper::GimpHeightToScreen(109));
-    TRANSFORM(route)->position = AnchorSystem::adjustPositionWithCardinal(
-        glm::vec2(0, PlacementHelper::GimpYToScreen(800)), TRANSFORM(route)->size, Cardinal::S);
-    TRANSFORM(route)->z = 0.1;
-    ADD_COMPONENT(route, Rendering);
-    RENDERING(route)->texture = theRenderingSystem.loadTextureFile("route");
-    RENDERING(route)->show = true;
-    RENDERING(route)->opaqueType = RenderingComponent::FULL_OPAQUE;
-
-    Entity buildings = theEntityManager.CreateEntity("buildings");
-    ADD_COMPONENT(buildings, Transformation);
-    TRANSFORM(buildings)->z = 0;
-    Entity trees = theEntityManager.CreateEntity("trees");
-    ADD_COMPONENT(trees, Transformation);
-    TRANSFORM(trees)->z = 0;
-
+    LOGT("Position not handled in .entity file yet!");
     PlacementHelper::ScreenSize.x *= 3;
     PlacementHelper::GimpSize = glm::vec2(1280 * 3, 800);
+
+
+    silhouette = theEntityManager.CreateEntity("silhouette",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/silhouette"));
+    TRANSFORM(silhouette)->position = AnchorSystem::adjustPositionWithCardinal(
+        glm::vec2(0, PlacementHelper::GimpYToScreen(0)), TRANSFORM(silhouette)->size, Cardinal::N);
+
+    route = theEntityManager.CreateEntity("road",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/road"));
+    TRANSFORM(route)->position = AnchorSystem::adjustPositionWithCardinal(
+        glm::vec2(0, PlacementHelper::GimpYToScreen(800)), TRANSFORM(route)->size, Cardinal::S);
+
+    Entity buildings = theEntityManager.CreateEntity("buildings",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/city-object"));
+
+    Entity trees = theEntityManager.CreateEntity("trees",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/city-object"));
+
     int count = 33;
     struct Decor {
     	float x, y, z;
@@ -360,32 +342,16 @@ void RecursiveRunnerGame::decor() {
         }
 	}
 
-    Entity banderolle = theEntityManager.CreateEntity("banderolle", 
-        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/banderolle"));
+    theEntityManager.CreateEntity("background/banderolle", 
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/banderolle"));
 
-    bestScore = theEntityManager.CreateEntity("best_score");
-    ADD_COMPONENT(bestScore, Transformation);
-    TRANSFORM(bestScore)->size.x = PlacementHelper::GimpWidthToScreen(775);
-    ADD_COMPONENT(bestScore, Anchor);
-    ANCHOR(bestScore)->parent = banderolle;
-    ANCHOR(bestScore)->z = 0.001;
-    ANCHOR(bestScore)->position = glm::vec2(0, PlacementHelper::GimpHeightToScreen(-10));
-    ADD_COMPONENT(bestScore, Text);
-    TEXT(bestScore)->text = "bla";
-    TEXT(bestScore)->charHeight = PlacementHelper::GimpHeightToScreen(50);
-    TEXT(bestScore)->flags |= TextComponent::AdjustHeightToFillWidthBit;
-    TEXT(bestScore)->show = true;
-    TEXT(bestScore)->color = Color(64.0 / 255, 62.0/255, 72.0/255);
+    bestScore = theEntityManager.CreateEntity("background/best_score",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/best_score"));
+
     const bool muted = true;//gameThreadContext->storageAPI->isMuted();
-    pianist = theEntityManager.CreateEntity("pianist");
-    ADD_COMPONENT(pianist, Transformation);
-    TRANSFORM(pianist)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("P1"));
-    TRANSFORM(pianist)->position = glm::vec2(PlacementHelper::GimpXToScreen(294), PlacementHelper::GimpYToScreen(700));
-    TRANSFORM(pianist)->z = 0.55;
-    ADD_COMPONENT(pianist, Rendering);
-    RENDERING(pianist)->show = true;
+    pianist = theEntityManager.CreateEntity("background/pianist",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
     RENDERING(pianist)->color.a = 0.8;
-    ADD_COMPONENT(pianist, Animation);
     ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
 
     std::vector<Entity> cameras = theCameraSystem.RetrieveAllEntityWithComponent();
@@ -414,20 +380,13 @@ void RecursiveRunnerGame::decor() {
     buttonSpacing.H = PlacementHelper::GimpWidthToScreen(94);
     buttonSpacing.V = PlacementHelper::GimpHeightToScreen(76);
 
-    muteBtn = theEntityManager.CreateEntity("mute_button");
-    ADD_COMPONENT(muteBtn, Transformation);
-    TRANSFORM(muteBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("son-off"));
-    ADD_COMPONENT(muteBtn, Anchor);
+    muteBtn = theEntityManager.CreateEntity("mute_button",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));
     ANCHOR(muteBtn)->parent = cameraEntity;
     ANCHOR(muteBtn)->position = TRANSFORM(cameraEntity)->size * glm::vec2(-0.5, 0.5)
         + glm::vec2(buttonSpacing.H, -buttonSpacing.V);
-    ANCHOR(muteBtn)->z = 0.95;
-    ADD_COMPONENT(muteBtn, Rendering);
     RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
-    RENDERING(muteBtn)->show = true;
-    ADD_COMPONENT(muteBtn, Button);
     BUTTON(muteBtn)->enabled = true;
-    BUTTON(muteBtn)->overSize = 1.2;
 
     theSoundSystem.mute = muted;
     theMusicSystem.toggleMute(muted);
@@ -439,48 +398,26 @@ void RecursiveRunnerGame::initGame() {
     leftMostCameraPos =
         glm::vec2(-PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5),
         baseLine + theRenderingSystem.screenH * 0.5);
-        LOGI("Creating cameras");
-        Entity camera = cameraEntity = theEntityManager.CreateEntity("camera1");
-
-    ADD_COMPONENT(camera, Transformation);
+    
+    LOGI("Creating cameras");
+    Entity camera = cameraEntity = theEntityManager.CreateEntity("camera1",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("camera"));
     TRANSFORM(camera)->position = leftMostCameraPos;
-    TRANSFORM(camera)->size = glm::vec2(theRenderingSystem.screenW, theRenderingSystem.screenH);
-    TRANSFORM(camera)->z = 0;
-    ADD_COMPONENT(camera, Camera);
-    CAMERA(camera)->clearColor = Color(148.0/255, 148.0/255, 148.0/255, 1.0);
 
     decor();
 
-    scorePanel = theEntityManager.CreateEntity("score_panel");
-    ADD_COMPONENT(scorePanel, Transformation);
-    TRANSFORM(scorePanel)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("score"));
+    scorePanel = theEntityManager.CreateEntity("background/score_panel",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/score_panel"));
     TRANSFORM(scorePanel)->position = AnchorSystem::adjustPositionWithCardinal(
         glm::vec2(0, baseLine + PlacementHelper::ScreenSize.y + PlacementHelper::GimpHeightToScreen(20)), TRANSFORM(scorePanel)->size, Cardinal::N);
-    TRANSFORM(scorePanel)->z = 0.8;
-    TRANSFORM(scorePanel)->rotation = 0.04;
-    // TRANSFORM(scorePanel)->parent = cameraEntity;
-    ADD_COMPONENT(scorePanel, Rendering);
-    RENDERING(scorePanel)->texture = theRenderingSystem.loadTextureFile("score");
-    RENDERING(scorePanel)->show = true;
-    // RENDERING(scorePanel)->color.a = 0.5;
 
-    scoreText = theEntityManager.CreateEntity("score_text");
-    ADD_COMPONENT(scoreText, Transformation);
-    ADD_COMPONENT(scoreText, Anchor);
-    ANCHOR(scoreText)->position = glm::vec2(-0.05, -0.18);
-    ANCHOR(scoreText)->z = 0.13;
-    ANCHOR(scoreText)->parent = scorePanel;
-    ADD_COMPONENT(scoreText, Text);
+    scoreText = theEntityManager.CreateEntity("score_text",
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/score_text"));
+
     std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
-    if (!players.empty()) {
-        TEXT(scoreText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points);
-    } else {
-        TEXT(scoreText)->text = "12345";
-    }
-    TEXT(scoreText)->charHeight = 1.5;
-    TEXT(scoreText)->show = true;
-    TEXT(scoreText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
-    TEXT(scoreText)->flags |= TextComponent::IsANumberBit;
+    TEXT(scoreText)->text = players.empty() ?
+        "12345"
+        : ObjectSerializer<int>::object2string(PLAYER(players[0])->points);
 
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0000")] =  CollisionZone(90,52,28,84,-0.1);
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0001")] =  CollisionZone(91,62,27,78,-0.1);
@@ -519,7 +456,9 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         /* restore systems */
         theRenderingSystem.restoreInternalState(&in[index], sSize);
         index += sSize;
-        std::cout << index << "/" << size << "(" << eSize << ", " << sSize << ")" << std::endl;
+        
+        LOGI( index << "/" << size << "(" << eSize << ", " << sSize << ")" );
+
         std::vector<Entity> all = theTransformationSystem.RetrieveAllEntityWithComponent();
         for (unsigned i=0; i<all.size(); i++) {
             if (TRANSFORM(all[i])->size.x > PlacementHelper::ScreenSize.x * param::LevelSize) {
@@ -654,7 +593,7 @@ void RecursiveRunnerGame::tick(float dt) {
 }
 
 void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
-    LOGW("TODO");
+    LOGT("setupCamera");
     switch (mode) {
         case CameraMode::Single:
             LOGI("Setup camera : Single");
@@ -813,32 +752,21 @@ static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMi
 
 void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition) {
     LOGI("Coins creation started");
+    
     EntityTemplateRef coinTemplate = theEntityManager.entityTemplateLibrary.load("coin");
+    EntityTemplateRef linkTemplate = theEntityManager.entityTemplateLibrary.load("link");
+    EntityTemplateRef link3Template = theEntityManager.entityTemplateLibrary.load("link3");
+
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
-        Entity e = theEntityManager.CreateEntity("coin", EntityType::Persistent, coinTemplate);
-        // ADD_COMPONENT(e, Transformation);
-        TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("ampoule")) * param::CoinScale;
+        Entity e = theEntityManager.CreateEntity("coin", 
+            EntityType::Persistent, coinTemplate);
+        
+        TRANSFORM(e)->size *= param::CoinScale;
         TRANSFORM(e)->position = coordinates[i];
-        // TRANSFORM(e)->rotation = glm::linearRand(-0.1f, 0.1f);
-        // TRANSFORM(e)->z = 0.75;
-        // ADD_COMPONENT(e, Rendering);
-        // RENDERING(e)->texture = theRenderingSystem.loadTextureFile("ampoule");
-        RENDERING(e)->show = true;
+
         RENDERING(e)->color.a = (transition ? 0 : 1);
-        // ADD_COMPONENT(e, Particule);
-        // PARTICULE(e)->emissionRate = 150;
-        // PARTICULE(e)->duration = 0;
-        // PARTICULE(e)->lifetime = 0.1 * 1;
-        // PARTICULE(e)->texture = InvalidTextureRef;
-        // PARTICULE(e)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 0.8), Color(145.0/255, 145.0/255, 145.0/255, 0.8));
-        // PARTICULE(e)->finalColor = PARTICULE(e)->initialColor;
-        // PARTICULE(e)->initialSize = Interval<float>(0.08, 0.16);
-        // PARTICULE(e)->finalSize = Interval<float>(0.0, 0.0);
-        // PARTICULE(e)->forceDirection = Interval<float> (0, 6.28);
-        // PARTICULE(e)->forceAmplitude = Interval<float>(5, 10);
-        // PARTICULE(e)->moment = Interval<float>(-5, 5);
-        // PARTICULE(e)->mass = 0.1;
+
         coins.push_back(e);
     }
 
@@ -846,51 +774,34 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
     const glm::vec2 offset = glm::vec2(0, PlacementHelper::GimpHeightToScreen(14));
     glm::vec2 previous = glm::vec2(-param::LevelSize * PlacementHelper::ScreenSize.x * 0.5, -PlacementHelper::ScreenSize.y * 0.2);
     for (unsigned i = 0; i <= coins.size(); i++) {
-       glm::vec2 topI;
-       if (i < coins.size())
+        glm::vec2 topI;
+        
+        if (i < coins.size())
             topI = TRANSFORM(coins[i])->position + glm::rotate(offset, TRANSFORM(coins[i])->rotation);
-       else
+        else
             topI = glm::vec2(param::LevelSize * PlacementHelper::ScreenSize.x * 0.5, 0);
 
-       Entity link = theEntityManager.CreateEntity("link", EntityType::Persistent);
-       ADD_COMPONENT(link, Transformation);
-       TRANSFORM(link)->position = (topI + previous) * 0.5f;
-       TRANSFORM(link)->size = glm::vec2(glm::length(topI - previous), PlacementHelper::GimpHeightToScreen(54));
-       TRANSFORM(link)->z = 0.6;
-       TRANSFORM(link)->rotation = -/*glm::radians*/(glm::orientedAngle(glm::normalize(topI - previous), glm::vec2(1.0f, 0.0f)));
-       ADD_COMPONENT(link, Rendering);
-       RENDERING(link)->texture = theRenderingSystem.loadTextureFile("link");
-       RENDERING(link)->show = true;
-       RENDERING(link)->color.a =  (transition ? 0 : 1);
+        Entity link = theEntityManager.CreateEntity("link",
+            EntityType::Persistent, linkTemplate);
+        TRANSFORM(link)->position = (topI + previous) * 0.5f;
+        TRANSFORM(link)->size = glm::vec2(glm::length(topI - previous), PlacementHelper::GimpHeightToScreen(54));
+        TRANSFORM(link)->rotation = -/*glm::radians*/(glm::orientedAngle(glm::normalize(topI - previous), glm::vec2(1.0f, 0.0f)));
+        RENDERING(link)->color.a =  (transition ? 0 : 1);
 
-       Entity link3 = theEntityManager.CreateEntity("link3", EntityType::Persistent);
-       ADD_COMPONENT(link3, Transformation);
-       TRANSFORM(link3)->size = TRANSFORM(link)->size * glm::vec2(1, 0.1);
-       ADD_COMPONENT(link3, Anchor);
-       ANCHOR(link3)->parent = link;
-       ANCHOR(link3)->position = glm::vec2(0, TRANSFORM(link)->size.y * 0.4);
-       ANCHOR(link3)->z = 0.2;
-       ADD_COMPONENT(link3, Particule);
-       PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.x * TRANSFORM(link)->size.y;
-       PARTICULE(link3)->duration = 0;
-       PARTICULE(link3)->lifetime = 0.1 * 1;
-       PARTICULE(link3)->texture = InvalidTextureRef;
-       PARTICULE(link3)->initialColor = Interval<Color>(Color(135.0/255, 135.0/255, 135.0/255, 1), Color(145.0/255, 145.0/255, 145.0/255, 1));
-       PARTICULE(link3)->finalColor = PARTICULE(link3)->initialColor;
-       PARTICULE(link3)->initialSize = Interval<float>(0.05, 0.1);
-       PARTICULE(link3)->finalSize = Interval<float>(0.01, 0.03);
-       PARTICULE(link3)->forceDirection = Interval<float> (0, 6.28);
-       PARTICULE(link3)->forceAmplitude = Interval<float>(5 / 10, 10 / 10);
-       PARTICULE(link3)->moment = Interval<float>(-5, 5);
-       PARTICULE(link3)->mass = 0.01;
-       session->sparkling.push_back(link3);
+        Entity link3 = theEntityManager.CreateEntity("link3", 
+            EntityType::Persistent, link3Template);
+        TRANSFORM(link3)->size = TRANSFORM(link)->size * glm::vec2(1, 0.1);
+        ANCHOR(link3)->parent = link;
+        ANCHOR(link3)->position = glm::vec2(0, TRANSFORM(link)->size.y * 0.4);
+        PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.x * TRANSFORM(link)->size.y;
+        session->sparkling.push_back(link3);
 
-       previous = topI;
-       session->links.push_back(link);
-   }
+        previous = topI;
+        session->links.push_back(link);
+    }
 
-   for (unsigned i=0; i<coins.size(); i++) {
-    session->coins.push_back(coins[i]);
-}
-LOGI("Coins creation finished");
+    for (unsigned i=0; i<coins.size(); i++) {
+        session->coins.push_back(coins[i]);
+    }
+    LOGI("Coins creation finished");
 }

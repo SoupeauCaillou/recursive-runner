@@ -1,0 +1,14 @@
+[Transformation]
+size%gimp = 790, 1
+
+[Anchor]
+parent%name = menu/subtitle
+position%gimp_size = 0, -25 
+z = .01
+rotation = 0.005
+
+[Text]
+show = 1;
+color = 0.157, 0.125, .118, 0.8
+flags = 2
+char_height%gimp_h = 45

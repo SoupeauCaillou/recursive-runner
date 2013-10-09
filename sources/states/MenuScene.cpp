@@ -47,7 +47,6 @@
 #include <vector>
 
 static void updateTitleSubTitle(Entity title, Entity subtitle);
-static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game);
 static void startMenuMusic(Entity title) {
     MUSIC(title)->music = theMusicSystem.loadMusicFile("sounds/intro-menu.ogg");
     MUSIC(title)->loopNext = theMusicSystem.loadMusicFile("sounds/boucle-menu.ogg");
@@ -69,94 +68,40 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
 
         void setup() {
-            titleGroup  = theEntityManager.CreateEntity("title_group");
-            ADD_COMPONENT(titleGroup, Transformation);
-            TRANSFORM(titleGroup)->z = 0.7;
-            TRANSFORM(titleGroup)->rotation = 0.02;
-            ADD_COMPONENT(titleGroup, ADSR);
+            titleGroup  = theEntityManager.CreateEntity("menu/title_group",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title_group"));
             ADSR(titleGroup)->idleValue = PlacementHelper::ScreenSize.y + PlacementHelper::GimpYToScreen(400);
-            ADSR(titleGroup)->sustainValue =
-                game->baseLine +
-                PlacementHelper::ScreenSize.y - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y * 0.5
+            ADSR(titleGroup)->sustainValue = game->baseLine + PlacementHelper::ScreenSize.y 
+                - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y * 0.5
                 + PlacementHelper::GimpHeightToScreen(10);
             ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
-            ADSR(titleGroup)->attackTiming = 2;
-            ADSR(titleGroup)->decayTiming = 0.2;
-            ADSR(titleGroup)->releaseTiming = 1.5;
             TRANSFORM(titleGroup)->position = glm::vec2(game->leftMostCameraPos.x + TRANSFORM(titleGroup)->size.x * 0.5, ADSR(titleGroup)->idleValue);
 
-            title = theEntityManager.CreateEntity("title");
-            ADD_COMPONENT(title, Transformation);
-            TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre"));
-            ADD_COMPONENT(title, Anchor);
-            ANCHOR(title)->parent = titleGroup;
-            ANCHOR(title)->position = glm::vec2(0.0f);
-            ANCHOR(title)->z = 0.15;
-            ADD_COMPONENT(title, Rendering);
-            RENDERING(title)->texture = theRenderingSystem.loadTextureFile("titre");
-            RENDERING(title)->show = true;
-            ADD_COMPONENT(title, Music);
+            title = theEntityManager.CreateEntity("menu/title",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title"));
 
-            subtitle = theEntityManager.CreateEntity("subtitle");
-            ADD_COMPONENT(subtitle, Transformation);
-            TRANSFORM(subtitle)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
-            ADD_COMPONENT(subtitle, Anchor);
-            ANCHOR(subtitle)->parent = titleGroup;
-            ANCHOR(subtitle)->position = glm::vec2(-PlacementHelper::GimpWidthToScreen(0), -PlacementHelper::GimpHeightToScreen(150));
-            ANCHOR(subtitle)->z = -0.1;
-            ADD_COMPONENT(subtitle, Rendering);
-            RENDERING(subtitle)->texture = theRenderingSystem.loadTextureFile("taptostart");
-            RENDERING(subtitle)->show = true;
-            ADD_COMPONENT(subtitle, ADSR);
-            ADSR(subtitle)->idleValue = 0;
-            ADSR(subtitle)->sustainValue = -PlacementHelper::GimpHeightToScreen(150);
-            ADSR(subtitle)->attackValue = -PlacementHelper::GimpHeightToScreen(150);
-            ADSR(subtitle)->attackTiming = 2;
-            ADSR(subtitle)->decayTiming = 0.1;
-            ADSR(subtitle)->releaseTiming = 1;
+            subtitle = theEntityManager.CreateEntity("menu/subtitle",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle"));
 
-            subtitleText = theEntityManager.CreateEntity("subtitle_text");
-            ADD_COMPONENT(subtitleText, Transformation);
-            TRANSFORM(subtitleText)->size = glm::vec2(PlacementHelper::GimpWidthToScreen(790), 1);
-            ADD_COMPONENT(subtitleText, Anchor);
-            ANCHOR(subtitleText)->parent = subtitle;
-            ANCHOR(subtitleText)->z = 0.01;
-            ANCHOR(subtitleText)->rotation = 0.005;
-            ANCHOR(subtitleText)->position = glm::vec2(0, -PlacementHelper::GimpHeightToScreen(25));
-            ADD_COMPONENT(subtitleText, Text);
+            subtitleText = theEntityManager.CreateEntity("subtitle_text",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle_text"));
             TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
-            TEXT(subtitleText)->charHeight = 1.5 * PlacementHelper::GimpHeightToScreen(45);
-            TEXT(subtitleText)->show = true;
-            TEXT(subtitleText)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
-            TEXT(subtitleText)->flags = TextComponent::AdjustHeightToFillWidthBit;
+            TEXT(subtitleText)->charHeight *= 1.5;
 
-            goToSocialCenterBtn = theEntityManager.CreateEntity("goToSocialCenter_button");
-            ADD_COMPONENT(goToSocialCenterBtn, Transformation);
-            TRANSFORM(goToSocialCenterBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("swarm"));
-            ADD_COMPONENT(goToSocialCenterBtn, Anchor);
+            goToSocialCenterBtn = theEntityManager.CreateEntity("goToSocialCenter_button",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));        
             ANCHOR(goToSocialCenterBtn)->parent = game->cameraEntity;
             ANCHOR(goToSocialCenterBtn)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(-0.5, -0.5)
                 + glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            ANCHOR(goToSocialCenterBtn)->z = 0.95;
-            ADD_COMPONENT(goToSocialCenterBtn, Rendering);
             RENDERING(goToSocialCenterBtn)->texture = theRenderingSystem.loadTextureFile("swarm");
-            RENDERING(goToSocialCenterBtn)->show = true;
-            ADD_COMPONENT(goToSocialCenterBtn, Button);
-            BUTTON(goToSocialCenterBtn)->overSize = 1.2;
 
-            helpBtn = theEntityManager.CreateEntity("help_button");
-            ADD_COMPONENT(helpBtn, Transformation);
-            TRANSFORM(helpBtn)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("aide"));
-            ADD_COMPONENT(helpBtn, Anchor);
+            helpBtn = theEntityManager.CreateEntity("help_button",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));
             ANCHOR(helpBtn)->parent = game->muteBtn;
             ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
             ANCHOR(helpBtn)->z = 0;
-            ADD_COMPONENT(helpBtn, Rendering);
             RENDERING(helpBtn)->texture = theRenderingSystem.loadTextureFile("aide");
-            RENDERING(helpBtn)->show = true;
-            ADD_COMPONENT(helpBtn, Button);
-            BUTTON(helpBtn)->overSize = 1.2;
         }
 
 
@@ -301,32 +246,6 @@ namespace Scene {
     StateHandler<Scene::Enum>* CreateMenuSceneHandler(RecursiveRunnerGame* game) {
         return new MenuScene(game);
     }
-}
-
-#ifndef ANDROID
-static void updateGiftizButton(Entity btn, RecursiveRunnerGame*) {
-    RENDERING(btn)->show = true;
-#else
-static void updateGiftizButton(Entity btn, RecursiveRunnerGame* game) {
-     int giftizState = game->communicationAPI->giftizGetButtonState();
-    switch (giftizState) {
-        case 0:
-            RENDERING(btn)->show = false;
-            break;
-        case 1:
-            RENDERING(btn)->show = true;
-            RENDERING(btn)->texture = theRenderingSystem.loadTextureFile("giftiz");
-            break;
-        case 2:
-            RENDERING(btn)->show = true;
-            RENDERING(btn)->texture = theRenderingSystem.loadTextureFile("giftiz_1");
-            break;
-        case 3:
-            RENDERING(btn)->show = true;
-            RENDERING(btn)->texture = theRenderingSystem.loadTextureFile("giftiz_warning");
-            break;
-    }
-#endif
 }
 
 static void updateTitleSubTitle(Entity titleGroup, Entity subtitle) {

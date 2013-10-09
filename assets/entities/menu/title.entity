@@ -1,0 +1,13 @@
+[Transformation]
+size%gimp = 849, 203
+
+[Anchor]
+parent%name = menu/title_group
+z = 0.15
+             
+[Rendering]
+texture = titre
+show = 1
+opaque_type = 0
+
+[Music]

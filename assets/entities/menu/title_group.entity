@@ -1,0 +1,8 @@
+[Transformation]
+z = .7
+rotation = 0.02
+
+[ADSR]
+attackTiming = 2
+decayTiming = 0.2
+releaseTiming = 1.5

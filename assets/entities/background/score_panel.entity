@@ -1,0 +1,8 @@
+[Transformation]
+size%gimp = 591, 166
+z = 0.8
+
+[Rendering]
+texture = score
+show = 1
+opaque_type = 0

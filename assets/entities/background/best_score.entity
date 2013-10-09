@@ -1,0 +1,14 @@
+[Transformation]
+size%gimp = 775, 1
+
+
+[Anchor]
+parent%name = background/banderolle
+z = 0.001;
+position%gimp_size = 0, -10
+
+[Text]
+charHeight%gimp_h = 50
+flags = 2
+show = 1
+color = .25, .24, .28

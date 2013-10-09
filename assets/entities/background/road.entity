@@ -1,0 +1,9 @@
+[Transformation]
+size%gimp = 1280, 109
+#todo!
+#position%gimp = 772, 415
+z = 0.1
+
+[Rendering]
+texture = route
+show = 1

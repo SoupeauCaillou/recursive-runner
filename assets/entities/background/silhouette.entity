@@ -1,0 +1,10 @@
+[Transformation]
+size%gimp = 3840, 484
+#todo!
+#position%gimp = 772, 415
+z = 0.01
+
+[Rendering]
+texture = silhouette_ville
+show = 1
+        

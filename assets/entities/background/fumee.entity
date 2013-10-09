@@ -1,0 +1,12 @@
+[Transformation]
+
+[Anchor]
+z = -0.1
+
+[Rendering]
+show = 0
+color = 1, 1, 1, 0.6
+opaque_type = 0
+
+[Animation]
+name = fumee_start
