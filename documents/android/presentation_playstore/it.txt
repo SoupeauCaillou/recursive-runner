@@ -1,0 +1,25 @@
+Corri, salta e colleziona punti! Sembra facile?
+Certo, eccezion fatta per un ostacolo da evitare che corre e salta: Te! (e Te (e Te (e Te (e...))))
+Prova un tipo completamente nuovo di running game!
+Normalmente giochi fino a quando non ti colpisce un ostacolo?
+Giocherai 90 secondi per ogni partita.
+Normalmente controlli un eroe che corre? Te ne daremo dieci.
+Il trucco?
+Li controlli uno alla volta, e quando hai finito con uno, lui ricomincerà lo stesso percorso più e più volte e continuerà a realizzare punti per te.
+La sfida è realizzare punti con il tuo eroe mentre eviti i te stesso precedenti - se ne colpisci uno, questi scomparirà per sempre.
+Swarm, la piattaforma di social gaming, necessita di alcuni permessi (nessun dato personale verrà utilizzato):
+Chiamate telefoniche: 
+Permette a Swarm di prevenire frodi e di creare un ambiente sicuro (nessuna informazioni in grado di identificare la persona verrà utilizzata).
+Comunicazione di rete:
+Permette agli utenti di creare un account, di autenticarsi, di salvare i trofei, di inviare il punteggio in classifica e di acquistare dal negozio virtuale.
+Inoltre permette a Swarm di individuare quando un utente è online o quando la connessione dell'utente viene interrotta.
+Se riscontri rallentamenti, puoi abilitare la modalità grafica a bassa risoluzione utilizzando il pulsante 'menu'
+(richiede il riavvio del gioco)
+Speriamo ti divertirai con Recursive Runner.
+Abbiamo intenzione di continuare ad aggiornare il gioco per un certo periodo di tempo, e stiamo aspettando le segnalazioni degli utenti per migliorarlo!
+* Aggiunta la funzionalità 'pausa': puoi fermare/riprendere il gioco in qualunque momento
+* Ora puoi uscire dal gioco premendo il pulsante 'indietro' nel menu
+* Aiuto all'interno del gioco (vedi l'icona '?')
+* Miglioramento generale delle prestazioni e una nuova opzione per abilitare la grafica a bassa risoluzione
+* Nuova grafica
+* Il prossimo aggiornamento conterrà nuove funzionalità di gioco!

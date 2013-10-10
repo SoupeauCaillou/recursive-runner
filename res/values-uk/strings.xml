@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">Натисніть на екран, щоб почати</string>
+  <string name="tap_screen_to_restart">натисніть на екран, щоб почати сочатку</string>
+  <string name="how_to_play">Як грати? (натисніть для продовження)</string>
+  <string name="this_is_you">Це - ви</string>
+  <string name="tap_jump">Натисніть на екран, щоб стрибнути</string>
+  <string name="turn_on">Увімкніть світло, щоб отримати очки</string>
+  <string name="longer_press">Тривале натискання зумовить вищий прижок</string>
+  <string name="run_edge">Ви будете бігти до укриття</string>
+  <string name="new_hero">Тоді, це новий Ти</string>
+  <string name="previous_hero_replay">Минулий ти переграє цей біг</string>
+  <string name="avoid_him">Уникни його: він збереже свій результат!</string>
+  <string name="ten_heroes">Спробуйте отримати кращий результат з 10-ма собою!</string>
+  <string name="good_luck">Щасти!</string>
+  <string name="high_quality_gfx_summ">Увімкнути графіку високої якості (потребує перезавантаження гри)</string>
+  <string name="low_quality_gfx_summ">Увімкнути графіку низької якості (потребує перезавантаження гри)</string>
+</resources>

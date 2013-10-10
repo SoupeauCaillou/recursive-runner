@@ -1,0 +1,25 @@
+Rennen, springen en punten scoren! Klinkt wel erg gemakkelijk...
+Dat is ook zo, maar je krijgt wel met obstakels te maken: jezelf! (en jezelf... en jezelf... en jezelf... en...)
+Beleef een volledig nieuw renspel!
+Gewend om te spelen tot je een obstakel raakt?
+Elk spel duurt 90 seconden.
+Gewend om 1 rennende held te besturen? Wij geven je 10!
+Hoe werkt het?
+Je bestuurt er eentje en als je hiermee klaar bent, rent dit personage hetzelfde parcours om punten voor je te scoren.
+Je moet proberen zo veel mogelijk punten met je huidige personage te scoren en je vorige personages ontwijken. Als je eentje raakt, verdwijnt deze uit het spel.
+Voor Swarm, het socialgamingplatform, zijn een aantal toestemmingen nodig (er worden geen persoonlijke gegevens gebruikt):
+Oproepen: 
+Stelt Swarm in staat om fraude te voorkomen en een veilige omgeving te creëren (er worden geen persoonsgegevens gebruikt).
+Netwerkcommunicatie:
+Stelt gebruikers in staat om een account aan te maken, prestaties op te slaan, scores in het klassement op te nemen en aankopen in de virtuele winkel te doen.
+Daarnaast stelt het Swarm in staat te detecteren wanneer de gebruiker online is of wanneer de verbinding is verbroken.
+Als het spel niet soepel verloopt, kun je graphics met een lage resolutie inschakelen via de Menu-knop.
+(opnieuw opstarten vereist)
+We wensen je veel plezier met Recursive Runner.
+We zijn van plan het spel te blijven updaten/verbeteren en wachten op feedback van spelers om ons hierbij te helpen!
+* Mogelijkheid om pauzeren toegevoegd: je kunt het spel wanneer je wilt pauzeren/verder spelen
+* Je kunt het spel afsluiten door in het menu op Terug te drukken
+* In-game hulp (via het ?-pictogram)
+* Algemene prestatieverbeteringen en een nieuwe optie om graphics met een lage resolutie in te schakelen
+* Nieuwe graphics
+* De volgende update draait om de gameplay!

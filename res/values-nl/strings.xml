@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">Tik op het scherm om te beginnen</string>
+  <string name="tap_screen_to_restart">Tik op het scherm om opnieuw te beginnen</string>
+  <string name="how_to_play">Hoe speel je? (tikken om door te gaan)</string>
+  <string name="this_is_you">Dit ben jij</string>
+  <string name="tap_jump">Tik op het scherm om te springen</string>
+  <string name="turn_on">Doe lampen aan om punten te scoren</string>
+  <string name="longer_press">Houd het scherm ingedrukt om hogere sprongen te maken</string>
+  <string name="run_edge">Je rent tot de rand van de scherm</string>
+  <string name="new_hero">Dan is er een nieuwe jij</string>
+  <string name="previous_hero_replay">De vorige jij herhaalt het parcours</string>
+  <string name="avoid_him">Vermijd hem: hij scoort nog steeds punten!</string>
+  <string name="ten_heroes">Probeer de beste score te halen met 10x jezelf!</string>
+  <string name="good_luck">Succes!</string>
+  <string name="high_quality_gfx_summ">Graphics met hoge kwaliteit inschakelen (opnieuw opstarten vereist)</string>
+  <string name="low_quality_gfx_summ">Graphics met lage kwaliteit inschakelen (opnieuw opstarten vereist)</string>
+</resources>

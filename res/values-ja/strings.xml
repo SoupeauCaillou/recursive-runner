@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">画面をタップしてスタート</string>
+  <string name="tap_screen_to_restart">画面をタップしてもう一度</string>
+  <string name="this_is_you">これはあなたです</string>
+  <string name="turn_on">明かりを点けると得点が増えます</string>
+  <string name="longer_press">長押しすることで高くジャンプできます</string>
+  <string name="run_edge">画面の端まで走ります</string>
+  <string name="new_hero">すると、新しいあなたが走り出します</string>
+  <string name="previous_hero_replay">前のあなたがその走りをリプレイします</string>
+  <string name="avoid_him">彼に触れてはいけません。彼がいることで点数が増えます。</string>
+  <string name="good_luck">では幸運を！</string>
+  <string name="high_quality_gfx_summ">高画質でプレイ(再起動が必要)</string>
+  <string name="low_quality_gfx_summ">低画質でプレイ(再起動が必要)</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">Presiona la pantalla para comenzar</string>
+  <string name="tap_screen_to_restart">presiona la pantalla para comenzar</string>
+  <string name="how_to_play">¿Cómo jugar? (presiona para continuar)</string>
+  <string name="this_is_you">Este eres Tu</string>
+  <string name="tap_jump">Presiona la pantalla para Saltar</string>
+  <string name="turn_on">Enciende las luces para ganar puntos</string>
+  <string name="longer_press">Mantén presionado para saltar más alto</string>
+  <string name="run_edge">Correrás hasta el borde de la pantalla</string>
+  <string name="new_hero">Luego, hay un nuevo Tú</string>
+  <string name="previous_hero_replay">El tú-previo está volviendo a jugar</string>
+  <string name="avoid_him">Evítalo: Él continuará ganando puntos!</string>
+  <string name="good_luck">Buena suerte!</string>
+  <string name="high_quality_gfx_summ">Activar gráficos de alta calidad (requiere reiniciar el juego)</string>
+  <string name="low_quality_gfx_summ">Activar gráficos de baja calidad (requiere reiniciar el juego)</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">Нажмите на экран, чтобы играть!</string>
+  <string name="tap_screen_to_restart">Нажмите на экран, чтобы ещё раз играть!</string>
+  <string name="how_to_play">Как играть? (Нажмите на экран, чтобы продолжать)</string>
+  <string name="this_is_you">Этот персонаж-это вы</string>
+  <string name="tap_jump">Нажмите на экран, чтобы прыгать</string>
+  <string name="turn_on">Включите светы, чтобы набрать очки</string>
+  <string name="longer_press">Нажмите дольше, чтобы выше прыгать</string>
+  <string name="run_edge">Бегите к краю экрана</string>
+  <string name="new_hero">Затем, вас появится новый вы</string>
+  <string name="previous_hero_replay">Ваше предыдущее Вы снова повторяет свой ход!</string>
+  <string name="avoid_him">Избегайте его: он набирает больше очков!</string>
+  <string name="good_luck">Удачи !</string>
+  <string name="high_quality_gfx_summ">Используете графические высокие разрешения (требуется перезапускать игру)</string>
+  <string name="low_quality_gfx_summ">Используете графические низкие разрешения (требуется перезапускать игру)</string>
+</resources>

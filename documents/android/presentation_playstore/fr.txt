@@ -1,0 +1,25 @@
+Courez, sautez et marquez des points ! Trop facile ?
+Peut-être... sauf qu'il y a un obstacle à éviter qui se déplace en sautant : vous ! (et vous (et vous (et vous (et...))))
+Découvrez un tout nouveau genre de runner game !
+Vous êtes habitué à jouer le plus longtemps possible, jusqu'à ce qu'un obstacle vous arrête :
+ici chaque partie dure 90 secondes.
+Vous êtes habitué à contrôler un seul personnage qui court : là vous en aurez 10.
+L'astuce ?
+Vous les contrôlez 1 par 1. Une fois fini avec 1, il répétera la même séquence à l'infini et continuera à marquer des points pour vous.
+Le challenge est d'arriver à marquer des points avec le personnage que vous dirigez tout en évitant les précédents - si vous en touchez un il dispaîtra à tout jamais.
+Swarm requiert quelques permissions (aucune information personnelle n'est utilisé) :
+Appels : 
+Permet à Swarm d'empécher les fraudes et de créer un environnement sécurisé.
+Communication réseau :
+Permet de se connecter à Swarm, sauvegarder son score et ses succès sur Internet, etc.
+Par ailleurs, cela permet à Swarm de détecter lorsque la connexion est perdue.
+Si le jeu n'est pas fluide, une option accessible via le bouton Menu permet d'améliorer les performances
+(quitter puis relancer le jeu pour que le changement soit effectif)
+Nous espéreons que vous apprécierez Recursive Runner.
+Nous prévoyons de le mettre à jour régulièrement : aidez nous en nous envoyant vos remarques (ou critiques :)) par mail
+* Le jeu peut être mis en pause n'importe quand
+* Appuyer sur touche 'Retour' dans le menu termine l'application
+* Ajout d'un tutorial pour expliquer les bases du jeu (voir icône '?')
+* Amélioration générale des performances et ajout d'une option pour passer en basse qualité graphique si nécessaire (bouton 'Menu' Android)
+* Nouveaux éléments graphiques
+* La prochaine mise à jour visera à étoffer le jeu soit au niveau gameplay, soit au niveau graphique (nouveau thème ?)

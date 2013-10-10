@@ -1,0 +1,11 @@
+[main]
+host = https://www.transifex.com
+
+[recursive-runner.playstore-presentation]
+file_filter = documents/android/presentation_playstore/<lang>.txt
+source_lang = en
+
+[recursive-runner.ingame-strings-v2]
+file_filter = res/values-<lang>/strings.xml
+source_lang = en
+

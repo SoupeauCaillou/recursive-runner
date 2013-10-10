@@ -1,0 +1,25 @@
+Run, jump and score points! Sound easy?
+Sure, except there is a running and jumping obstacle to avoid: You! (and You (and You (and You (and...))))
+Experience an all new kind of running game!
+Used to play until being hit by an obstacle?
+You’ll play for 90 seconds each game.
+Used to control 1 running hero? We’ll give you 10 of them.
+The trick?
+You control them one at a time, and when you’re done with one, he will do the same run over and over and continue to score points for you.
+The challenge is to score with your current hero while avoiding your previous ones - if you hit one of them he will disappear forever.
+Swarm, the social gaming platform, need some permissions (no personnal datas used):
+Phone calls: 
+Allows Swarm to prevent fraud and create a secure environment (no personally identifiable information is used).
+Network communication:
+Allows users to create an account, login, save Achievements, post scores to Leaderboards, and make purchases from the Virtual Store.
+Besides it allows Swarm to detect when a user is online or when the user's connection has been lost.
+If you experience slowdowns, you can enable low-res graphics mode using the 'menu' button
+(requires to restart the game)
+We hope you’ll enjoy Recursive Runner.
+We plan to keep updating the game for a while, and are waiting for player feedback to help us improve it!
+* Added 'pause' capability : you can pause/restore the game at anytime
+* You can exit the game by pressing 'back' button in the menu
+* In game help (see '?' icon)
+* General performance improvement and a new option to enable low-res graphics mode
+* New graphics stuff
+* Next update will feature gameplay content!
