@@ -25,12 +25,12 @@ rotated=0
 opaque_rect=13,59,398,247
 [image3]
 name=route
-original_size=8,8
+original_size=32,32
 position_in_atlas=963,1
-size_in_atlas=8,8
+size_in_atlas=32,32
 crop_offset=0,0
 rotated=0
-opaque_rect=0,0,8,8
+opaque_rect=0,0,32,32
 [image4]
 name=silhouette_ville
 original_size=960,121

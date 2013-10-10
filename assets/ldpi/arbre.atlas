@@ -3,9 +3,9 @@ atlas_size=1024,256
 name=ampoule
 original_size=24,26
 position_in_atlas=875,22
-size_in_atlas=22,22
-crop_offset=1,4
-rotated=0
+size_in_atlas=22,21
+crop_offset=2,4
+rotated=1
 opaque_rect=0,0,0,0
 [image1]
 name=arbre1
