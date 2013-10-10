@@ -26,12 +26,12 @@ echo "Uninstall current version from device..."
 adb uninstall net.damsy.soupeaucaillou.sactestonly
 
 #replace R package name import
-sed -i "s/import .*\.R;/import net.damsy.soupeaucaillou.sactestonly.R;/" platforms/android/src/net/damsy/soupeaucaillou/recursiverunner/RecursiveRunnerActivity.java
+sed -i "s/import .*\.R;/import net.damsy.soupeaucaillou.sactestonly.R;/" platforms/android/src/net/damsy/soupeaucaillou/recursiveRunner/RecursiveRunnerActivity.java
 
 ./sac/tools/build/build-all.sh --target android -release n -p -i r -c --c -DSAC_CUSTOM_DEFINES='-DSAC_ENABLE_LOG=1;-DSAC_DEBUG_PA=1'
 
 #revert changes applied
-git checkout AndroidManifest.xml platforms/android/src/net/damsy/soupeaucaillou/recursiverunner/RecursiveRunnerActivity.java
+git checkout AndroidManifest.xml platforms/android/src/net/damsy/soupeaucaillou/recursiveRunner/RecursiveRunnerActivity.java
 
 if [ ! -z "$result" ]; then
 	echo "Do you want to add a tag for this version (tag='version test $result')? (uploaded APK) (yes/no)"
