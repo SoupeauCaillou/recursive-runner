@@ -21,17 +21,21 @@
 
 package net.damsy.soupeaucaillou.recursiveRunner;
 
+import java.util.Arrays;
+
 import net.damsy.soupeaucaillou.recursiveRunner.R;
 import net.damsy.soupeaucaillou.SacActivity;
 import net.damsy.soupeaucaillou.api.AdAPI;
 import net.damsy.soupeaucaillou.api.AssetAPI;
 import net.damsy.soupeaucaillou.api.CommunicationAPI;
 import net.damsy.soupeaucaillou.api.ExitAPI;
+import net.damsy.soupeaucaillou.api.GameCenterAPI;
 import net.damsy.soupeaucaillou.api.LocalizeAPI;
 import net.damsy.soupeaucaillou.api.MusicAPI;
 import net.damsy.soupeaucaillou.api.SoundAPI;
 import net.damsy.soupeaucaillou.api.StorageAPI;
 import net.damsy.soupeaucaillou.api.VibrateAPI;
+import net.damsy.soupeaucaillou.googleplaygameservices.SacGooglePlayGameServicesPlugin;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -76,5 +80,11 @@ public class RecursiveRunnerActivity extends SacActivity {
 		AssetAPI.Instance().init(this, getAssets());
 		SoundAPI.Instance().init(getAssets());
 		LocalizeAPI.Instance().init(this.getResources(), this.getPackageName());
+
+        SacGooglePlayGameServicesPlugin sgpgsp = new SacGooglePlayGameServicesPlugin();
+        sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(true, 
+                Arrays.asList(new String[] { }), 
+                Arrays.asList(new String[] {"CgkI-af7kuELEAIQAQ"})));
+        GameCenterAPI.Instance().init(this, sgpgsp);
 	}
 }

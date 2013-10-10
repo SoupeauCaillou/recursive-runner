@@ -25,6 +25,6 @@
             </intent-filter>
         </activity>
 		
-        <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 536191081513" /> <!-- the space is important since we cannot write int values without making the app crash -->
+        <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 404035130361" /> <!-- the space is important since we cannot write int values without making the app crash -->
     </application>
 </manifest>
