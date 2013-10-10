@@ -459,7 +459,6 @@ public:
     void onExit(Scene::Enum to) {
         RENDERING(title)->show = false;
 
-        TEXT(entities.text)->show = false;
         RENDERING(entities.anim)->show = false;
         gameScene.onExit(to);
         BUTTON(game->muteBtn)->enabled = true;
