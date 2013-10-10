@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="tap_screen_to_start">برای شروع صفحه را لمس کنید</string>
-  <string name="tap_screen_to_restart">برای شروع دوباره صفحه را لمس کنید</string>
-  <string name="how_to_play">نحوه بازی کردن(برای ادامه صفحه را لمس کنید)</string>
-  <string name="this_is_you">این شما هستید</string>
-  <string name="tap_jump">برای پریدن صفحه را لمس کنید</string>
-  <string name="turn_on">چراغ ها را روشن کنید تا امتیاز بگیرید </string>
-  <string name="longer_press">برای پرش های بلندتر دست خود را برو روی صفحه نگه دارید</string>
-  <string name="run_edge">شما تا انتهای صفحه خواهید دوید </string>
-  <string name="new_hero">سپس شمایی جدید بوجود خواهد آمد  </string>
-  <string name="previous_hero_replay">شخصیت قبلی شما دور قبلی را دوباره بازی میکند</string>
-  <string name="avoid_him">از او دوری کیند :او امتیاز ها را جمع خواهد کرد </string>
-  <string name="ten_heroes">سعی کنید بیشترین امتیاز را با 10 شخصیت بدست بیاورید </string>
-  <string name="good_luck">موفق باشید </string>
-  <string name="high_quality_gfx_summ">فعال کردن گرافیک بالاتر بازی(نیاز به راه اندازی مجدد بازی)</string>
-  <string name="low_quality_gfx_summ">فعال کردن گرافیک پایین بازی(نیاز به راه اندازی مجدد بازی)</string>
+  <string name="tap_screen_to_start">"برای شروع صفحه را لمس کنید"</string>
+  <string name="tap_screen_to_restart">"برای شروع دوباره صفحه را لمس کنید"</string>
+  <string name="how_to_play">"نحوه بازی کردن(برای ادامه صفحه را لمس کنید)"</string>
+  <string name="this_is_you">"این شما هستید"</string>
+  <string name="tap_jump">"برای پریدن صفحه را لمس کنید"</string>
+  <string name="turn_on">"چراغ ها را روشن کنید تا امتیاز بگیرید "</string>
+  <string name="longer_press">"برای پرش های بلندتر دست خود را برو روی صفحه نگه دارید"</string>
+  <string name="run_edge">"شما تا انتهای صفحه خواهید دوید "</string>
+  <string name="new_hero">"سپس شمایی جدید بوجود خواهد آمد  "</string>
+  <string name="previous_hero_replay">"شخصیت قبلی شما دور قبلی را دوباره بازی میکند"</string>
+  <string name="avoid_him">"از او دوری کیند :او امتیاز ها را جمع خواهد کرد "</string>
+  <string name="ten_heroes">"سعی کنید بیشترین امتیاز را با 10 شخصیت بدست بیاورید "</string>
+  <string name="good_luck">"موفق باشید "</string>
+  <string name="high_quality_gfx_summ">"فعال کردن گرافیک بالاتر بازی(نیاز به راه اندازی مجدد بازی)"</string>
+  <string name="low_quality_gfx_summ">"فعال کردن گرافیک پایین بازی(نیاز به راه اندازی مجدد بازی)"</string>
 </resources>
