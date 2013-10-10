@@ -344,7 +344,7 @@ void RecursiveRunnerGame::decor() {
     bestScore = theEntityManager.CreateEntity("background/best_score",
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/best_score"));
 
-    const bool muted = true;//gameThreadContext->storageAPI->isMuted();
+    const bool muted = gameThreadContext->storageAPI->isOption("sound", "off");
     pianist = theEntityManager.CreateEntity("background/pianist",
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
     RENDERING(pianist)->color.a = 0.8;
