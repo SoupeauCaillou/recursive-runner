@@ -55,7 +55,7 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
 
 static void killRunner(Entity runner) {
     RENDERING(runner)->show = false;
-    Entity e = theEntityManager.CreateEntityFromTemplate("kill_runner_anim");
+    Entity e = theEntityManager.CreateEntityFromTemplate("ingame/kill_runner_anim");
     *TRANSFORM(e) = *TRANSFORM(runner);
     TRANSFORM(e)->position.y += TRANSFORM(e)->size.y * 0.1;
     RENDERING(e)->texture = RENDERING(runner)->texture;

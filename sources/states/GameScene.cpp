@@ -66,7 +66,7 @@ public:
 
         void setup() {
             pauseButton = theEntityManager.CreateEntity("pause_buttton",
-                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
             ANCHOR(pauseButton)->parent = game->cameraEntity;
             ANCHOR(pauseButton)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
@@ -360,7 +360,7 @@ namespace Scene {
 
 
 static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
-    Entity e = theEntityManager.CreateEntityFromTemplate("gain");
+    Entity e = theEntityManager.CreateEntityFromTemplate("ingame/gain");
     
     TRANSFORM(e)->position = TRANSFORM(parent)->position;
     TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
@@ -374,7 +374,7 @@ static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost
 
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc) {
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
-    Entity e = theEntityManager.CreateEntityFromTemplate("runner");
+    Entity e = theEntityManager.CreateEntityFromTemplate("ingame/runner");
     TRANSFORM(e)->size *= .68f;
     TRANSFORM(e)->z += 0.01 * p->runnersCount;
     TRANSFORM(e)->position = AnchorSystem::adjustPositionWithCardinal(
@@ -415,7 +415,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 
     RENDERING(e)->mirrorH = (direction < 0);
 
-    Entity collisionZone = theEntityManager.CreateEntityFromTemplate("collision_zone");
+    Entity collisionZone = theEntityManager.CreateEntityFromTemplate("ingame/collision_zone");
     ANCHOR(collisionZone)->parent = e;
     #if 0
         ADD_COMPONENT(collisionZone, Rendering);

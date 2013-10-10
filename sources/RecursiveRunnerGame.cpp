@@ -101,6 +101,7 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
         case ContextAPI::Ad:
         case ContextAPI::Asset:
         case ContextAPI::Communication:
+        case ContextAPI::GameCenter:
         case ContextAPI::Exit:
         case ContextAPI::Localize:
         case ContextAPI::Music:
@@ -377,7 +378,7 @@ void RecursiveRunnerGame::decor() {
     buttonSpacing.V = PlacementHelper::GimpHeightToScreen(76);
 
     muteBtn = theEntityManager.CreateEntity("mute_button",
-        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
     ANCHOR(muteBtn)->parent = cameraEntity;
     ANCHOR(muteBtn)->position = TRANSFORM(cameraEntity)->size * glm::vec2(-0.5, 0.5)
         + glm::vec2(buttonSpacing.H, -buttonSpacing.V);
@@ -437,6 +438,9 @@ void RecursiveRunnerGame::initGame() {
         a << "run_l2r_" << std::setfill('0') << std::setw(4) << i;
         texture2Collision[theRenderingSystem.loadTextureFile(a.str())] =  CollisionZone(118,103,35,88,-0.5);
     }
+
+    //important! This must be called AFTER camera setup, since we are referencing it (anchor component)
+    gamecenterAPIHelper.init(gameThreadContext->gameCenterAPI, false, true);
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in, int size) {
@@ -759,9 +763,9 @@ static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMi
 void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition) {
     LOGI("Coins creation started");
     
-    EntityTemplateRef coinTemplate = theEntityManager.entityTemplateLibrary.load("coin");
-    EntityTemplateRef linkTemplate = theEntityManager.entityTemplateLibrary.load("link");
-    EntityTemplateRef link3Template = theEntityManager.entityTemplateLibrary.load("link3");
+    EntityTemplateRef coinTemplate = theEntityManager.entityTemplateLibrary.load("ingame/coin");
+    EntityTemplateRef linkTemplate = theEntityManager.entityTemplateLibrary.load("ingame/link");
+    EntityTemplateRef link3Template = theEntityManager.entityTemplateLibrary.load("ingame/link3");
 
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {

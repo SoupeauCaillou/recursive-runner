@@ -59,7 +59,7 @@ static void startMenuMusic(Entity title) {
 
 class MenuScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
-    Entity titleGroup, title, subtitle, subtitleText, helpBtn, goToSocialCenterBtn;
+    Entity titleGroup, title, subtitle, subtitleText, helpBtn;
 
     public:
         MenuScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
@@ -88,16 +88,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
             TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
             TEXT(subtitleText)->charHeight *= 1.5;
 
-            goToSocialCenterBtn = theEntityManager.CreateEntity("menu/goToSocialCenter_button",
-                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));        
-            ANCHOR(goToSocialCenterBtn)->parent = game->cameraEntity;
-            ANCHOR(goToSocialCenterBtn)->position =
-                TRANSFORM(game->cameraEntity)->size * glm::vec2(-0.5, -0.5)
-                + glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            RENDERING(goToSocialCenterBtn)->texture = theRenderingSystem.loadTextureFile("swarm");
-
             helpBtn = theEntityManager.CreateEntity("menu/help_button",
-                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
             ANCHOR(helpBtn)->parent = game->muteBtn;
             ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
             ANCHOR(helpBtn)->z = 0;
@@ -138,8 +130,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 startMenuMusic(title);
             }
             // unhide UI
-            RENDERING(goToSocialCenterBtn)->show = RENDERING(helpBtn)->show = true;
-            RENDERING(goToSocialCenterBtn)->color = RENDERING(helpBtn)->color = Color(1,1,1,0);
+            RENDERING(helpBtn)->show = true;
+            RENDERING(helpBtn)->color = Color(1,1,1,0);
         }
 
         bool updatePreEnter(Scene::Enum, float) {
@@ -147,7 +139,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // check if adsr is complete
             ADSRComponent* adsr = ADSR(titleGroup);
             float progress = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
-            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(helpBtn)->color.a = progress;
+            RENDERING(helpBtn)->color.a = progress;
             return (adsr->value == adsr->sustainValue);
         }
 
@@ -155,8 +147,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
         void onEnter(Scene::Enum) {
             RecursiveRunnerGame::endGame();
             // enable UI
-            BUTTON(goToSocialCenterBtn)->enabled = BUTTON(helpBtn)->enabled = true;
-            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(helpBtn)->color.a = 1;
+            BUTTON(helpBtn)->enabled = true;
+            RENDERING(helpBtn)->color.a = 1;
+
+            game->gamecenterAPIHelper.displayUI();
         }
 
 #if 0
@@ -167,6 +161,9 @@ void backgroundUpdate(float) {
 #endif
 
         Scene::Enum update(float) {
+            // Game center UI
+            game->gamecenterAPIHelper.updateUI();
+
             // Menu music
             if (!theMusicSystem.isMuted()) {
                 MusicComponent* music = MUSIC(title);
@@ -219,8 +216,9 @@ void backgroundUpdate(float) {
             MUSIC(title)->control = MusicControl::Stop;
 
             // disable button interaction
-            BUTTON(goToSocialCenterBtn)->enabled = false;
             BUTTON(helpBtn)->enabled = false;
+
+            game->gamecenterAPIHelper.hideUI();
 
             // activate animation
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
@@ -232,13 +230,13 @@ void backgroundUpdate(float) {
             float progress = (adsr->value - adsr->attackValue) /
                     (adsr->idleValue - adsr->attackValue);
 
-            RENDERING(goToSocialCenterBtn)->color.a = RENDERING(helpBtn)->color.a = 1 - progress;
+            RENDERING(helpBtn)->color.a = 1 - progress;
             // check if animation is finished
             return (adsr->value >= adsr->idleValue);
         }
 
         void onExit(Scene::Enum) {
-            RENDERING(goToSocialCenterBtn)->show = RENDERING(helpBtn)->show = false;
+            RENDERING(helpBtn)->show = false;
         }
 };
 

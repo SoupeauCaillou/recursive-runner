@@ -29,6 +29,9 @@
 #include "api/AdAPI.h"
 #include "api/ExitAPI.h"
 #include "api/CommunicationAPI.h"
+
+#include "util/GameCenterAPIHelper.h"
+
 #include "states/Scenes.h"
 
 #include "base/StateMachine.h"
@@ -86,6 +89,7 @@ class RecursiveRunnerGame : public Game {
       bool ignoreClick;
       Entity silhouette, route, cameraEntity, bestScore;
       std::vector<Entity> decorEntities;
+      GameCenterAPIHelper gamecenterAPIHelper;
 
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;

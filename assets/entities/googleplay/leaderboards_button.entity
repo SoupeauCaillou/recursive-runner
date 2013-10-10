@@ -1,0 +1,14 @@
+[Transformation]
+size%gimp = 129, 92
+
+[Anchor]
+parent%name = camera1
+position%screen= -0.43, -0.3
+z = 0.95
+
+[Rendering]
+
+[Button]
+overSize = 1.2
+texture_inactive = gg_leaderboards
+texture_active = gg_leaderboards_active
