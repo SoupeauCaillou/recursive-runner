@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.damsy.soupeaucaillou.sactestonly"
-    android:versionCode="1310101930"
-    android:versionName="1.0.0"
+    package="net.damsy.soupeaucaillou.recursiveRunner"
+    android:versionCode="10"
+    android:versionName="1.0.1"
     android:installLocation="auto"
     >
     
@@ -13,12 +13,12 @@
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="9"/>
     <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
 
-    <application android:label="0sac test only" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.dogtag.DogtagApplication" android:allowBackup="true">
+    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication" android:allowBackup="true">
         
         <!-- Our activity is the built-in NativeActivity framework class.
              This will take care of integrating with our NDK code. -->
-        <activity android:name="net.damsy.soupeaucaillou.dogtag.DogtagActivity"
-                android:label="0sac test only" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
+        <activity android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity"
+                android:label="Recursive Runner" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
