@@ -535,8 +535,6 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 
 void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
-        theRenderingSystem.textureLibrary.reloadAll();
-
         //retrieve current state
         bool muted = gameThreadContext->storageAPI->isOption("sound", "off");
         
