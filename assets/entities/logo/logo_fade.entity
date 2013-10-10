@@ -8,4 +8,3 @@ z = 1
 [Rendering]
 color = 0.,0,0,1
 opaque_type = 0
-show = 1

@@ -360,39 +360,23 @@ namespace Scene {
 
 
 static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
-    Entity e = theEntityManager.CreateEntity("gain");
-    ADD_COMPONENT(e, Transformation);
+    Entity e = theEntityManager.CreateEntityFromTemplate("gain");
+    
     TRANSFORM(e)->position = TRANSFORM(parent)->position;
     TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
     TRANSFORM(e)->size = TRANSFORM(parent)->size;
     TRANSFORM(e)->z = TRANSFORM(parent)->z + (isGhost ? 0.1 : 0.11);
-    ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->texture = theRenderingSystem.loadTextureFile("lumiere");
+    
     RENDERING(e)->color = color;
-    RENDERING(e)->show = true;
 
-    PARTICULE(parent)->duration = 0.1;
     PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
-    ADD_COMPONENT(e, AutoDestroy);
-    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    AUTO_DESTROY(e)->params.lifetime.freq.value = 3.5;
-    AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
-    // AUTO_DESTROY(e)->hasText = true;
 }
 
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc) {
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
-    Entity e = theEntityManager.CreateEntity("runner", EntityType::Persistent);
-    ADD_COMPONENT(e, Transformation);
-    TRANSFORM(e)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("run_l2r_0000")) * 0.68f;
-
-    TRANSFORM(e)->rotation = 0;
-    TRANSFORM(e)->z = 0.8 + 0.01 * p->runnersCount;
-    ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->show = true;
-    RENDERING(e)->color = Color(12.0/255, 4.0/255, 41.0/255);
-    ADD_COMPONENT(e, Runner);
-
+    Entity e = theEntityManager.CreateEntityFromTemplate("runner");
+    TRANSFORM(e)->size *= .68f;
+    TRANSFORM(e)->z += 0.01 * p->runnersCount;
     TRANSFORM(e)->position = AnchorSystem::adjustPositionWithCardinal(
         glm::vec2(direction * -(param::LevelSize * PlacementHelper::ScreenSize.x + TRANSFORM(e)->size.x) * 0.5, game->baseLine),
         TRANSFORM(e)->size,
@@ -402,52 +386,49 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
-    ADD_COMPONENT(e, Platformer);
+    
     PLATFORMER(e)->offset = glm::vec2(0, TRANSFORM(e)->size.y * -0.5);
     PLATFORMER(e)->platforms.insert(std::make_pair(game->ground, true));
     for (unsigned i=0; i<sc->platforms.size(); i++) {
         PLATFORMER(e)->platforms.insert(std::make_pair(sc->platforms[i].platform, sc->platforms[i].active));
     }
-    std::cout <<" add runner: " << e << " - " << "(pos: " << TRANSFORM(e)->position.x << ',' << TRANSFORM(e)->position.y << ")" << RUNNER(e)->speed << std::endl;
+
     #if 0
-    do {
-        Color c(Color::random());
-        c.a = 1;
-        float sum = c.r + c.b + c.g;
-        float maxDiff = MathUtil::Max(MathUtil::Max(MathUtil::Abs(c.r - c.g), MathUtil::Abs(c.r - c.b)), MathUtil::Abs(c.b - c.g));
-        if ((sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) && maxDiff > 0.5) {
-            RUNNER(e)->color = c;
-            break;
-        }
-    } while (true);
+        do {
+            Color c(Color::random());
+            c.a = 1;
+            float sum = c.r + c.b + c.g;
+            float maxDiff = MathUtil::Max(MathUtil::Max(MathUtil::Abs(c.r - c.g), MathUtil::Abs(c.r - c.b)), MathUtil::Abs(c.b - c.g));
+            if ((sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) && maxDiff > 0.5) {
+                RUNNER(e)->color = c;
+                break;
+            }
+        } while (true);
     #else
-    int idx = (int)glm::linearRand(0.0f, (float)p->colors.size());
-    RUNNER(e)->color = p->colors[idx];
-    p->colors.erase(p->colors.begin() + idx);
+        int idx = (int)glm::linearRand(0.0f, (float)p->colors.size());
+        RUNNER(e)->color = p->colors[idx];
+        p->colors.erase(p->colors.begin() + idx);
     #endif
-    ADD_COMPONENT(e, CameraTarget);
+
     CAM_TARGET(e)->camera = game->cameraEntity;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
-    ADD_COMPONENT(e, Physics);
-    PHYSICS(e)->mass = 1;
-    ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = "runL2R";
-    ANIMATION(e)->playbackSpeed = 1.1;
+
     RENDERING(e)->mirrorH = (direction < 0);
 
-    Entity collisionZone = theEntityManager.CreateEntity("collision_zone", EntityType::Persistent);
-    ADD_COMPONENT(collisionZone, Transformation);
-    ADD_COMPONENT(collisionZone, Anchor);
+    Entity collisionZone = theEntityManager.CreateEntityFromTemplate("collision_zone");
     ANCHOR(collisionZone)->parent = e;
-    ANCHOR(collisionZone)->z = 0.01;
     #if 0
-    ADD_COMPONENT(collisionZone, Rendering);
-    RENDERING(collisionZone)->show = true;
-    RENDERING(collisionZone)->color = Color(1,0,0,1);
+        ADD_COMPONENT(collisionZone, Rendering);
+        RENDERING(collisionZone)->show = true;
+        RENDERING(collisionZone)->color = Color(1,0,0,1);
     #endif
     RUNNER(e)->collisionZone = collisionZone;
+
+
     p->runnersCount++;
-    LOGI("Add runner " << e << " at pos : {" << TRANSFORM(e)->position.x << ", " << TRANSFORM(e)->position.y << "}, speed: " << RUNNER(e)->speed << " (player=" << player << ')');
+    LOGI("Add runner " << e << " at pos : " << TRANSFORM(e)->position << "}, speed: " << 
+        RUNNER(e)->speed << " (player=" << player << ')');
+
     return e;
 }
 

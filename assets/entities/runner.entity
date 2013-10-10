@@ -1,0 +1,22 @@
+[Transformation]
+size%gimp = 200, 210
+z = 0.8
+
+[Rendering]
+show = 1
+color = 0.05, 0.01, 0.16
+
+[Runner]
+
+[Platformer]
+
+[CameraTarget]
+
+[Physics]
+mass = 1
+
+[Animation]
+name = runL2R
+playbackSpeed = 1.1
+
+

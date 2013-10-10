@@ -38,7 +38,7 @@
 
 class PauseScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
-    Entity title, pauseText;
+
     Entity continueButton, restartButton, stopButton;
     std::vector<Entity> pausedMusic;
 
@@ -49,51 +49,23 @@ class PauseScene : public StateHandler<Scene::Enum> {
     }
 
     void setup() {
-        title = theEntityManager.CreateEntity("pause_title");
-        ADD_COMPONENT(title, Transformation);
-        TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("menu-pause"));
-        ADD_COMPONENT(title, Anchor);
-        ANCHOR(title)->z = 0.85;
-        ANCHOR(title)->position = glm::vec2(0, PlacementHelper::ScreenSize.y * 0.5 - TRANSFORM(title)->size.y * 0.43);
-        ANCHOR(title)->parent = game->cameraEntity;
-        ADD_COMPONENT(title, Rendering);
-        RENDERING(title)->texture = theRenderingSystem.loadTextureFile("menu-pause");
-        RENDERING(title)->show = false;
-
-        pauseText = theEntityManager.CreateEntity("pause_text");
-        ADD_COMPONENT(pauseText, Transformation);
-        ADD_COMPONENT(pauseText, Anchor);
-        ANCHOR(pauseText)->z = 0.9;
-        ANCHOR(pauseText)->parent = title;
-        ADD_COMPONENT(pauseText, Text);
-        TEXT(pauseText)->text = "PAUSE";
-        TEXT(pauseText)->charHeight = 1.;
-        TEXT(pauseText)->show = false;
-
         std::string textures[] = {"fermer", "recommencer", "reprendre"};
         Entity buttons[3];
-        buttons[2] = continueButton = theEntityManager.CreateEntity("pause_button_continue");
-        buttons[1] = restartButton = theEntityManager.CreateEntity("pause_button_restart");
-        buttons[0] = stopButton = theEntityManager.CreateEntity("pause_button_stop");
+
         for (int i = 0; i < 3; ++i) {
-            ADD_COMPONENT(buttons[i], Transformation);
+            buttons[i] = theEntityManager.CreateEntity("pause/button_" + textures[i],
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("pause/button"));
+
             TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i])) * 1.2f;
-            ADD_COMPONENT(buttons[i], Anchor);
-            ANCHOR(buttons[i])->parent = game->cameraEntity;
-            int mul = 0;
-            if (i == 0) mul = -1;
-            else if(i==2) mul=1;
-            ANCHOR(buttons[i])->position =
-                glm::vec2(mul * TRANSFORM(title)->size.x * 0.35,
-                0);//PlacementHelper::ScreenHeight * 0.1);
-                //- (TRANSFORM(title)->size.Y + TRANSFORM(buttons[i])->size.Y) * 0.45);
-            ANCHOR(buttons[i])->z = 0.9;
-            ADD_COMPONENT(buttons[i], Rendering);
+            
+            ANCHOR(buttons[i])->parent = game->cameraEntity;            
+            ANCHOR(buttons[i])->position = glm::vec2((i-1) * TRANSFORM(game->scorePanel)->size.x * 0.35, 0);
+            
             RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile(textures[i]);
-            RENDERING(buttons[i])->show = false;
-            ADD_COMPONENT(buttons[i], Button);
-            BUTTON(buttons[i])->enabled = false;
         }
+        stopButton = buttons[0];
+        restartButton = buttons[1];
+        continueButton = buttons[2];
     }
 
 
@@ -106,14 +78,13 @@ class PauseScene : public StateHandler<Scene::Enum> {
         }
 
         //show text & buttons
-        TEXT(pauseText)->show = true;
         RENDERING(continueButton)->show = true;
         BUTTON(continueButton)->enabled = true;
         RENDERING(restartButton)->show = true;
         BUTTON(restartButton)->enabled = true;
         RENDERING(stopButton)->show = true;
         BUTTON(stopButton)->enabled = true;
-        // RENDERING(title)->hide = false;
+
         TRANSFORM(game->scorePanel)->position.x = TRANSFORM(game->cameraEntity)->position.x;
         TEXT(game->scoreText)->text = "Pause";
         TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
@@ -149,14 +120,13 @@ class PauseScene : public StateHandler<Scene::Enum> {
     }
 
     void onPreExit(Scene::Enum) {
-        TEXT(pauseText)->show = false;
         RENDERING(continueButton)->show = false;
         BUTTON(continueButton)->enabled = false;
         RENDERING(restartButton)->show = false;
         BUTTON(restartButton)->enabled = false;
         RENDERING(stopButton)->show = false;
         BUTTON(stopButton)->enabled = false;
-        // RENDERING(title)->hide = true;
+
         // TEXT(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
         TRANSFORM(game->scorePanel)->position.x = 0;
         TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;

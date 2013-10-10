@@ -1,0 +1,11 @@
+[Transformation]
+
+[Anchor]
+z = 0.9
+             
+[Rendering]
+show = 0
+opaque_type = 0
+
+[Button]
+enabled = 0

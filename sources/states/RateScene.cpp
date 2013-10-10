@@ -40,25 +40,17 @@ class RateScene : public StateHandler<Scene::Enum> {
 
       void setup() {
          Entity entity[4];
-         entity[0] = rateText = theEntityManager.CreateEntity("rate_text");
-         entity[1] = btnNow = theEntityManager.CreateEntity("rate_button_now");
-         entity[2] = btnLater = theEntityManager.CreateEntity("rate_button_later");
-         entity[3] = btnNever = theEntityManager.CreateEntity("rate_button_never");
+         entity[0] = rateText = theEntityManager.CreateEntityFromTemplate("rate/text");
+         entity[1] = btnNow = theEntityManager.CreateEntity("rate/button_now",
+            EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("rate/button"));
+         entity[2] = btnLater = theEntityManager.CreateEntity("rate/button_later",
+            EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("rate/button"));
+         entity[3] = btnNever = theEntityManager.CreateEntity("rate/button_never",
+            EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("rate/button"));
 
          for (int i = 0; i < 4; i++) {
-            ADD_COMPONENT(entity[i], Transformation);
-            ADD_COMPONENT(entity[i], Anchor);
-            ANCHOR(entity[i])->z = 0.9;
             ANCHOR(entity[i])->parent = game->cameraEntity;
             ANCHOR(entity[i])->position = glm::vec2(0, -i);
-
-            ADD_COMPONENT(entity[i], Text);
-            TEXT(entity[i])->charHeight = 1.;
-            TEXT(entity[i])->color = Color(13.0 / 255, 5.0/255, 42.0/255);
-            TEXT(entity[i])->show = false;
-
-            if (i)
-               ADD_COMPONENT(entity[i], Button);
          }
          TEXT(entity[0])->text = "Votez !";
          TEXT(entity[1])->text = "Oui";
@@ -68,12 +60,12 @@ class RateScene : public StateHandler<Scene::Enum> {
       }
 
       void onEnter(Scene::Enum) {
-         TEXT(rateText)->show = true;
-         TEXT(btnNow)->show = true;
-         BUTTON(btnNow)->enabled = true;
-         TEXT(btnLater)->show = true;
-         BUTTON(btnLater)->enabled = true;
-         TEXT(btnNever)->show = true;
+         TEXT(rateText)->show =
+         TEXT(btnNow)->show =
+         BUTTON(btnNow)->enabled =
+         TEXT(btnLater)->show =
+         BUTTON(btnLater)->enabled =
+         TEXT(btnNever)->show =
          BUTTON(btnNever)->enabled = true;
       }
 
@@ -93,12 +85,12 @@ class RateScene : public StateHandler<Scene::Enum> {
       }
 
       void onPreExit(Scene::Enum) {
-         TEXT(rateText)->show = false;
-         TEXT(btnNow)->show = false;
-         BUTTON(btnNow)->enabled = false;
-         TEXT(btnLater)->show = false;
-         BUTTON(btnLater)->enabled = false;
-         TEXT(btnNever)->show = false;
+         TEXT(rateText)->show =
+         TEXT(btnNow)->show =
+         BUTTON(btnNow)->enabled =
+         TEXT(btnLater)->show =
+         BUTTON(btnLater)->enabled =
+         TEXT(btnNever)->show =
          BUTTON(btnNever)->enabled = false;
       }
 };

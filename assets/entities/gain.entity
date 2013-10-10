@@ -1,0 +1,13 @@
+[Transformation]
+
+[Rendering]
+name = lumiere
+show = 1
+
+[Particule]
+duration = 0.1
+
+[AutoDestroy]
+type = 1
+lifetime/value = 3.5
+lifetime/map2AlphaRendering = 1
