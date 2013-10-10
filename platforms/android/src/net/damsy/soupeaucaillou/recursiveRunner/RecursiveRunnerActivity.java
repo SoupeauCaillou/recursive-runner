@@ -21,19 +21,22 @@
 
 package net.damsy.soupeaucaillou.recursiveRunner;
 
-import java.util.Arrays;
-
-import net.damsy.soupeaucaillou.sactestonly.R;
+import net.damsy.soupeaucaillou.recursiveRunner.R;
 import net.damsy.soupeaucaillou.SacActivity;
+import net.damsy.soupeaucaillou.api.AdAPI;
 import net.damsy.soupeaucaillou.api.AssetAPI;
-import net.damsy.soupeaucaillou.api.GameCenterAPI;
+import net.damsy.soupeaucaillou.api.CommunicationAPI;
+import net.damsy.soupeaucaillou.api.ExitAPI;
 import net.damsy.soupeaucaillou.api.LocalizeAPI;
+import net.damsy.soupeaucaillou.api.MusicAPI;
 import net.damsy.soupeaucaillou.api.SoundAPI;
-import net.damsy.soupeaucaillou.api.WWWAPI;
-import net.damsy.soupeaucaillou.googleplaygameservices.SacGooglePlayGameServicesPlugin;
+import net.damsy.soupeaucaillou.api.StorageAPI;
+import net.damsy.soupeaucaillou.api.VibrateAPI;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.widget.Toast;
 
 public class RecursiveRunnerActivity extends SacActivity {
@@ -68,21 +71,10 @@ public class RecursiveRunnerActivity extends SacActivity {
 
 	@Override
 	public void initRequiredAPI() {
+		StorageAPI.Instance().init(getApplicationContext());
+		VibrateAPI.Instance().init((Vibrator) getSystemService(Context.VIBRATOR_SERVICE));
 		AssetAPI.Instance().init(this, getAssets());
 		SoundAPI.Instance().init(getAssets());
 		LocalizeAPI.Instance().init(this.getResources(), this.getPackageName());
-        WWWAPI.Instance().init(this);
-       
-        SacGooglePlayGameServicesPlugin sgpgsp = new SacGooglePlayGameServicesPlugin();
-        sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(true, 
-        		Arrays.asList(new String[] {"CgkIqbjqu80PEAIQCA", "CgkIqbjqu80PEAIQCQ", "CgkIqbjqu80PEAIQHg",
-                    "CgkIqbjqu80PEAIQCw", "CgkIqbjqu80PEAIQDA", "CgkIqbjqu80PEAIQIQ",
-                    "CgkIqbjqu80PEAIQDQ", "CgkIqbjqu80PEAIQDg", "CgkIqbjqu80PEAIQHw",
-                    "CgkIqbjqu80PEAIQEA", "CgkIqbjqu80PEAIQEg", "CgkIqbjqu80PEAIQIw",
-                    "CgkIqbjqu80PEAIQFA", "CgkIqbjqu80PEAIQFQ", "CgkIqbjqu80PEAIQIg",
-                    "CgkIqbjqu80PEAIQFg", "CgkIqbjqu80PEAIQGA", "CgkIqbjqu80PEAIQIA",
-                    "CgkIqbjqu80PEAIQGw", "CgkIqbjqu80PEAIQHA", "CgkIqbjqu80PEAIQHQ" }), 
-        		Arrays.asList(new String[] {})));
-        GameCenterAPI.Instance().init(this, sgpgsp);
 	}
 }
