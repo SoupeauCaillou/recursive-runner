@@ -116,10 +116,6 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     Game::sacInit(windowW, windowH);
 
-    gameThreadContext->storageAPI->init(gameThreadContext->assetAPI, "RecursiveRunner");
-    gameThreadContext->storageAPI->setOption("sound", std::string(), "on");
-    gameThreadContext->storageAPI->setOption("gameCount", std::string(), "0");
-
 	PlacementHelper::GimpSize = glm::vec2(1280, 800);
 
     // load anim files
@@ -444,6 +440,13 @@ void RecursiveRunnerGame::initGame() {
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in, int size) {
+    gameThreadContext->storageAPI->init(gameThreadContext->assetAPI, "RecursiveRunner");
+    gameThreadContext->storageAPI->setOption("sound", std::string(), "on");
+    gameThreadContext->storageAPI->setOption("gameCount", std::string(), "0");
+
+    ScoreStorageProxy ssp;
+    gameThreadContext->storageAPI->createTable(&ssp);
+    
     if (size > 0 && in) {
         int eSize, sSize, index=0;
         memcpy(&eSize, &in[index], sizeof(eSize));
@@ -468,8 +471,6 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         }
     }
 
-    ScoreStorageProxy ssp;
-    gameThreadContext->storageAPI->createTable(&ssp);
 
 //    RecursiveRunnerDebugConsole::init(this);
 
