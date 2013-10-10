@@ -1,0 +1,9 @@
+[Transformation]
+size%gimp_size = 776, 102
+
+[Anchor]
+parent%name = tuto/title
+z = 0.01
+
+[Rendering]
+color = 0.51, 0,45, 0,46

@@ -1,0 +1,13 @@
+[Transformation]
+size%gimp_size = 118, 101
+
+[Anchor]
+z = 0.9
+
+[Rendering]
+texture = fleche
+show = 0
+
+[Animation]
+name = arrow_tuto
+playbackSpeed = 0

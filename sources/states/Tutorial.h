@@ -1,3 +1,26 @@
+#pragma once
+
+#include "base/Entity.h"
+#include "base/PlacementHelper.h"
+#include "base/TouchInputManager.h"
+
+#include "api/LocalizeAPI.h"
+
+#include "states/Scenes.h"
+
+#include "systems/SessionSystem.h"
+#include "systems/AnchorSystem.h"
+#include "systems/RenderingSystem.h"
+#include "systems/TransformationSystem.h"
+#include "systems/AnimationSystem.h"
+#include "systems/PhysicsSystem.h"
+#include "systems/ADSRSystem.h"
+#include "systems/MusicSystem.h"
+#include "systems/ButtonSystem.h"
+#include "systems/RunnerSystem.h"
+#include "systems/TextSystem.h"
+
+#include "RecursiveRunnerGame.h"
 
 namespace Tutorial {
     enum Enum {
@@ -20,6 +43,7 @@ struct TutorialEntities {
     Entity text;
     Entity anim;
 };
+
 
 struct TutorialStep : public StateHandler<Tutorial::Enum> {
     GameScene* gameScene;
@@ -149,68 +173,24 @@ public:
         // setup game
         gameScene.setup();
         // setup tutorial
-        titleGroup  = theEntityManager.CreateEntity("tuto_title_group");
-        ADD_COMPONENT(titleGroup, Transformation);
-        TRANSFORM(titleGroup)->z = 0.7;
-        ADD_COMPONENT(titleGroup, Anchor);
-        ANCHOR(titleGroup)->rotation = 0.036;
+        titleGroup  = theEntityManager.CreateEntityFromTemplate("tuto/title_group");
         ANCHOR(titleGroup)->parent = game->cameraEntity;
-        ADD_COMPONENT(titleGroup, ADSR);
         ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenSize.y + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.6;
         ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenSize.y - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.5
             + PlacementHelper::GimpHeightToScreen(35);
         ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
-        ADSR(titleGroup)->attackTiming = 1;
-        ADSR(titleGroup)->decayTiming = 0.1;
-        ADSR(titleGroup)->releaseTiming = 0.3;
         ANCHOR(titleGroup)->position = glm::vec2(0, ADSR(titleGroup)->idleValue);
 
-        title = theEntityManager.CreateEntity("tuto_title");
-        ADD_COMPONENT(title, Transformation);
-        TRANSFORM(title)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("taptostart"));
-        ADD_COMPONENT(title, Anchor);
-        ANCHOR(title)->parent = titleGroup;
-        ANCHOR(title)->position = glm::vec2(0.0f);
-        ANCHOR(title)->z = 0.15;
-        ADD_COMPONENT(title, Rendering);
-        RENDERING(title)->texture = theRenderingSystem.loadTextureFile("taptostart");
+        title = theEntityManager.CreateEntityFromTemplate("tuto/title");
 
-        hideText = theEntityManager.CreateEntity("tuto_hide_text");
-        ADD_COMPONENT(hideText, Transformation);
-        TRANSFORM(hideText)->size = PlacementHelper::GimpSizeToScreen(glm::vec2(776, 102));
-        ADD_COMPONENT(hideText, Anchor);
-        ANCHOR(hideText)->parent = title;
+        hideText = theEntityManager.CreateEntityFromTemplate("tuto/hide_text");
         ANCHOR(hideText)->position = (glm::vec2(-0.5, 0.5) + glm::vec2(41, -72) / theRenderingSystem.getTextureSize("titre")) *
             TRANSFORM(title)->size + TRANSFORM(hideText)->size * glm::vec2(0.5, -0.5);
-        ANCHOR(hideText)->z = 0.01;
-        ADD_COMPONENT(hideText, Rendering);
-        RENDERING(hideText)->color = Color(130.0/255, 116.0/255, 117.0/255);
 
-        entities.text = theEntityManager.CreateEntity("tuto_text");
-        ADD_COMPONENT(entities.text, Transformation);
+        entities.text = theEntityManager.CreateEntityFromTemplate("tuto/text");
         TRANSFORM(entities.text)->size = TRANSFORM(hideText)->size;
-        ADD_COMPONENT(entities.text, Anchor);
-        ANCHOR(entities.text)->parent = hideText;
-        ANCHOR(entities.text)->z = 0.02;
-        ANCHOR(entities.text)->rotation = 0.004;
-        ADD_COMPONENT(entities.text, Text);
-        TEXT(entities.text)->charHeight = PlacementHelper::GimpHeightToScreen(50);
-        TEXT(entities.text)->show = false;
-        TEXT(entities.text)->color = Color(40.0 / 255, 32.0/255, 30.0/255, 0.8);
-        TEXT(entities.text)->positioning = TextComponent::CENTER;
-        TEXT(entities.text)->flags |= TextComponent::AdjustHeightToFillWidthBit;
 
-        entities.anim = theEntityManager.CreateEntity("tuto_fleche");
-        ADD_COMPONENT(entities.anim, Transformation);
-        TRANSFORM(entities.anim)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fleche"));
-        ADD_COMPONENT(entities.anim, Anchor);
-        ANCHOR(entities.anim)->z = 0.9;
-        ADD_COMPONENT(entities.anim, Rendering);
-        RENDERING(entities.anim)->texture = theRenderingSystem.loadTextureFile("fleche");
-        RENDERING(entities.anim)->show = false;
-        ADD_COMPONENT(entities.anim, Animation);
-        ANIMATION(entities.anim)->name = "arrow_tuto";
-        ANIMATION(entities.anim)->playbackSpeed = 0;
+        entities.anim = theEntityManager.CreateEntityFromTemplate("tuto/fleche");
         theAnimationSystem.loadAnim(game->gameThreadContext->assetAPI, "arrow_tuto", "arrow_tuto");
     }
 
@@ -433,7 +413,6 @@ public:
         waitingClick = true;
 
         tutorialStateMachine.setup(Tutorial::Title);
-        tutorialStateMachine.reEnterCurrentState();
 
         RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT(game->scoreText)->show = false;
     }

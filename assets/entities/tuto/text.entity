@@ -1,0 +1,14 @@
+
+[Transformation]
+
+[Anchor]
+z = 0.02
+rotation = 0.004
+parent%name = tuto/hide_text
+
+[Text]
+charHeight%gimp_h = 50
+show = 0
+color = 0,16, 0.13, 0,12, 0.8
+positioning = 0.5
+flags = 2
