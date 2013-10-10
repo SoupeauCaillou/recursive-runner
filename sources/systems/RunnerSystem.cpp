@@ -55,20 +55,11 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
 
 static void killRunner(Entity runner) {
     RENDERING(runner)->show = false;
-    Entity e = theEntityManager.CreateEntity("kill_runner_anim");
-    ADD_COMPONENT(e, Transformation);
+    Entity e = theEntityManager.CreateEntityFromTemplate("kill_runner_anim");
     *TRANSFORM(e) = *TRANSFORM(runner);
     TRANSFORM(e)->position.y += TRANSFORM(e)->size.y * 0.1;
-    ADD_COMPONENT(e, Rendering);
-    RENDERING(e)->show = true;
     RENDERING(e)->texture = RENDERING(runner)->texture;
     RENDERING(e)->color.a = 0.5;
-    ADD_COMPONENT(e, Animation);
-    ANIMATION(e)->name = "disappear2";
-    ADD_COMPONENT(e, AutoDestroy);
-    AUTO_DESTROY(e)->type = AutoDestroyComponent::LIFETIME;
-    //AUTO_DESTROY(e)->params.lifetime.map2AlphaRendering = true;
-    AUTO_DESTROY(e)->params.lifetime.freq.value = 6 / 18.0;
 }
 
 void RunnerSystem::DoUpdate(float dt) {

@@ -83,12 +83,12 @@ class MenuScene : public StateHandler<Scene::Enum> {
             subtitle = theEntityManager.CreateEntity("menu/subtitle",
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle"));
 
-            subtitleText = theEntityManager.CreateEntity("subtitle_text",
+            subtitleText = theEntityManager.CreateEntity("menu/subtitle_text",
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle_text"));
             TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
             TEXT(subtitleText)->charHeight *= 1.5;
 
-            goToSocialCenterBtn = theEntityManager.CreateEntity("goToSocialCenter_button",
+            goToSocialCenterBtn = theEntityManager.CreateEntity("menu/goToSocialCenter_button",
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));        
             ANCHOR(goToSocialCenterBtn)->parent = game->cameraEntity;
             ANCHOR(goToSocialCenterBtn)->position =
@@ -96,7 +96,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 + glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
             RENDERING(goToSocialCenterBtn)->texture = theRenderingSystem.loadTextureFile("swarm");
 
-            helpBtn = theEntityManager.CreateEntity("help_button",
+            helpBtn = theEntityManager.CreateEntity("menu/help_button",
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));
             ANCHOR(helpBtn)->parent = game->muteBtn;
             ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));

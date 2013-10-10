@@ -1,8 +1,9 @@
 [Transformation]
 
 [Rendering]
-name = lumiere
+texture = lumiere
 show = 1
+opaque_type = 0
 
 [Particule]
 duration = 0.1

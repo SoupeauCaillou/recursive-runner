@@ -1,0 +1,12 @@
+[Transformation]
+
+[Rendering]
+show = 1
+opaque_type = 0
+
+[Animation]
+name = disappear2
+
+[AutoDestroy]
+type = 1
+lifetime/value = 0.3333
