@@ -1,9 +1,0 @@
-[Transformation]
-size%screen = 1, 1
-
-[Anchor]
-position = 0, 0
-z = 0.97
-
-[Rendering]
-color = 0.,0,0,1

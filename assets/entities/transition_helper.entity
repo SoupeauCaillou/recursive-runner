@@ -1,0 +1,11 @@
+[ADSR]
+idle_value = 0
+sustain_value = 1
+attack_value = 1
+attack_timing = 1
+decay_timing = 0
+release_timing = 0.5
+
+[Music]
+fade_out = 2
+fade_in = 1

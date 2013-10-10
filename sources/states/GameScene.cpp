@@ -65,33 +65,17 @@ public:
         }
 
         void setup() {
-            pauseButton = theEntityManager.CreateEntity("pause_buttton");
-            ADD_COMPONENT(pauseButton, Transformation);
-            TRANSFORM(pauseButton)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("pause"));
-            ADD_COMPONENT(pauseButton, Anchor);
+            pauseButton = theEntityManager.CreateEntity("pause_buttton",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("button"));
             ANCHOR(pauseButton)->parent = game->cameraEntity;
             ANCHOR(pauseButton)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
                 - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            ANCHOR(pauseButton)->z = 0.95;
-            ADD_COMPONENT(pauseButton, Rendering);
             RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
             RENDERING(pauseButton)->show = false;
-            ADD_COMPONENT(pauseButton, Button);
-            BUTTON(pauseButton)->enabled = false;
-            BUTTON(pauseButton)->overSize = 1.2;
 
-            transition = theEntityManager.CreateEntity("transition_helper");
-            ADD_COMPONENT(transition, ADSR);
-            ADSR(transition)->idleValue = 0;
-            ADSR(transition)->sustainValue = 1;
-            ADSR(transition)->attackValue = 1;
-            ADSR(transition)->attackTiming = 1;
-            ADSR(transition)->decayTiming = 0.;
-            ADSR(transition)->releaseTiming = 0.5;
-            ADD_COMPONENT(transition, Music);
-            MUSIC(transition)->fadeOut = 2;
-            MUSIC(transition)->fadeIn = 1;
+            transition = theEntityManager.CreateEntity("transition_helper",
+                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("transition_helper"));
         }
 
 

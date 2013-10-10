@@ -487,11 +487,11 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     if (size > 0 && in) {
         sceneStateMachine.setup(Scene::Pause);
     } else {
-        #if SAC_DEBUG
-            sceneStateMachine.setup(Scene::Menu);
-        #else
+        // #if SAC_DEBUG
+            // sceneStateMachine.setup(Scene::Menu);
+        // #else
             sceneStateMachine.setup(Scene::Logo);
-        #endif
+        // #endif
     }
     
 }

@@ -1,9 +1,10 @@
 [Transformation]
-size%screen_h = 0.8, 0.8
+size%screen = 1, 1
 
 [Anchor]
 position = 0, 0
-z = 0.98
+z = 0.97
 
 [Rendering]
-texture = soupe_logo
+color = 0.,0,0,1
+show = 1

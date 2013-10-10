@@ -1,32 +1,36 @@
 /*
-	This file is part of RecursiveRunner.
+    This file is part of RecursiveRunner.
 
-	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
-	@author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Jordane Pelloux-Prayer
+    @author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
 
-	RecursiveRunner is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3.
+    RecursiveRunner is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3.
 
-	RecursiveRunner is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    RecursiveRunner is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+
 #include "base/StateMachine.h"
+#include "Scenes.h"
 
 #include "base/EntityManager.h"
 #include "base/TouchInputManager.h"
 #include "base/PlacementHelper.h"
 #include "base/StateMachine.h"
 
-#include "systems/AnchorSystem.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
 #include "systems/SoundSystem.h"
+#include "systems/AnchorSystem.h"
 
 #include "RecursiveRunnerGame.h"
 #include "DepthLayer.h"
@@ -75,28 +79,22 @@ public:
     }
 
     void setup() {
-        logo = theEntityManager.CreateEntity("logo", EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("logo"));
-        logobg = theEntityManager.CreateEntity("logo_bg", EntityType::Volatile, theEntityManager.entityTemplateLibrary.load("logo_bg"));
-        logofade = theEntityManager.CreateEntity("logo_fade", EntityType::Volatile, theEntityManager.entityTemplateLibrary.load("logo_fade"));
-        animLogo = theEntityManager.CreateEntity("logo_anim");
+        logo = theEntityManager.CreateEntityFromTemplate("logo/logo");
+        logobg = theEntityManager.CreateEntityFromTemplate("logo/logo_bg");
+        logofade = theEntityManager.CreateEntityFromTemplate("logo/logo_fade");
+        animLogo = theEntityManager.CreateEntityFromTemplate("logo/logo_anim");
 
         ANCHOR(logo)->parent = game->cameraEntity;
         ANCHOR(logobg)->parent = game->cameraEntity;
         ANCHOR(logofade)->parent = game->cameraEntity;
+        ANCHOR(animLogo)->parent = game->cameraEntity;
 
-
-        ADD_COMPONENT(animLogo, Transformation);
-        TRANSFORM(animLogo)->size = TRANSFORM(logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331")
+        TRANSFORM(animLogo)->size = 
+            TRANSFORM(logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331")
             * glm::vec2(1.0 / theRenderingSystem.getTextureSize("soupe_logo").x, 1.0 / theRenderingSystem.getTextureSize("soupe_logo").y);
-        ADD_COMPONENT(animLogo, Anchor);
         glm::vec2 offset = glm::vec2(-10 / 800.0, 83/869.0) * TRANSFORM(logo)->size;
         ANCHOR(animLogo)->position = TRANSFORM(logo)->position + offset;
         ANCHOR(animLogo)->z = DL_LogoAnim - TRANSFORM(game->cameraEntity)->z;
-        ANCHOR(animLogo)->parent = game->cameraEntity;
-        ADD_COMPONENT(animLogo, Rendering);
-        RENDERING(animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo2_365_331");
-        RENDERING(animLogo)->show = false;
-        ADD_COMPONENT(animLogo, Sound);
     }
 
 
@@ -108,7 +106,6 @@ public:
         RENDERING(logo)->show = RENDERING(logobg)->show = RENDERING(logofade)->show = true;
         // preload sound
         theSoundSystem.loadSoundFile("sounds/logo_blink.ogg");
-
         // setup state machine
         logoSM = new StateMachine<LogoStep>();
         logoSM->registerState(LogoStep0,
@@ -177,7 +174,9 @@ public:
         theEntityManager.DeleteEntity(logobg);
         theEntityManager.DeleteEntity(animLogo);
         theEntityManager.DeleteEntity(logofade);
-        // theRenderingSystem.unloadAtlas("logo");
+
+        theRenderingSystem.unloadAtlas("logo");
+
         delete logoSM;
     }
 };
