@@ -97,7 +97,7 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
         // display arrow if needed
         if (runnerPointedByArrow >= 0) {
             RENDERING(entities->anim)->show = true;
-            ANCHOR(entities->anim)->position = TRANSFORM(sc->runners[runnerPointedByArrow])->position +
+            TRANSFORM(entities->anim)->position = TRANSFORM(sc->runners[runnerPointedByArrow])->position +
                 TRANSFORM(sc->runners[runnerPointedByArrow])->size * arrowOffset;
             pointArrowTo(entities->anim, TRANSFORM(sc->runners[runnerPointedByArrow])->position);
         } else {
@@ -141,7 +141,7 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
 
     void pointArrowTo(Entity arrow, const glm::vec2& target) const {
         glm::vec2 v = glm::normalize(target - TRANSFORM(arrow)->position);
-        ANCHOR(arrow)->rotation = glm::atan2(v.y, v.x);
+        TRANSFORM(arrow)->rotation = glm::atan2(v.y, v.x);
         ANIMATION(arrow)->accum = ANIMATION(arrow)->frameIndex = 0;
         ANIMATION(arrow)->playbackSpeed = 1.0;
     }
