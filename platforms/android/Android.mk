@@ -4,42 +4,26 @@ include $(CLEAR_VARS)
 
 APP_DIR := $(LOCAL_PATH)
 
-LOCAL_MODULE := recursiveRunner
+LOCAL_MODULE := dogtag
 
-LOCAL_CFLAGS := -DANDROID_NDK -DENABLE_LOG -DDEBUG  \
+LOCAL_CFLAGS := -DANDROID_NDK \
                 -DDISABLE_IMPORTGL \
 				-I$(LOCAL_PATH)/..
 
-LOCAL_CXXFLAGS := -DANDROID_NDK -DENABLE_LOG  -DDEBUG\
-                -DDISABLE_IMPORTGL  -fvisibility=hidden \
+LOCAL_CXXFLAGS := -DANDROID_NDK \
+                -DDISABLE_IMPORTGL \
             -I$(LOCAL_PATH)/../sources \
 				-I$(LOCAL_PATH)/.. \
 				-I$(LOCAL_PATH)/../sac/ \
 				-I$(LOCAL_PATH)/../sac/libs/libpng/jni/ \
-				-I$(LOCAL_PATH)/../sac/libs/ \
-                -ffast-math -Os -funroll-loops
-
-LOCAL_ARM_MODE := arm
+				-I$(LOCAL_PATH)/../sac/libs/
 
 LOCAL_SRC_FILES := \
-    recursiveRunner.cpp \
-    ../sources/RecursiveRunnerGame.cpp \
+    dogtag.cpp \
+    ../sources/DogtagGame.cpp \
     ../sources/states/LogoStateManager.cpp \
-    ../sources/states/GameStateManager.cpp \
     ../sources/states/MenuStateManager.cpp \
-    ../sources/states/PauseStateManager.cpp \
-    ../sources/states/RateStateManager.cpp \
-    ../sources/states/AdStateManager.cpp \
-    ../sources/states/RestartGameStateManager.cpp \
-    ../sources/states/TutorialStateManager.cpp \
     ../sources/states/TransitionStateManager.cpp \
-    ../sources/systems/RunnerSystem.cpp \
-    ../sources/systems/PlayerSystem.cpp \
-    ../sources/systems/CameraTargetSystem.cpp \
-    ../sources/systems/RangeFollowerSystem.cpp \
-    ../sources/systems/PlatformerSystem.cpp \
-    ../sources/systems/SessionSystem.cpp \
-    ../sources/api/android/StorageAPIAndroidImpl.cpp \
     ../sac/android/sacjnilib.cpp
 
 LOCAL_STATIC_LIBRARIES := sac png tremor jsoncpp
