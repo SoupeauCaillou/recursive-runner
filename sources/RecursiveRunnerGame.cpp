@@ -536,9 +536,16 @@ void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
         theRenderingSystem.textureLibrary.reloadAll();
 
-        bool muted = true;//!gameThreadContext->storageAPI->isMuted();
-        // gameThreadContext->storageAPI->setMuted(muted);
+        //retrieve current state
+        bool muted = gameThreadContext->storageAPI->isOption("sound", "off");
+        
+        //and invert it
+        muted = ! muted;
+
+        //then save it
+        gameThreadContext->storageAPI->setOption("sound", muted ? "off" : "on", "on");
         RENDERING(muteBtn)->texture = theRenderingSystem.loadTextureFile(muted ? "son-off" : "son-on");
+        
         theSoundSystem.mute = muted;
         theMusicSystem.toggleMute(muted);
 
