@@ -178,7 +178,7 @@ public:
         // setup tutorial
         titleGroup  = theEntityManager.CreateEntityFromTemplate("tuto/title_group");
         ANCHOR(titleGroup)->parent = game->cameraEntity;
-        ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenSize.y + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.6;
+        ADSR(titleGroup)->idleValue = (PlacementHelper::ScreenSize.y + PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.7;
         ADSR(titleGroup)->sustainValue = (PlacementHelper::ScreenSize.y - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y) * 0.5
             + PlacementHelper::GimpHeightToScreen(35);
         ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
