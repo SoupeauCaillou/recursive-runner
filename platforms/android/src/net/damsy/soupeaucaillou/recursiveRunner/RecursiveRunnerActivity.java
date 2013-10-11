@@ -23,23 +23,17 @@ package net.damsy.soupeaucaillou.recursiveRunner;
 
 import java.util.Arrays;
 
-import com.chartboost.sdk.Chartboost;
 
 import net.damsy.soupeaucaillou.recursiveRunner.R;
 import net.damsy.soupeaucaillou.SacActivity;
-import net.damsy.soupeaucaillou.SacPluginManager.SacPlugin;
 import net.damsy.soupeaucaillou.api.AdAPI;
 import net.damsy.soupeaucaillou.api.AssetAPI;
-import net.damsy.soupeaucaillou.api.CommunicationAPI;
-import net.damsy.soupeaucaillou.api.ExitAPI;
 import net.damsy.soupeaucaillou.api.GameCenterAPI;
 import net.damsy.soupeaucaillou.api.LocalizeAPI;
-import net.damsy.soupeaucaillou.api.MusicAPI;
 import net.damsy.soupeaucaillou.api.SoundAPI;
 import net.damsy.soupeaucaillou.api.StorageAPI;
 import net.damsy.soupeaucaillou.api.VibrateAPI;
 import net.damsy.soupeaucaillou.chartboost.SacChartboostPlugin;
-import net.damsy.soupeaucaillou.chartboost.SacChartboostPlugin.ChartboostParams;
 import net.damsy.soupeaucaillou.googleplaygameservices.SacGooglePlayGameServicesPlugin;
 import android.content.Context;
 import android.content.pm.PackageInfo;

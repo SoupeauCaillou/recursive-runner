@@ -12,12 +12,8 @@
 void SuccessManager::init(RecursiveRunnerGame* g) {
     game = g;
     
-    //initialize achievement progression if not initialized yet
-    game->gameThreadContext->storageAPI->setOption("Achievement0Step", std::string(), "0");
-    game->gameThreadContext->storageAPI->setOption("Achievement4Step", std::string(), "0");
-
-    achievement0CurrentStep = ObjectSerializer<int>::string2object(game->gameThreadContext->storageAPI->getOption("Achievement0Step"));
-    achievement4CurrentStep = ObjectSerializer<int>::string2object(game->gameThreadContext->storageAPI->getOption("Achievement4Step"));
+    achievement0CurrentStep = 0;
+    achievement4CurrentStep = 0;
 }
 
 void SuccessManager::gameStart(bool bIsTuto) {
@@ -75,20 +71,14 @@ void SuccessManager::gameEnd(SessionComponent* sc) {
 
     // switch all the 20 lights in a row 
     if (bestLighter > achievement0CurrentStep) {
-        game->gameThreadContext->gameCenterAPI->updateAchievementProgression(0, bestLighter - achievement0CurrentStep);
+        game->gameThreadContext->gameCenterAPI->updateAchievementProgression(0, bestLighter);
         achievement0CurrentStep = bestLighter;
-
-        auto v = ObjectSerializer<int>::object2string(achievement0CurrentStep);
-        game->gameThreadContext->storageAPI->setOption("Achievement0Step", v, v);
     }
 
     // open 7/20 lights with each runner
     if (totalGoodLighters > achievement4CurrentStep) {
-        game->gameThreadContext->gameCenterAPI->updateAchievementProgression(4, totalGoodLighters - achievement4CurrentStep);
+        game->gameThreadContext->gameCenterAPI->updateAchievementProgression(4, totalGoodLighters);
         achievement4CurrentStep = totalGoodLighters;
-
-        auto v = ObjectSerializer<int>::object2string(achievement4CurrentStep);
-        game->gameThreadContext->storageAPI->setOption("Achievement4Step", v, v);
     }
     
     long finalScore = PLAYER(sc->players[0])->points;
