@@ -276,11 +276,11 @@ void RecursiveRunnerGame::decor() {
 	    ADD_COMPONENT(b, Transformation);
         auto tb = TRANSFORM(b);
 	    tb->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
-        ADD_COMPONENT(b, Anchor);
-	    ANCHOR(b)->position = AnchorSystem::adjustPositionWithCardinal(
+	    TRANSFORM(b)->position = 
+            TRANSFORM(bdef.parent)->position +
+            AnchorSystem::adjustPositionWithCardinal(
             glm::vec2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), tb->size, bdef.ref);
-	    ANCHOR(b)->z = bdef.z;
-        ANCHOR(b)->parent = bdef.parent;
+	    TRANSFORM(b)->z = TRANSFORM(bdef.parent)->z + bdef.z;
 	    ADD_COMPONENT(b, Rendering);
 	    RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
 	    RENDERING(b)->show = true;
