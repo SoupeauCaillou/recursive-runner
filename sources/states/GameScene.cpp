@@ -127,9 +127,13 @@ public:
                     sc->currentRunner = r;
                 }
                 game->setupCamera(CameraMode::Single);
+
+                game->successManager.gameStart(from == Scene::Tutorial);
             }
             if (from != Scene::Tutorial)
                 BUTTON(pauseButton)->enabled = true;
+
+
         }
 
 
@@ -160,19 +164,22 @@ public:
                 if (RUNNER(sc->currentRunner)->finished) {
                     LOGI(sc->currentRunner << " finished, add runner or end game");
                     CAM_TARGET(sc->currentRunner)->enabled = false;
+                    game->successManager.oneMoreRunner(RUNNER(sc->currentRunner)->totalCoinsEarned);
 
                     if (PLAYER(sc->players[i])->runnersCount == param::runner) {
                         // Game is finished, show either Rate Menu or Main Menu
-                          if (0 && game->gameThreadContext->communicationAPI->mustShowRateDialog()) {
-                             return Scene::Rate;
-                          } else {
-                           return Scene::Menu;
+                        LOGW("Apprater is disabled yet!");   
+                        if (0 && game->gameThreadContext->communicationAPI->mustShowRateDialog()) {
+                            return Scene::Rate;
+                        } else {
+                            return Scene::Menu;
                         }
                     } else {
                         LOGI("Create runner");
                         // add a new runner
                         sc->currentRunner = addRunnerToPlayer(game, sc->players[i], PLAYER(sc->players[i]), i, sc);
                         sc->runners.push_back(sc->currentRunner);
+
                     }
                 }
                 if (!game->ignoreClick && sc->userInputEnabled) {
@@ -239,6 +246,8 @@ public:
                                 rc->killed = true;
                                 sc->runners.erase(sc->runners.begin() + j);
                                 j--;
+
+                                game->successManager.oneLessRunner();
                                 break;
                             }
                         }
@@ -330,6 +339,8 @@ public:
             BUTTON(pauseButton)->enabled = false;
             if (to != Scene::Pause) {
                 ADSR(transition)->active = false;
+
+                game->successManager.gameEnd(SESSION(session));
             }
         }
 

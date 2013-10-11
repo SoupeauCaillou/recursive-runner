@@ -451,6 +451,8 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     ScoreStorageProxy ssp;
     gameThreadContext->storageAPI->createTable(&ssp);
     
+    successManager.init(this);
+
     if (size > 0 && in) {
         int eSize, sSize, index=0;
         memcpy(&eSize, &in[index], sizeof(eSize));

@@ -31,6 +31,7 @@
 #include "api/CommunicationAPI.h"
 
 #include "util/GameCenterAPIHelper.h"
+#include "util/SuccessManager.h"
 
 #include "states/Scenes.h"
 
@@ -90,6 +91,7 @@ class RecursiveRunnerGame : public Game {
       Entity silhouette, route, cameraEntity, bestScore;
       std::vector<Entity> decorEntities;
       GameCenterAPIHelper gamecenterAPIHelper;
+      SuccessManager successManager;
 
       // GameTempVar gameTempVars;
       Entity scoreText, scorePanel;

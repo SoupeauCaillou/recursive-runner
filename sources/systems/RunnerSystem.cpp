@@ -50,6 +50,7 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     componentSerializer.add(new Property<int>("coin_sequence_bonus", OFFSET(coinSequenceBonus, tc)));
     componentSerializer.add(new VectorProperty<float>("jump_times", OFFSET(jumpTimes, tc)));
     componentSerializer.add(new VectorProperty<float>("jump_durations", OFFSET(jumpDurations, tc)));
+    componentSerializer.add(new Property<int>("total_coins_earned", OFFSET(totalCoinsEarned, tc)));
     componentSerializer.add(new VectorProperty<float>("coins", OFFSET(coins, tc)));
 }
 
@@ -98,7 +99,8 @@ void RunnerSystem::DoUpdate(float dt) {
             if ((tc->position.x > rc->endPoint.x && rc->speed > 0) ||
                 (tc->position.x < rc->endPoint.x && rc->speed < 0)) {
                 if (!rc->ghost)
-                    LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position.x << "," << tc->position.y << ") "<< rc->endPoint.x);
+                    LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position 
+                        << ") "<< rc->endPoint.x);
                 ANIMATION(a)->name = "runL2R";
                 rc->finished = true;
                 rc->oldNessBonus++;
@@ -112,6 +114,7 @@ void RunnerSystem::DoUpdate(float dt) {
 
                 pc->linearVelocity =  glm::vec2(0.0f);
                 pc->gravity.y = 0;
+                rc->totalCoinsEarned = rc->coins.size();
                 rc->coins.clear();
             }
         }
