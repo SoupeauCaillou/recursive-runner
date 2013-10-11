@@ -579,9 +579,10 @@ void RecursiveRunnerGame::tick(float dt) {
          }
     }
 
+    //disable "play" click if we are hitting the left zone of the screen (buttons zone)
     if (theTouchInputManager.isTouched(0)) {
-        ignoreClick |= theTouchInputManager.getTouchLastPosition(0).y
-            >= (TRANSFORM(muteBtn)->position.y - TRANSFORM(muteBtn)->size.y * BUTTON(muteBtn)->overSize * 0.5);
+        auto touchPos = theTouchInputManager.getTouchLastPosition(0);
+        ignoreClick |= touchPos.x < TRANSFORM(muteBtn)->position.x + TRANSFORM(muteBtn)->size.x * BUTTON(muteBtn)->overSize * 0.5;
     }
 
     sceneStateMachine.update(dt);

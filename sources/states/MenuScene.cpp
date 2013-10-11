@@ -161,8 +161,11 @@ void backgroundUpdate(float) {
 #endif
 
         Scene::Enum update(float) {
-            // Game center UI
-            game->gamecenterAPIHelper.updateUI();
+            // Game center UI - if any button clicked, break the loop
+            if (game->gamecenterAPIHelper.updateUI()) {
+                return Scene::Menu;
+            }
+
 
             // Menu music
             if (!theMusicSystem.isMuted()) {
@@ -193,7 +196,7 @@ void backgroundUpdate(float) {
             }
             RENDERING(helpBtn)->color = BUTTON(helpBtn)->mouseOver ? Color("gray") : Color();
 
-            // Start game ? (tutorial if no game done)
+            // Start game? (tutorial if no game done)
             if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
                 int current = ObjectSerializer<int>::string2object(game->gameThreadContext->storageAPI->getOption("gameCount"));
                 game->gameThreadContext->storageAPI->setOption("gameCount", ObjectSerializer<int>::object2string(current + 1), "0");
