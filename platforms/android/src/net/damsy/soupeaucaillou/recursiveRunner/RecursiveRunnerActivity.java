@@ -61,15 +61,6 @@ public class RecursiveRunnerActivity extends SacActivity {
         super.onCreate(savedInstanceState);
 
         // Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        
-		try {
-			PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			Toast toast = Toast.makeText(this, "Package name: " + getPackageName() + ", version code: "
-					+ pInfo.versionCode + ", version name: " + pInfo.versionName, Toast.LENGTH_LONG);
-			toast.show();
-		} catch (NameNotFoundException e) {
-			e.printStackTrace();
-		}
     }
 
 	@Override
