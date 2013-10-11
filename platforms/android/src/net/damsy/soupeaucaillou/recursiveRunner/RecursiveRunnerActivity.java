@@ -23,8 +23,11 @@ package net.damsy.soupeaucaillou.recursiveRunner;
 
 import java.util.Arrays;
 
+import com.chartboost.sdk.Chartboost;
+
 import net.damsy.soupeaucaillou.recursiveRunner.R;
 import net.damsy.soupeaucaillou.SacActivity;
+import net.damsy.soupeaucaillou.SacPluginManager.SacPlugin;
 import net.damsy.soupeaucaillou.api.AdAPI;
 import net.damsy.soupeaucaillou.api.AssetAPI;
 import net.damsy.soupeaucaillou.api.CommunicationAPI;
@@ -35,6 +38,8 @@ import net.damsy.soupeaucaillou.api.MusicAPI;
 import net.damsy.soupeaucaillou.api.SoundAPI;
 import net.damsy.soupeaucaillou.api.StorageAPI;
 import net.damsy.soupeaucaillou.api.VibrateAPI;
+import net.damsy.soupeaucaillou.chartboost.SacChartboostPlugin;
+import net.damsy.soupeaucaillou.chartboost.SacChartboostPlugin.ChartboostParams;
 import net.damsy.soupeaucaillou.googleplaygameservices.SacGooglePlayGameServicesPlugin;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -99,5 +104,16 @@ public class RecursiveRunnerActivity extends SacActivity {
             )
         );
         GameCenterAPI.Instance().init(this, sgpgsp);
+        
+        String appId = "4fc020e1f77659180c00000a";
+        String appSignature = "2a87927586c0b423792510a9d4ff049da4140155";
+     
+        
+        //test id (sample app)
+        //String appId = "4f7b433509b6025804000002";
+        //String appSignature = "dd2d41b69ac01b80f443f5b6cf06096d457f82bd";
+        SacChartboostPlugin chartboost = new SacChartboostPlugin();
+        chartboost.init(this, chartboost.new ChartboostParams(appId, appSignature));
+        AdAPI.Instance().providers.add(chartboost);
 	}
 }
