@@ -26,8 +26,13 @@ adb uninstall net.damsy.soupeaucaillou.recursiveRunner
 #replace R package name import
 sed -i "s/import .*\.R;/import net.damsy.soupeaucaillou.recursiveRunner.R;/" platforms/android/src/net/damsy/soupeaucaillou/recursiveRunner/RecursiveRunnerActivity.java
 
-./sac/tools/build/build-all.sh --target android -x86 -release n -c
-./sac/tools/build/build-all.sh --target android -arm -release n -p -i r -c
+if (!(./sac/tools/build/build-all.sh --target android -x86 -release n -c)); then
+    echo "Error when building x86 version"
+    exit 1
+elif (!(./sac/tools/build/build-all.sh --target android -arm -release n -p -i r -c)); then
+    echo "Error when building ARM version"
+    exit 1
+fi        
 
 #revert changes applied
 git checkout AndroidManifest.xml platforms/android/src/net/damsy/soupeaucaillou/recursiveRunner/RecursiveRunnerActivity.java
