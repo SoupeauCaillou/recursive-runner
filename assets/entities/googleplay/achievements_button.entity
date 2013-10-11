@@ -3,7 +3,7 @@ size%gimp = 129, 92
 
 [Anchor]
 parent%name = camera1
-position%screen= -0.43, -0.4
+position%screen= -0.43, -0.2
 z = 0.95
 
 [Rendering]
@@ -11,5 +11,5 @@ opaque_type = 0
 
 [Button]
 overSize = 1.2
-texture_inactive = gg_signin
-texture_active = gg_signin_active
+texture_inactive = gg_achievements
+texture_active = gg_achievements_active

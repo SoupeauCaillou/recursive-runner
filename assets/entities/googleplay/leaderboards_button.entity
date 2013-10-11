@@ -7,6 +7,7 @@ position%screen= -0.43, -0.3
 z = 0.95
 
 [Rendering]
+opaque_type = 0
 
 [Button]
 overSize = 1.2
