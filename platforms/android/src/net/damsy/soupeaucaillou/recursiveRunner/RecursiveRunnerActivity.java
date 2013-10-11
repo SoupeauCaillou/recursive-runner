@@ -83,8 +83,21 @@ public class RecursiveRunnerActivity extends SacActivity {
 
         SacGooglePlayGameServicesPlugin sgpgsp = new SacGooglePlayGameServicesPlugin();
         sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(true, 
-                Arrays.asList(new String[] { }), 
-                Arrays.asList(new String[] {"CgkI-af7kuELEAIQAQ"})));
+                Arrays.asList(new String[] { 
+                    "CgkI-af7kuELEAIQAw",
+                    "CgkI-af7kuELEAIQBA",
+                    "CgkI-af7kuELEAIQBQ",
+                    "CgkI-af7kuELEAIQBg",
+                    "CgkI-af7kuELEAIQBw",
+                    "CgkI-af7kuELEAIQCA",
+                    "CgkI-af7kuELEAIQCQ",
+                    "CgkI-af7kuELEAIQCg"
+                }), 
+                Arrays.asList(new String[] {
+                    "CgkI-af7kuELEAIQAQ"
+                })
+            )
+        );
         GameCenterAPI.Instance().init(this, sgpgsp);
 	}
 }
