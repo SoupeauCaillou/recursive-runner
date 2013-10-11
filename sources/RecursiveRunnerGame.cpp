@@ -590,18 +590,23 @@ void RecursiveRunnerGame::tick(float dt) {
     sceneStateMachine.update(dt);
 
     // limit cam position
-    for (unsigned i=2; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
-        float& camPosX = TRANSFORM(cameraEntity)->position.x;
-        if (camPosX < - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
-            camPosX = - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
-        } else if (camPosX > PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
-            camPosX = PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
+    if (sceneStateMachine.getCurrentState() != Scene::Menu) {
+        for (unsigned i=1; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
+            float& camPosX = TRANSFORM(cameraEntity)->position.x;
+            if (camPosX < - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
+                camPosX = - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
+            } else if (camPosX > PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
+                camPosX = PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
+            }
+            // TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
+            TRANSFORM(cameraEntity)->position.x = camPosX;
+            TRANSFORM(cameraEntity)->position.y = baseLine + TRANSFORM(cameraEntity)->size.y * 0.5;
         }
-        // TRANSFORM(silhouette)->position.X = TRANSFORM(route)->position.X = camPosX;
-        TRANSFORM(cameraEntity)->position.x = camPosX;
+    } else {
+        // force left pos
+        TRANSFORM(cameraEntity)->position.x = - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
         TRANSFORM(cameraEntity)->position.y = baseLine + TRANSFORM(cameraEntity)->size.y * 0.5;
     }
-
     theRangeFollowerSystem.Update(dt);
 }
 

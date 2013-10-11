@@ -19,8 +19,11 @@
 #include "CameraTargetSystem.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
+#include "RunnerSystem.h"
 #include "util/IntersectionUtil.h"
 #include "steering/SteeringBehavior.h"
+#include "base/PlacementHelper.h"
+#include "../Parameters.h"
 
 INSTANCE_IMPL(CameraTargetSystem);
 
@@ -38,14 +41,27 @@ void CameraTargetSystem::DoUpdate(float dt) {
         if (!ctc->enabled)
             continue;
         glm::vec2 target (TRANSFORM(a)->position + ctc->offset);
+
+        // limit offset to valid position
+        if (target.x < - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
+            target.x = - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
+        } else if (target.x > PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
+            target.x = PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
+        }
+
         glm::vec2 force = SteeringBehavior::arrive(
             TRANSFORM(ctc->camera)->position,
             ctc->cameraSpeed,
             target,
             ctc->maxCameraSpeed,
-            0.3) * 10.0f;
+            0.3);
         // accel = force
-        ctc->cameraSpeed += force * dt;
-        TRANSFORM(ctc->camera)->position.x += ctc->cameraSpeed.x * dt;
+        ctc->cameraSpeed += force;
+        // and camera must move in the same direction as the target
+        if (ctc->cameraSpeed.x * RUNNER(a)->speed < 0) {
+            ctc->cameraSpeed = glm::vec2(0.0f);
+        } else {
+            TRANSFORM(ctc->camera)->position.x += ctc->cameraSpeed.x * dt;
+        }
     }
 }
