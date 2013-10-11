@@ -200,13 +200,17 @@ void backgroundUpdate(float) {
 
             // Start game? (tutorial if no game done)
             if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
-                int current = ObjectSerializer<int>::string2object(game->gameThreadContext->storageAPI->getOption("gameCount"));
-                game->gameThreadContext->storageAPI->setOption("gameCount", ObjectSerializer<int>::object2string(current + 1), "0");
+                //only if we did not hit left area zone (buttons)
+                auto touchPos = theTouchInputManager.getTouchLastPosition(0);
+                if (touchPos.x >= TRANSFORM(game->muteBtn)->position.x + TRANSFORM(game->muteBtn)->size.x * BUTTON(game->muteBtn)->overSize * 0.5) {
+                    int current = ObjectSerializer<int>::string2object(game->gameThreadContext->storageAPI->getOption("gameCount"));
+                    game->gameThreadContext->storageAPI->setOption("gameCount", ObjectSerializer<int>::object2string(current + 1), "0");
 
-                if (current == 0) {
-                    return Scene::Tutorial;
-                } else {
-                    return Scene::Ad;
+                    if (current == 0) {
+                        return Scene::Tutorial;
+                    } else {
+                        return Scene::Ad;
+                    }
                 }
             }
             return Scene::Menu;

@@ -579,15 +579,15 @@ void RecursiveRunnerGame::tick(float dt) {
          }
     }
 
-    //disable "play" click if we are hitting the left zone of the screen (buttons zone)
+    //disable "play" click if we are hitting (or trying to) the mute button
     if (theTouchInputManager.isTouched(0)) {
         auto touchPos = theTouchInputManager.getTouchLastPosition(0);
-        ignoreClick |= touchPos.x < TRANSFORM(muteBtn)->position.x + TRANSFORM(muteBtn)->size.x * BUTTON(muteBtn)->overSize * 0.5;
+        ignoreClick |= touchPos.y >= (TRANSFORM(muteBtn)->position.y - TRANSFORM(muteBtn)->size.y * BUTTON(muteBtn)->overSize * 0.5);
     }
 
     sceneStateMachine.update(dt);
 
-    // limit cam pos
+    // limit cam position
     for (unsigned i=2; i<2 /* theRenderingSystem.cameras.size()*/; i++) {
         float& camPosX = TRANSFORM(cameraEntity)->position.x;
         if (camPosX < - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5)) {
