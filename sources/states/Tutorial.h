@@ -442,8 +442,13 @@ public:
         TEXT(entities.text)->show = false;
         gameScene.onPreExit(to);
 
-
         RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT(game->scoreText)->show = true;
+
+        RENDERING(entities.anim)->show = false;
+        ANIMATION(entities.anim)->playbackSpeed = 0;
+        gameScene.onExit(to);
+        BUTTON(game->muteBtn)->enabled = true;
+
     }
 
     bool updatePreExit(Scene::Enum to, float dt) {
@@ -460,10 +465,6 @@ public:
 
     void onExit(Scene::Enum to) {
         RENDERING(title)->show = false;
-
-        RENDERING(entities.anim)->show = false;
-        gameScene.onExit(to);
-        BUTTON(game->muteBtn)->enabled = true;
 
         auto hdl = tutorialStateMachine.getHandlers();
         for(auto it = hdl.begin(); it!=hdl.end(); ++it) {

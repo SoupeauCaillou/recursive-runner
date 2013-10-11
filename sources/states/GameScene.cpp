@@ -450,6 +450,12 @@ static void updateSessionTransition(const SessionComponent* session, float progr
     for (unsigned i=0; i<session->links.size(); i++) {
         RENDERING(session->links[i])->color.a = progress * 0.65;
     }
+    for (unsigned i=0; i<session->sparkling.size(); i++) {
+        RENDERING(session->sparkling[i])->color.a = progress;
+    }
+    theRunnerSystem.forEachEntityDo([progress] (Entity e) -> void {
+        RENDERING(e)->color.a = progress;
+    });
 }
 
 static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc) {
