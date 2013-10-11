@@ -64,7 +64,7 @@ class AdScene : public StateHandler<Scene::Enum> {
        // must show an ad
        else if (gamesb4Ad == 0) {
            //try to launch the ad
-            if (game->gameThreadContext->adAPI->showAd()) {
+            if (game->gameThreadContext->adAPI->showAd(false)) {
                 lastAdTime = TimeUtil::GetTime();
             //if not ready, retry next game
             } else {

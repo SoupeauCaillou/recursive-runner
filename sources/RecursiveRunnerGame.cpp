@@ -502,8 +502,11 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         #else
             sceneStateMachine.setup(Scene::Logo);
         #endif
+
+        //show splash interstitial
+        gameThreadContext->adAPI->showAd(true);    
     }
-    
+
 }
 
 void RecursiveRunnerGame::quickInit() {
