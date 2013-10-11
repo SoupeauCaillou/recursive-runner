@@ -134,6 +134,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // unhide UI
             RENDERING(helpBtn)->show = true;
             RENDERING(helpBtn)->color = Color(1,1,1,0);
+
+            game->gamecenterAPIHelper.displayUI();
         }
 
         bool updatePreEnter(Scene::Enum, float) {
@@ -151,8 +153,6 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // enable UI
             BUTTON(helpBtn)->enabled = true;
             RENDERING(helpBtn)->color.a = 1;
-
-            game->gamecenterAPIHelper.displayUI();
         }
 
 #if 0
