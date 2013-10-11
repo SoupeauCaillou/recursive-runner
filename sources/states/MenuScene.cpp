@@ -124,6 +124,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 game->gameThreadContext->storageAPI->saveEntries(&ssp);
 
                 game->updateBestScore();
+
+                game->gameThreadContext->gameCenterAPI->submitScore(0, ssp.getValue("points"));
             }
             // start music if not muted
             if (!theMusicSystem.isMuted() && MUSIC(title)->control == MusicControl::Stop) {

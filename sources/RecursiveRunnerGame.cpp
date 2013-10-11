@@ -440,7 +440,7 @@ void RecursiveRunnerGame::initGame() {
     }
 
     //important! This must be called AFTER camera setup, since we are referencing it (anchor component)
-    gamecenterAPIHelper.init(gameThreadContext->gameCenterAPI, true, true);
+    gamecenterAPIHelper.init(gameThreadContext->gameCenterAPI, true, true, true);
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in, int size) {
