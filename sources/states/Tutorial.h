@@ -170,8 +170,11 @@ public:
     }
 
     void setup() {
-        // setup game
         gameScene.setup();
+        theAnimationSystem.loadAnim(game->gameThreadContext->assetAPI, "arrow_tuto", "arrow_tuto");
+    }
+
+    void createEntities() {
         // setup tutorial
         titleGroup  = theEntityManager.CreateEntityFromTemplate("tuto/title_group");
         ANCHOR(titleGroup)->parent = game->cameraEntity;
@@ -191,7 +194,6 @@ public:
         TRANSFORM(entities.text)->size = TRANSFORM(hideText)->size;
 
         entities.anim = theEntityManager.CreateEntityFromTemplate("tuto/fleche");
-        theAnimationSystem.loadAnim(game->gameThreadContext->assetAPI, "arrow_tuto", "arrow_tuto");
     }
 
 
@@ -199,7 +201,7 @@ public:
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
     void onPreEnter(Scene::Enum) {
-        // TODO init state machine
+        createEntities();
 
         bool isMuted = theMusicSystem.isMuted();
         theMusicSystem.toggleMute(true);
@@ -467,5 +469,12 @@ public:
         for(auto it = hdl.begin(); it!=hdl.end(); ++it) {
             delete it->second;
         }
+        tutorialStateMachine.unregisterAllStates();
+
+        theEntityManager.DeleteEntity(entities.anim);
+        theEntityManager.DeleteEntity(entities.text);
+        theEntityManager.DeleteEntity(hideText);
+        theEntityManager.DeleteEntity(title);
+        theEntityManager.DeleteEntity(titleGroup);
     }
 };
