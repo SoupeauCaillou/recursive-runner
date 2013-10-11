@@ -312,6 +312,10 @@ void RecursiveRunnerGame::decor() {
         }
         if (zPrepassSize) {
             const glm::vec2& size = tb->size;
+            #if 0
+            Color color = Color::random();
+            color.a = 0.6;
+            #endif
             for (int j=0; j<4; j++) {
                 if (zPrepassSize[j] == glm::vec2(0.0f))
                     break;
@@ -320,20 +324,19 @@ void RecursiveRunnerGame::decor() {
                 TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
                 glm::vec2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
                 ratio.y = 1 - ratio.y;
-                ADD_COMPONENT(bb, Anchor);
-                ANCHOR(bb)->position =
+                glm::vec2 pos =
                     size * (glm::vec2(-0.5) + ratio) + TRANSFORM(bb)->size * glm::vec2(0.5, -0.5);
                 if (bdef.mirrorUV)
-                    ANCHOR(bb)->position.x = -ANCHOR(bb)->position.x;
-                ANCHOR(bb)->z = 0;
-                ANCHOR(bb)->parent = b;
+                    pos.x = -pos.x;
+                TRANSFORM(bb)->z = TRANSFORM(b)->z;
+                TRANSFORM(bb)->position = TRANSFORM(b)->position + pos;
                 ADD_COMPONENT(bb, Rendering);
                 *RENDERING(bb) = *RENDERING(b);
                 #if 1
                 RENDERING(bb)->zPrePass = true;
                 #else
                 RENDERING(bb)->texture = InvalidTextureRef;
-                RENDERING(bb)->color = Color(1,1,0,0.6);
+                RENDERING(bb)->color = color;
                 #endif
             }
         }
