@@ -9,4 +9,4 @@ opaque_type = 0
 
 [Animation]
 name = arrow_tuto
-playbackSpeed = 0
+playback_speed = 0
