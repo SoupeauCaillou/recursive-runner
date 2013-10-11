@@ -26,16 +26,17 @@ adb uninstall net.damsy.soupeaucaillou.recursiveRunner
 #replace R package name import
 sed -i "s/import .*\.R;/import net.damsy.soupeaucaillou.recursiveRunner.R;/" platforms/android/src/net/damsy/soupeaucaillou/recursiveRunner/RecursiveRunnerActivity.java
 
-./sac/tools/build/build-all.sh --target android -release n -p -i r -c --c -DSAC_CUSTOM_DEFINES='-DSAC_ENABLE_LOG=1;-DSAC_DEBUG_PA=1'
+./sac/tools/build/build-all.sh --target android -x86 -release n -c
+./sac/tools/build/build-all.sh --target android -arm -release n -p -i r -c
 
 #revert changes applied
 git checkout AndroidManifest.xml platforms/android/src/net/damsy/soupeaucaillou/recursiveRunner/RecursiveRunnerActivity.java
 
 if [ ! -z "$result" ]; then
-	echo "Do you want to add a tag for this version (tag='version test $result')? (uploaded APK) (yes/no)"
+	echo "Do you want to add a tag for this version (tag='version $result')? (uploaded APK) (yes/no)"
 	read confirm
 	if [ "$confirm" = "yes" ]; then
-		git tag -a vt$result -m "version test $result"
-		echo "Do not forget to push it with 'git push origin vt$result'!"
+		git tag -a $result -m "version $result"
+		echo "Do not forget to push it with 'git push origin $result'!"
 	fi
 fi
