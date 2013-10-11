@@ -39,6 +39,7 @@ class RateScene : public StateHandler<Scene::Enum> {
 
 
       void setup() {
+#if 0
          Entity entity[4];
          entity[0] = rateText = theEntityManager.CreateEntityFromTemplate("rate/text");
          entity[1] = btnNow = theEntityManager.CreateEntity("rate/button_now",
@@ -56,7 +57,7 @@ class RateScene : public StateHandler<Scene::Enum> {
          TEXT(entity[1])->text = "Oui";
          TEXT(entity[2])->text = "Non";
          TEXT(entity[3])->text = "Peut-etre";
-
+#endif
       }
 
       void onEnter(Scene::Enum) {
