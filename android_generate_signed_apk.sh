@@ -28,7 +28,6 @@ sed -i "s/import .*\.R;/import net.damsy.soupeaucaillou.recursiveRunner.R;/" pla
 #replace log level
 sed -i "s/SacActivity.LogLevel = SacActivity.*/SacActivity.LogLevel = SacActivity.F;/" platforms/android/src/net/damsy/soupeaucaillou/recursiveRunner/RecursiveRunnerActivity.java
 
-exit
 if (!(./sac/tools/build/build-all.sh --target android -x86 -release n -c)); then
     echo "Error when building x86 version"
     exit 1
