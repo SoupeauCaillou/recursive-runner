@@ -48,6 +48,7 @@
 #include "systems/SessionSystem.h"
 #include "systems/PlatformerSystem.h"
 
+#include "api/LocalizeAPI.h"
 #include "api/StorageAPI.h"
 #include "util/ScoreStorageProxy.h"
 
@@ -480,9 +481,10 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         }
     }
 
-
-//    RecursiveRunnerDebugConsole::init(this);
-
+#if SAC_INGAME_EDITORS && SAC_DEBUG
+   RecursiveRunnerDebugConsole::init(this);
+#endif
+   
     level = Level::Level1;
     initGame();
     if (in == 0 || size == 0) {
@@ -636,7 +638,7 @@ void RecursiveRunnerGame::updateBestScore() {
     ScoreStorageProxy ssp;
     gameThreadContext->storageAPI->loadEntries(&ssp, "points", "order by points desc limit 1");
     if (! ssp.isEmpty()) {
-        TEXT(bestScore)->text = "Best: " + ObjectSerializer<int>::object2string(ssp._queue.front().points);
+        TEXT(bestScore)->text = gameThreadContext->localizeAPI->text("Best") + ": " + ObjectSerializer<int>::object2string(ssp._queue.front().points);
     } else {
         LOGW("No best score found (?!)");
         TEXT(bestScore)->text = "";

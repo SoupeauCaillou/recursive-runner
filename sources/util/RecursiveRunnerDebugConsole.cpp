@@ -1,14 +1,33 @@
-#if SAC_INGAME_EDITORS
+#if SAC_INGAME_EDITORS && SAC_DEBUG
 
 #include "RecursiveRunnerDebugConsole.h"
 
 #include "RecursiveRunnerGame.h"
 
-RecursiveRunnerGame* RecursiveRunnerDebugConsole::_game = 0;
+#include "systems/PlayerSystem.h"
 
-void RecursiveRunnerDebugConsole::init(RecursiveRunnerGame* game) {
-    _game = game;
+RecursiveRunnerGame* RecursiveRunnerDebugConsole::game = 0;
 
-    //nothing yet
+void RecursiveRunnerDebugConsole::init(RecursiveRunnerGame* g) {
+    game = g;
+
+    static float score = 10.f;
+    DebugConsole::RegisterMethod("Force end game", callbackForceEndGame, "Score multiplier",
+        TW_TYPE_FLOAT, &score);
+}
+
+void RecursiveRunnerDebugConsole::callbackForceEndGame(void* arg) {
+    if (game->sceneStateMachine.getCurrentState() != Scene::Game) {
+        LOGE("You are not playing! Abort");
+        return;
+    }
+    float multiplier = *(float*)arg;
+
+    for (auto player : thePlayerSystem.RetrieveAllEntityWithComponent()) {
+        PLAYER(player)->points *= multiplier;
+        LOGI("Player " << player << " score is now " << PLAYER(player)->points);
+    }
+
+    game->sceneStateMachine.forceNewState(Scene::Menu);
 }
 #endif

@@ -82,7 +82,13 @@ class RecursiveRunnerGame : public Game {
    private:
       void decor();
       void initGame();
-      StateMachine<Scene::Enum> sceneStateMachine;
+
+
+    private:
+#if SAC_DEBUG
+    public:
+#endif
+        StateMachine<Scene::Enum> sceneStateMachine;
 
    public:
       // shared/global vars
