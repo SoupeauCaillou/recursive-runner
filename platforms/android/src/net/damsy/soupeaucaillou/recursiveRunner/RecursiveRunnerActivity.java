@@ -72,7 +72,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 		LocalizeAPI.Instance().init(this.getResources(), this.getPackageName());
 
         SacGooglePlayGameServicesPlugin sgpgsp = new SacGooglePlayGameServicesPlugin();
-        sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(true, 
+        sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(false, 
                 Arrays.asList(new String[] { 
                     "CgkI-af7kuELEAIQAw",
                     "CgkI-af7kuELEAIQBA",
