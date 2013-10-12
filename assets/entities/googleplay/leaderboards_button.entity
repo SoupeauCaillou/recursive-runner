@@ -2,9 +2,9 @@
 size%gimp = 129, 92
 
 [Anchor]
-parent%name = camera1
-position%screen= -0.43, -0.3
-z = 0.95
+parent%name = gg/achievements_button
+positionS%gimp_size= 0, 76
+z = 0
 
 [Rendering]
 opaque_type = 0

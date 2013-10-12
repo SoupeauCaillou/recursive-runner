@@ -535,6 +535,7 @@ void RecursiveRunnerGame::backPressed() {
             sceneStateMachine.forceNewState(Scene::Menu);
             break;
         default:
+            sceneStateMachine.forceNewState(Scene::Menu);
             break;
     }
 }

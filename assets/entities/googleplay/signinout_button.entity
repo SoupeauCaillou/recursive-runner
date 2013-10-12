@@ -3,7 +3,8 @@ size%gimp = 129, 92
 
 [Anchor]
 parent%name = camera1
-position%screen= -0.43, -0.4
+position%gimp_size= 94, 76
+anchor%screen = -0.5, -0.5
 z = 0.95
 
 [Rendering]
