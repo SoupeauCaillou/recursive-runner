@@ -463,7 +463,7 @@ public:
         return gameScene.updatePreExit(to, dt);
     }
 
-    void onExit(Scene::Enum to) {
+    void onExit(Scene::Enum) {
         RENDERING(title)->show = false;
 
         auto hdl = tutorialStateMachine.getHandlers();
