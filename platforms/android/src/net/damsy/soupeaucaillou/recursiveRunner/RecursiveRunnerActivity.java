@@ -36,11 +36,8 @@ import net.damsy.soupeaucaillou.api.VibrateAPI;
 import net.damsy.soupeaucaillou.chartboost.SacChartboostPlugin;
 import net.damsy.soupeaucaillou.googleplaygameservices.SacGooglePlayGameServicesPlugin;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.widget.Toast;
 
 public class RecursiveRunnerActivity extends SacActivity {
 	static {
@@ -57,6 +54,9 @@ public class RecursiveRunnerActivity extends SacActivity {
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
+		//In release, this is set to Fatal only
+		SacActivity.LogLevel = SacActivity.I;
+		
 		SacActivity.LogI("-> onCreate [" + savedInstanceState);
         super.onCreate(savedInstanceState);
 
