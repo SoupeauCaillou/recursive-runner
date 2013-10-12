@@ -12,6 +12,4 @@
   <string name="previous_hero_replay">"之前那個你重新跑過來"</string>
   <string name="avoid_him">"避開他：他能保住得分！"</string>
   <string name="good_luck">"祝好運！"</string>
-  <string name="high_quality_gfx_summ">"開啟高質量圖形模式（需要重啟遊戲）"</string>
-  <string name="low_quality_gfx_summ">"開啟低質量圖形模式（需要重啟遊戲）"</string>
 </resources>

@@ -7,19 +7,5 @@ Acostumado a controlar 1 herói correndo? Nós vamos dar a você 10 deles.
 O truque?
 Você controle eles um por vez e, quando você terminar com um, ele vai fazer a mesma corrida denovo e denovo e continuar a pontuar para você.
 O desafio é pontuar com seu herói atual enquanto evita seus anteriores - se você acertar um deles, ele vai desaparecer para sempre.
-Swarm, a platarforma social de jogos, precisa de algumas permissões (nenhum dado pessoal é usado):
-Chamadas de telefone: 
-Permite que Swarm evite fraude e crie um ambiente seguro (nenhuma informação identificável da pessoal é usada).
-Comunicação com a rede:
-Permite que usuários criem uma conta, conectem-se, salvem Achievements, enviem pontuações para Leaderboards e façam compras na loja virtual.
-Além disso, permite que o Swarm detecte quando um usuário está online ou quando a conexão do usuário foi perdida.
-Se você perceber lentidões, você pode habilitar o modo de gráficos de baixa resolução usando o botão "menu"
-(necessário reiniciar o jogo)
 Nós esperamos que você goste do Recursive Runner.
 Planejamos continuar atualizando o jogo por um tempo, e estamos esperando pelo feedback dos jogadores para nos ajudar a melhorá-lo!
-* Adicionada a capacidade de pausar : você pode pausar/restaurar o jogo a qualquer momento
-* Você pode sair do jogo pressionando o botão "back" no menu
-* Ajuda no jogo (veja o ícone "?")
-* Melhoras na performance geral e uma nova opção para habilitar modo de gráficos de baixa resolução
-* Novas coisas gráficas
-* A próxima atualização vai apresentar conteúdo de jogabilidade!

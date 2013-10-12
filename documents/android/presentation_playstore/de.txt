@@ -7,19 +7,5 @@ Du bist es gewohnt einen rennenden Helden zu spielen? Wir geben dir 10 von ihm!
 Der Trick?
 Du kontrollierst immer nur einen. Wenn du mit diesem fertig bist wiederholt er seinen Lauf immer und immer wieder und sammelt Punkte für dich.
 Versuche mit deinem Helden Punkte zu erzielen während du deinen früheren Helden ausweichst. Wenn du sie triffst, verschwinden sie für immer.
-Swarm, die Social Gaming Plattform braucht einige Berechtigungen (Dabei werden keine persönlichen Daten erhoben)
-Anrufe: 
-Erlaubt Swarm Betrügern vorzubeugen und ein sicheres Umfeld zu schaffen (Es werden keine Informationen genutzt die euch identifizieren können)
-Netzwerkkommunikation:
-Erlaubt den Nutzern einen Account zu erstellen, sich einzuloggen, Erfolge zu speichern, Punkte auf der Bestenliste einzutragen und in dem Virtual Store einzukaufen.
-Des Weiteren erlaubt es Swarm eine Nachricht zu schicken, wenn ein Benutzer online ist oder seine Verbindung verliert.
-Falls das Spiel ungewöhnlich langsam läuft kannst du den low-res Grafikmodus mit dem 'Menü' Button einschalten.
-(Erfordert Neustart)
 Wir hoffen dir gefällt Recursive Runner.
 Wir wollen das Spiel eine Weile Up-to-Date halten und freuen uns über euer Feedback um das Spiel zu verbessern!
-* Pauseknopf hinzugefügt: Nun könnt ihr auch mal eine Pause machen - jederzeit.
-* Ihr könnt das Spiel nun über den 'zurück' button im Menü verlassen.
-* Hilfe im Spiel (siehe '?' Symbol)
-* Verbesserung der allgemeinen Performance und eine neue Option um den low-res Grafikmodus zu starten
-* neue Grafiken
-* Im nächsten Update bringen wir noch mehr Spielinhalte!

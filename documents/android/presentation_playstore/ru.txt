@@ -7,19 +7,5 @@
 хитрость?
 Вы можете ими управлять по одному за раз. После завершения, то он будет повторить в той же последовательности на неопределенный срок и будет продолжать набрать очки для вас.
 Задача состоит в том, чтобы набрать очки с персонажом, который вы управляете, избегая при этом предыдующих - если вы касаетесь одного, то он исчезнет навсегда.
-Swarm требует несколько разрешений (никакая персональная информация не используется):
-телефонный звонок: 
-Позволяете Swarm, чтобы предотвратить мошенничество и создания безопасной среды.
-Коммуникационня сеть:
-Позволяете подключаться к Swarm, сохранить его счет и на его успех в Интернете и т.д.
-Кроме того, это позволяет Swarm определить, когда пользователь находится в сети или при-соединения пользователя была потеряна.
-Если вы испытываете замедлений, можно включить в низком разрешении графическом режиме с помощью кнопки «меню»
-(requires to restart the game)
 We hope you’ll enjoy Recursive Runner.
 We plan to keep updating the game for a while, and are waiting for player feedback to help us improve it!
-* Added 'pause' capability : you can pause/restore the game at anytime
-* You can exit the game by pressing 'back' button in the menu
-* In game help (see '?' icon)
-* General performance improvement and a new option to enable low-res graphics mode
-* New graphics stuff
-* Next update will feature gameplay content!

@@ -12,6 +12,4 @@
   <string name="previous_hero_replay">"Il precedente Te sta ripercorrendo il suo percorso"</string>
   <string name="avoid_him">"Evitalo: continuerà a collezionare punti!"</string>
   <string name="good_luck">"Buona fortuna!"</string>
-  <string name="high_quality_gfx_summ">"Abilita grafica ad alta qualità (richiede il riavvio del gioco)"</string>
-  <string name="low_quality_gfx_summ">"Abilita la grafica a bassa qualità (richiede il riavvio del gioco)"</string>
 </resources>

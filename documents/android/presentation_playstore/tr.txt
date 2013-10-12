@@ -7,19 +7,5 @@ Her oyunda 90 saniye için oynayacaksın.
 Aldatmaya mı çalışıyorsun ?
 Onları bir seferde kontrol edecek ve
 The challenge is to score with your current hero while avoiding your previous ones - if you hit one of them he will disappear forever.
-Swarm, the social gaming platform, need some permissions (no personnal datas used):
-Arama kayıtları: 
-Allows Swarm to prevent fraud and create a secure environment (no personally identifiable information is used).
-Ağ iletişimi:
-Kullanıcıların üyelik açmalarına , üye girişi yapmalarına , başarılarını kaydetmelerine , skorlarını skor panosuna postalamalarına ve internet mağazasından alım yapmasına izin verilir.
-Besides it allows Swarm to detect when a user is online or when the user's connection has been lost.
-Eğer yavaşlama olursa, "menü" butonundan düşük grafik modunu etkinleştirebilirsin
-(yeniden başlatmayı gerektirir)
 Recursive Runner oynarken eğlence duyacağınızı umuyoruz.
 Bir süredir oyunu geliştirmeyi planlıyor ve oyunculardan oyun hakkında geri dönmelerini ve bu sayede bizlere oyunun gelişiminde yardımcı olmalarını bekliyoruz!
-Eklenen durdurma yeteneği ile oyunu istediğiniz zaman durdurup yeniden başlatabilirsiniz.
-Menüdeki 'geri' tuşuna basarak oyundan çıkabilirsiniz.
-* Oyun içi yardım ('?' simgesi)
-* Genel performans gelişimi ve yeni özellikler düşük grafik modunda oynamaya olanak sağlar
-* Yeni grafikler
-Bir sonraki güncelleştirme oyun zevkini arttırmaya yönelik olacak!
