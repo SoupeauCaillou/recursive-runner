@@ -13,6 +13,4 @@
   <string name="avoid_him">"Avoid him: he'll keep scoring points!"</string>
   <string name="ten_heroes">"Try to get the best score with 10 You!"</string>
   <string name="good_luck">"Good luck!"</string>
-  <string name="high_quality_gfx_summ">"Enable high quality graphics (requires to restart the game)"</string>
-  <string name="low_quality_gfx_summ">"Enable low quality graphics (requires to restart the game)"</string>
 </resources>
