@@ -37,6 +37,7 @@
             "-DSAC_ENABLE_LOG=1",
             "-DSAC_LINUX=1",
             "-DSAC_DESKTOP=1",
+            "-DSAC_ASSETS_DIR=\"assets\"",
             "-DSAC_INGAME_EDITORS=1",
             "-DSAC_DEBUG=1"
         ]
