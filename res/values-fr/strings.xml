@@ -13,4 +13,6 @@
   <string name="avoid_him">"Évitez-le : il marque encore des points !"</string>
   <string name="ten_heroes">"Donnez le meilleur de vous même avec 10 Vous !"</string>
   <string name="good_luck">"Bonne chance !"</string>
+  <string name="Best">"Record "</string>
+  <string name="points">"points"</string>
 </resources>

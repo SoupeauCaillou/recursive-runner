@@ -114,7 +114,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
             if (!players.empty() && from == Scene::Game) {
                 TEXT(subtitleText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points)
-                + " points - " + game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
+                + " " + game->gameThreadContext->localizeAPI->text("points") + " - " + game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
 
                 //save the score in DB
                 ScoreStorageProxy ssp;
