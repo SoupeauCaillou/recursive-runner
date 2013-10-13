@@ -46,24 +46,26 @@ class AdScene : public StateHandler<Scene::Enum> {
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
     void onEnter(Scene::Enum) {
-       LOGI(gamesb4Ad << " game(s) left");
+#if SAC_DEBUG
+        static int minSpanTime = 3;
+#else
+        static int minSpanTime = 60;
+#endif
 
-       float timeSinceLAstAd = TimeUtil::GetTime() - lastAdTime;
+        float timeSinceLAstAd = TimeUtil::GetTime() - lastAdTime;
 
-       //anticheating?
-       if (gamesb4Ad > 3) {
-          gamesb4Ad = 3;
-       }
-
-
-       // postpone ad if previous ad was shown less than 60sec ago
-       else if (/*false && */gamesb4Ad <= 0 && timeSinceLAstAd < 60) {
-          gamesb4Ad = 1;
-       }
-
-       // must show an ad
-       else if (gamesb4Ad == 0) {
-           //try to launch the ad
+        LOGI(gamesb4Ad << " game(s) left. Last ad was " << timeSinceLAstAd << "s ago (min " << minSpanTime << ").");
+        
+        //if the user cheated and changed this value, reset it to 3
+        if (gamesb4Ad > 3) {
+            gamesb4Ad = 3;
+        // postpone ad if previous ad was shown less than "minSpanTime" sec ago
+        } else if (gamesb4Ad <= 0 && timeSinceLAstAd < minSpanTime) {
+            LOGI("Last ad was shown earlier than min delay. Postponing this");
+            gamesb4Ad = 1;
+        // must show an ad
+        } else if (gamesb4Ad == 0) {
+            //try to launch the ad
             if (game->gameThreadContext->adAPI->showAd(false)) {
                 lastAdTime = TimeUtil::GetTime();
             //if not ready, retry next game

@@ -549,6 +549,10 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
+    if (!gameThreadContext->adAPI->done()) {
+        return;
+    }
+
     if (BUTTON(muteBtn)->clicked) {
         //retrieve current state
         bool muted = gameThreadContext->storageAPI->isOption("sound", "off");
