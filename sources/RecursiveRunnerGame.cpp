@@ -50,6 +50,7 @@
 
 #include "api/LocalizeAPI.h"
 #include "api/StorageAPI.h"
+#include "api/InAppPurchaseAPI.h"
 #include "util/ScoreStorageProxy.h"
 
 #include "util/RecursiveRunnerDebugConsole.h"
@@ -102,8 +103,9 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
         case ContextAPI::Ad:
         case ContextAPI::Asset:
         case ContextAPI::Communication:
-        case ContextAPI::GameCenter:
         case ContextAPI::Exit:
+        case ContextAPI::GameCenter:
+        case ContextAPI::InAppPurchase:
         case ContextAPI::Localize:
         case ContextAPI::Music:
         case ContextAPI::Sound:
@@ -507,6 +509,8 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 
         //show splash interstitial
         gameThreadContext->adAPI->showAd(true);    
+
+        gameThreadContext->inAppPurchaseAPI->purchase("donation");
     }
 
 }

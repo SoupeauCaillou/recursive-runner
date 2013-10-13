@@ -25,10 +25,12 @@ import java.util.Arrays;
 
 
 import net.damsy.soupeaucaillou.recursiveRunner.R;
+import net.damsy.soupeaucaillou.sacgoogleplayinappbilling.SacGooglePlayInAppBillingPlugin;
 import net.damsy.soupeaucaillou.SacActivity;
 import net.damsy.soupeaucaillou.api.AdAPI;
 import net.damsy.soupeaucaillou.api.AssetAPI;
 import net.damsy.soupeaucaillou.api.GameCenterAPI;
+import net.damsy.soupeaucaillou.api.InAppPurchaseAPI;
 import net.damsy.soupeaucaillou.api.LocalizeAPI;
 import net.damsy.soupeaucaillou.api.SoundAPI;
 import net.damsy.soupeaucaillou.api.StorageAPI;
@@ -101,5 +103,9 @@ public class RecursiveRunnerActivity extends SacActivity {
         SacChartboostPlugin chartboost = new SacChartboostPlugin();
         chartboost.init(this, chartboost.new ChartboostParams(appId, appSignature));
         AdAPI.Instance().providers.add(chartboost);
+        
+        SacGooglePlayInAppBillingPlugin inapp = new SacGooglePlayInAppBillingPlugin();
+        InAppPurchaseAPI.Instance().init(this, inapp);
+        
 	}
 }
