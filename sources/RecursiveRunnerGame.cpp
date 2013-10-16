@@ -625,6 +625,8 @@ void RecursiveRunnerGame::setupCamera(CameraMode::Enum mode) {
     switch (mode) {
         case CameraMode::Single:
             LOGI("Setup camera : Single");
+            TRANSFORM(cameraEntity)->position.x = - PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
+            TRANSFORM(cameraEntity)->position.y = baseLine + TRANSFORM(cameraEntity)->size.y * 0.5;
             break;
         case CameraMode::Menu:
             LOGI("Setup camera : Menu");
