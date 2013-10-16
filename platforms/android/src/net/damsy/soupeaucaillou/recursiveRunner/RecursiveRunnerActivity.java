@@ -90,8 +90,7 @@ public class RecursiveRunnerActivity extends SacActivity {
         );
         GameCenterAPI.Instance().init(this, sgpgsp);
         
-        SacGooglePlayInAppBillingPlugin inapp = new SacGooglePlayInAppBillingPlugin();
-        InAppPurchaseAPI.Instance().init(this, inapp);
-        
+        // SacGooglePlayInAppBillingPlugin inapp = new SacGooglePlayInAppBillingPlugin();
+        // InAppPurchaseAPI.Instance().init(this, inapp);        
 	}
 }

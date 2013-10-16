@@ -126,7 +126,7 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
         case ContextAPI::Communication:
         case ContextAPI::Exit:
         case ContextAPI::GameCenter:
-        case ContextAPI::InAppPurchase:
+        // case ContextAPI::InAppPurchase:
         case ContextAPI::Localize:
         case ContextAPI::Music:
         case ContextAPI::Sound:
