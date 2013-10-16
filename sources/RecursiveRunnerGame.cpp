@@ -62,12 +62,22 @@
 #include <iomanip>
 
 
+#include "systems/AutonomousAgentSystem.h"
+#include "systems/CollisionSystem.h"
+#include "systems/ContainerSystem.h"
+#include "systems/DebuggingSystem.h"
+#include "systems/GraphSystem.h"
+#include "systems/GridSystem.h"
+#include "systems/MorphingSystem.h"
+#include "systems/ScrollingSystem.h"
+#include "systems/ZSQDSystem.h"
+
+
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
 RecursiveRunnerGame::RecursiveRunnerGame() {
-
    RunnerSystem::CreateInstance();
    CameraTargetSystem::CreateInstance();
    PlayerSystem::CreateInstance();
@@ -82,6 +92,19 @@ RecursiveRunnerGame::RecursiveRunnerGame() {
    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
    sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this), "Scene::RestartGame");
    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
+
+   // destroy sac unused systems
+   AutonomousAgentSystem::DestroyInstance();
+   CollisionSystem::DestroyInstance();
+   ContainerSystem::DestroyInstance();
+   DebuggingSystem::DestroyInstance();
+   GraphSystem::DestroyInstance();
+   GridSystem::DestroyInstance();
+   MorphingSystem::DestroyInstance();
+   ScrollingSystem::DestroyInstance();
+   ZSQDSystem::DestroyInstance();
+
+   Game::buildOrderedSystemsToUpdateList();
 }
 
 
@@ -132,9 +155,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "piano2", "piano2");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "pianojournal", "pianojournal");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "runL2R", "runL2R");
-
-    // init font
-//    loadFont(renderThreadContext->assetAPI, "typo");
 }
 
 void fumee(Entity building) {
