@@ -77,7 +77,6 @@ RecursiveRunnerGame::RecursiveRunnerGame() {
 
    sceneStateMachine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(this), "Scene::Logo");
    sceneStateMachine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(this), "Scene::Menu");
-   sceneStateMachine.registerState(Scene::Ad, Scene::CreateAdSceneHandler(this), "Scene::Ad");
    sceneStateMachine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(this), "Scene::Pause");
    sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this), "Scene::Rate");
    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
@@ -100,7 +99,6 @@ RecursiveRunnerGame::~RecursiveRunnerGame() {
 
 bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
     switch (api) {
-        case ContextAPI::Ad:
         case ContextAPI::Asset:
         case ContextAPI::Communication:
         case ContextAPI::Exit:
@@ -508,9 +506,6 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         #else
             sceneStateMachine.setup(Scene::Logo);
         #endif
-
-        //show splash interstitial
-        gameThreadContext->adAPI->showAd(true);    
     }
 
 }
@@ -553,10 +548,6 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
-    if (!gameThreadContext->adAPI->done()) {
-        return;
-    }
-
     if (BUTTON(muteBtn)->clicked) {
         //retrieve current state
         bool muted = gameThreadContext->storageAPI->isOption("sound", "off");

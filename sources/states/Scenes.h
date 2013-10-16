@@ -29,7 +29,6 @@ namespace Scene {
       Game,
       Tutorial,
       Pause,
-      Ad,
       Rate,
       RestartGame,
    };
@@ -42,7 +41,6 @@ namespace Scene {
   DECLARE_SCENE_HANDLER_FACTORY(Game)
   DECLARE_SCENE_HANDLER_FACTORY(Tutorial)
   DECLARE_SCENE_HANDLER_FACTORY(Pause)
-  DECLARE_SCENE_HANDLER_FACTORY(Ad)
   DECLARE_SCENE_HANDLER_FACTORY(Rate)
   DECLARE_SCENE_HANDLER_FACTORY(RestartGame)
 }

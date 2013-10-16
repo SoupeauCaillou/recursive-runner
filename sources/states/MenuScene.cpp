@@ -209,7 +209,7 @@ void backgroundUpdate(float) {
                     if (current == 0) {
                         return Scene::Tutorial;
                     } else {
-                        return Scene::Ad;
+                        return Scene::Game;
                     }
                 }
             }
