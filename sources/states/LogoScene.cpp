@@ -139,7 +139,8 @@ public:
         logoSM->registerState(LogoStep7,
             new LogoTimeBasedStateHandler(LogoStep7, 10),
             "LogoStep7");
-        logoSM->setup(LogoStep0);
+        logoSM->setup();
+        logoSM->start(LogoStep0);
     }
 
 

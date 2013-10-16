@@ -497,14 +497,16 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     }
     updateBestScore();
 
+    sceneStateMachine.setup();
+
     //recover
     if (size > 0 && in) {
-        sceneStateMachine.setup(Scene::Pause);
+        sceneStateMachine.start(Scene::Pause);
     } else {
         #if SAC_DEBUG
-            sceneStateMachine.setup(Scene::Menu);
+            sceneStateMachine.start(Scene::Menu);
         #else
-            sceneStateMachine.setup(Scene::Logo);
+            sceneStateMachine.start(Scene::Logo);
         #endif
     }
 

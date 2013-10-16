@@ -414,7 +414,8 @@ public:
         gameScene.onEnter(Scene::Tutorial);
         waitingClick = true;
 
-        tutorialStateMachine.setup(Tutorial::Title);
+        tutorialStateMachine.setup();
+        tutorialStateMachine.start(Tutorial::Title);
 
         RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT(game->scoreText)->show = false;
     }
