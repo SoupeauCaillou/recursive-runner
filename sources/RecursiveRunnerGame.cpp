@@ -511,8 +511,6 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 
         //show splash interstitial
         gameThreadContext->adAPI->showAd(true);    
-
-        gameThreadContext->inAppPurchaseAPI->purchase("donation");
     }
 
 }
