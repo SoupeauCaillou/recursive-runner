@@ -841,7 +841,6 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
         Entity link3 = theEntityManager.CreateEntity("link3", 
             EntityType::Persistent, link3Template);
         TRANSFORM(link3)->size = TRANSFORM(link)->size * glm::vec2(1, 0.1);
-        RENDERING(link3)->color.a =  (transition ? 0 : 1);
         ANCHOR(link3)->parent = link;
         ANCHOR(link3)->position = glm::vec2(0, TRANSFORM(link)->size.y * 0.4);
         PARTICULE(link3)->emissionRate = 100 * TRANSFORM(link)->size.x * TRANSFORM(link)->size.y;

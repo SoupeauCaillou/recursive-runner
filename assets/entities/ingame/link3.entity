@@ -3,11 +3,6 @@
 [Anchor]
 z = 0.2
 
-[Rendering]
-texture = ampoule
-show = 1
-opaque_type = 0
-
 [Particule]
 duration = 0
 lifetime = 0.1, 0.1
