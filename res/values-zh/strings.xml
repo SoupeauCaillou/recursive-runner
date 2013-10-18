@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="tap_screen_to_start">"\t輕觸屏幕開始"</string>
+  <string name="tap_screen_to_start">"輕觸屏幕開始"</string>
   <string name="tap_screen_to_restart">"輕觸屏幕重新開始"</string>
   <string name="how_to_play">"如何玩？（輕觸以繼續）"</string>
   <string name="this_is_you">"這是你"</string>
