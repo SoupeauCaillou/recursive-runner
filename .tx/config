@@ -2,8 +2,8 @@
 host = https://www.transifex.com
 
 [recursive-runner.playstore-presentation]
-file_filter = documents/android/presentation_playstore/<lang>.txt
-source_file = documents/android/presentation_playstore/en.txt
+file_filter = external_res/documents/android/presentation_playstore/<lang>.txt
+source_file = external_res/documents/android/presentation_playstore/en.txt
 source_lang = en
 
 [recursive-runner.ingame-strings-v2]

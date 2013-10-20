@@ -1,11 +1,11 @@
-Corra, pule e pontue! Parece fácil?
+Corra, pule e marque pontos! Parece fácil?
 Claro, exceto que há um obstáculo correndo e pulando para se evitar: Você! (e Você (e Você (e Você (e...))))
-Experimente a tipo de jogo de corrida completamente novo!
+Experimente um jogo de corredor completamente novo!
 Acostumado a jogar até ser acertado por um obstáculo?
 Você vai jogar por 90 segundos cada jogo.
 Acostumado a controlar 1 herói correndo? Nós vamos dar a você 10 deles.
 O truque?
-Você controle eles um por vez e, quando você terminar com um, ele vai fazer a mesma corrida denovo e denovo e continuar a pontuar para você.
+Você controla um deles por vez, e quando você terminar com um, ele vai fazer a mesma corrida denovo e denovo e continuar a pontuar para você.
 O desafio é pontuar com seu herói atual enquanto evita seus anteriores - se você acertar um deles, ele vai desaparecer para sempre.
 Nós esperamos que você goste do Recursive Runner.
-Planejamos continuar atualizando o jogo por um tempo, e estamos esperando pelo feedback dos jogadores para nos ajudar a melhorá-lo!
+Planejamos continuar atualizando o jogo por um tempo, e estamos aguardando opiniões dos jogadores para nos ajudar a melhorá-lo!
