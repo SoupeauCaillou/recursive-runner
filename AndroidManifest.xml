@@ -10,7 +10,10 @@
 
 	<uses-feature android:glEsVersion="0x00020000" />
 
-    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="9"/>
+    <!-- minSdkVersion = 9 because of http://code.google.com/p/android/issues/detail?id=43819 -->
+    <!-- targetSdkVersion = 11 because of https://developer.android.com/distribute/googleplay/quality/tablet.html#android-versions -->
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="11"/>
+
     <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
 
     <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication" android:allowBackup="true">
