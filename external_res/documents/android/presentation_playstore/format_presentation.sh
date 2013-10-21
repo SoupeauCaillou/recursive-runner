@@ -14,16 +14,17 @@ fi
 declare -A semantic
 #add there your specific presentation format
 semantic[1]=""
-semantic[2]="\n"
+semantic[2]="\n\n\n"
 semantic[3]="\n"
 semantic[4]=""
 semantic[5]="\n"
 semantic[6]=""
 semantic[7]=""
 semantic[8]="\n"
-semantic[9]="\n"
-semantic[10]="\n*** "
-semantic[11]="***\n"
+semantic[9]="\n\n"
+semantic[10]="\n\n*** "
+semantic[11]=""
+semantic[12]="***\n"
 
 
 function parse_file {

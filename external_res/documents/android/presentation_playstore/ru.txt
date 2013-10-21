@@ -7,5 +7,6 @@
 хитрость?
 Вы можете ими управлять по одному за раз. После завершения, то он будет повторить в той же последовательности на неопределенный срок и будет продолжать набрать очки для вас.
 Задача состоит в том, чтобы набрать очки с персонажом, который вы управляете, избегая при этом предыдующих - если вы касаетесь одного, то он исчезнет навсегда.
+Several achievements to earn and a leaderboard to master!
 We hope you’ll enjoy Recursive Runner.
 We plan to keep updating the game for a while, and are waiting for player feedback to help us improve it!

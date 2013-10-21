@@ -7,5 +7,6 @@ Vous êtes habitué à contrôler un seul personnage qui court : là vous en aur
 L'astuce ?
 Vous les contrôlez 1 par 1. Une fois fini avec 1, il répétera la même séquence à l'infini et continuera à marquer des points pour vous.
 Le challenge est d'arriver à marquer des points avec le personnage que vous dirigez tout en évitant les précédents - si vous en touchez un il dispaîtra à tout jamais.
+Des succès à débloquer et un classement à maîtriser !
 Nous espéreons que vous apprécierez Recursive Runner.
 Nous prévoyons de le mettre à jour régulièrement : aidez nous en nous envoyant vos remarques (ou critiques :)) par mail

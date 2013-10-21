@@ -7,5 +7,6 @@ Acostumado a controlar 1 herói correndo? Nós vamos dar a você 10 deles.
 O truque?
 Você controla um deles por vez, e quando você terminar com um, ele vai fazer a mesma corrida denovo e denovo e continuar a pontuar para você.
 O desafio é pontuar com seu herói atual enquanto evita seus anteriores - se você acertar um deles, ele vai desaparecer para sempre.
+Several achievements to earn and a leaderboard to master!
 Nós esperamos que você goste do Recursive Runner.
 Planejamos continuar atualizando o jogo por um tempo, e estamos aguardando opiniões dos jogadores para nos ajudar a melhorá-lo!
