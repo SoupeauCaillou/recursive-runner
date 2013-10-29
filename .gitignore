@@ -18,3 +18,4 @@ Parameters.h
 *.jar
 *.o
 recursiveRunner.sublime-workspace
+jni/
