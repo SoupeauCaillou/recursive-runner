@@ -26,6 +26,7 @@
 #include "base/TouchInputManager.h"
 #include "base/PlacementHelper.h"
 #include "base/StateMachine.h"
+#include "base/StateMachine.inl"
 
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"

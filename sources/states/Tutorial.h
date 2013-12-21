@@ -3,6 +3,7 @@
 #include "base/Entity.h"
 #include "base/PlacementHelper.h"
 #include "base/TouchInputManager.h"
+#include "base/StateMachine.inl"
 
 #include "api/LocalizeAPI.h"
 

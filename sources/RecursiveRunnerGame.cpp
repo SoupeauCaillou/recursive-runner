@@ -28,6 +28,7 @@
 #include "base/TimeUtil.h"
 #include "base/PlacementHelper.h"
 #include "base/ObjectSerializer.h"
+#include "base/StateMachine.inl"
 
 #include "systems/AnchorSystem.h"
 #include "systems/TransformationSystem.h"
