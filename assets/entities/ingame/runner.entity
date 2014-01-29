@@ -1,6 +1,6 @@
 [Transformation]
 size%gimp = 200, 210
-z = 0.8
+z = 0.9
 
 [Rendering]
 show = 1

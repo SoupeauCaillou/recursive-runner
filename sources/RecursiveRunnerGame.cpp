@@ -373,7 +373,6 @@ void RecursiveRunnerGame::decor() {
     const bool muted = gameThreadContext->storageAPI->isOption("sound", "off");
     pianist = theEntityManager.CreateEntity("background/pianist",
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
-    RENDERING(pianist)->color.a = 0.8;
     ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
 
     std::vector<Entity> cameras = theCameraSystem.RetrieveAllEntityWithComponent();

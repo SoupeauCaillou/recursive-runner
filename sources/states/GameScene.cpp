@@ -448,7 +448,7 @@ static void updateSessionTransition(const SessionComponent* session, float progr
         RENDERING(session->coins[i])->color.a = progress;
     }
     for (unsigned i=0; i<session->links.size(); i++) {
-        RENDERING(session->links[i])->color.a = progress * 0.65;
+        RENDERING(session->links[i])->color.a = progress;
     }
     theRunnerSystem.forEachEntityDo([progress] (Entity e) -> void {
         RENDERING(e)->color.a = progress;

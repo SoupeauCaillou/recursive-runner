@@ -1,6 +1,6 @@
 [Transformation]
 size%gimp = 591, 166
-z = 0.8
+z = 0.91
 
 [Rendering]
 texture = score
