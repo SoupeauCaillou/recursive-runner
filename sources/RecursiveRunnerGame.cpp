@@ -59,7 +59,6 @@
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/rotate_vector.hpp>
-#include <glm/core/func_geometric.hpp>
 #include <iomanip>
 
 
