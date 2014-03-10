@@ -203,6 +203,10 @@ void backgroundUpdate(float) {
                 //only if we did not hit left area zone (buttons)
                 auto touchPos = theTouchInputManager.getTouchLastPosition(0);
                 if (touchPos.x >= TRANSFORM(game->muteBtn)->position.x + TRANSFORM(game->muteBtn)->size.x * BUTTON(game->muteBtn)->overSize * 0.5) {
+
+#if SAC_EMSCRIPTEN
+                    return Scene::Game;
+#else
                     int current = ObjectSerializer<int>::string2object(game->gameThreadContext->storageAPI->getOption("gameCount"));
                     game->gameThreadContext->storageAPI->setOption("gameCount", ObjectSerializer<int>::object2string(current + 1), "0");
 
@@ -211,6 +215,7 @@ void backgroundUpdate(float) {
                     } else {
                         return Scene::Game;
                     }
+#endif
                 }
             }
             return Scene::Menu;

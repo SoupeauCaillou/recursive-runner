@@ -369,7 +369,12 @@ void RecursiveRunnerGame::decor() {
     bestScore = theEntityManager.CreateEntity("background/best_score",
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/best_score"));
 
-    const bool muted = gameThreadContext->storageAPI->isOption("sound", "off");
+    const bool muted =
+#if SAC_EMSCRIPTEN
+            true;
+#else
+            gameThreadContext->storageAPI->isOption("sound", "off");
+#endif
     pianist = theEntityManager.CreateEntity("background/pianist",
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
     ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
@@ -571,7 +576,12 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 void RecursiveRunnerGame::tick(float dt) {
     if (BUTTON(muteBtn)->clicked) {
         //retrieve current state
-        bool muted = gameThreadContext->storageAPI->isOption("sound", "off");
+        bool muted =
+#if SAC_EMSCRIPTEN
+            true;
+#else
+            gameThreadContext->storageAPI->isOption("sound", "off");
+#endif
         
         //and invert it
         muted = ! muted;
