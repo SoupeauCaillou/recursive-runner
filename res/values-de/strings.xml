@@ -11,5 +11,8 @@
   <string name="new_hero">"Dann kommt schon dein neues Ich"</string>
   <string name="previous_hero_replay">"Dein vorher-Ich rennt seine vorherige Strecke ab"</string>
   <string name="avoid_him">"Weiche ihm aus: Er bringt dir weiter deine Punkte!"</string>
+  <string name="ten_heroes">"Versuche mit 10 Ichs das beste Ergebnis zu erhalten!"</string>
   <string name="good_luck">"Viel Glück!"</string>
+  <string name="Best">"Beste"</string>
+  <string name="points">"Punkte"</string>
 </resources>

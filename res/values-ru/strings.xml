@@ -11,5 +11,8 @@
   <string name="new_hero">"Затем, вас появится новый вы"</string>
   <string name="previous_hero_replay">"Ваше предыдущее Вы снова повторяет свой ход!"</string>
   <string name="avoid_him">"Избегайте его: он набирает больше очков!"</string>
+  <string name="ten_heroes">"Попытате, чтобы получить лучший балл с 10 вы."</string>
   <string name="good_luck">"Удачи !"</string>
+  <string name="Best">"Лучше всего"</string>
+  <string name="points">"Очки"</string>
 </resources>

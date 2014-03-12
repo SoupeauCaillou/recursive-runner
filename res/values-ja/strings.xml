@@ -2,12 +2,17 @@
 <resources>
   <string name="tap_screen_to_start">"画面をタップしてスタート"</string>
   <string name="tap_screen_to_restart">"画面をタップしてもう一度"</string>
+  <string name="how_to_play">"遊び方(タップして続ける)"</string>
   <string name="this_is_you">"これはあなたです"</string>
+  <string name="tap_jump">"画面をタップするとジャンプします"</string>
   <string name="turn_on">"明かりを点けると得点が増えます"</string>
   <string name="longer_press">"長押しすることで高くジャンプできます"</string>
-  <string name="run_edge">"画面の端まで走ります"</string>
-  <string name="new_hero">"すると、新しいあなたが走り出します"</string>
-  <string name="previous_hero_replay">"前のあなたがその走りをリプレイします"</string>
-  <string name="avoid_him">"彼に触れてはいけません。彼がいることで点数が増えます。"</string>
+  <string name="run_edge">"画面の端まで走ると・・・"</string>
+  <string name="new_hero">"新しいあなたが走り出します"</string>
+  <string name="previous_hero_replay">"前のあなたがその走りをリプレイしています"</string>
+  <string name="avoid_him">"彼に触れてはいけません。彼がいることで得点が増えます。"</string>
+  <string name="ten_heroes">"10人のあなたでベストスコアを目指しましょう！"</string>
   <string name="good_luck">"では幸運を！"</string>
+  <string name="Best">"最高スコア"</string>
+  <string name="points">"ポイント"</string>
 </resources>

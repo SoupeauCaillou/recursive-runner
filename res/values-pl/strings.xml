@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">"Dotknij ekranu, aby rozpocząć"</string>
+  <string name="tap_screen_to_restart">"dotknij ekran, aby uruchomić ponownie"</string>
+  <string name="how_to_play">"Jak zagrać? (dotknij, aby kontynuować)"</string>
+  <string name="this_is_you">"To jesteś Ty"</string>
+  <string name="tap_jump">"Dotknij ekranu, aby wykonać skok"</string>
+  <string name="turn_on">"Włącz światła, aby zdobyć punkty"</string>
+  <string name="longer_press">"Dotknij dłużej, aby wykonać wyższe skoki"</string>
+  <string name="run_edge">"Będziesz biegł, aż do krawędzi ekranu"</string>
+  <string name="new_hero">"Następnie będzie nowy Ty"</string>
+  <string name="previous_hero_replay">"Poprzedni-Ty powtarza swój bieg"</string>
+  <string name="avoid_him">"Unikaj go: on będzie dalej zbierał punkty!"</string>
+  <string name="ten_heroes">"Staraj się uzyskać jak najlepszy wynik z 10-cioma Ty!"</string>
+  <string name="good_luck">"Powodzenia!"</string>
+  <string name="Best">"Najlepszy"</string>
+  <string name="points">"punkty"</string>
+</resources>

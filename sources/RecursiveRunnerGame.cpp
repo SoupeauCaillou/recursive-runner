@@ -701,11 +701,12 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
     uint8_t* ptr = *out = new uint8_t[finalSize + 2 * sizeof(int)];
 
     /* save entity/system thingie */
-    ptr = (uint8_t*)mempcpy(ptr, &eSize, sizeof(eSize));
-    ptr = (uint8_t*)mempcpy(ptr, &sSize, sizeof(sSize));
-    ptr = (uint8_t*)mempcpy(ptr, entities, eSize);
-    ptr = (uint8_t*)mempcpy(ptr, systems, sSize);
-    std::cout << eSize << ", " << sSize << std::endl;
+    MEMPCPY(uint8_t*, ptr, &eSize, sizeof(eSize));
+    MEMPCPY(uint8_t*, ptr, &sSize, sizeof(sSize));
+    MEMPCPY(uint8_t*, ptr, entities, eSize);
+    MEMPCPY(uint8_t*, ptr, systems, sSize);
+    
+    LOGV(1, eSize << ", " << sSize);
     return finalSize;
 }
 

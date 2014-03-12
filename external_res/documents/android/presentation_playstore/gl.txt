@@ -1,0 +1,12 @@
+Corre, salta e gaña puntos! Parece doado non si?
+De certo, se non fose que hai un obstáculo que corre e dá chimpos coma ti: Ti! (e Ti (e Ti (e Ti (e...))))
+Proba un novo tipo de xogo de correr!
+Afeito a xogar ata que es golpeado por un obstáculo?
+Xogarás durante 90 segundos en cada partida.
+Estás afeito a controlar 1 corredor? Nós darémosche ata 10.
+Cal é o truco?
+Controlas un deles por cada partida e cando esteas pronto con un, o seguinte fará a mesma carreira unha e outra vez e continuará gañando puntos para ti.
+O reto é sumar puntos co corredor actual ao tempo que evitas colidir cos anteriores; se te espetas cun deles, desaparecerá para sempre.
+Varios logros para conseguir e unha táboa clasificatoria que dominar!
+Agardamos que o pases ben co Recursive Runner.
+Temos previsto manter actualizado o xogo durante un tempo e agardamos as suxestións dos xogadores para axudarnos a melloralo!
