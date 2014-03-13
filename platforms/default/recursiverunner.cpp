@@ -19,8 +19,15 @@
 #include "RecursiveRunnerGame.h"
 #include "app/AppSetup.h"
 
+#include <RecursiveRunnerGitVersion.h>
+    
 int main(int argc, char** argv) {
-    if (initGame("Recursive Runner", glm::ivec2(800, 600))) {
+    std::string versionName = "";
+    #if SAC_DEBUG
+        versionName = versionName + " / " + TAG_NAME + " - " + VERSION_NAME;
+    #endif
+
+    if (initGame("Recursive Runner", glm::ivec2(800, 600), versionName)) {
         LOGE("Failed to initialize");
         return 1;
     }
