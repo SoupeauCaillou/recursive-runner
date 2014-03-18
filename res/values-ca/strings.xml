@@ -3,6 +3,10 @@
   <string name="tap_screen_to_start">"Toca la pantalla per començar"</string>
   <string name="tap_screen_to_restart">"toca la pantalla per tornar a començar"</string>
   <string name="how_to_play">"Com es juga? (toca per continuar)"</string>
-  <string name="this_is_you">"Aquest ets tu"</string>
   <string name="tap_jump">"Toca la pantalla per saltar"</string>
+  <string name="turn_on">"Encén els llums per fer punts"</string>
+  <string name="longer_press">"Prem una estona per saltar més amunt"</string>
+  <string name="good_luck">"Bona sort!"</string>
+  <string name="Best">"Millor"</string>
+  <string name="points">"punts"</string>
 </resources>

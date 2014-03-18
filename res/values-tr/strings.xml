@@ -6,6 +6,5 @@
   <string name="tap_jump">"Zıplamak için ekrana dokun"</string>
   <string name="turn_on">"Puan toplamak için ışıkları aç"</string>
   <string name="longer_press">"Daha yüksek zıplamak için uzun süre bas"</string>
-  <string name="run_edge">"Ekranın köşesine kadar koşacaksın!"</string>
   <string name="good_luck">"İyi Şanslar!"</string>
 </resources>

@@ -3,15 +3,9 @@
   <string name="tap_screen_to_start">"Berühre Bildschirm um zu starten"</string>
   <string name="tap_screen_to_restart">"Berühre Bildschirm zum Neustart"</string>
   <string name="how_to_play">"Wie wird gespielt? (Berühre zum Fortfahren)"</string>
-  <string name="this_is_you">"Das bist Du"</string>
   <string name="tap_jump">"Berühre den Bildschirm um zu springen"</string>
   <string name="turn_on">"Schalte die Lichter an um zu punkten"</string>
   <string name="longer_press">"Längeres Drücken bedeutet höhere Sprünge"</string>
-  <string name="run_edge">"Du rennst bis zum Ende des Bildschirms"</string>
-  <string name="new_hero">"Dann kommt schon dein neues Ich"</string>
-  <string name="previous_hero_replay">"Dein vorher-Ich rennt seine vorherige Strecke ab"</string>
-  <string name="avoid_him">"Weiche ihm aus: Er bringt dir weiter deine Punkte!"</string>
-  <string name="ten_heroes">"Versuche mit 10 Ichs das beste Ergebnis zu erhalten!"</string>
   <string name="good_luck">"Viel Glück!"</string>
   <string name="Best">"Beste"</string>
   <string name="points">"Punkte"</string>

@@ -3,15 +3,9 @@
   <string name="tap_screen_to_start">"Toca a pantalla para xogar"</string>
   <string name="tap_screen_to_restart">"toca a pantalla para volver xogar"</string>
   <string name="how_to_play">"Como xogar? (toca para continuar)"</string>
-  <string name="this_is_you">"Este es Ti"</string>
   <string name="tap_jump">"Toca a pantalla para dar chimpos"</string>
   <string name="turn_on">"Prende as luces para gañar puntos"</string>
   <string name="longer_press">"Toque longo para facer chimpos máis altos"</string>
-  <string name="run_edge">"Correrás ata o bordo da pantalla."</string>
-  <string name="new_hero">"Despois, hai un novo Ti"</string>
-  <string name="previous_hero_replay">"O Ti anterior está volvendo a xogar"</string>
-  <string name="avoid_him">"Evítao: el seguirá sumando puntos!"</string>
-  <string name="ten_heroes">"Tenta conseguir a mellor puntuación con 10 coma ti!"</string>
   <string name="good_luck">"Boa sorte!"</string>
   <string name="Best">"Mellor"</string>
   <string name="points">"puntos"</string>

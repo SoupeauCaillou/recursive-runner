@@ -3,13 +3,8 @@
   <string name="tap_screen_to_start">"Tocca lo schermo per iniziare"</string>
   <string name="tap_screen_to_restart">"tocca lo schermo per riavviare"</string>
   <string name="how_to_play">"Come si gioca? (tocca per continuare)"</string>
-  <string name="this_is_you">"Questo sei Tu"</string>
   <string name="tap_jump">"Tocca lo schermo per saltare"</string>
   <string name="turn_on">"Accendi le luci per collezionare punti"</string>
   <string name="longer_press">"Tieni premuto più a lungo per saltare più in alto"</string>
-  <string name="run_edge">"Correrai fino al bordo dello schermo"</string>
-  <string name="new_hero">"Poi, ecco un nuovo Te"</string>
-  <string name="previous_hero_replay">"Il precedente Te sta ripercorrendo il suo percorso"</string>
-  <string name="avoid_him">"Evitalo: continuerà a collezionare punti!"</string>
   <string name="good_luck">"Buona fortuna!"</string>
 </resources>

@@ -1,12 +1,12 @@
-Run, jump and score points! Sound easy?
-Sure, except there is a running and jumping obstacle to avoid: You! (and You (and You (and You (and...))))
-Experience an all new kind of running game!
-Used to play until being hit by an obstacle?
-You’ll play for 90 seconds each game.
-Used to control 1 running hero? We’ll give you 10 of them.
-The trick?
-You control them one at a time, and when you’re done with one, he will do the same run over and over and continue to score points for you.
-The challenge is to score with your current hero while avoiding your previous ones - if you hit one of them he will disappear forever.
-Several achievements to earn and a leaderboard to master!
-We hope you’ll enjoy Recursive Runner. 
-We removed ads from game since we don't like intrusive content!
+Corre, salta i fes punts! Sembla fàcil?
+Segur, excepte que hi ha un obstacle que corre i salta: tu! (i tu (i tu (i t (i...))))
+Experimenta un tipus de joc de moviment nou!
+Estàs acostumat a jugar fins que et toca un obstacle?
+Cada partida dura 90 segons.
+Normalment controles 1 heroi en moviment? Te'n donem 10.
+El truc?
+You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
+The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Several achievements to earn and a leaderboard to climb!
+There are no ads in the game, since we like you, and that you dont like ads that dont like you
+We hope you like avoiding recursivly running into a phantom-mime.

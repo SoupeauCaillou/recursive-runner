@@ -5,8 +5,8 @@ Normalmente giochi fino a quando non ti colpisce un ostacolo?
 Giocherai 90 secondi per ogni partita.
 Normalmente controlli un eroe che corre? Te ne daremo dieci.
 Il trucco?
-Li controlli uno alla volta, e quando hai finito con uno, lui ricomincerà lo stesso percorso più e più volte e continuerà a realizzare punti per te.
-La sfida è realizzare punti con il tuo eroe mentre eviti i te stesso precedenti - se ne colpisci uno, questi scomparirà per sempre.
-Several achievements to earn and a leaderboard to master!
-Speriamo ti divertirai con Recursive Runner. 
-We removed ads from game since we don't like intrusive content!
+You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
+The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Several achievements to earn and a leaderboard to climb!
+There are no ads in the game, since we like you, and that you dont like ads that dont like you
+We hope you like avoiding recursivly running into a phantom-mime.

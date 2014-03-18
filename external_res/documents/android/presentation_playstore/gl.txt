@@ -5,8 +5,8 @@ Afeito a xogar ata que es golpeado por un obstáculo?
 Xogarás durante 90 segundos en cada partida.
 Estás afeito a controlar 1 corredor? Nós darémosche ata 10.
 Cal é o truco?
-Controlas un deles por cada partida e cando esteas pronto con un, o seguinte fará a mesma carreira unha e outra vez e continuará gañando puntos para ti.
-O reto é sumar puntos co corredor actual ao tempo que evitas colidir cos anteriores; se te espetas cun deles, desaparecerá para sempre.
-Varios logros para conseguir e unha táboa clasificatoria que dominar!
-Agardamos que o pases ben co Recursive Runner. 
-We removed ads from game since we don't like intrusive content!
+You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
+The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Several achievements to earn and a leaderboard to climb!
+There are no ads in the game, since we like you, and that you dont like ads that dont like you
+We hope you like avoiding recursivly running into a phantom-mime.

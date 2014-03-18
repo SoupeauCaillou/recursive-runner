@@ -5,8 +5,8 @@
 1ゲームで90秒遊べます。
 1人の走者でプレイするんですか？いいえ、10人です。
 幻覚？
-プレイヤーは一度に1人のキャラクターを操作し、完走します。そうすると彼は同じように何度も繰り返して走り、あなたにポイントを加算していきます。
-あなたの現在の走者で、以前の走者を避けながらポイントを稼ぐことは難しいです。 -もし以前の走者に触れてしまったら、彼は永遠に消えてしまいます。
-Several achievements to earn and a leaderboard to master!
-あなたがRecursive Runnerを楽しんでくれることを願っています。 
-We removed ads from game since we don't like intrusive content!
+You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
+The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Several achievements to earn and a leaderboard to climb!
+There are no ads in the game, since we like you, and that you dont like ads that dont like you
+We hope you like avoiding recursivly running into a phantom-mime.

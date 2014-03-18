@@ -5,8 +5,8 @@ Sure, except there is a running and jumping obstacle to avoid: You! (and You (an
 Кожна гра триватиме 90 секунд
 Використовуєте одного героя? Ми дамо вам їх 10.
 Хитрість?
-Ви керуєте одним за раз, і після завершення, він продовжить бігти тим же маршрутом знову і знову збільшуючи ваші очки.
-Задача полягає в тому, щоб набирати очки з поточним героєм, уникаючи при цьому попередніх – якщо ви торкнетесь іншого, то він зникне назавжди.
-Кілька досягнень для новачків та таблиця рекордів для майстрів!
-Ми сподіваємось, що вам сподобається Recursive Runner. 
-We removed ads from game since we don't like intrusive content!
+You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
+The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Several achievements to earn and a leaderboard to climb!
+There are no ads in the game, since we like you, and that you dont like ads that dont like you
+We hope you like avoiding recursivly running into a phantom-mime.

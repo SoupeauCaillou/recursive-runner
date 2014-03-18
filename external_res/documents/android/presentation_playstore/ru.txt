@@ -5,8 +5,8 @@
 Здесь каждая игра длится 90 секунд.
 Вы привыкли управлять только одном персонажом, который бежит: там у вас будет 10.
 хитрость?
-Вы можете ими управлять по одному за раз. После завершения, то он будет повторить в той же последовательности на неопределенный срок и будет продолжать набрать очки для вас.
-Задача состоит в том, чтобы набрать очки с персонажом, который вы управляете, избегая при этом предыдующих - если вы касаетесь одного, то он исчезнет навсегда.
-Several achievements to earn and a leaderboard to master!
-We hope you’ll enjoy Recursive Runner. 
-We removed ads from game since we don't like intrusive content!
+You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
+The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Several achievements to earn and a leaderboard to climb!
+There are no ads in the game, since we like you, and that you dont like ads that dont like you
+We hope you like avoiding recursivly running into a phantom-mime.
