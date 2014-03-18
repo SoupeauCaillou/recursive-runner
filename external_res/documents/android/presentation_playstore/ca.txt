@@ -8,5 +8,5 @@ The trick?
 You control them one at a time, and when you’re done with one, he will do the same run over and over and continue to score points for you.
 The challenge is to score with your current hero while avoiding your previous ones - if you hit one of them he will disappear forever.
 Several achievements to earn and a leaderboard to master!
-We hope you’ll enjoy Recursive Runner.
-We plan to keep updating the game for a while, and are waiting for player feedback to help us improve it!
+We hope you’ll enjoy Recursive Runner. 
+We removed ads from game since we don't like intrusive content!

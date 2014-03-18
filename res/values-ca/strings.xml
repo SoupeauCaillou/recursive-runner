@@ -1,2 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources/>
+<resources>
+  <string name="tap_screen_to_start">"Toca la pantalla per començar"</string>
+  <string name="tap_screen_to_restart">"toca la pantalla per tornar a començar"</string>
+  <string name="how_to_play">"Com es juga? (toca per continuar)"</string>
+  <string name="this_is_you">"Aquest ets tu"</string>
+  <string name="tap_jump">"Toca la pantalla per saltar"</string>
+</resources>

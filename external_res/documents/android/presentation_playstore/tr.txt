@@ -8,5 +8,5 @@ Aldatmaya mı çalışıyorsun ?
 Onları bir seferde kontrol edecek ve
 The challenge is to score with your current hero while avoiding your previous ones - if you hit one of them he will disappear forever.
 Several achievements to earn and a leaderboard to master!
-Recursive Runner oynarken eğlence duyacağınızı umuyoruz.
-Bir süredir oyunu geliştirmeyi planlıyor ve oyunculardan oyun hakkında geri dönmelerini ve bu sayede bizlere oyunun gelişiminde yardımcı olmalarını bekliyoruz!
+Recursive Runner oynarken eğlence duyacağınızı umuyoruz. 
+We removed ads from game since we don't like intrusive content!

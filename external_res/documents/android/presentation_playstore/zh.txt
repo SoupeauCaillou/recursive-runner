@@ -8,5 +8,5 @@
 你可以一次只控制一個, 當你完成一個, 他會重新幫你跑一次, 再一次, 去繼續替你得分!
 你面對的挑戰是在你控制主角去得分的同時, 要避免之前的那些主角分身- 如果現在的主角擊中了其中一個分身的話，現在的主角也將永遠消失。
 Several achievements to earn and a leaderboard to master!
-希望你會喜歡Recursive Runner。
-我們打算不定時更新這遊戲, 同時等玩家你的意見, 讓我們可以讓遊戲更好玩!
+希望你會喜歡Recursive Runner。 
+We removed ads from game since we don't like intrusive content!

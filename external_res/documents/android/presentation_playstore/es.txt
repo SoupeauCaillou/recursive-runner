@@ -8,5 +8,5 @@ Jugarás 90 segundos por cada partida.
 Controlas a uno de ellos por cada partida y cuando estés listo con uno, él hará la misma carrera una y otra vez y continuará ganando puntos por ti.
 El reto es ganar puntuación con el personaje actual mientras evitas chocar con los anteriores - si chocas con uno de ellos, desaparecerá para siempre.
 Several achievements to earn and a leaderboard to master!
-Esperamos que disfrutes Recursive Runner.
-Planeamos mantener actualizando el juego por un tiempo y estamos esperando por información de los jugadores para mejorar el juego!
+Esperamos que disfrutes Recursive Runner. 
+We removed ads from game since we don't like intrusive content!

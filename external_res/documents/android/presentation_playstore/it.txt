@@ -8,5 +8,5 @@ Il trucco?
 Li controlli uno alla volta, e quando hai finito con uno, lui ricomincerà lo stesso percorso più e più volte e continuerà a realizzare punti per te.
 La sfida è realizzare punti con il tuo eroe mentre eviti i te stesso precedenti - se ne colpisci uno, questi scomparirà per sempre.
 Several achievements to earn and a leaderboard to master!
-Speriamo ti divertirai con Recursive Runner.
-Abbiamo intenzione di continuare ad aggiornare il gioco per un certo periodo di tempo, e stiamo aspettando le segnalazioni degli utenti per migliorarlo!
+Speriamo ti divertirai con Recursive Runner. 
+We removed ads from game since we don't like intrusive content!

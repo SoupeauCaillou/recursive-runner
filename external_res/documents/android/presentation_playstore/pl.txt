@@ -8,5 +8,5 @@ Sztuczka?
 Sterujesz zawsze tylko jednym. Kiedy zakończysz nim, powtórzy on swój bieg w kółko i będzie zdobywał dla Ciebie punkty.
 Staraj się osiągnąć punkty twoim bohaterem, unikając swoich poprzednich bohaterów. Jeśli się z nimi zderzysz, znikną na zawsze.
 Kilka osiągnięć do zdobycia i tabela liderów do mistrza!
-Mamy nadzieję, że spodobał ci się Recursive Runner.
-Planujemy na chwilę utrzymać aktualizację gry i czekamy na opinie graczy aby pomóc nam udoskonalić grę!
+Mamy nadzieję, że spodobał ci się Recursive Runner. 
+We removed ads from game since we don't like intrusive content!

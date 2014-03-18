@@ -1,2 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources/>
+<resources>
+  <string name="tap_screen_to_start">"Trykk for å starte"</string>
+  <string name="tap_screen_to_restart">"Trykk på skjermen for omstart"</string>
+  <string name="how_to_play">"Spillerveiledning? (trykk for å fortsette)"</string>
+  <string name="this_is_you">"Dette er deg"</string>
+  <string name="tap_jump">"Trykk på skjermen for å hoppe"</string>
+  <string name="turn_on">"Skru på lysene for å sanke poeng"</string>
+  <string name="longer_press">"Trykk lengre for å hoppe lenger"</string>
+  <string name="run_edge">"Du forsetter å springe til skjermens ende"</string>
+  <string name="new_hero">"Så er du gjenoppstanden"</string>
+  <string name="previous_hero_replay">"Ditt tidligere selv gjentar sitt ærend"</string>
+  <string name="avoid_him">"Unngå vedkommende, som vil forsette å sanke poeng!"</string>
+  <string name="ten_heroes">"Prøv å oppnå best mulig poengsum med 10 instanser av deg selv!"</string>
+  <string name="good_luck">"Lykke til!"</string>
+  <string name="Best">"Beste"</string>
+  <string name="points">"poeng"</string>
+</resources>

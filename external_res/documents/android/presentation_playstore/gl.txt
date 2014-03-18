@@ -8,5 +8,5 @@ Cal é o truco?
 Controlas un deles por cada partida e cando esteas pronto con un, o seguinte fará a mesma carreira unha e outra vez e continuará gañando puntos para ti.
 O reto é sumar puntos co corredor actual ao tempo que evitas colidir cos anteriores; se te espetas cun deles, desaparecerá para sempre.
 Varios logros para conseguir e unha táboa clasificatoria que dominar!
-Agardamos que o pases ben co Recursive Runner.
-Temos previsto manter actualizado o xogo durante un tempo e agardamos as suxestións dos xogadores para axudarnos a melloralo!
+Agardamos que o pases ben co Recursive Runner. 
+We removed ads from game since we don't like intrusive content!
