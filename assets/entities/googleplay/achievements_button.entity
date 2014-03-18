@@ -2,8 +2,8 @@
 size%gimp = 129, 92
 
 [Anchor]
-parent%name = gg/sign_in_out_button
-positionS%gimp_size= 0, 76
+parent%name = googleplay/leaderboards_button
+position%gimp_size= 0, -100
 z = 0
 
 [Rendering]
