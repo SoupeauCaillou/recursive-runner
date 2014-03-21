@@ -181,10 +181,14 @@ void fumee(Entity building) {
         Entity fumee = theEntityManager.CreateEntity("fumee",
             EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/fumee"));
         TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * glm::linearRand(0.5f, 0.8f);
-        ANCHOR(fumee)->parent = building;
-        ANCHOR(fumee)->position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
+
+        AnchorComponent ac;
+        ac.z = -0.1;
+        ac.parent = building;
+        ac.position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
         if (RENDERING(building)->mirrorH)
-            ANCHOR(fumee)->position.x = -ANCHOR(fumee)->position.x;
+            ac.position.x = -ANCHOR(fumee)->position.x;
+        AnchorSystem::adjustTransformWithAnchor(TRANSFORM(fumee), TRANSFORM(building), &ac);
         ANIMATION(fumee)->waitAccum = glm::linearRand(0.0f, 10.f);
     }
 }
@@ -704,7 +708,7 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
     MEMPCPY(uint8_t*, ptr, &sSize, sizeof(sSize));
     MEMPCPY(uint8_t*, ptr, entities, eSize);
     MEMPCPY(uint8_t*, ptr, systems, sSize);
-    
+
     LOGV(1, eSize << ", " << sSize);
     return finalSize;
 }
