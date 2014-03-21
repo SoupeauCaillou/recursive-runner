@@ -383,8 +383,6 @@ void RecursiveRunnerGame::decor() {
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
     ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
 
-    std::vector<Entity> cameras = theCameraSystem.RetrieveAllEntityWithComponent();
-    cameraEntity = cameras[0];
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
         leftMostCameraPos.x, -leftMostCameraPos.x);
@@ -443,10 +441,10 @@ void RecursiveRunnerGame::initGame() {
     scoreText = theEntityManager.CreateEntity("score_text",
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/score_text"));
 
-    std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
+    const auto& players = thePlayerSystem.RetrieveAllEntityWithComponent();
     TEXT(scoreText)->text = players.empty() ?
         "12345"
-        : ObjectSerializer<int>::object2string(PLAYER(players[0])->points);
+        : ObjectSerializer<int>::object2string(PLAYER(players.front())->points);
 
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0000")] =  CollisionZone(90,52,28,84,-0.1);
     texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0001")] =  CollisionZone(91,62,27,78,-0.1);
@@ -502,13 +500,11 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
 
         LOGI( index << "/" << size << "(" << eSize << ", " << sSize << ")" );
 
-        std::vector<Entity> all = theTransformationSystem.RetrieveAllEntityWithComponent();
-        for (unsigned i=0; i<all.size(); i++) {
-            if (TRANSFORM(all[i])->size.x > PlacementHelper::ScreenSize.x * param::LevelSize) {
-                ground = all[i];
-                break;
+        theTransformationSystem.forEachECDo([this] (Entity e, TransformationComponent* tc) -> void {
+            if (tc->size.x > PlacementHelper::ScreenSize.x * param::LevelSize) {
+                ground = e;
             }
-        }
+        });
     }
 
 #if SAC_INGAME_EDITORS && SAC_DEBUG
@@ -607,7 +603,6 @@ void RecursiveRunnerGame::tick(float dt) {
         bool pianistPlaying = !theMusicSystem.isMuted();
         if (pianistPlaying) {
             pianistPlaying = false;
-            std::vector<Entity> e = theMusicSystem.RetrieveAllEntityWithComponent();
             theMusicSystem.forEachECDo([&pianistPlaying] (Entity, MusicComponent* mc) -> void {
                 if (mc->opaque[0] && mc->control != MusicControl::Pause) {
                     pianistPlaying = true;
@@ -716,8 +711,8 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
 static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMin, float heightMax);
 
 void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
-    assert(theSessionSystem.RetrieveAllEntityWithComponent().empty());
-    assert(thePlayerSystem.RetrieveAllEntityWithComponent().empty());
+    LOGF_IF(theSessionSystem.entityCount() != 0, "Incoherent state. " << theSessionSystem.entityCount() << " sessions existing");
+    LOGF_IF(thePlayerSystem.entityCount() != 0, "Incoherent state. " << thePlayerSystem.entityCount() << " players existing");
 
     // Create session
     Entity session = theEntityManager.CreateEntity("session", EntityType::Persistent);
@@ -768,7 +763,7 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
 }
 
 void RecursiveRunnerGame::endGame() {
-    std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
+    const auto& sessions = theSessionSystem.RetrieveAllEntityWithComponent();
     if (!sessions.empty()) {
         SessionComponent* sc = SESSION(sessions.front());
         for(unsigned i=0; i<sc->runners.size(); i++)
@@ -779,10 +774,10 @@ void RecursiveRunnerGame::endGame() {
         std::for_each(sc->links.begin(), sc->links.end(), deleteEntityFunctor);
         std::for_each(sc->sparkling.begin(), sc->sparkling.end(), deleteEntityFunctor);
         theEntityManager.DeleteEntity(sessions.front());
-        // on supprime aussi tous les trucs temporaires (lumières, ...)
-        std::vector<Entity> temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
-        std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
     }
+    // on supprime aussi tous les trucs temporaires (lumières, ...)
+    const auto& temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
+    std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
 }
 
 

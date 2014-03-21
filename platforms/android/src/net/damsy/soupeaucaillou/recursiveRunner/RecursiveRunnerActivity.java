@@ -70,7 +70,7 @@ public class RecursiveRunnerActivity extends SacActivity {
 		AssetAPI.Instance().init(this, getAssets());
 		SoundAPI.Instance().init(getAssets());
 		LocalizeAPI.Instance().init(this.getResources(), this.getPackageName());
-
+/*
         SacGooglePlayGameServicesPlugin sgpgsp = new SacGooglePlayGameServicesPlugin();
         sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(false, 
                 Arrays.asList(new String[] { 
@@ -89,7 +89,7 @@ public class RecursiveRunnerActivity extends SacActivity {
             )
         );
         GameCenterAPI.Instance().init(this, sgpgsp);
-        
+        */
         // SacGooglePlayInAppBillingPlugin inapp = new SacGooglePlayInAppBillingPlugin();
         // InAppPurchaseAPI.Instance().init(this, inapp);        
 	}

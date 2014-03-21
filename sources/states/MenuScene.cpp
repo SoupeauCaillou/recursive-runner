@@ -1,20 +1,20 @@
 /*
-	This file is part of RecursiveRunner.
+    This file is part of RecursiveRunner.
 
-	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
-	@author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+    @author Soupe au Caillou - Gautier Pelloux-Prayer
 
-	RecursiveRunner is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3.
+    RecursiveRunner is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3.
 
-	RecursiveRunner is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    RecursiveRunner is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "base/StateMachine.h"
 #include "base/ObjectSerializer.h"
@@ -71,7 +71,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             titleGroup  = theEntityManager.CreateEntity("menu/title_group",
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title_group"));
             ADSR(titleGroup)->idleValue = PlacementHelper::ScreenSize.y + PlacementHelper::GimpYToScreen(400);
-            ADSR(titleGroup)->sustainValue = game->baseLine + PlacementHelper::ScreenSize.y 
+            ADSR(titleGroup)->sustainValue = game->baseLine + PlacementHelper::ScreenSize.y
                 - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y * 0.5
                 + PlacementHelper::GimpHeightToScreen(10);
             ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
@@ -101,7 +101,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
         ///--------------------- ENTER SECTION ----------------------------------------//
         ///----------------------------------------------------------------------------//
         void onPreEnter(Scene::Enum from) {
-            std::vector<Entity> temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
+            const auto& temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
             std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
 
             // activate animation
@@ -111,15 +111,15 @@ class MenuScene : public StateHandler<Scene::Enum> {
             game->setupCamera(CameraMode::Menu);
 
             // save score if any
-            std::vector<Entity> players = thePlayerSystem.RetrieveAllEntityWithComponent();
+            const auto& players = thePlayerSystem.RetrieveAllEntityWithComponent();
             if (!players.empty() && from == Scene::Game) {
-                TEXT(subtitleText)->text = ObjectSerializer<int>::object2string(PLAYER(players[0])->points)
+                TEXT(subtitleText)->text = ObjectSerializer<int>::object2string(PLAYER(players.front())->points)
                 + " " + game->gameThreadContext->localizeAPI->text("points") + " - " + game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
 
                 //save the score in DB
                 ScoreStorageProxy ssp;
-                ssp.setValue("points", ObjectSerializer<int>::object2string(PLAYER(players[0])->points), true); // ask to create a new score
-                ssp.setValue("coins", ObjectSerializer<int>::object2string(PLAYER(players[0])->coins), false);
+                ssp.setValue("points", ObjectSerializer<int>::object2string(PLAYER(players.front())->points), true); // ask to create a new score
+                ssp.setValue("coins", ObjectSerializer<int>::object2string(PLAYER(players.front())->coins), false);
                 ssp.setValue("name", "rzehtrtyBg", false);
                 game->gameThreadContext->storageAPI->saveEntries(&ssp);
 

@@ -1,20 +1,20 @@
 /*
-	This file is part of RecursiveRunner.
+    This file is part of RecursiveRunner.
 
-	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
-	@author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+    @author Soupe au Caillou - Gautier Pelloux-Prayer
 
-	RecursiveRunner is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3.
+    RecursiveRunner is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3.
 
-	RecursiveRunner is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    RecursiveRunner is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "base/StateMachine.h"
 #include "base/EntityManager.h"
@@ -57,10 +57,10 @@ class PauseScene : public StateHandler<Scene::Enum> {
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("pause/button"));
 
             TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i])) * 1.2f;
-            
-            ANCHOR(buttons[i])->parent = game->cameraEntity;            
+
+            ANCHOR(buttons[i])->parent = game->cameraEntity;
             ANCHOR(buttons[i])->position = glm::vec2((i-1) * TRANSFORM(game->scorePanel)->size.x * 0.35, 0);
-            
+
             RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile(textures[i]);
         }
         stopButton = buttons[0];
@@ -90,11 +90,11 @@ class PauseScene : public StateHandler<Scene::Enum> {
         TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
         //mute music
         if (!theMusicSystem.isMuted()) {
-            std::vector<Entity> musics = theMusicSystem.RetrieveAllEntityWithComponent();
-            for (unsigned i=0; i<musics.size(); i++) {
-                if (MUSIC(musics[i])->control == MusicControl::Play) {
-                    MUSIC(musics[i])->control = MusicControl::Pause;
-                    pausedMusic.push_back(musics[i]);
+            const auto& musics = theMusicSystem.RetrieveAllEntityWithComponent();
+            for (auto music: musics) {
+                if (MUSIC(music)->control == MusicControl::Play) {
+                    MUSIC(music)->control = MusicControl::Pause;
+                    pausedMusic.push_back(music);
                 }
             }
         }
@@ -133,7 +133,7 @@ class PauseScene : public StateHandler<Scene::Enum> {
     }
 
     void onExit(Scene::Enum to) {
-        std::vector<Entity> sessions = theSessionSystem.RetrieveAllEntityWithComponent();
+        const auto& sessions = theSessionSystem.RetrieveAllEntityWithComponent();
         if (!sessions.empty()) {
             const SessionComponent* session = SESSION(sessions.front());
             // restore physics for runners

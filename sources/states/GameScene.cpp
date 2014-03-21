@@ -1,20 +1,20 @@
 /*
-	This file is part of RecursiveRunner.
+    This file is part of RecursiveRunner.
 
-	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
-	@author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+    @author Soupe au Caillou - Gautier Pelloux-Prayer
 
-	RecursiveRunner is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3.
+    RecursiveRunner is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3.
 
-	RecursiveRunner is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    RecursiveRunner is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "base/StateMachine.h"
 
@@ -85,7 +85,7 @@ public:
         void onPreEnter(Scene::Enum from) {
             ADSR(transition)->active = true;
 
-            if (theSessionSystem.RetrieveAllEntityWithComponent().empty()) {
+            if (theSessionSystem.entityCount() == 0) {
                 RecursiveRunnerGame::startGame(game->level, true);
                 MUSIC(transition)->fadeOut = 2;
                 MUSIC(transition)->volume = 1;
@@ -168,7 +168,7 @@ public:
 
                     if (PLAYER(sc->players[i])->runnersCount == param::runner) {
                         // Game is finished, show either Rate Menu or Main Menu
-                        LOGW("Apprater is disabled yet!");   
+                        LOGW("Apprater is disabled yet!");
                         if (0 && game->gameThreadContext->communicationAPI->mustShowRateDialog()) {
                             return Scene::Rate;
                         } else {
@@ -299,7 +299,7 @@ public:
 
             // handle platforms
             {
-                std::vector<Entity> platformers = thePlatformerSystem.RetrieveAllEntityWithComponent();
+                const auto& platformers = thePlatformerSystem.RetrieveAllEntityWithComponent();
                 for (unsigned i=0; i<sc->platforms.size(); i++) {
                     Platform& pt = sc->platforms[i];
                     bool active = pt.switches[1].state & pt.switches[1].state & (
@@ -312,8 +312,9 @@ public:
                         } else {
                             RENDERING(pt.platform)->texture = InvalidTextureRef;
                         }
-                        for (unsigned k=0; k<platformers.size(); k++) {
-                            PLATFORMER(platformers[k])->platforms[pt.platform] = active;
+
+                        for (auto pl: platformers) {
+                            PLATFORMER(pl)->platforms[pt.platform] = active;
                         }
                     }
                 }
@@ -372,12 +373,12 @@ namespace Scene {
 
 static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
     Entity e = theEntityManager.CreateEntityFromTemplate("ingame/gain");
-    
+
     TRANSFORM(e)->position = TRANSFORM(parent)->position;
     TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
     TRANSFORM(e)->size = TRANSFORM(parent)->size;
     TRANSFORM(e)->z = TRANSFORM(parent)->z + (isGhost ? 0.1 : 0.11);
-    
+
     RENDERING(e)->color = color;
 
     PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
@@ -397,7 +398,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     RUNNER(e)->speed = direction * (param::speedConst + param::speedCoeff * p->runnersCount);
     RUNNER(e)->startTime = 0;//MathUtil::RandomFloatInRange(1,3);
     RUNNER(e)->playerOwner = player;
-    
+
     PLATFORMER(e)->offset = glm::vec2(0, TRANSFORM(e)->size.y * -0.5);
     PLATFORMER(e)->platforms.insert(std::make_pair(game->ground, true));
     for (unsigned i=0; i<sc->platforms.size(); i++) {
@@ -437,7 +438,7 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 
 
     p->runnersCount++;
-    LOGI("Add runner " << e << " at pos : " << TRANSFORM(e)->position << "}, speed: " << 
+    LOGI("Add runner " << e << " at pos : " << TRANSFORM(e)->position << "}, speed: " <<
         RUNNER(e)->speed << " (player=" << player << ')');
 
     return e;
