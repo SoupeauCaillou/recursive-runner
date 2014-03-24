@@ -218,6 +218,9 @@ void backgroundUpdate(float) {
 #endif
                 }
             }
+#if SAC_BENCHMARK_MODE
+            return Scene::Game;
+#endif
             return Scene::Menu;
         }
 

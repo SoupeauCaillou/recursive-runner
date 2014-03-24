@@ -472,7 +472,6 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                  int linkIdx = (rc->speed > 0) ? idx : end - idx;
                     if (rc->coins.back() == prev) {
                         rc->coinSequenceBonus++;
-                        #if 1
                         if (!rc->ghost) {
                             if (rc->speed > 0) {
                                 for (int j=1; j<rc->coinSequenceBonus; j++) {
@@ -486,8 +485,6 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                                 }
                             }
                         }
-                        #endif
-
                     } else {
                         rc->coinSequenceBonus = 1;
                     }
