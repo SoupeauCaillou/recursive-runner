@@ -35,7 +35,7 @@
 #include "systems/ParticuleSystem.h"
 #include "systems/AutoDestroySystem.h"
 #include "util/IntersectionUtil.h"
-
+#include "util/Random.h"
 #include "systems/PlayerSystem.h"
 #include "systems/RunnerSystem.h"
 #include "systems/CameraTargetSystem.h"
@@ -185,7 +185,11 @@ public:
                 if (!game->ignoreClick && sc->userInputEnabled) {
                     // Input (jump) handling
                     for (int j=0; j<1; j++) {
+#if SAC_BENCHMARK_MODE
+                        if (true) {
+#else
                         if (theTouchInputManager.isTouched(j)) {
+#endif
                             if (sc->numPlayers == 2) {
                                 const glm::vec2& ppp = theTouchInputManager.getTouchLastPosition(j);
                                 if (i == 0 && ppp.y < 0)
@@ -195,7 +199,12 @@ public:
                             }
                             PhysicsComponent* pc = PHYSICS(sc->currentRunner);
                             RunnerComponent* rc = RUNNER(sc->currentRunner);
+
+#if SAC_BENCHMARK_MODE
+                            if (Random::Float() > 0.9) {
+#else
                             if (!theTouchInputManager.wasTouched(j)) {
+#endif
                                 if (rc->jumpingSince <= 0 && pc->linearVelocity.y == 0) {
                                     rc->jumpTimes.push_back(rc->elapsed);
                                     rc->jumpDurations.push_back(dt);
