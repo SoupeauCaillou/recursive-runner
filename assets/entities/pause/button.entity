@@ -5,7 +5,7 @@ z = 0.9
              
 [Rendering]
 show = 0
-opaque_type = 0
+flags = 1
 
 [Button]
 enabled = 0

@@ -8,4 +8,4 @@ parent%name = tuto/title_group
 
 [Rendering]
 texture = taptostart
-opaque_type = 0
+flags = 1

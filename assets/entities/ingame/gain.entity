@@ -3,7 +3,7 @@
 [Rendering]
 texture = lumiere
 show = 1
-opaque_type = 0
+flags = 1
 
 [Particule]
 duration = 0.1

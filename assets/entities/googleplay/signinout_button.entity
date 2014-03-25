@@ -7,7 +7,7 @@ position%gimp_size= 0, -100
 z = 0
 
 [Rendering]
-opaque_type = 0
+flags = 1
 
 [Button]
 overSize = 1.2

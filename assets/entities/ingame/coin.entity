@@ -6,7 +6,7 @@ size%gimp = 99, 107
 [Rendering]
 texture = ampoule
 show = 1
-opaque_type = 0
+flags = 1
 
 [Particule]
 emission_rate = 150

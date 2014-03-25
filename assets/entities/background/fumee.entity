@@ -3,7 +3,7 @@
 [Rendering]
 show = 0
 color = 1, 1, 1, 1
-opaque_type = 0
+flags = 1
 
 [Animation]
 name = fumee_start

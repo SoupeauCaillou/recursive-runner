@@ -62,7 +62,10 @@ void PlatformerSystem::DoUpdate(float) {
                     pc->linearVelocity = glm::vec2(0.0f);
                     tc->position.y = pltfTC->position.y + tc->size.y * 0.5;
                     ANIMATION(entity)->name = "jumptorunL2R";
-                    RENDERING(entity)->mirrorH = (RUNNER(entity)->speed < 0);
+                    if (RUNNER(entity)->speed < 0)
+                        RENDERING(entity)->flags |= RenderingFlags::MirrorHorizontal;
+                    else
+                        RENDERING(entity)->flags &= ~(RenderingFlags::MirrorHorizontal);
                     newPosition = tc->position + glm::rotate(pltf->offset, tc->rotation);
                     pltf->onPlatform = it->first;
                     break;

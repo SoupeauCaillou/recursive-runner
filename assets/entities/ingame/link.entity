@@ -4,4 +4,4 @@ z = 0.6
 [Rendering]
 texture = link
 show = 1
-opaque_type = 0
+flags = 1

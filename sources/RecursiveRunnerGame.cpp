@@ -186,7 +186,7 @@ void fumee(Entity building) {
         ac.z = -0.1;
         ac.parent = building;
         ac.position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
-        if (RENDERING(building)->mirrorH)
+        if (RENDERING(building)->flags & RenderingFlags::MirrorHorizontal)
             ac.position.x = -ANCHOR(fumee)->position.x;
         AnchorSystem::adjustTransformWithAnchor(TRANSFORM(fumee), TRANSFORM(building), &ac);
         ANIMATION(fumee)->waitAccum = glm::linearRand(0.0f, 10.f);
@@ -309,8 +309,9 @@ void RecursiveRunnerGame::decor() {
         ADD_COMPONENT(b, Rendering);
         RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
         RENDERING(b)->show = true;
-        RENDERING(b)->mirrorH = bdef.mirrorUV;
-        RENDERING(b)->opaqueType = RenderingComponent::NON_OPAQUE;
+        RENDERING(b)->flags = RenderingFlags::NonOpaque;
+        if (bdef.mirrorUV)
+            RENDERING(b)->flags |= RenderingFlags::MirrorHorizontal;
         decorEntities.push_back(b);
 
         if (i < 3) {
@@ -357,12 +358,7 @@ void RecursiveRunnerGame::decor() {
                 TRANSFORM(bb)->position = TRANSFORM(b)->position + pos;
                 ADD_COMPONENT(bb, Rendering);
                 *RENDERING(bb) = *RENDERING(b);
-                #if 1
-                RENDERING(bb)->zPrePass = true;
-                #else
-                RENDERING(bb)->texture = InvalidTextureRef;
-                RENDERING(bb)->color = color;
-                #endif
+                RENDERING(bb)->flags = RenderingFlags::ZPrePass;
             }
         }
     }

@@ -434,7 +434,10 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
     CAM_TARGET(e)->camera = game->cameraEntity;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
 
-    RENDERING(e)->mirrorH = (direction < 0);
+    if (direction < 0)
+        RENDERING(e)->flags |= RenderingFlags::MirrorHorizontal;
+    else
+        RENDERING(e)->flags &= ~(RenderingFlags::MirrorHorizontal);
 
     Entity collisionZone = theEntityManager.CreateEntityFromTemplate("ingame/collision_zone");
     ANCHOR(collisionZone)->parent = e;

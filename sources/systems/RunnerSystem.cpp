@@ -1,20 +1,20 @@
 /*
-	This file is part of RecursiveRunner.
+    This file is part of RecursiveRunner.
 
-	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
-	@author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
+    @author Soupe au Caillou - Gautier Pelloux-Prayer
 
-	RecursiveRunner is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3.
+    RecursiveRunner is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3.
 
-	RecursiveRunner is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    RecursiveRunner is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "RunnerSystem.h"
 #include "base/EntityManager.h"
@@ -77,7 +77,7 @@ void RunnerSystem::DoUpdate(float dt) {
             tta->position = tc->size * cz.position;
             ttt->size = tc->size * cz.size;
             tta->rotation = cz.rotation;
-            if (rendc->mirrorH) {
+            if (rendc->flags & RenderingFlags::MirrorHorizontal) {
                 ttt->position.x = -ttt->position.x;
                 ttt->rotation = -ttt->rotation;
             }
@@ -99,7 +99,7 @@ void RunnerSystem::DoUpdate(float dt) {
             if ((tc->position.x > rc->endPoint.x && rc->speed > 0) ||
                 (tc->position.x < rc->endPoint.x && rc->speed < 0)) {
                 if (!rc->ghost)
-                    LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position 
+                    LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position
                         << ") "<< rc->endPoint.x);
                 ANIMATION(a)->name = "runL2R";
                 rc->finished = true;
@@ -127,7 +127,10 @@ void RunnerSystem::DoUpdate(float dt) {
                 rc->jumpingSince = 0.001;
                 pc->gravity.y = -50;
                 ANIMATION(a)->name = "jumpL2R_up";
-                RENDERING(a)->mirrorH = (rc->speed < 0);
+                if (rc->speed < 0)
+                    RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
+                else
+                    RENDERING(a)->flags &= ~(RenderingFlags::MirrorHorizontal);
             } else {
                 if (rc->jumpingSince > 0) {
                     rc->jumpingSince += dt;
@@ -145,7 +148,10 @@ void RunnerSystem::DoUpdate(float dt) {
         }
         if (pc->gravity.y < 0 && pc->linearVelocity.y < -10) {
             ANIMATION(a)->name = "jumpL2R_down";
-            RENDERING(a)->mirrorH = (rc->speed < 0);
+            if (rc->speed < 0)
+                RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
+            else
+                RENDERING(a)->flags &= ~(RenderingFlags::MirrorHorizontal);
         }
              /*RENDERING(a)->texture = InvalidTextureRef;
             ANIMATION(a)->name = "";*/

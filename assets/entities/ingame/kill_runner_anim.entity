@@ -2,7 +2,7 @@
 
 [Rendering]
 show = 1
-opaque_type = 0
+flags = 1
 
 [Animation]
 name = disappear2

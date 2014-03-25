@@ -8,6 +8,6 @@ z = 0.15
 [Rendering]
 texture = titre
 show = 1
-opaque_type = 0
+flags = 1
 
 [Music]
