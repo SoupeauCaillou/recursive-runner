@@ -101,7 +101,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
         ///--------------------- ENTER SECTION ----------------------------------------//
         ///----------------------------------------------------------------------------//
         void onPreEnter(Scene::Enum from) {
-            const auto& temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
+            const auto temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
             std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
 
             // activate animation

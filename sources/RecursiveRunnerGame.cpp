@@ -774,7 +774,7 @@ void RecursiveRunnerGame::endGame() {
         theEntityManager.DeleteEntity(sessions.front());
     }
     // on supprime aussi tous les trucs temporaires (lumières, ...)
-    const auto& temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
+    const auto temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
     std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
 }
 
