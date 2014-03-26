@@ -219,10 +219,10 @@ void RecursiveRunnerGame::decor() {
     struct Decor {
         float x, y, z;
         Cardinal::Enum ref;
-        std::string texture;
+        const char* texture;
         bool mirrorUV;
         Entity parent;
-        Decor(float _x=0, float _y=0, float _z=0, Cardinal::Enum _ref=Cardinal::C, const std::string& _texture="", bool _mirrorUV=false, Entity _parent=0) :
+        Decor(float _x=0, float _y=0, float _z=0, Cardinal::Enum _ref=Cardinal::C, const char* _texture="", bool _mirrorUV=false, Entity _parent=0) :
             x(_x), y(_y), z(_z), ref(_ref), texture(_texture), mirrorUV(_mirrorUV), parent(_parent) {}
     };
 
@@ -319,20 +319,21 @@ void RecursiveRunnerGame::decor() {
         }
         glm::vec2* zPrepassSize = 0, *zPrepassOffset = 0;
 
-        if (bdef.texture.find("arbre") != std::string::npos) {
-            int idx = atoi(bdef.texture.substr(5, 1).c_str()) - 1;
+        if (strncmp(bdef.texture, "arbre", 5) == 0) {
+            char c = bdef.texture[5];
+            int idx = (int)c - 30 - 1;
             zPrepassSize = v[idx];
             zPrepassOffset = o[idx];
-        } else if (bdef.texture == "immeuble") {
+        } else if (!strcmp(bdef.texture, "immeuble")) {
             zPrepassSize = vBat[0];
             zPrepassOffset = oBat[0];
-        } else if (bdef.texture == "maison") {
+        } else if (!strcmp(bdef.texture, "maison")) {
             zPrepassSize = vBat[1];
             zPrepassOffset = oBat[1];
-        } else if (bdef.texture == "usine2") {
+        } else if (!strcmp(bdef.texture, "usine2")) {
             zPrepassSize = vBat[2];
             zPrepassOffset = oBat[2];
-        } else if (bdef.texture == "usine_desaf") {
+        } else if (!strcmp(bdef.texture, "usine_desaf")) {
             zPrepassSize = vBat[3];
             zPrepassOffset = oBat[3];
         }
@@ -345,7 +346,7 @@ void RecursiveRunnerGame::decor() {
             for (int j=0; j<4; j++) {
                 if (zPrepassSize[j] == glm::vec2(0.0f))
                     break;
-                Entity bb = theEntityManager.CreateEntity(bdef.texture + "_z_pre-pass");
+                Entity bb = theEntityManager.CreateEntity(std::string(bdef.texture) + "_z_pre-pass");
                 ADD_COMPONENT(bb, Transformation);
                 TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
                 glm::vec2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
@@ -442,27 +443,27 @@ void RecursiveRunnerGame::initGame() {
         "12345"
         : ObjectSerializer<int>::object2string(PLAYER(players.front())->points);
 
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0000")] =  CollisionZone(90,52,28,84,-0.1);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0001")] =  CollisionZone(91,62,27,78,-0.1);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0002")] =  CollisionZone(95,74,23,72, -0.1);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0003")] =  CollisionZone(95,74,23,70, -0.1);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0004")] =  CollisionZone(111,95,24,75, -0.3);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0005")] =  CollisionZone(114,94,15,84, -0.5);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0006")] =  CollisionZone(109,100,20,81, -0.5);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0007")] =  CollisionZone(101, 96,24,85,-0.2);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0008")] =  CollisionZone(100, 98,25,74,-0.15);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0009")] =  CollisionZone(95,95,25, 76, 0.0);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0010")] =  CollisionZone(88,96,25,75, 0.);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0011")] =  CollisionZone(85,95,24,83, 0.4);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0012")] =  CollisionZone(93,100,24,83, 0.2);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0013")] =  CollisionZone(110,119,25,64,-0.6);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0014")] =  CollisionZone(100, 120,21,60, -0.2);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0015")] =  CollisionZone(105, 115,22,62, -0.15);
-    texture2Collision[theRenderingSystem.loadTextureFile("jump_l2r_0016")] =  CollisionZone(103,103,24,66,-0.1);
+    texture2Collision[Murmur::Hash("jump_l2r_0000")] =  CollisionZone(90,52,28,84,-0.1);
+    texture2Collision[Murmur::Hash("jump_l2r_0001")] =  CollisionZone(91,62,27,78,-0.1);
+    texture2Collision[Murmur::Hash("jump_l2r_0002")] =  CollisionZone(95,74,23,72, -0.1);
+    texture2Collision[Murmur::Hash("jump_l2r_0003")] =  CollisionZone(95,74,23,70, -0.1);
+    texture2Collision[Murmur::Hash("jump_l2r_0004")] =  CollisionZone(111,95,24,75, -0.3);
+    texture2Collision[Murmur::Hash("jump_l2r_0005")] =  CollisionZone(114,94,15,84, -0.5);
+    texture2Collision[Murmur::Hash("jump_l2r_0006")] =  CollisionZone(109,100,20,81, -0.5);
+    texture2Collision[Murmur::Hash("jump_l2r_0007")] =  CollisionZone(101, 96,24,85,-0.2);
+    texture2Collision[Murmur::Hash("jump_l2r_0008")] =  CollisionZone(100, 98,25,74,-0.15);
+    texture2Collision[Murmur::Hash("jump_l2r_0009")] =  CollisionZone(95,95,25, 76, 0.0);
+    texture2Collision[Murmur::Hash("jump_l2r_0010")] =  CollisionZone(88,96,25,75, 0.);
+    texture2Collision[Murmur::Hash("jump_l2r_0011")] =  CollisionZone(85,95,24,83, 0.4);
+    texture2Collision[Murmur::Hash("jump_l2r_0012")] =  CollisionZone(93,100,24,83, 0.2);
+    texture2Collision[Murmur::Hash("jump_l2r_0013")] =  CollisionZone(110,119,25,64,-0.6);
+    texture2Collision[Murmur::Hash("jump_l2r_0014")] =  CollisionZone(100, 120,21,60, -0.2);
+    texture2Collision[Murmur::Hash("jump_l2r_0015")] =  CollisionZone(105, 115,22,62, -0.15);
+    texture2Collision[Murmur::Hash("jump_l2r_0016")] =  CollisionZone(103,103,24,66,-0.1);
     for (int i=0; i<12; i++) {
         std::stringstream a;
         a << "run_l2r_" << std::setfill('0') << std::setw(4) << i;
-        texture2Collision[theRenderingSystem.loadTextureFile(a.str())] =  CollisionZone(118,103,35,88,-0.5);
+        texture2Collision[theRenderingSystem.loadTextureFile(a.str().c_str())] =  CollisionZone(118,103,35,88,-0.5);
     }
 
     //important! This must be called AFTER camera setup, since we are referencing it (anchor component)
