@@ -402,7 +402,7 @@ public:
 
         ADSRComponent* adsr = ADSR(titleGroup);
         ANCHOR(titleGroup)->position.y = adsr->value;
-        RENDERING(game->muteBtn)->color.a = 1. - (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
+        RENDERING(game->muteBtn)->color.a = 1.0f - (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
 
         return (adsr->value == adsr->sustainValue) && gameCanEnter;
     }

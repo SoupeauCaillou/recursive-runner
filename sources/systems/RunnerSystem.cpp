@@ -60,7 +60,7 @@ static void killRunner(Entity runner) {
     *TRANSFORM(e) = *TRANSFORM(runner);
     TRANSFORM(e)->position.y += TRANSFORM(e)->size.y * 0.1;
     RENDERING(e)->texture = RENDERING(runner)->texture;
-    RENDERING(e)->color.a = 0.5;
+    RENDERING(e)->color.a = 0.5f;
 }
 
 void RunnerSystem::DoUpdate(float dt) {
@@ -107,7 +107,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 rc->coinSequenceBonus = 1;
                 rc->ghost = true;
                 rc->startTime = glm::linearRand(0.0f, 2.0f);
-                RENDERING(a)->color = Color(27.0/255, 2.0/255, 2.0/255, 0.8);
+                RENDERING(a)->color = Color(27, 2, 2, 204);
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
                 rc->currentJump = 0;

@@ -420,7 +420,7 @@ void RecursiveRunnerGame::decor() {
 }
 
 void RecursiveRunnerGame::initGame() {
-    Color::nameColor(Color(0.8, 0.8, 0.8), "gray");
+    Color::nameColor(Color(0.8f, 0.8f, 0.8f), "gray");
     baseLine = PlacementHelper::GimpYToScreen(800);
     leftMostCameraPos =
         glm::vec2(-PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5),
@@ -728,7 +728,7 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     ADD_COMPONENT(player, Player);
     sc->players.push_back(player);
     PlayerComponent* pc = PLAYER(player);
-    #define COLOR(n) Color(((0x##n >> 16) & 0xff) / 255.0, ((0x##n >> 8) & 0xff) / 255.0, ((0x##n >> 0) & 0xff) / 255.0, 1.0)
+    #define COLOR(n) Color(((0x##n >> 16) & 0xff), ((0x##n >> 8) & 0xff), ((0x##n >> 0) & 0xff), 255)
     pc->colors.push_back(COLOR(c30101));
     pc->colors.push_back(COLOR(ea6c06));
     pc->colors.push_back(COLOR(f4cf00));
