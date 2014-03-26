@@ -133,7 +133,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             }
             // unhide UI
             RENDERING(helpBtn)->show = true;
-            RENDERING(helpBtn)->color = Color(255,255,255,0);
+            RENDERING(helpBtn)->color = Color(1,1,1,0);
 
             game->gamecenterAPIHelper.displayUI();
         }
@@ -152,7 +152,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             RecursiveRunnerGame::endGame();
             // enable UI
             BUTTON(helpBtn)->enabled = true;
-            RENDERING(helpBtn)->color.a = 255;
+            RENDERING(helpBtn)->color.a = 1;
         }
 
 #if 0
@@ -247,7 +247,7 @@ void backgroundUpdate(float) {
             float progress = (adsr->value - adsr->attackValue) /
                     (adsr->idleValue - adsr->attackValue);
 
-            RENDERING(helpBtn)->color.a = 1.0f - progress;
+            RENDERING(helpBtn)->color.a = 1 - progress;
             // check if animation is finished
             return (adsr->value >= adsr->idleValue);
         }
