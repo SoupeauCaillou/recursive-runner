@@ -71,7 +71,7 @@ public:
             ANCHOR(pauseButton)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
                 - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            RENDERING(pauseButton)->texture = theRenderingSystem.loadTextureFile("pause");
+            RENDERING(pauseButton)->texture = Murmur::Hash("pause");
             RENDERING(pauseButton)->show = false;
 
             transition = theEntityManager.CreateEntity("transition_helper",
@@ -317,7 +317,7 @@ public:
                         pt.active = active;
                         std::cout << "platform #" << i << " is now : " << active << std::endl;
                         if (active) {
-                            RENDERING(pt.platform)->texture = theRenderingSystem.loadTextureFile("link");
+                            RENDERING(pt.platform)->texture = Murmur::Hash("link");
                         } else {
                             RENDERING(pt.platform)->texture = InvalidTextureRef;
                         }

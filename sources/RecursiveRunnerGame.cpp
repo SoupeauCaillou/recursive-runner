@@ -377,7 +377,7 @@ void RecursiveRunnerGame::decor() {
 #endif
     pianist = theEntityManager.CreateEntity("background/pianist",
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
-    ANIMATION(pianist)->name = (muted ? "pianojournal" : "piano");
+    ANIMATION(pianist)->name = muted ? Murmur::Hash("pianojournal") : Murmur::Hash("piano");
 
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
@@ -607,12 +607,14 @@ void RecursiveRunnerGame::tick(float dt) {
                 }
             });
          }
+         auto* ac = ANIMATION(pianist);
+
          if (pianistPlaying) {
-            if (ANIMATION(pianist)->name == "pianojournal") {
-                ANIMATION(pianist)->name = "piano";
-            }
+            // only change if necessary, because pianist alternates between piano and piano2
+            if (ac->name == Murmur::Hash("pianojournal"))
+                ac->name = Murmur::Hash("piano");
          } else {
-            ANIMATION(pianist)->name = "pianojournal";
+            ANIMATION(pianist)->name = Murmur::Hash("pianojournal");
          }
     }
 

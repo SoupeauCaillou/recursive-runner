@@ -93,7 +93,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             ANCHOR(helpBtn)->parent = game->muteBtn;
             ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
             ANCHOR(helpBtn)->z = 0;
-            RENDERING(helpBtn)->texture = theRenderingSystem.loadTextureFile("aide");
+            RENDERING(helpBtn)->texture = Murmur::Hash("aide");
         }
 
 

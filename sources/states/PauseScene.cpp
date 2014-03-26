@@ -49,11 +49,11 @@ class PauseScene : public StateHandler<Scene::Enum> {
     }
 
     void setup() {
-        std::string textures[] = {"fermer", "recommencer", "reprendre"};
+        const char* textures[] = {"fermer", "recommencer", "reprendre"};
         Entity buttons[3];
 
         for (int i = 0; i < 3; ++i) {
-            buttons[i] = theEntityManager.CreateEntity("pause/button_" + textures[i],
+            buttons[i] = theEntityManager.CreateEntity(std::string("pause/button_") + textures[i],
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("pause/button"));
 
             TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i])) * 1.2f;

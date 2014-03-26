@@ -61,7 +61,7 @@ void PlatformerSystem::DoUpdate(float) {
                     pc->gravity.y = 0;
                     pc->linearVelocity = glm::vec2(0.0f);
                     tc->position.y = pltfTC->position.y + tc->size.y * 0.5;
-                    ANIMATION(entity)->name = "jumptorunL2R";
+                    ANIMATION(entity)->name = Murmur::Hash("jumptorunL2R");
                     if (RUNNER(entity)->speed < 0)
                         RENDERING(entity)->flags |= RenderingFlags::MirrorHorizontal;
                     else

@@ -101,7 +101,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 if (!rc->ghost)
                     LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position
                         << ") "<< rc->endPoint.x);
-                ANIMATION(a)->name = "runL2R";
+                ANIMATION(a)->name = Murmur::Hash("runL2R");
                 rc->finished = true;
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
@@ -126,7 +126,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 pc->forces.push_back(std::make_pair(Force(force,  glm::vec2(0.0f)), RunnerSystem::MinJumpDuration));
                 rc->jumpingSince = 0.001;
                 pc->gravity.y = -50;
-                ANIMATION(a)->name = "jumpL2R_up";
+                ANIMATION(a)->name = Murmur::Hash("jumpL2R_up");
                 if (rc->speed < 0)
                     RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
                 else
@@ -147,7 +147,7 @@ void RunnerSystem::DoUpdate(float dt) {
             }
         }
         if (pc->gravity.y < 0 && pc->linearVelocity.y < -10) {
-            ANIMATION(a)->name = "jumpL2R_down";
+            ANIMATION(a)->name = Murmur::Hash("jumpL2R_down");
             if (rc->speed < 0)
                 RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
             else
