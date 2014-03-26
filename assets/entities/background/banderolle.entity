@@ -1,6 +1,6 @@
 [Transformation]
-size%gimp = 393, 89
-position%gimp = 772, 415
+size%gimp_size = 393, 89
+position%gimp_pos = 772, 415
 z = 0.6
 rotation = 0.1
 

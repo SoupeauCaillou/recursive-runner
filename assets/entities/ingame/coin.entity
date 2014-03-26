@@ -1,7 +1,7 @@
 [Transformation]
 rotation = -0.1, 0.1
 z = 0.75
-size%gimp = 99, 107
+size%gimp_size = 99, 107
 
 [Rendering]
 texture = ampoule

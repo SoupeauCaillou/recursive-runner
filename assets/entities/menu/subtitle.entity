@@ -1,5 +1,5 @@
 [Transformation]
-size%gimp = 843, 156
+size%gimp_size = 843, 156
 
 [Anchor]
 parent%name = menu/title_group

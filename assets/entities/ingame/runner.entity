@@ -1,5 +1,5 @@
 [Transformation]
-size%gimp = 200, 210
+size%gimp_size = 200, 210
 z = 0.9
 
 [Rendering]

@@ -1,5 +1,5 @@
 [Transformation]
-size%gimp = 129, 92
+size%gimp_size = 129, 92
 
 [Anchor]
 parent%name = googleplay/achievements_button

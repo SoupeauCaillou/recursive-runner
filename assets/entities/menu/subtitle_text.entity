@@ -1,5 +1,5 @@
 [Transformation]
-size%gimp = 790, 1
+size%gimp_size = 790, 1
 
 [Anchor]
 parent%name = menu/subtitle

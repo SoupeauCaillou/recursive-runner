@@ -1,7 +1,7 @@
 [Transformation]
-size%gimp = 3840, 484
+size%gimp_size = 3840, 484
 #todo!
-#position%gimp = 772, 415
+#position%gimp_pos = 772, 415
 z = 0.01
 
 [Rendering]
