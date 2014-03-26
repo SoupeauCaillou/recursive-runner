@@ -346,7 +346,10 @@ void RecursiveRunnerGame::decor() {
             for (int j=0; j<4; j++) {
                 if (zPrepassSize[j] == glm::vec2(0.0f))
                     break;
-                Entity bb = theEntityManager.CreateEntity(std::string(bdef.texture) + "_z_pre-pass");
+                char tmp[1024];
+                strcpy(tmp, bdef.texture);
+                strcpy(&tmp[strlen(bdef.texture)], "_z_pre-pass");
+                Entity bb = theEntityManager.CreateEntity(tmp);
                 ADD_COMPONENT(bb, Transformation);
                 TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
                 glm::vec2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
