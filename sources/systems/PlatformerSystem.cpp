@@ -31,10 +31,10 @@ INSTANCE_IMPL(PlatformerSystem);
 
 PlatformerSystem::PlatformerSystem() : ComponentSystemImpl<PlatformerComponent>("Platformer") {
     PlatformerComponent tc;
-    componentSerializer.add(new Property<glm::vec2>("previous_position", OFFSET(previousPosition, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<glm::vec2>("offset", OFFSET(offset, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new EntityProperty("on_platform", OFFSET(onPlatform, tc)));
-    componentSerializer.add(new MapProperty<Entity, bool>("platforms", OFFSET(platforms, tc)));
+    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("previous_position"), OFFSET(previousPosition, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("offset"), OFFSET(offset, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new EntityProperty(Murmur::Hash("on_platform"), OFFSET(onPlatform, tc)));
+    componentSerializer.add(new MapProperty<Entity, bool>(Murmur::Hash("platforms"), OFFSET(platforms, tc)));
 }
 
 void PlatformerSystem::DoUpdate(float) {

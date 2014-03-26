@@ -29,11 +29,11 @@ INSTANCE_IMPL(CameraTargetSystem);
 
 CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetComponent>("CameraTarget") {
     CameraTargetComponent tc;
-    componentSerializer.add(new Property<Entity>("camera", OFFSET(camera, tc)));
-    componentSerializer.add(new Property<glm::vec2>("offset", OFFSET(offset, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<float>("max_camera_speed", OFFSET(maxCameraSpeed, tc), 0.001));
-    componentSerializer.add(new Property<bool>("enabled", OFFSET(enabled, tc)));
-    componentSerializer.add(new Property<glm::vec2>("camera_speed", OFFSET(cameraSpeed, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<Entity>(Murmur::Hash("camera"), OFFSET(camera, tc)));
+    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("offset"), OFFSET(offset, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<float>(Murmur::Hash("max_camera_speed"), OFFSET(maxCameraSpeed, tc), 0.001));
+    componentSerializer.add(new Property<bool>(Murmur::Hash("enabled"), OFFSET(enabled, tc)));
+    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("camera_speed"), OFFSET(cameraSpeed, tc), glm::vec2(0.001, 0)));
 }
 
 void CameraTargetSystem::DoUpdate(float dt) {

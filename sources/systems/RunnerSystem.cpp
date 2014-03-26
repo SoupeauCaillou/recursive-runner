@@ -34,24 +34,24 @@ float RunnerSystem::MaxJumpDuration = 0.2;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     RunnerComponent tc;
-    componentSerializer.add(new EntityProperty("player_owner", OFFSET(playerOwner, tc)));
-    componentSerializer.add(new EntityProperty("collision_zone", OFFSET(collisionZone, tc)));
-    componentSerializer.add(new Property<glm::vec2>("start_point", OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<glm::vec2>("end_point", OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<Color>("color", OFFSET(color, tc)));
-    componentSerializer.add(new Property<float>("speed", OFFSET(speed, tc), 0.001));
-    componentSerializer.add(new Property<bool>("finished", OFFSET(finished, tc)));
-    componentSerializer.add(new Property<bool>("ghost", OFFSET(ghost, tc)));
-    componentSerializer.add(new Property<bool>("killed", OFFSET(killed, tc)));
-    componentSerializer.add(new Property<float>("elapsed", OFFSET(elapsed, tc), 0.001));
-    componentSerializer.add(new Property<float>("jumping_since", OFFSET(jumpingSince, tc), 0.001));
-    componentSerializer.add(new Property<bool>("current_jump", OFFSET(currentJump, tc)));
-    componentSerializer.add(new Property<int>("oldness_bonus", OFFSET(oldNessBonus, tc)));
-    componentSerializer.add(new Property<int>("coin_sequence_bonus", OFFSET(coinSequenceBonus, tc)));
-    componentSerializer.add(new VectorProperty<float>("jump_times", OFFSET(jumpTimes, tc)));
-    componentSerializer.add(new VectorProperty<float>("jump_durations", OFFSET(jumpDurations, tc)));
-    componentSerializer.add(new Property<int>("total_coins_earned", OFFSET(totalCoinsEarned, tc)));
-    componentSerializer.add(new VectorProperty<float>("coins", OFFSET(coins, tc)));
+    componentSerializer.add(new EntityProperty(Murmur::Hash("player_owner"), OFFSET(playerOwner, tc)));
+    componentSerializer.add(new EntityProperty(Murmur::Hash("collision_zone"), OFFSET(collisionZone, tc)));
+    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("start_point"), OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("end_point"), OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<Color>(Murmur::Hash("color"), OFFSET(color, tc)));
+    componentSerializer.add(new Property<float>(Murmur::Hash("speed"), OFFSET(speed, tc), 0.001));
+    componentSerializer.add(new Property<bool>(Murmur::Hash("finished"), OFFSET(finished, tc)));
+    componentSerializer.add(new Property<bool>(Murmur::Hash("ghost"), OFFSET(ghost, tc)));
+    componentSerializer.add(new Property<bool>(Murmur::Hash("killed"), OFFSET(killed, tc)));
+    componentSerializer.add(new Property<float>(Murmur::Hash("elapsed"), OFFSET(elapsed, tc), 0.001));
+    componentSerializer.add(new Property<float>(Murmur::Hash("jumping_since"), OFFSET(jumpingSince, tc), 0.001));
+    componentSerializer.add(new Property<bool>(Murmur::Hash("current_jump"), OFFSET(currentJump, tc)));
+    componentSerializer.add(new Property<int>(Murmur::Hash("oldness_bonus"), OFFSET(oldNessBonus, tc)));
+    componentSerializer.add(new Property<int>(Murmur::Hash("coin_sequence_bonus"), OFFSET(coinSequenceBonus, tc)));
+    componentSerializer.add(new VectorProperty<float>(Murmur::Hash("jump_times"), OFFSET(jumpTimes, tc)));
+    componentSerializer.add(new VectorProperty<float>(Murmur::Hash("jump_durations"), OFFSET(jumpDurations, tc)));
+    componentSerializer.add(new Property<int>(Murmur::Hash("total_coins_earned"), OFFSET(totalCoinsEarned, tc)));
+    componentSerializer.add(new VectorProperty<float>(Murmur::Hash("coins"), OFFSET(coins, tc)));
 }
 
 static void killRunner(Entity runner) {
