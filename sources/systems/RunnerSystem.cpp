@@ -34,24 +34,24 @@ float RunnerSystem::MaxJumpDuration = 0.2;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     RunnerComponent tc;
-    componentSerializer.add(new EntityProperty(HASH("player_owner", 0x0), OFFSET(playerOwner, tc)));
-    componentSerializer.add(new EntityProperty(HASH("collision_zone", 0x0), OFFSET(collisionZone, tc)));
-    componentSerializer.add(new Property<glm::vec2>(HASH("start_point", 0x0), OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<glm::vec2>(HASH("end_point", 0x0), OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<Color>(HASH("color", 0x0), OFFSET(color, tc)));
-    componentSerializer.add(new Property<float>(HASH("speed", 0x0), OFFSET(speed, tc), 0.001));
-    componentSerializer.add(new Property<bool>(HASH("finished", 0x0), OFFSET(finished, tc)));
-    componentSerializer.add(new Property<bool>(HASH("ghost", 0x0), OFFSET(ghost, tc)));
-    componentSerializer.add(new Property<bool>(HASH("killed", 0x0), OFFSET(killed, tc)));
-    componentSerializer.add(new Property<float>(HASH("elapsed", 0x0), OFFSET(elapsed, tc), 0.001));
-    componentSerializer.add(new Property<float>(HASH("jumping_since", 0x0), OFFSET(jumpingSince, tc), 0.001));
-    componentSerializer.add(new Property<bool>(HASH("current_jump", 0x0), OFFSET(currentJump, tc)));
-    componentSerializer.add(new Property<int>(HASH("oldness_bonus", 0x0), OFFSET(oldNessBonus, tc)));
-    componentSerializer.add(new Property<int>(HASH("coin_sequence_bonus", 0x0), OFFSET(coinSequenceBonus, tc)));
-    componentSerializer.add(new VectorProperty<float>(HASH("jump_times", 0x0), OFFSET(jumpTimes, tc)));
-    componentSerializer.add(new VectorProperty<float>(HASH("jump_durations", 0x0), OFFSET(jumpDurations, tc)));
-    componentSerializer.add(new Property<int>(HASH("total_coins_earned", 0x0), OFFSET(totalCoinsEarned, tc)));
-    componentSerializer.add(new VectorProperty<float>(HASH("coins", 0x0), OFFSET(coins, tc)));
+    componentSerializer.add(new EntityProperty(HASH("player_owner", 0xd5181aa0), OFFSET(playerOwner, tc)));
+    componentSerializer.add(new EntityProperty(HASH("collision_zone", 0x2a513634), OFFSET(collisionZone, tc)));
+    componentSerializer.add(new Property<glm::vec2>(HASH("start_point", 0xdd8c9350), OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(HASH("end_point", 0x85fa62a4), OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<Color>(HASH("color", 0xccc35cf8), OFFSET(color, tc)));
+    componentSerializer.add(new Property<float>(HASH("speed", 0x9e8699c2), OFFSET(speed, tc), 0.001));
+    componentSerializer.add(new Property<bool>(HASH("finished", 0x8f15805b), OFFSET(finished, tc)));
+    componentSerializer.add(new Property<bool>(HASH("ghost", 0x72965f98), OFFSET(ghost, tc)));
+    componentSerializer.add(new Property<bool>(HASH("killed", 0xe805462a), OFFSET(killed, tc)));
+    componentSerializer.add(new Property<float>(HASH("elapsed", 0x621cadb3), OFFSET(elapsed, tc), 0.001));
+    componentSerializer.add(new Property<float>(HASH("jumping_since", 0xe830c835), OFFSET(jumpingSince, tc), 0.001));
+    componentSerializer.add(new Property<bool>(HASH("current_jump", 0x9bb0b842), OFFSET(currentJump, tc)));
+    componentSerializer.add(new Property<int>(HASH("oldness_bonus", 0x14ad4fd5), OFFSET(oldNessBonus, tc)));
+    componentSerializer.add(new Property<int>(HASH("coin_sequence_bonus", 0xe7d65188), OFFSET(coinSequenceBonus, tc)));
+    componentSerializer.add(new VectorProperty<float>(HASH("jump_times", 0xf291681a), OFFSET(jumpTimes, tc)));
+    componentSerializer.add(new VectorProperty<float>(HASH("jump_durations", 0xa9048c79), OFFSET(jumpDurations, tc)));
+    componentSerializer.add(new Property<int>(HASH("total_coins_earned", 0x7852232e), OFFSET(totalCoinsEarned, tc)));
+    componentSerializer.add(new VectorProperty<float>(HASH("coins", 0xb2cf216c), OFFSET(coins, tc)));
 }
 
 static void killRunner(Entity runner) {
@@ -126,7 +126,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 pc->forces.push_back(std::make_pair(Force(force,  glm::vec2(0.0f)), RunnerSystem::MinJumpDuration));
                 rc->jumpingSince = 0.001;
                 pc->gravity.y = -50;
-                ANIMATION(a)->name = HASH("jumpL2R_up", 0x0);
+                ANIMATION(a)->name = HASH("jumpL2R_up", 0xc043b37b);
                 if (rc->speed < 0)
                     RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
                 else
@@ -147,7 +147,7 @@ void RunnerSystem::DoUpdate(float dt) {
             }
         }
         if (pc->gravity.y < 0 && pc->linearVelocity.y < -10) {
-            ANIMATION(a)->name = HASH("jumpL2R_down", 0x0);
+            ANIMATION(a)->name = HASH("jumpL2R_down", 0xc810b848);
             if (rc->speed < 0)
                 RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
             else

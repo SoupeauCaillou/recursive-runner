@@ -68,7 +68,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
 
         void setup() {
-            titleGroup  = theEntityManager.CreateEntity(HASH("menu/title_group", 0x0),
+            titleGroup  = theEntityManager.CreateEntity(HASH("menu/title_group", 0x5affe5af),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title_group"));
             ADSR(titleGroup)->idleValue = PlacementHelper::ScreenSize.y + PlacementHelper::GimpYToScreen(400);
             ADSR(titleGroup)->sustainValue = game->baseLine + PlacementHelper::ScreenSize.y
@@ -77,23 +77,23 @@ class MenuScene : public StateHandler<Scene::Enum> {
             ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
             TRANSFORM(titleGroup)->position = glm::vec2(game->leftMostCameraPos.x + TRANSFORM(titleGroup)->size.x * 0.5, ADSR(titleGroup)->idleValue);
 
-            title = theEntityManager.CreateEntity(HASH("menu/title", 0x0),
+            title = theEntityManager.CreateEntity(HASH("menu/title", 0x29a5b815),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title"));
 
-            subtitle = theEntityManager.CreateEntity(HASH("menu/subtitle", 0x0),
+            subtitle = theEntityManager.CreateEntity(HASH("menu/subtitle", 0xc7be6a96),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle"));
 
-            subtitleText = theEntityManager.CreateEntity(HASH("menu/subtitle_text", 0x0),
+            subtitleText = theEntityManager.CreateEntity(HASH("menu/subtitle_text", 0x5b9b7415),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle_text"));
             TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
             TEXT(subtitleText)->charHeight *= 1.5;
 
-            helpBtn = theEntityManager.CreateEntity(HASH("menu/help_button", 0x0),
+            helpBtn = theEntityManager.CreateEntity(HASH("menu/help_button", 0xf0532382),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
             ANCHOR(helpBtn)->parent = game->muteBtn;
             ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
             ANCHOR(helpBtn)->z = 0;
-            RENDERING(helpBtn)->texture = HASH("aide", 0x0);
+            RENDERING(helpBtn)->texture = HASH("aide", 0xc3acc704);
         }
 
 

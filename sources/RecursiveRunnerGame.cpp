@@ -178,7 +178,7 @@ void fumee(Entity building) {
 
     for (unsigned i=0; i<indexes.size(); i++) {
         int idx = indexes[i];
-        Entity fumee = theEntityManager.CreateEntity(HASH("fumee", 0x0),
+        Entity fumee = theEntityManager.CreateEntity(HASH("fumee", 0x1ff6ee0c),
             EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/fumee"));
         TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * glm::linearRand(0.5f, 0.8f);
 
@@ -199,20 +199,20 @@ void RecursiveRunnerGame::decor() {
     PlacementHelper::GimpSize = glm::vec2(1280 * 3, 800);
 
 
-    silhouette = theEntityManager.CreateEntity(HASH("silhouette", 0x0),
+    silhouette = theEntityManager.CreateEntity(HASH("silhouette", 0x1be67565),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/silhouette"));
     TRANSFORM(silhouette)->position = AnchorSystem::adjustPositionWithCardinal(
         glm::vec2(0, PlacementHelper::GimpYToScreen(0)), TRANSFORM(silhouette)->size, Cardinal::N);
 
-    route = theEntityManager.CreateEntity(HASH("road", 0x0),
+    route = theEntityManager.CreateEntity(HASH("road", 0x4875b6d4),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/road"));
     TRANSFORM(route)->position = AnchorSystem::adjustPositionWithCardinal(
         glm::vec2(0, PlacementHelper::GimpYToScreen(800)), TRANSFORM(route)->size, Cardinal::S);
 
-    Entity buildings = theEntityManager.CreateEntity(HASH("buildings", 0x0),
+    Entity buildings = theEntityManager.CreateEntity(HASH("buildings", 0x240377a9),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/city-object"));
 
-    Entity trees = theEntityManager.CreateEntity(HASH("trees", 0x0),
+    Entity trees = theEntityManager.CreateEntity(HASH("trees", 0xe84e02fd),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/city-object"));
 
     int count = 33;
@@ -367,10 +367,10 @@ void RecursiveRunnerGame::decor() {
         }
     }
 
-    theEntityManager.CreateEntity(HASH("background/banderolle", 0x0),
+    theEntityManager.CreateEntity(HASH("background/banderolle", 0xa00038cb),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/banderolle"));
 
-    bestScore = theEntityManager.CreateEntity(HASH("background/best_score", 0x0),
+    bestScore = theEntityManager.CreateEntity(HASH("background/best_score", 0x99691578),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/best_score"));
 
     const bool muted =
@@ -379,9 +379,9 @@ void RecursiveRunnerGame::decor() {
 #else
             gameThreadContext->storageAPI->isOption("sound", "off");
 #endif
-    pianist = theEntityManager.CreateEntity(HASH("background/pianist", 0x0),
+    pianist = theEntityManager.CreateEntity(HASH("background/pianist", 0x136d34ba),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
-    ANIMATION(pianist)->name = muted ? HASH("pianojournal", 0x0) : HASH("piano", 0x0);
+    ANIMATION(pianist)->name = muted ? HASH("pianojournal", 0x0) : HASH("piano", 0x62205ad5);
 
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
@@ -407,7 +407,7 @@ void RecursiveRunnerGame::decor() {
     buttonSpacing.H = PlacementHelper::GimpWidthToScreen(94);
     buttonSpacing.V = PlacementHelper::GimpHeightToScreen(76);
 
-    muteBtn = theEntityManager.CreateEntity(HASH("mute_button", 0x0),
+    muteBtn = theEntityManager.CreateEntity(HASH("mute_button", 0x8b1ba537),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
     ANCHOR(muteBtn)->parent = cameraEntity;
     ANCHOR(muteBtn)->position = TRANSFORM(cameraEntity)->size * glm::vec2(-0.5, 0.5)
@@ -427,18 +427,18 @@ void RecursiveRunnerGame::initGame() {
         baseLine + theRenderingSystem.screenH * 0.5);
 
     LOGI("Creating cameras");
-    Entity camera = cameraEntity = theEntityManager.CreateEntity(HASH("camera1", 0x0),
+    Entity camera = cameraEntity = theEntityManager.CreateEntity(HASH("camera1", 0xc6993429),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("camera"));
     TRANSFORM(camera)->position = leftMostCameraPos;
 
     decor();
 
-    scorePanel = theEntityManager.CreateEntity(HASH("background/score_panel", 0x0),
+    scorePanel = theEntityManager.CreateEntity(HASH("background/score_panel", 0xcd25a15f),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/score_panel"));
     TRANSFORM(scorePanel)->position = AnchorSystem::adjustPositionWithCardinal(
         glm::vec2(0, baseLine + PlacementHelper::ScreenSize.y + PlacementHelper::GimpHeightToScreen(20)), TRANSFORM(scorePanel)->size, Cardinal::N);
 
-    scoreText = theEntityManager.CreateEntity(HASH("score_text", 0x0),
+    scoreText = theEntityManager.CreateEntity(HASH("score_text", 0xa032241b),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/score_text"));
 
     const auto& players = thePlayerSystem.RetrieveAllEntityWithComponent();
@@ -446,23 +446,23 @@ void RecursiveRunnerGame::initGame() {
         "12345"
         : ObjectSerializer<int>::object2string(PLAYER(players.front())->points);
 
-    texture2Collision[HASH("jump_l2r_0000", 0x0)] =  CollisionZone(90,52,28,84,-0.1);
-    texture2Collision[HASH("jump_l2r_0001", 0x0)] =  CollisionZone(91,62,27,78,-0.1);
-    texture2Collision[HASH("jump_l2r_0002", 0x0)] =  CollisionZone(95,74,23,72, -0.1);
-    texture2Collision[HASH("jump_l2r_0003", 0x0)] =  CollisionZone(95,74,23,70, -0.1);
-    texture2Collision[HASH("jump_l2r_0004", 0x0)] =  CollisionZone(111,95,24,75, -0.3);
-    texture2Collision[HASH("jump_l2r_0005", 0x0)] =  CollisionZone(114,94,15,84, -0.5);
-    texture2Collision[HASH("jump_l2r_0006", 0x0)] =  CollisionZone(109,100,20,81, -0.5);
-    texture2Collision[HASH("jump_l2r_0007", 0x0)] =  CollisionZone(101, 96,24,85,-0.2);
-    texture2Collision[HASH("jump_l2r_0008", 0x0)] =  CollisionZone(100, 98,25,74,-0.15);
-    texture2Collision[HASH("jump_l2r_0009", 0x0)] =  CollisionZone(95,95,25, 76, 0.0);
-    texture2Collision[HASH("jump_l2r_0010", 0x0)] =  CollisionZone(88,96,25,75, 0.);
-    texture2Collision[HASH("jump_l2r_0011", 0x0)] =  CollisionZone(85,95,24,83, 0.4);
-    texture2Collision[HASH("jump_l2r_0012", 0x0)] =  CollisionZone(93,100,24,83, 0.2);
-    texture2Collision[HASH("jump_l2r_0013", 0x0)] =  CollisionZone(110,119,25,64,-0.6);
-    texture2Collision[HASH("jump_l2r_0014", 0x0)] =  CollisionZone(100, 120,21,60, -0.2);
-    texture2Collision[HASH("jump_l2r_0015", 0x0)] =  CollisionZone(105, 115,22,62, -0.15);
-    texture2Collision[HASH("jump_l2r_0016", 0x0)] =  CollisionZone(103,103,24,66,-0.1);
+    texture2Collision[HASH("jump_l2r_0000", 0x955adbfa)] =  CollisionZone(90,52,28,84,-0.1);
+    texture2Collision[HASH("jump_l2r_0001", 0x2737e4c3)] =  CollisionZone(91,62,27,78,-0.1);
+    texture2Collision[HASH("jump_l2r_0002", 0xcfec26f2)] =  CollisionZone(95,74,23,72, -0.1);
+    texture2Collision[HASH("jump_l2r_0003", 0x11fae020)] =  CollisionZone(95,74,23,70, -0.1);
+    texture2Collision[HASH("jump_l2r_0004", 0x947eb14)] =  CollisionZone(111,95,24,75, -0.3);
+    texture2Collision[HASH("jump_l2r_0005", 0x5a2307d8)] =  CollisionZone(114,94,15,84, -0.5);
+    texture2Collision[HASH("jump_l2r_0006", 0xdf42bc08)] =  CollisionZone(109,100,20,81, -0.5);
+    texture2Collision[HASH("jump_l2r_0007", 0x223d3232)] =  CollisionZone(101, 96,24,85,-0.2);
+    texture2Collision[HASH("jump_l2r_0008", 0x70ba05a2)] =  CollisionZone(100, 98,25,74,-0.15);
+    texture2Collision[HASH("jump_l2r_0009", 0x4d5e5e36)] =  CollisionZone(95,95,25, 76, 0.0);
+    texture2Collision[HASH("jump_l2r_0010", 0x750568e5)] =  CollisionZone(88,96,25,75, 0.);
+    texture2Collision[HASH("jump_l2r_0011", 0x40c86c9)] =  CollisionZone(85,95,24,83, 0.4);
+    texture2Collision[HASH("jump_l2r_0012", 0x903325ff)] =  CollisionZone(93,100,24,83, 0.2);
+    texture2Collision[HASH("jump_l2r_0013", 0x693e3cfa)] =  CollisionZone(110,119,25,64,-0.6);
+    texture2Collision[HASH("jump_l2r_0014", 0x6b426fdc)] =  CollisionZone(100, 120,21,60, -0.2);
+    texture2Collision[HASH("jump_l2r_0015", 0xeb11f32d)] =  CollisionZone(105, 115,22,62, -0.15);
+    texture2Collision[HASH("jump_l2r_0016", 0x79836412)] =  CollisionZone(103,103,24,66,-0.1);
     for (int i=0; i<12; i++) {
         std::stringstream a;
         a << "run_l2r_" << std::setfill('0') << std::setw(4) << i;
@@ -514,7 +514,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     level = Level::Level1;
     initGame();
     if (in == 0 || size == 0) {
-        ground = theEntityManager.CreateEntity(HASH("ground", 0x0), EntityType::Persistent);
+        ground = theEntityManager.CreateEntity(HASH("ground", 0x6f0d41f5), EntityType::Persistent);
         ADD_COMPONENT(ground, Transformation);
         TRANSFORM(ground)->size = glm::vec2(PlacementHelper::ScreenSize.x * (param::LevelSize + 1), 0);
         TRANSFORM(ground)->position = glm::vec2(0, baseLine);
@@ -719,12 +719,12 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     LOGF_IF(thePlayerSystem.entityCount() != 0, "Incoherent state. " << thePlayerSystem.entityCount() << " players existing");
 
     // Create session
-    Entity session = theEntityManager.CreateEntity(HASH("session", 0x0), EntityType::Persistent);
+    Entity session = theEntityManager.CreateEntity(HASH("session", 0xba9956b4), EntityType::Persistent);
     ADD_COMPONENT(session, Session);
     SessionComponent* sc = SESSION(session);
     sc->numPlayers = 1;
     // Create player
-    Entity player = theEntityManager.CreateEntity(HASH("player", 0x0), EntityType::Persistent);
+    Entity player = theEntityManager.CreateEntity(HASH("player", 0x9881cf14), EntityType::Persistent);
     ADD_COMPONENT(player, Player);
     sc->players.push_back(player);
     PlayerComponent* pc = PLAYER(player);
@@ -821,7 +821,7 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
 
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
-        Entity e = theEntityManager.CreateEntity(HASH("coin", 0x0),
+        Entity e = theEntityManager.CreateEntity(HASH("coin", 0x844c8381),
             EntityType::Persistent, coinTemplate);
 
         TRANSFORM(e)->size *= param::CoinScale;
@@ -843,14 +843,14 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
         else
             topI = glm::vec2(param::LevelSize * PlacementHelper::ScreenSize.x * 0.5, 0);
 
-        Entity link = theEntityManager.CreateEntity(HASH("link", 0x0),
+        Entity link = theEntityManager.CreateEntity(HASH("link", 0xcacec0a0),
             EntityType::Persistent, linkTemplate);
         TRANSFORM(link)->position = (topI + previous) * 0.5f;
         TRANSFORM(link)->size = glm::vec2(glm::length(topI - previous), PlacementHelper::GimpHeightToScreen(54));
         TRANSFORM(link)->rotation = -/*glm::radians*/(glm::orientedAngle(glm::normalize(topI - previous), glm::vec2(1.0f, 0.0f)));
         RENDERING(link)->color.a =  (transition ? 0 : 1);
 
-        Entity link3 = theEntityManager.CreateEntity(HASH("link3", 0x0),
+        Entity link3 = theEntityManager.CreateEntity(HASH("link3", 0xba31ef20),
             EntityType::Persistent, link3Template);
         TRANSFORM(link3)->size = TRANSFORM(link)->size * glm::vec2(1, 0.1);
         ANCHOR(link3)->parent = link;

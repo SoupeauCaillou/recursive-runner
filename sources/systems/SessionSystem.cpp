@@ -22,14 +22,14 @@ INSTANCE_IMPL(SessionSystem);
 
 SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>("Session") {
     SessionComponent tc;
-    componentSerializer.add(new Property<int>(HASH("num_players", 0x0), OFFSET(numPlayers, tc)));
-    componentSerializer.add(new EntityProperty(HASH("current_runner", 0x0), OFFSET(currentRunner, tc)));
-    componentSerializer.add(new Property<bool>(HASH("user_input_enabled", 0x0), OFFSET(userInputEnabled, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(HASH("runners", 0x0), OFFSET(runners, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(HASH("coins", 0x0), OFFSET(coins, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(HASH("players", 0x0), OFFSET(players, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(HASH("links", 0x0), OFFSET(links, tc)));
-    componentSerializer.add(new VectorProperty<Entity>(HASH("sparkling", 0x0), OFFSET(sparkling, tc)));
+    componentSerializer.add(new Property<int>(HASH("num_players", 0xead54286), OFFSET(numPlayers, tc)));
+    componentSerializer.add(new EntityProperty(HASH("current_runner", 0x893ac6b3), OFFSET(currentRunner, tc)));
+    componentSerializer.add(new Property<bool>(HASH("user_input_enabled", 0xf26c3b34), OFFSET(userInputEnabled, tc)));
+    componentSerializer.add(new VectorProperty<Entity>(HASH("runners", 0xba2926be), OFFSET(runners, tc)));
+    componentSerializer.add(new VectorProperty<Entity>(HASH("coins", 0xb2cf216c), OFFSET(coins, tc)));
+    componentSerializer.add(new VectorProperty<Entity>(HASH("players", 0xa66fa23b), OFFSET(players, tc)));
+    componentSerializer.add(new VectorProperty<Entity>(HASH("links", 0x54f52b4e), OFFSET(links, tc)));
+    componentSerializer.add(new VectorProperty<Entity>(HASH("sparkling", 0x35cb46b9), OFFSET(sparkling, tc)));
 }
 
 void SessionSystem::DoUpdate(float) {

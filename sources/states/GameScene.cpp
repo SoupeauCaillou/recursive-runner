@@ -65,16 +65,16 @@ public:
         }
 
         void setup() {
-            pauseButton = theEntityManager.CreateEntity(HASH("pause_buttton", 0x0),
+            pauseButton = theEntityManager.CreateEntity(HASH("pause_buttton", 0x62b4dbd4),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
             ANCHOR(pauseButton)->parent = game->cameraEntity;
             ANCHOR(pauseButton)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
                 - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            RENDERING(pauseButton)->texture = HASH("pause", 0x0);
+            RENDERING(pauseButton)->texture = HASH("pause", 0xaf9ecc33);
             RENDERING(pauseButton)->show = false;
 
-            transition = theEntityManager.CreateEntity(HASH("transition_helper", 0x0),
+            transition = theEntityManager.CreateEntity(HASH("transition_helper", 0x91fede42),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("transition_helper"));
         }
 
