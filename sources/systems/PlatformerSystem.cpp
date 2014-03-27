@@ -31,10 +31,10 @@ INSTANCE_IMPL(PlatformerSystem);
 
 PlatformerSystem::PlatformerSystem() : ComponentSystemImpl<PlatformerComponent>("Platformer") {
     PlatformerComponent tc;
-    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("previous_position"), OFFSET(previousPosition, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("offset"), OFFSET(offset, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new EntityProperty(Murmur::Hash("on_platform"), OFFSET(onPlatform, tc)));
-    componentSerializer.add(new MapProperty<Entity, bool>(Murmur::Hash("platforms"), OFFSET(platforms, tc)));
+    componentSerializer.add(new Property<glm::vec2>(HASH("previous_position", 0x0), OFFSET(previousPosition, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(HASH("offset", 0x0), OFFSET(offset, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new EntityProperty(HASH("on_platform", 0x0), OFFSET(onPlatform, tc)));
+    componentSerializer.add(new MapProperty<Entity, bool>(HASH("platforms", 0x0), OFFSET(platforms, tc)));
 }
 
 void PlatformerSystem::DoUpdate(float) {
@@ -61,7 +61,7 @@ void PlatformerSystem::DoUpdate(float) {
                     pc->gravity.y = 0;
                     pc->linearVelocity = glm::vec2(0.0f);
                     tc->position.y = pltfTC->position.y + tc->size.y * 0.5;
-                    ANIMATION(entity)->name = Murmur::Hash("jumptorunL2R");
+                    ANIMATION(entity)->name = HASH("jumptorunL2R", 0x0);
                     if (RUNNER(entity)->speed < 0)
                         RENDERING(entity)->flags |= RenderingFlags::MirrorHorizontal;
                     else

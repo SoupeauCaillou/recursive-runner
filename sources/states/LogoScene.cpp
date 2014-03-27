@@ -120,11 +120,11 @@ public:
             }), "WaitBeforeBlink");
         logoSM->registerState(LogoStep2,
             new LogoTimeBasedStateHandler(LogoStep2, 0.05, [this] () {
-                RENDERING(animLogo)->texture = Murmur::Hash("soupe_logo3_365_331");
+                RENDERING(animLogo)->texture = HASH("soupe_logo3_365_331", 0x0);
             }), "LogoStep2");
         logoSM->registerState(LogoStep3,
             new LogoTimeBasedStateHandler(LogoStep3, 0.25, [this] () {
-                RENDERING(animLogo)->texture = Murmur::Hash("soupe_logo2_365_331");
+                RENDERING(animLogo)->texture = HASH("soupe_logo2_365_331", 0x0);
             }), "LogoStep3");
         logoSM->registerState(LogoStep4,
             new LogoTimeBasedStateHandler(LogoStep4, 0.05, [this] () {

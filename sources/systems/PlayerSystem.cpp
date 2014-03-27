@@ -23,10 +23,10 @@ INSTANCE_IMPL(PlayerSystem);
 
 PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
     PlayerComponent tc;
-    componentSerializer.add(new Property<int>(Murmur::Hash("points"), OFFSET(points, tc)));
-    componentSerializer.add(new Property<int>(Murmur::Hash("runners_count"), OFFSET(runnersCount, tc)));
-    componentSerializer.add(new Property<bool>(Murmur::Hash("ready"), OFFSET(ready, tc)));
-    componentSerializer.add(new VectorProperty<Color>(Murmur::Hash("colors"), OFFSET(colors, tc)));
+    componentSerializer.add(new Property<int>(HASH("points", 0x0), OFFSET(points, tc)));
+    componentSerializer.add(new Property<int>(HASH("runners_count", 0x0), OFFSET(runnersCount, tc)));
+    componentSerializer.add(new Property<bool>(HASH("ready", 0x0), OFFSET(ready, tc)));
+    componentSerializer.add(new VectorProperty<Color>(HASH("colors", 0x0), OFFSET(colors, tc)));
 }
 
 void PlayerSystem::DoUpdate(float) {

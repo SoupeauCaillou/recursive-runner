@@ -65,16 +65,16 @@ public:
         }
 
         void setup() {
-            pauseButton = theEntityManager.CreateEntity("pause_buttton",
+            pauseButton = theEntityManager.CreateEntity(HASH("pause_buttton", 0x0),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
             ANCHOR(pauseButton)->parent = game->cameraEntity;
             ANCHOR(pauseButton)->position =
                 TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
                 - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
-            RENDERING(pauseButton)->texture = Murmur::Hash("pause");
+            RENDERING(pauseButton)->texture = HASH("pause", 0x0);
             RENDERING(pauseButton)->show = false;
 
-            transition = theEntityManager.CreateEntity("transition_helper",
+            transition = theEntityManager.CreateEntity(HASH("transition_helper", 0x0),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("transition_helper"));
         }
 
@@ -317,7 +317,7 @@ public:
                         pt.active = active;
                         std::cout << "platform #" << i << " is now : " << active << std::endl;
                         if (active) {
-                            RENDERING(pt.platform)->texture = Murmur::Hash("link");
+                            RENDERING(pt.platform)->texture = HASH("link", 0x0);
                         } else {
                             RENDERING(pt.platform)->texture = InvalidTextureRef;
                         }

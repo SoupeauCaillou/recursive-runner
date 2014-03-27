@@ -23,8 +23,8 @@ INSTANCE_IMPL(RangeFollowerSystem);
 
 RangeFollowerSystem::RangeFollowerSystem() : ComponentSystemImpl<RangeFollowerComponent>("RangeFollower") {
     RangeFollowerComponent tc;
-    componentSerializer.add(new EntityProperty(Murmur::Hash("parent"), OFFSET(parent, tc)));
-    componentSerializer.add(new IntervalProperty<float>(Murmur::Hash("range"), OFFSET(range, tc)));
+    componentSerializer.add(new EntityProperty(HASH("parent", 0x0), OFFSET(parent, tc)));
+    componentSerializer.add(new IntervalProperty<float>(HASH("range", 0x0), OFFSET(range, tc)));
 }
 
 void RangeFollowerSystem::DoUpdate(float) {

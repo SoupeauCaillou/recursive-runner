@@ -34,24 +34,24 @@ float RunnerSystem::MaxJumpDuration = 0.2;
 
 RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
     RunnerComponent tc;
-    componentSerializer.add(new EntityProperty(Murmur::Hash("player_owner"), OFFSET(playerOwner, tc)));
-    componentSerializer.add(new EntityProperty(Murmur::Hash("collision_zone"), OFFSET(collisionZone, tc)));
-    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("start_point"), OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<glm::vec2>(Murmur::Hash("end_point"), OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
-    componentSerializer.add(new Property<Color>(Murmur::Hash("color"), OFFSET(color, tc)));
-    componentSerializer.add(new Property<float>(Murmur::Hash("speed"), OFFSET(speed, tc), 0.001));
-    componentSerializer.add(new Property<bool>(Murmur::Hash("finished"), OFFSET(finished, tc)));
-    componentSerializer.add(new Property<bool>(Murmur::Hash("ghost"), OFFSET(ghost, tc)));
-    componentSerializer.add(new Property<bool>(Murmur::Hash("killed"), OFFSET(killed, tc)));
-    componentSerializer.add(new Property<float>(Murmur::Hash("elapsed"), OFFSET(elapsed, tc), 0.001));
-    componentSerializer.add(new Property<float>(Murmur::Hash("jumping_since"), OFFSET(jumpingSince, tc), 0.001));
-    componentSerializer.add(new Property<bool>(Murmur::Hash("current_jump"), OFFSET(currentJump, tc)));
-    componentSerializer.add(new Property<int>(Murmur::Hash("oldness_bonus"), OFFSET(oldNessBonus, tc)));
-    componentSerializer.add(new Property<int>(Murmur::Hash("coin_sequence_bonus"), OFFSET(coinSequenceBonus, tc)));
-    componentSerializer.add(new VectorProperty<float>(Murmur::Hash("jump_times"), OFFSET(jumpTimes, tc)));
-    componentSerializer.add(new VectorProperty<float>(Murmur::Hash("jump_durations"), OFFSET(jumpDurations, tc)));
-    componentSerializer.add(new Property<int>(Murmur::Hash("total_coins_earned"), OFFSET(totalCoinsEarned, tc)));
-    componentSerializer.add(new VectorProperty<float>(Murmur::Hash("coins"), OFFSET(coins, tc)));
+    componentSerializer.add(new EntityProperty(HASH("player_owner", 0x0), OFFSET(playerOwner, tc)));
+    componentSerializer.add(new EntityProperty(HASH("collision_zone", 0x0), OFFSET(collisionZone, tc)));
+    componentSerializer.add(new Property<glm::vec2>(HASH("start_point", 0x0), OFFSET(startPoint.x, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<glm::vec2>(HASH("end_point", 0x0), OFFSET(endPoint, tc), glm::vec2(0.001, 0)));
+    componentSerializer.add(new Property<Color>(HASH("color", 0x0), OFFSET(color, tc)));
+    componentSerializer.add(new Property<float>(HASH("speed", 0x0), OFFSET(speed, tc), 0.001));
+    componentSerializer.add(new Property<bool>(HASH("finished", 0x0), OFFSET(finished, tc)));
+    componentSerializer.add(new Property<bool>(HASH("ghost", 0x0), OFFSET(ghost, tc)));
+    componentSerializer.add(new Property<bool>(HASH("killed", 0x0), OFFSET(killed, tc)));
+    componentSerializer.add(new Property<float>(HASH("elapsed", 0x0), OFFSET(elapsed, tc), 0.001));
+    componentSerializer.add(new Property<float>(HASH("jumping_since", 0x0), OFFSET(jumpingSince, tc), 0.001));
+    componentSerializer.add(new Property<bool>(HASH("current_jump", 0x0), OFFSET(currentJump, tc)));
+    componentSerializer.add(new Property<int>(HASH("oldness_bonus", 0x0), OFFSET(oldNessBonus, tc)));
+    componentSerializer.add(new Property<int>(HASH("coin_sequence_bonus", 0x0), OFFSET(coinSequenceBonus, tc)));
+    componentSerializer.add(new VectorProperty<float>(HASH("jump_times", 0x0), OFFSET(jumpTimes, tc)));
+    componentSerializer.add(new VectorProperty<float>(HASH("jump_durations", 0x0), OFFSET(jumpDurations, tc)));
+    componentSerializer.add(new Property<int>(HASH("total_coins_earned", 0x0), OFFSET(totalCoinsEarned, tc)));
+    componentSerializer.add(new VectorProperty<float>(HASH("coins", 0x0), OFFSET(coins, tc)));
 }
 
 static void killRunner(Entity runner) {
@@ -101,7 +101,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 if (!rc->ghost)
                     LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position
                         << ") "<< rc->endPoint.x);
-                ANIMATION(a)->name = Murmur::Hash("runL2R");
+                ANIMATION(a)->name = HASH("runL2R", 0x0);
                 rc->finished = true;
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
@@ -126,7 +126,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 pc->forces.push_back(std::make_pair(Force(force,  glm::vec2(0.0f)), RunnerSystem::MinJumpDuration));
                 rc->jumpingSince = 0.001;
                 pc->gravity.y = -50;
-                ANIMATION(a)->name = Murmur::Hash("jumpL2R_up");
+                ANIMATION(a)->name = HASH("jumpL2R_up", 0x0);
                 if (rc->speed < 0)
                     RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
                 else
@@ -147,7 +147,7 @@ void RunnerSystem::DoUpdate(float dt) {
             }
         }
         if (pc->gravity.y < 0 && pc->linearVelocity.y < -10) {
-            ANIMATION(a)->name = Murmur::Hash("jumpL2R_down");
+            ANIMATION(a)->name = HASH("jumpL2R_down", 0x0);
             if (rc->speed < 0)
                 RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
             else
