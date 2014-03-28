@@ -90,7 +90,7 @@ public:
         ANCHOR(logofade)->parent = game->cameraEntity;
         ANCHOR(animLogo)->parent = game->cameraEntity;
 
-        TRANSFORM(animLogo)->size = 
+        TRANSFORM(animLogo)->size =
             TRANSFORM(logo)->size * theRenderingSystem.getTextureSize("soupe_logo2_365_331")
             * glm::vec2(1.0 / theRenderingSystem.getTextureSize("soupe_logo").x, 1.0 / theRenderingSystem.getTextureSize("soupe_logo").y);
         glm::vec2 offset = glm::vec2(-10 / 800.0, 83/869.0) * TRANSFORM(logo)->size;
@@ -120,11 +120,11 @@ public:
             }), "WaitBeforeBlink");
         logoSM->registerState(LogoStep2,
             new LogoTimeBasedStateHandler(LogoStep2, 0.05, [this] () {
-                RENDERING(animLogo)->texture = HASH("soupe_logo3_365_331", 0x0);
+                RENDERING(animLogo)->texture = HASH("soupe_logo3_365_331", 0x995c5967);
             }), "LogoStep2");
         logoSM->registerState(LogoStep3,
             new LogoTimeBasedStateHandler(LogoStep3, 0.25, [this] () {
-                RENDERING(animLogo)->texture = HASH("soupe_logo2_365_331", 0x0);
+                RENDERING(animLogo)->texture = HASH("soupe_logo2_365_331", 0x3f655e56);
             }), "LogoStep3");
         logoSM->registerState(LogoStep4,
             new LogoTimeBasedStateHandler(LogoStep4, 0.05, [this] () {
