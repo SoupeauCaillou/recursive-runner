@@ -101,7 +101,7 @@ void RunnerSystem::DoUpdate(float dt) {
                 if (!rc->ghost)
                     LOGV(1, a << " finished! (" << rc->coins.size() << ") (pos=" << tc->position
                         << ") "<< rc->endPoint.x);
-                ANIMATION(a)->name = HASH("runL2R", 0x0);
+                ANIMATION(a)->name = HASH("runL2R", 0xda1d330c);
                 rc->finished = true;
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
