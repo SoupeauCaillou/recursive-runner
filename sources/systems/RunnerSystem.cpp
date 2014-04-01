@@ -121,11 +121,11 @@ void RunnerSystem::DoUpdate(float dt) {
 
         if (!rc->jumpTimes.empty() && rc->currentJump < (int)rc->jumpTimes.size()) {
             if ((rc->elapsed - rc->startTime)>= rc->jumpTimes[rc->currentJump] && rc->jumpingSince == 0) {
-                glm::vec2 force(0, 100 * 1.5);
-                //pc->forces.push_back(std::make_pair(Force(force,  glm::vec2(0.0f)), RunnerSystem::MinJumpDuration));
+                // std::cout << a << " -> jump #" << rc->currentJump << " -> " << rc->jumpTimes[rc->currentJump] << std::endl;
+                glm::vec2 force(0, 1800 * 1.5);
+                pc->forces.push_back(std::make_pair(Force(force,  glm::vec2(0.0f)), RunnerSystem::MinJumpDuration));
                 rc->jumpingSince = 0.001;
                 pc->gravity.y = -50;
-                pc->linearVelocity.y = 16;
                 ANIMATION(a)->name = HASH("jumpL2R_up", 0xc043b37b);
                 if (rc->speed < 0)
                     RENDERING(a)->flags |= RenderingFlags::MirrorHorizontal;
