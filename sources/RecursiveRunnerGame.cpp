@@ -71,9 +71,8 @@
 #include "systems/MorphingSystem.h"
 #include "systems/ScrollingSystem.h"
 #include "systems/ZSQDSystem.h"
-
-
-extern std::map<TextureRef, CollisionZone> texture2Collision;
+#include "systems/SpotSystem.h"
+#include "systems/SwypeButtonSystem.h"
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
 
@@ -103,6 +102,9 @@ RecursiveRunnerGame::RecursiveRunnerGame() {
    MorphingSystem::DestroyInstance();
    ScrollingSystem::DestroyInstance();
    ZSQDSystem::DestroyInstance();
+   SpotSystem::DestroyInstance();
+   SpotBlockSystem::DestroyInstance();
+   SwypeButtonSystem::DestroyInstance();
 
    Game::buildOrderedSystemsToUpdateList();
 }
