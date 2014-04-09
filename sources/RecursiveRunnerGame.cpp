@@ -55,6 +55,7 @@
 #include "util/ScoreStorageProxy.h"
 
 #include "util/RecursiveRunnerDebugConsole.h"
+#include "util/Random.h"
 
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/vector_angle.hpp>
@@ -75,6 +76,9 @@
 #include "systems/SwypeButtonSystem.h"
 
 extern std::map<TextureRef, CollisionZone> texture2Collision;
+
+float RecursiveRunnerGame::nextRunnerStartTime[100];
+int RecursiveRunnerGame::nextRunnerStartTimeIndex;
 
 RecursiveRunnerGame::RecursiveRunnerGame() {
    RunnerSystem::CreateInstance();
@@ -698,6 +702,11 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     LOGF_IF(theSessionSystem.entityCount() != 0, "Incoherent state. " << theSessionSystem.entityCount() << " sessions existing");
     LOGF_IF(thePlayerSystem.entityCount() != 0, "Incoherent state. " << thePlayerSystem.entityCount() << " players existing");
 
+    for (int i=0; i<100; i++) {
+        nextRunnerStartTime[i] = Random::Float(0.0f, 2.0f);
+    }
+    nextRunnerStartTimeIndex = 0;
+
     // Create session
     Entity session = theEntityManager.CreateEntity(HASH("session", 0xba9956b4), EntityType::Persistent);
     ADD_COMPONENT(session, Session);
@@ -726,22 +735,6 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
             break;
         case Level::Level2:
             createCoins(generateCoinsCoordinates(10, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
-            int index[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-            // use created coins as platforms switches
-            for (unsigned i=0; i<9; i++) {
-                Platform pf;
-                pf.switches[0].entity = sc->coins[index[i]];
-                pf.switches[1].entity = sc->coins[index[i]+1];
-                pf.platform = sc->links[index[i]+1];
-                RENDERING(pf.platform)->texture = InvalidTextureRef;
-                sc->platforms.push_back(pf);
-                TRANSFORM(pf.switches[0].entity)->position.y =
-                TRANSFORM(pf.switches[1].entity)->position.y =
-                TRANSFORM(pf.platform)->position.y = PlacementHelper::GimpYToScreen(600);
-                TRANSFORM(pf.platform)->rotation = 0;
-            }
-            createCoins(generateCoinsCoordinates(15, PlacementHelper::GimpYToScreen(400), PlacementHelper::GimpYToScreen(150)), sc, transition);
-
             break;
     }
 }

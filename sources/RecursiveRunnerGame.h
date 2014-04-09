@@ -109,5 +109,8 @@ class RecursiveRunnerGame : public Game {
         float H, V;
       } buttonSpacing;
 
+      static float nextRunnerStartTime[100];
+      static int nextRunnerStartTimeIndex;
+
       static void createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition);
 };

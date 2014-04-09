@@ -25,6 +25,8 @@
 #include "systems/AnchorSystem.h"
 #include "systems/AutoDestroySystem.h"
 #include "util/IntersectionUtil.h"
+
+#include "../RecursiveRunnerGame.h"
 std::map<TextureRef, CollisionZone> texture2Collision;
 
 INSTANCE_IMPL(RunnerSystem);
@@ -106,7 +108,8 @@ void RunnerSystem::DoUpdate(float dt) {
                 rc->oldNessBonus++;
                 rc->coinSequenceBonus = 1;
                 rc->ghost = true;
-                rc->startTime = glm::linearRand(0.0f, 2.0f);
+                LOGF_IF(RecursiveRunnerGame::nextRunnerStartTimeIndex >= 100, "Not enough start times");
+                rc->startTime = RecursiveRunnerGame::nextRunnerStartTime[RecursiveRunnerGame::nextRunnerStartTimeIndex++];
                 RENDERING(a)->color = Color(27.0/255, 2.0/255, 2.0/255, 0.8);
                 tc->position = rc->startPoint;
                 rc->elapsed = rc->jumpingSince = 0;
