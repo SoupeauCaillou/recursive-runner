@@ -383,7 +383,7 @@ void RecursiveRunnerGame::decor() {
 #endif
     pianist = theEntityManager.CreateEntity(HASH("background/pianist", 0x136d34ba),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
-    ANIMATION(pianist)->name = muted ? HASH("pianojournal", 0x0) : HASH("piano", 0x62205ad5);
+    ANIMATION(pianist)->name = muted ? HASH("pianojournal", 0xfd122906) : HASH("piano", 0x62205ad5);
 
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
@@ -486,28 +486,6 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     gameThreadContext->storageAPI->createTable(&ssp);
 
     successManager.init(this);
-
-    if (size > 0 && in) {
-        int eSize, sSize, index=0;
-        memcpy(&eSize, &in[index], sizeof(eSize));
-        index += sizeof(eSize);
-        memcpy(&sSize, &in[index], sizeof(sSize));
-        index += sizeof(sSize);
-        /* restore entities */
-        theEntityManager.deserialize(&in[index], eSize);
-        index += eSize;
-        /* restore systems */
-        theRenderingSystem.restoreInternalState(&in[index], sSize);
-        index += sSize;
-
-        LOGI( index << "/" << size << "(" << eSize << ", " << sSize << ")" );
-
-        theTransformationSystem.forEachECDo([this] (Entity e, TransformationComponent* tc) -> void {
-            if (tc->size.x > PlacementHelper::ScreenSize.x * param::LevelSize) {
-                ground = e;
-            }
-        });
-    }
 
 #if SAC_INGAME_EDITORS && SAC_DEBUG
    RecursiveRunnerDebugConsole::init(this);
