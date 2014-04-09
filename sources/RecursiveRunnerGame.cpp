@@ -702,6 +702,20 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     LOGF_IF(theSessionSystem.entityCount() != 0, "Incoherent state. " << theSessionSystem.entityCount() << " sessions existing");
     LOGF_IF(thePlayerSystem.entityCount() != 0, "Incoherent state. " << thePlayerSystem.entityCount() << " players existing");
 
+    // Level2 => fixed srand
+    if (level == Level::Level2) {
+        time_t t = time(NULL);
+        struct tm * timeinfo = localtime (&t);
+        int base[3];
+        base[0] = timeinfo->tm_mday;
+        base[1] = timeinfo->tm_mon;
+        base[2] = timeinfo->tm_year;
+        hash_t seed = Murmur::RuntimeHash(&base, 3 * sizeof(int));
+        LOGI("SEED: " << seed);
+        srand(seed);
+    }
+
+
     for (int i=0; i<100; i++) {
         nextRunnerStartTime[i] = Random::Float(0.0f, 2.0f);
     }
@@ -734,8 +748,13 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
             createCoins(generateCoinsCoordinates(20, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
             break;
         case Level::Level2:
-            createCoins(generateCoinsCoordinates(10, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
+            createCoins(generateCoinsCoordinates(20, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
             break;
+    }
+
+    if (level == Level::Level2) {
+        // restore whatever seed
+        srand(time(0));
     }
 }
 
@@ -770,8 +789,8 @@ static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMi
         do {
             p = glm::vec2(
                 glm::linearRand(
-                    -param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x,
-                    param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x),
+                    -param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x + 1,
+                    param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x - 1),
                 glm::linearRand(heightMin, heightMax));
            notFarEnough = false;
            for (unsigned j = 0; j < positions.size() && !notFarEnough; j++) {
