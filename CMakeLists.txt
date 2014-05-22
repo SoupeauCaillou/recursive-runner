@@ -3,11 +3,13 @@ cmake_minimum_required(VERSION 2.6)
 #set the name of the project...
 project(RecursiveRunner)
 
-option(USE_RESTRICTIVE_PLUGINS "Use restrictive plugins (Google Play Game Services)" OFF)
+option(USE_RESTRICTIVE_PLUGINS "Use restrictive plugins (Google Play Game Services)" ON)
 
 if (USE_RESTRICTIVE_PLUGINS)
     #add_definitions(-DSAC_RESTRICTIVE_PLUGINS=1)
 endif()
+
+add_definitions(-DDISABLE_SCROLLING_SYSTEM=1 -DDISABLE_AUTONOMOUS_SYSTEM=1 -DDISABLE_COLLISION_SYSTEM=1 -DDISABLE_CONTAINER_SYSTEM=1 -DDISABLE_GRAPH_SYSTEM=1 -DDISABLE_GRID_SYSTEM=1 -DDISABLE_MORPHING_SYSTEM=1 -DDISABLE_ZSQD_SYSTEM=1 -DDISABLE_SPOT_SYSTEM=1 -DDISABLE_SWYPE_SYSTEM=1)
 
 #and let the magic begin :-)
 include(sac/build/cmake/CMakeLists.txt)
