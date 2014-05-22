@@ -97,18 +97,7 @@ RecursiveRunnerGame::RecursiveRunnerGame() {
    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
 
    // destroy sac unused systems
-   AutonomousAgentSystem::DestroyInstance();
-   CollisionSystem::DestroyInstance();
-   ContainerSystem::DestroyInstance();
    DebuggingSystem::DestroyInstance();
-   GraphSystem::DestroyInstance();
-   GridSystem::DestroyInstance();
-   MorphingSystem::DestroyInstance();
-   ScrollingSystem::DestroyInstance();
-   ZSQDSystem::DestroyInstance();
-   SpotSystem::DestroyInstance();
-   SpotBlockSystem::DestroyInstance();
-   SwypeButtonSystem::DestroyInstance();
 
    Game::buildOrderedSystemsToUpdateList();
 }
@@ -712,7 +701,7 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
         base[2] = timeinfo->tm_year;
         hash_t seed = Murmur::RuntimeHash(&base, 3 * sizeof(int));
         LOGI("SEED: " << seed);
-        srand(seed);
+        Random::Init(seed);
     }
 
 
@@ -754,7 +743,7 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
 
     if (level == Level::Level2) {
         // restore whatever seed
-        srand(time(0));
+        Random::Init(time(0));
     }
 }
 
@@ -783,24 +772,44 @@ static bool sortLeftToRight(Entity e, Entity f) {
 
 static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMin, float heightMax) {
     std::vector<glm::vec2> positions;
+
+    int available = 0;
+    float* randomX = new float[count];
+    float* randomY = new float[count];
+
+
     for (int i=0; i<count; i++) {
         glm::vec2 p;
         bool notFarEnough = true;
+
         do {
-            p = glm::vec2(
-                glm::linearRand(
+            if (available == 0) {
+                // initialize random
+                Random::N_Floats(count, randomX,
                     -param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x + 1,
-                    param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x - 1),
-                glm::linearRand(heightMin, heightMax));
-           notFarEnough = false;
-           for (unsigned j = 0; j < positions.size() && !notFarEnough; j++) {
-                if (glm::distance(positions[j], p) < 1) {
+                    param::LevelSize * 0.5 * PlacementHelper::ScreenSize.x - 1);
+
+                Random::N_Floats(count, randomY, heightMin, heightMax);
+
+                available = count;
+            }
+
+            p = glm::vec2(randomX[available - 1], randomY[available - 1]);
+            available--;
+
+            notFarEnough = false;
+            for (unsigned j = 0; j < positions.size() && !notFarEnough; j++) {
+                if (glm::abs(positions[j].x - p.x) < 1) {
                     notFarEnough = true;
                 }
-           }
+            }
         } while (notFarEnough);
         positions.push_back(p);
     }
+
+    delete[] randomX;
+    delete[] randomY;
+
     return positions;
 }
 
