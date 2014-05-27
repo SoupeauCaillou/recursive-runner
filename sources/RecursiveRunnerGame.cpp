@@ -333,7 +333,7 @@ void RecursiveRunnerGame::decor() {
             zPrepassOffset = oBat[3];
         }
         if (zPrepassSize) {
-            const glm::vec2& size = tb->size;
+            const glm::vec2 size = tb->size;
             #if 0
             Color color = Color::random();
             color.a = 0.6;
@@ -350,7 +350,7 @@ void RecursiveRunnerGame::decor() {
                 glm::vec2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
                 ratio.y = 1 - ratio.y;
                 glm::vec2 pos =
-                    size * (glm::vec2(-0.5) + ratio) + TRANSFORM(bb)->size * glm::vec2(0.5, -0.5);
+                    size * (glm::vec2(-0.5) + ratio)+ TRANSFORM(bb)->size * glm::vec2(0.5, -0.5);
                 if (bdef.mirrorUV)
                     pos.x = -pos.x;
                 TRANSFORM(bb)->z = TRANSFORM(b)->z;
