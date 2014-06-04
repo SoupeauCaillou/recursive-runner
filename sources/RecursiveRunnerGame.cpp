@@ -293,20 +293,22 @@ void RecursiveRunnerGame::decor() {
         const Decor& bdef = def[i];
 
         Entity b = theEntityManager.CreateEntity(Murmur::RuntimeHash(bdef.texture));
-        ADD_COMPONENT(b, Transformation);
-        auto tb = TRANSFORM(b);
-        tb->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
-        TRANSFORM(b)->position =
-            TRANSFORM(bdef.parent)->position +
-            AnchorSystem::adjustPositionWithCardinal(
-            glm::vec2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), tb->size, bdef.ref);
-        TRANSFORM(b)->z = TRANSFORM(bdef.parent)->z + bdef.z;
-        ADD_COMPONENT(b, Rendering);
-        RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
-        RENDERING(b)->show = true;
-        RENDERING(b)->flags = RenderingFlags::NonOpaque;
-        if (bdef.mirrorUV)
-            RENDERING(b)->flags |= RenderingFlags::MirrorHorizontal;
+        {
+            ADD_COMPONENT(b, Transformation);
+            auto tb = TRANSFORM(b);
+            tb->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(bdef.texture));
+            TRANSFORM(b)->position =
+                TRANSFORM(bdef.parent)->position +
+                AnchorSystem::adjustPositionWithCardinal(
+                glm::vec2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), tb->size, bdef.ref);
+            TRANSFORM(b)->z = TRANSFORM(bdef.parent)->z + bdef.z;
+            ADD_COMPONENT(b, Rendering);
+            RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
+            RENDERING(b)->show = true;
+            RENDERING(b)->flags = RenderingFlags::NonOpaque | RenderingFlags::Constant;
+            if (bdef.mirrorUV)
+                RENDERING(b)->flags |= RenderingFlags::MirrorHorizontal;
+        }
         decorEntities.push_back(b);
 
         if (i < 3) {
@@ -316,7 +318,7 @@ void RecursiveRunnerGame::decor() {
 
         if (strncmp(bdef.texture, "arbre", 5) == 0) {
             char c = bdef.texture[5];
-            int idx = (int)c - 30 - 1;
+            int idx = (int)c - (int)'0' - 1;
             zPrepassSize = v[idx];
             zPrepassOffset = o[idx];
         } else if (!strcmp(bdef.texture, "immeuble")) {
@@ -333,7 +335,7 @@ void RecursiveRunnerGame::decor() {
             zPrepassOffset = oBat[3];
         }
         if (zPrepassSize) {
-            const glm::vec2 size = tb->size;
+            const glm::vec2 size = TRANSFORM(b)->size;
             #if 0
             Color color = Color::random();
             color.a = 0.6;
@@ -425,6 +427,7 @@ void RecursiveRunnerGame::initGame() {
     Entity camera = cameraEntity = theEntityManager.CreateEntity(HASH("camera1", 0xc6993429),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("camera"));
     TRANSFORM(camera)->position = leftMostCameraPos;
+    theTouchInputManager.setCamera(camera);
 
     decor();
 
@@ -501,7 +504,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         sceneStateMachine.start(Scene::Pause);
     } else {
         #if SAC_DEBUG
-            sceneStateMachine.start(Scene::Menu);
+            sceneStateMachine.start(Scene::Logo);
         #elif SAC_BENCHMARK_MODE
             sceneStateMachine.start(Scene::Game);
         #else
