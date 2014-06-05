@@ -7,4 +7,4 @@ rotation = 0.1
 [Rendering]
 texture = banderolle
 show = 1
-flags = 1
+flags = 9
