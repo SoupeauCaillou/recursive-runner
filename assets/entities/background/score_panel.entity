@@ -5,4 +5,4 @@ z = 0.91
 [Rendering]
 texture = score
 show = 1
-flags = 1
+flags = 9
