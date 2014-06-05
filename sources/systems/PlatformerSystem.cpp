@@ -29,7 +29,7 @@ static bool onPlatform(const glm::vec2& position, float yEpsilon, Entity platfor
 
 INSTANCE_IMPL(PlatformerSystem);
 
-PlatformerSystem::PlatformerSystem() : ComponentSystemImpl<PlatformerComponent>("Platformer") {
+PlatformerSystem::PlatformerSystem() : ComponentSystemImpl<PlatformerComponent>("Platformer", ComponentType::Complex) {
     PlatformerComponent tc;
     componentSerializer.add(new Property<glm::vec2>(HASH("previous_position", 0x4a11c67f), OFFSET(previousPosition, tc), glm::vec2(0.001, 0)));
     componentSerializer.add(new Property<glm::vec2>(HASH("offset", 0xc4601426), OFFSET(offset, tc), glm::vec2(0.001, 0)));
