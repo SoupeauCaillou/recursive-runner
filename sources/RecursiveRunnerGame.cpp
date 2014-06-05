@@ -66,7 +66,6 @@
 #include "systems/AutonomousAgentSystem.h"
 #include "systems/CollisionSystem.h"
 #include "systems/ContainerSystem.h"
-#include "systems/DebuggingSystem.h"
 #include "systems/GraphSystem.h"
 #include "systems/GridSystem.h"
 #include "systems/MorphingSystem.h"
@@ -95,9 +94,6 @@ RecursiveRunnerGame::RecursiveRunnerGame() {
    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
    sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this), "Scene::RestartGame");
    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
-
-   // destroy sac unused systems
-   DebuggingSystem::DestroyInstance();
 
    Game::buildOrderedSystemsToUpdateList();
 }
@@ -297,7 +293,7 @@ void RecursiveRunnerGame::decor() {
             TRANSFORM(b)->position =
                 AnchorSystem::adjustPositionWithCardinal(
                 glm::vec2(PlacementHelper::GimpXToScreen(bdef.x), PlacementHelper::GimpYToScreen(bdef.y)), tb->size, bdef.ref);
-            TRANSFORM(b)->z = TRANSFORM(bdef.parent)->z + bdef.z;
+            TRANSFORM(b)->z = bdef.z;
             ADD_COMPONENT(b, Rendering);
             RENDERING(b)->texture = theRenderingSystem.loadTextureFile(bdef.texture);
             RENDERING(b)->show = true;
