@@ -34,7 +34,7 @@ INSTANCE_IMPL(RunnerSystem);
 float RunnerSystem::MinJumpDuration = 0.005;
 float RunnerSystem::MaxJumpDuration = 0.2;
 
-RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>("Runner") {
+RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>(HASH("Runner", 0xe5dc730a)) {
     RunnerComponent tc;
     componentSerializer.add(new EntityProperty(HASH("player_owner", 0xd5181aa0), OFFSET(playerOwner, tc)));
     componentSerializer.add(new EntityProperty(HASH("collision_zone", 0x2a513634), OFFSET(collisionZone, tc)));

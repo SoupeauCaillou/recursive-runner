@@ -27,7 +27,7 @@
 
 INSTANCE_IMPL(CameraTargetSystem);
 
-CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetComponent>("CameraTarget") {
+CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetComponent>(HASH("CameraTarget", 0xf279bb66)) {
     CameraTargetComponent tc;
     componentSerializer.add(new Property<Entity>(HASH("camera", 0x526b9e0c), OFFSET(camera, tc)));
     componentSerializer.add(new Property<glm::vec2>(HASH("offset", 0xc4601426), OFFSET(offset, tc), glm::vec2(0.001, 0)));

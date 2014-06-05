@@ -21,7 +21,7 @@
 
 INSTANCE_IMPL(RangeFollowerSystem);
 
-RangeFollowerSystem::RangeFollowerSystem() : ComponentSystemImpl<RangeFollowerComponent>("RangeFollower") {
+RangeFollowerSystem::RangeFollowerSystem() : ComponentSystemImpl<RangeFollowerComponent>(HASH("RangeFollower", 0x63b75580)) {
     RangeFollowerComponent tc;
     componentSerializer.add(new EntityProperty(HASH("parent", 0x7ae3b713), OFFSET(parent, tc)));
     componentSerializer.add(new IntervalProperty<float>(HASH("range", 0x85dd6984), OFFSET(range, tc)));

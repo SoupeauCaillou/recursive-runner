@@ -21,7 +21,7 @@
 
 INSTANCE_IMPL(PlayerSystem);
 
-PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>("Player") {
+PlayerSystem::PlayerSystem() : ComponentSystemImpl<PlayerComponent>(HASH("Player", 0x75a3a9db)) {
     PlayerComponent tc;
     componentSerializer.add(new Property<int>(HASH("points", 0x844cd72f), OFFSET(points, tc)));
     componentSerializer.add(new Property<int>(HASH("runners_count", 0x648f5bb3), OFFSET(runnersCount, tc)));
