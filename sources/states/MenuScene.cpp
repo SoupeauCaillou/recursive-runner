@@ -45,7 +45,7 @@
 #include "../Parameters.h"
 
 #include <vector>
-
+#include <mutex>
 static void updateTitleSubTitle(Entity title, Entity subtitle);
 static void startMenuMusic(Entity title) {
     MUSIC(title)->music = theMusicSystem.loadMusicFile("sounds/intro-menu.ogg");
@@ -60,6 +60,8 @@ static void startMenuMusic(Entity title) {
 class MenuScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
     Entity titleGroup, title, subtitle, subtitleText, helpBtn;
+    std::mutex m;
+    int weeklyRank;
 
     public:
         MenuScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
@@ -94,6 +96,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
             ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
             ANCHOR(helpBtn)->z = 0;
             RENDERING(helpBtn)->texture = HASH("aide", 0xc3acc704);
+
+            weeklyRank = -1;
         }
 
 
@@ -125,7 +129,22 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
                 game->updateBestScore();
 
+                // Submit score to generic leaderboard
                 game->gameThreadContext->gameCenterAPI->submitScore(0, ssp.getValue("points"));
+                if (game->level == Level::Level2) {
+                    // Submit score to daily leaderboard
+                    time_t t = time(0);
+                    struct tm * timeinfo = localtime (&t);
+                    game->gameThreadContext->gameCenterAPI->submitScore(1 /*+ tm->tm_mday*/, ssp.getValue("points"));
+                    // retrieve weekly rank
+                    game->gameThreadContext->gameCenterAPI->getWeeklyRank(1 /*+ tm->tm_mday*/, [this] (int rank) -> void {
+                            std::unique_lock<std::mutex> l(m);
+                            weeklyRank = rank;
+                            LOGI(__(rank));
+                            //__android_log_print(ANDROID_LOG_ERROR, "sac", "RANK: %d", rank);
+                        }
+                    );
+                }
             }
             // start music if not muted
             if (!theMusicSystem.isMuted() && MUSIC(title)->control == MusicControl::Stop) {
