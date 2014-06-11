@@ -1,8 +1,9 @@
 [Transformation]
 size%gimp_size = 153, 136
+
+[Anchor]
 position%gimp_pos = 294, 700
 z = 0.55
-
 
 [Rendering]
 show = 1
