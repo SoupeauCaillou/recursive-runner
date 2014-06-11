@@ -203,6 +203,9 @@ void RecursiveRunnerGame::decor() {
     Entity buildings = theEntityManager.CreateEntity(HASH("buildings", 0x240377a9),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/city-object"));
 
+    Entity trees = theEntityManager.CreateEntity(HASH("trees", 0xe84e02fd),
+        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/city-object"));
+
     int count = 33;
     struct Decor {
         float x, y, z;
@@ -224,34 +227,34 @@ void RecursiveRunnerGame::decor() {
         Decor(2053, 244, 0.29, Cardinal::NW, "usine_desaf", false, buildings),
         Decor(3185, 298, 0.22, Cardinal::NE, "usine2", true, buildings),
         // trees
-        Decor(152, 780, 0.5, Cardinal::S, "arbre3", false, 0),
-        Decor(522, 780, 0.5, Cardinal::S, "arbre2", false, 0),
-        Decor(812, 774, 0.45, Cardinal::S, "arbre5", false, 0),
-        Decor(1162, 792, 0.5, Cardinal::S, "arbre4", false, 0),
-        Decor(1418, 790, 0.45, Cardinal::S, "arbre2", false, 0),
-        Decor(1600, 768, 0.42, Cardinal::S, "arbre1", false, 0),
-        Decor(1958, 782, 0.5, Cardinal::S, "arbre4", true, 0),
-        Decor(2396, 774, 0.44, Cardinal::S, "arbre5", false, 0),
-        Decor(2684, 784, 0.45, Cardinal::S, "arbre3", false, 0),
-        Decor(3022, 764, 0.42, Cardinal::S, "arbre1", false, 0),
-        Decor(3290, 764, 0.41, Cardinal::S, "arbre1", true, 0),
-        Decor(3538, 768, 0.44, Cardinal::S, "arbre2", false, 0),
-        Decor(3820, 772, 0.5, Cardinal::S, "arbre4", false, 0),
+        Decor(152, 780, 0.5, Cardinal::S, "arbre3", false, trees),
+        Decor(522, 780, 0.5, Cardinal::S, "arbre2", false, trees),
+        Decor(812, 774, 0.45, Cardinal::S, "arbre5", false, trees),
+        Decor(1162, 792, 0.5, Cardinal::S, "arbre4", false, trees),
+        Decor(1418, 790, 0.45, Cardinal::S, "arbre2", false, trees),
+        Decor(1600, 768, 0.42, Cardinal::S, "arbre1", false, trees),
+        Decor(1958, 782, 0.5, Cardinal::S, "arbre4", true, trees),
+        Decor(2396, 774, 0.44, Cardinal::S, "arbre5", false, trees),
+        Decor(2684, 784, 0.45, Cardinal::S, "arbre3", false, trees),
+        Decor(3022, 764, 0.42, Cardinal::S, "arbre1", false, trees),
+        Decor(3290, 764, 0.41, Cardinal::S, "arbre1", true, trees),
+        Decor(3538, 768, 0.44, Cardinal::S, "arbre2", false, trees),
+        Decor(3820, 772, 0.5, Cardinal::S, "arbre4", false, trees),
         // benchs
-        Decor(672, 768, 0.35, Cardinal::S, "bench_cat", false, 0),
-        Decor(1090, 764, 0.35, Cardinal::S, "bench", false, 0),
-        Decor(2082, 760, 0.35, Cardinal::S, "bench", true, 0),
-        Decor(2526, 762, 0.35, Cardinal::S, "bench", false, 0),
-        Decor(3464, 758, 0.35, Cardinal::S, "bench_cat", false, 0),
-        Decor(3612, 762, 0.6, Cardinal::S, "bench", false, 0),
+        Decor(672, 768, 0.35, Cardinal::S, "bench_cat", false, trees),
+        Decor(1090, 764, 0.35, Cardinal::S, "bench", false, trees),
+        Decor(2082, 760, 0.35, Cardinal::S, "bench", true, trees),
+        Decor(2526, 762, 0.35, Cardinal::S, "bench", false, trees),
+        Decor(3464, 758, 0.35, Cardinal::S, "bench_cat", false, trees),
+        Decor(3612, 762, 0.6, Cardinal::S, "bench", false, trees),
         // lampadaire
-        Decor(472, 748, 0.3, Cardinal::S, "lampadaire2", false, 0),
-        Decor(970, 748, 0.3, Cardinal::S, "lampadaire3", false, 0),
-        Decor(1740, 748, 0.3, Cardinal::S, "lampadaire2", false, 0),
-        Decor(2208, 748, 0.3, Cardinal::S, "lampadaire1", false, 0),
-        Decor(2620, 748, 0.3, Cardinal::S, "lampadaire3", false, 0),
-        Decor(3182, 748, 0.3, Cardinal::S, "lampadaire1", false, 0),
-        Decor(3732, 748, 0.3, Cardinal::S, "lampadaire3", false, 0),
+        Decor(472, 748, 0.3, Cardinal::S, "lampadaire2", false, trees),
+        Decor(970, 748, 0.3, Cardinal::S, "lampadaire3", false, trees),
+        Decor(1740, 748, 0.3, Cardinal::S, "lampadaire2", false, trees),
+        Decor(2208, 748, 0.3, Cardinal::S, "lampadaire1", false, trees),
+        Decor(2620, 748, 0.3, Cardinal::S, "lampadaire3", false, trees),
+        Decor(3182, 748, 0.3, Cardinal::S, "lampadaire1", false, trees),
+        Decor(3732, 748, 0.3, Cardinal::S, "lampadaire3", false, trees),
     };
     // pour les arbres
     glm::vec2 v[5][4] = {
@@ -380,6 +383,7 @@ void RecursiveRunnerGame::decor() {
     pianist = theEntityManager.CreateEntity(HASH("background/pianist", 0x136d34ba),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/pianist"));
     ANIMATION(pianist)->name = muted ? HASH("pianojournal", 0xfd122906) : HASH("piano", 0x62205ad5);
+    ANCHOR(pianist)->parent = trees;
 
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
@@ -398,6 +402,10 @@ void RecursiveRunnerGame::decor() {
     ADD_COMPONENT(buildings, RangeFollower);
     RANGE_FOLLOWER(buildings)->range = Interval<float>(-2, 2);
     RANGE_FOLLOWER(buildings)->parent = cameraEntity;
+
+    ADD_COMPONENT(trees, RangeFollower);
+    RANGE_FOLLOWER(trees)->range = Interval<float>(-1, 1);
+    RANGE_FOLLOWER(trees)->parent = cameraEntity;
 
     PlacementHelper::GimpSize = glm::vec2(1280, 800);
     PlacementHelper::ScreenSize.x /= 3;
