@@ -20,3 +20,4 @@ Parameters.h
 recursiveRunner.sublime-workspace
 jni/
 sources/RecursiveRunnerGitVersion.h
+build
