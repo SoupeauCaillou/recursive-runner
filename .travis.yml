@@ -1,0 +1,11 @@
+language: cpp
+compiler:
+	- clang
+	- gcc
+notifications:
+  recipients:
+    - soupeaucaillou@damsy.net
+  email:
+    on_success: change
+    on_failure: always
+script: "./sac/tools/build/build-all.sh --target linux n"
