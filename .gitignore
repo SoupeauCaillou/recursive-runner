@@ -21,3 +21,4 @@ recursiveRunner.sublime-workspace
 jni/
 sources/RecursiveRunnerGitVersion.h
 build
+local.properties

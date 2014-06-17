@@ -3,9 +3,15 @@
   <string name="tap_screen_to_start">"Toque na tela para começar"</string>
   <string name="tap_screen_to_restart">"Toque na tela para recomeçar"</string>
   <string name="how_to_play">"Como jogar? (toque para continuar)"</string>
+  <string name="this_is_you">"Este é você"</string>
   <string name="tap_jump">"Toque na tela para pular"</string>
   <string name="turn_on">"Acenda as luzes para marcar pontos"</string>
   <string name="longer_press">"Pressione por mais tempo para pulos mais altos"</string>
+  <string name="run_edge">"Você deve correr até o final da tela"</string>
+  <string name="new_hero">"Então, há um novo Você"</string>
+  <string name="previous_hero_replay">"Seu eu-anterior está repetindo o mesmo percurso"</string>
+  <string name="avoid_him">"Evite seu outro-eu, ele continuará ganhando pontos para você!"</string>
+  <string name="ten_heroes">"Tente obter a melhor pontuação trabalhando em conjunto com seus 10 outros-eu!"</string>
   <string name="good_luck">"Boa sorte!"</string>
   <string name="Best">"Melhores"</string>
   <string name="points">"pontos"</string>

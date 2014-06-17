@@ -3,9 +3,15 @@
   <string name="tap_screen_to_start">"Trykk for å starte"</string>
   <string name="tap_screen_to_restart">"Trykk på skjermen for omstart"</string>
   <string name="how_to_play">"Spillerveiledning? (trykk for å fortsette)"</string>
+  <string name="this_is_you">"Dette er deg"</string>
   <string name="tap_jump">"Trykk på skjermen for å hoppe"</string>
   <string name="turn_on">"Skru på lysene for å sanke poeng"</string>
   <string name="longer_press">"Trykk lengre for å hoppe lenger"</string>
+  <string name="run_edge">"Løpet ender ved skjermens ende"</string>
+  <string name="new_hero">"Oppstandens tidløse, er deg, nå"</string>
+  <string name="previous_hero_replay">"Ditt tidligere selv gjentar sin skjebne"</string>
+  <string name="avoid_him">"Unngå deg selv, som vil fortsette å sanke poeng!"</string>
+  <string name="ten_heroes">"Prøv å oppnå best poengsum med og mot 10 instanser av deg selv."</string>
   <string name="good_luck">"Lykke til!"</string>
   <string name="Best">"Beste"</string>
   <string name="points">"poeng"</string>
