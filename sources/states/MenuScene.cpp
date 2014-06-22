@@ -133,8 +133,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 game->gameThreadContext->gameCenterAPI->submitScore(0, ssp.getValue("points"));
                 if (game->level == Level::Level2) {
                     // Submit score to daily leaderboard
-                    time_t t = time(0);
-                    struct tm * timeinfo = localtime (&t);
+                    // time_t t = time(0);
+                    // struct tm * timeinfo = localtime (&t);
                     game->gameThreadContext->gameCenterAPI->submitScore(1 /*+ tm->tm_mday*/, ssp.getValue("points"));
                     // retrieve weekly rank
                     game->gameThreadContext->gameCenterAPI->getWeeklyRank(1 /*+ tm->tm_mday*/, [this] (int rank) -> void {
