@@ -57,9 +57,19 @@ static void startMenuMusic(Entity title) {
     MUSIC(title)->control = MusicControl::Play;
 }
 
+namespace Button {
+    enum Enum {
+        Help = 0,
+        About,
+        Exit,
+        Count
+    };
+}
+
 class MenuScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
-    Entity titleGroup, title, subtitle, subtitleText, helpBtn;
+    Entity titleGroup, title, subtitle, subtitleText;
+    Entity buttons[Button::Count];
     std::mutex m;
     int weeklyRank;
 
@@ -90,12 +100,22 @@ class MenuScene : public StateHandler<Scene::Enum> {
             TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
             TEXT(subtitleText)->charHeight *= 1.5;
 
-            helpBtn = theEntityManager.CreateEntity(HASH("menu/help_button", 0xf0532382),
+            buttons[Button::Help] = theEntityManager.CreateEntity(HASH("menu/help_button", 0xf0532382),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
-            ANCHOR(helpBtn)->parent = game->muteBtn;
-            ANCHOR(helpBtn)->position = glm::vec2(0, -(TRANSFORM(helpBtn)->size.y * 0.5 + game->buttonSpacing.V));
-            ANCHOR(helpBtn)->z = 0;
-            RENDERING(helpBtn)->texture = HASH("aide", 0xc3acc704);
+            ANCHOR(buttons[Button::Help])->parent = game->muteBtn;
+            ANCHOR(buttons[Button::Help])->position = glm::vec2(0, -(TRANSFORM(buttons[Button::Help])->size.y * 0.5 + game->buttonSpacing.V));
+            ANCHOR(buttons[Button::Help])->z = 0;
+            RENDERING(buttons[Button::Help])->texture = HASH("aide", 0xc3acc704);
+
+
+            buttons[Button::About] = theEntityManager.CreateEntityFromTemplate("menu/about_btn");
+            ANCHOR(buttons[Button::About])->parent = buttons[Button::Help];
+            buttons[Button::Exit] = theEntityManager.CreateEntityFromTemplate("menu/exit_btn");
+            ANCHOR(buttons[Button::Exit])->parent = game->muteBtn;
+            // sigh
+            LOGI("OFFSET: " << (game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5));
+            TRANSFORM(buttons[Button::About])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
+            TRANSFORM(buttons[Button::Exit])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
 
             weeklyRank = -1;
         }
@@ -153,8 +173,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 startMenuMusic(title);
             }
             // unhide UI
-            RENDERING(helpBtn)->show = true;
-            RENDERING(helpBtn)->color = Color(1,1,1,0);
+            for (int i=0; i<(int)Button::Count; i++) {
+                RENDERING(buttons[i])->show = true;
+                RENDERING(buttons[i])->color = Color(1,1,1,0);
+            }
 
             #if SAC_RESTRICTIVE_PLUGINS
                 game->gamecenterAPIHelper.displayUI();
@@ -166,7 +188,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // check if adsr is complete
             ADSRComponent* adsr = ADSR(titleGroup);
             float progress = (adsr->value - adsr->idleValue) / (adsr->sustainValue - adsr->idleValue);
-            RENDERING(helpBtn)->color.a = progress;
+
+            for (int i=0; i<(int)Button::Count; i++) {
+                RENDERING(buttons[i])->color.a = progress;
+            }
             return (adsr->value == adsr->sustainValue);
         }
 
@@ -174,8 +199,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
         void onEnter(Scene::Enum) {
             RecursiveRunnerGame::endGame();
             // enable UI
-            BUTTON(helpBtn)->enabled = true;
-            RENDERING(helpBtn)->color.a = 1;
+            for (int i=0; i<(int)Button::Count; i++) {
+                BUTTON(buttons[i])->enabled = true;
+                RENDERING(buttons[i])->color.a = 1;
+            }
         }
 
 #if 0
@@ -215,12 +242,13 @@ void backgroundUpdate(float) {
 
             // Handle help button
             if (!game->ignoreClick) {
-                if (BUTTON(helpBtn)->clicked) {
+                if (BUTTON(buttons[Button::Help])->clicked) {
                     return Scene::Tutorial;
                 }
-                game->ignoreClick = BUTTON(helpBtn)->mouseOver;
+                game->ignoreClick = BUTTON(buttons[Button::Help])->mouseOver;
             }
-            RENDERING(helpBtn)->color = BUTTON(helpBtn)->mouseOver ? Color("gray") : Color();
+            RENDERING(buttons[Button::Help])->color = BUTTON(buttons[Button::Help])->mouseOver ? Color("gray") : Color();
+            RENDERING(buttons[Button::About])->color = BUTTON(buttons[Button::About])->mouseOver ? Color("gray") : Color();
 
             // Start game? (tutorial if no game done)
             if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
@@ -257,7 +285,9 @@ void backgroundUpdate(float) {
             MUSIC(title)->control = MusicControl::Stop;
 
             // disable button interaction
-            BUTTON(helpBtn)->enabled = false;
+            for (int i=0; i<(int)Button::Count; i++) {
+                BUTTON(buttons[i])->enabled = false;
+            }
 
             #if SAC_RESTRICTIVE_PLUGINS
                 game->gamecenterAPIHelper.hideUI();
@@ -273,13 +303,17 @@ void backgroundUpdate(float) {
             float progress = (adsr->value - adsr->attackValue) /
                     (adsr->idleValue - adsr->attackValue);
 
-            RENDERING(helpBtn)->color.a = 1 - progress;
+            for (int i=0; i<(int)Button::Count; i++) {
+                RENDERING(buttons[i])->color.a = 1 - progress;
+            }
             // check if animation is finished
             return (adsr->value >= adsr->idleValue);
         }
 
         void onExit(Scene::Enum) {
-            RENDERING(helpBtn)->show = false;
+            for (int i=0; i<(int)Button::Count; i++) {
+                RENDERING(buttons[i])->show = false;
+            }
         }
 };
 

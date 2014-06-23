@@ -1,0 +1,14 @@
+[Transformation]
+size%gimp_size = 129, 92
+
+[Anchor]
+z = 0
+position%gimp_size = 1092, 0
+
+[Rendering]
+show = 1
+flags = 1
+texture = exit
+
+[Button]
+overSize = 1.2
