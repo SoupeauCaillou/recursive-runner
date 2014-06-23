@@ -90,27 +90,29 @@ class RecursiveRunnerGame : public Game {
 #endif
         StateMachine<Scene::Enum> sceneStateMachine;
 
-   public:
-      // shared/global vars
-      float baseLine;
-      bool ignoreClick;
-      Entity silhouette, route, cameraEntity, bestScore;
-      std::vector<Entity> decorEntities;
-      GameCenterAPIHelper gamecenterAPIHelper;
-      SuccessManager successManager;
+    public:
+        // shared/global vars
+        float baseLine;
+        bool ignoreClick;
+        Entity silhouette, route, cameraEntity, bestScore;
+        std::vector<Entity> decorEntities;
+        #if SAC_RESTRICTIVE_PLUGINS
+        GameCenterAPIHelper gamecenterAPIHelper;
+        #endif
+        SuccessManager successManager;
 
-      // GameTempVar gameTempVars;
-      Entity scoreText, scorePanel;
-      Entity muteBtn, ground;
-      Entity pianist;
-      glm::vec2 leftMostCameraPos;
-      Level::Enum level;
-      struct {
+        // GameTempVar gameTempVars;
+        Entity scoreText, scorePanel;
+        Entity muteBtn, ground;
+        Entity pianist;
+        glm::vec2 leftMostCameraPos;
+        Level::Enum level;
+        struct {
         float H, V;
-      } buttonSpacing;
+        } buttonSpacing;
 
-      static float nextRunnerStartTime[100];
-      static int nextRunnerStartTimeIndex;
+        static float nextRunnerStartTime[100];
+        static int nextRunnerStartTimeIndex;
 
-      static void createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition);
+        static void createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition);
 };

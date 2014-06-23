@@ -129,22 +129,24 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
                 game->updateBestScore();
 
-                // Submit score to generic leaderboard
-                game->gameThreadContext->gameCenterAPI->submitScore(0, ssp.getValue("points"));
-                if (game->level == Level::Level2) {
-                    // Submit score to daily leaderboard
-                    // time_t t = time(0);
-                    // struct tm * timeinfo = localtime (&t);
-                    game->gameThreadContext->gameCenterAPI->submitScore(1 /*+ tm->tm_mday*/, ssp.getValue("points"));
-                    // retrieve weekly rank
-                    game->gameThreadContext->gameCenterAPI->getWeeklyRank(1 /*+ tm->tm_mday*/, [this] (int rank) -> void {
-                            std::unique_lock<std::mutex> l(m);
-                            weeklyRank = rank;
-                            LOGI(__(rank));
-                            //__android_log_print(ANDROID_LOG_ERROR, "sac", "RANK: %d", rank);
-                        }
-                    );
-                }
+                #if SAC_RESTRICTIVE_PLUGINS
+                    // Submit score to generic leaderboard
+                    game->gameThreadContext->gameCenterAPI->submitScore(0, ssp.getValue("points"));
+                    if (game->level == Level::Level2) {
+                        // Submit score to daily leaderboard
+                        // time_t t = time(0);
+                        // struct tm * timeinfo = localtime (&t);
+                        game->gameThreadContext->gameCenterAPI->submitScore(1 /*+ tm->tm_mday*/, ssp.getValue("points"));
+                        // retrieve weekly rank
+                        game->gameThreadContext->gameCenterAPI->getWeeklyRank(1 /*+ tm->tm_mday*/, [this] (int rank) -> void {
+                                std::unique_lock<std::mutex> l(m);
+                                weeklyRank = rank;
+                                LOGI(__(rank));
+                                //__android_log_print(ANDROID_LOG_ERROR, "sac", "RANK: %d", rank);
+                            }
+                        );
+                    }
+                #endif
             }
             // start music if not muted
             if (!theMusicSystem.isMuted() && MUSIC(title)->control == MusicControl::Stop) {
@@ -154,7 +156,9 @@ class MenuScene : public StateHandler<Scene::Enum> {
             RENDERING(helpBtn)->show = true;
             RENDERING(helpBtn)->color = Color(1,1,1,0);
 
-            game->gamecenterAPIHelper.displayUI();
+            #if SAC_RESTRICTIVE_PLUGINS
+                game->gamecenterAPIHelper.displayUI();
+            #endif
         }
 
         bool updatePreEnter(Scene::Enum, float) {
@@ -182,11 +186,12 @@ void backgroundUpdate(float) {
 #endif
 
         Scene::Enum update(float) {
-            // Game center UI - if any button clicked, break the loop
-            if (game->gamecenterAPIHelper.updateUI()) {
-                return Scene::Menu;
-            }
-
+            #if SAC_RESTRICTIVE_PLUGINS
+                // Game center UI - if any button clicked, break the loop
+                if (game->gamecenterAPIHelper.updateUI()) {
+                    return Scene::Menu;
+                }
+            #endif
 
             // Menu music
             if (!theMusicSystem.isMuted()) {
@@ -254,7 +259,9 @@ void backgroundUpdate(float) {
             // disable button interaction
             BUTTON(helpBtn)->enabled = false;
 
-            game->gamecenterAPIHelper.hideUI();
+            #if SAC_RESTRICTIVE_PLUGINS
+                game->gamecenterAPIHelper.hideUI();
+            #endif
 
             // activate animation
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;

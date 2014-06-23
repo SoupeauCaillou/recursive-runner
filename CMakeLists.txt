@@ -6,7 +6,7 @@ project(RecursiveRunner)
 option(USE_RESTRICTIVE_PLUGINS "Use restrictive plugins (Google Play Game Services)" ON)
 
 if (USE_RESTRICTIVE_PLUGINS)
-    #add_definitions(-DSAC_RESTRICTIVE_PLUGINS=1)
+    add_definitions(-DSAC_RESTRICTIVE_PLUGINS=1)
 endif()
 
 add_definitions(

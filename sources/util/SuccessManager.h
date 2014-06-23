@@ -35,7 +35,7 @@ class SuccessManager {
         void gameEnd(SessionComponent* sc);
     private:
         RecursiveRunnerGame * game;
-        
+
         bool isTuto;
 
         // 0. switch all the lights in a row (INCREMENTAL)

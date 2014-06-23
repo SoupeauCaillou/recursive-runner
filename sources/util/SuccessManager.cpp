@@ -11,7 +11,7 @@
 
 void SuccessManager::init(RecursiveRunnerGame* g) {
     game = g;
-    
+
     achievement0CurrentStep = 0;
     achievement4CurrentStep = 0;
 }
@@ -50,6 +50,7 @@ void SuccessManager::oneLessRunner() {
     LOGV(1, "One less: " << totalLiving);
 }
 
+#if SAC_RESTRICTIVE_PLUGINS
 void SuccessManager::gameEnd(SessionComponent* sc) {
     if (isTuto) {
         LOGW_EVERY_N(120, "This is the tuto! Do not unlock successes there...");
@@ -69,7 +70,7 @@ void SuccessManager::gameEnd(SessionComponent* sc) {
         game->gameThreadContext->gameCenterAPI->unlockAchievement(3);
     }
 
-    // switch all the 20 lights in a row 
+    // switch all the 20 lights in a row
     if (bestLighter > achievement0CurrentStep) {
         game->gameThreadContext->gameCenterAPI->updateAchievementProgression(0, bestLighter);
         achievement0CurrentStep = bestLighter;
@@ -80,7 +81,7 @@ void SuccessManager::gameEnd(SessionComponent* sc) {
         game->gameThreadContext->gameCenterAPI->updateAchievementProgression(4, totalGoodLighters);
         achievement4CurrentStep = totalGoodLighters;
     }
-    
+
     long finalScore = PLAYER(sc->players[0])->points;
     // reach a total score of {50K, 100K, 200K}
     if (finalScore >= 50000) {
@@ -93,3 +94,6 @@ void SuccessManager::gameEnd(SessionComponent* sc) {
         game->gameThreadContext->gameCenterAPI->unlockAchievement(7);
     }
 }
+#else
+void SuccessManager::gameEnd(SessionComponent*) {}
+#endif

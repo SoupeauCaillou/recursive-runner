@@ -116,7 +116,9 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
         case ContextAPI::Asset:
         case ContextAPI::Communication:
         case ContextAPI::Exit:
+        #if SAC_RESTRICTIVE_PLUGINS
         case ContextAPI::GameCenter:
+        #endif
         // case ContextAPI::InAppPurchase:
         case ContextAPI::Localize:
         case ContextAPI::Music:
@@ -477,9 +479,11 @@ void RecursiveRunnerGame::initGame() {
     }
 
     //important! This must be called AFTER camera setup, since we are referencing it (anchor component)
-    gamecenterAPIHelper.init(gameThreadContext->gameCenterAPI, true, true, true, [this] {
-        gameThreadContext->gameCenterAPI->openSpecificLeaderboard(0);
-    });
+    #if SAC_RESTRICTIVE_PLUGINS
+        gamecenterAPIHelper.init(gameThreadContext->gameCenterAPI, true, true, true, [this] {
+            gameThreadContext->gameCenterAPI->openSpecificLeaderboard(0);
+        });
+    #endif
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in, int size) {
