@@ -1,0 +1,12 @@
+[Transformation]
+size%screen = 0.95, 0.95
+
+[Anchor]
+parent%name = camera1
+z = 0.97
+position = 0, 0
+
+[Rendering]
+flags = 1
+texture = about_bg
+color = 1, 1, 1, 0.8

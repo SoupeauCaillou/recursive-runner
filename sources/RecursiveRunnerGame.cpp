@@ -94,6 +94,7 @@ RecursiveRunnerGame::RecursiveRunnerGame() {
    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
    sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this), "Scene::RestartGame");
    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
+   sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this), "Scene::About");
 
    Game::buildOrderedSystemsToUpdateList();
 }

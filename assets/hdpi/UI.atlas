@@ -1,4 +1,4 @@
-atlas_size=1024,2048
+atlas_size=2048,2048
 [image0]
 name=105_typo
 original_size=34,61
@@ -26,7 +26,11 @@ opaque_rect=1,12,27,2
 [image3]
 name=130_typo
 original_size=31,61
+<<<<<<< HEAD
 position_in_atlas=435,1383
+=======
+position_in_atlas=1747,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,24
 crop_offset=0,5
 rotated=1
@@ -34,7 +38,7 @@ opaque_rect=11,9,2,34
 [image4]
 name=131_typo
 original_size=12,80
-position_in_atlas=905,210
+position_in_atlas=2012,168
 size_in_atlas=32,6
 crop_offset=0,31
 rotated=1
@@ -66,7 +70,7 @@ opaque_rect=7,38,11,1
 [image8]
 name=15e_typo
 original_size=32,61
-position_in_atlas=911,1191
+position_in_atlas=1654,1074
 size_in_atlas=45,26
 crop_offset=0,13
 rotated=1
@@ -74,7 +78,11 @@ opaque_rect=22,2,2,7
 [image9]
 name=15f_typo
 original_size=32,61
+<<<<<<< HEAD
 position_in_atlas=657,1383
+=======
+position_in_atlas=1927,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=37,24
 crop_offset=0,21
 rotated=1
@@ -90,7 +98,7 @@ opaque_rect=1,35,22,2
 [image11]
 name=21_typo
 original_size=14,80
-position_in_atlas=944,415
+position_in_atlas=1925,201
 size_in_atlas=43,8
 crop_offset=0,20
 rotated=1
@@ -98,7 +106,11 @@ opaque_rect=2,0,4,24
 [image12]
 name=22_typo
 original_size=22,80
+<<<<<<< HEAD
 position_in_atlas=885,724
+=======
+position_in_atlas=2024,739
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=17,16
 crop_offset=1,20
 rotated=0
@@ -106,7 +118,11 @@ opaque_rect=12,0,3,15
 [image13]
 name=23_typo
 original_size=40,80
+<<<<<<< HEAD
 position_in_atlas=181,1852
+=======
+position_in_atlas=192,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,37
 crop_offset=0,20
 rotated=1
@@ -114,7 +130,7 @@ opaque_rect=3,13,33,4
 [image14]
 name=27_typo
 original_size=12,80
-position_in_atlas=857,218
+position_in_atlas=1718,217
 size_in_atlas=16,6
 crop_offset=1,20
 rotated=1
@@ -122,47 +138,61 @@ opaque_rect=1,0,3,13
 [image15]
 name=28_typo
 original_size=18,80
-position_in_atlas=1003,226
-size_in_atlas=15,53
+position_in_atlas=1984,74
+size_in_atlas=53,15
 crop_offset=0,20
-rotated=0
+rotated=1
 opaque_rect=2,14,3,25
 [image16]
 name=29_typo
 original_size=18,80
-position_in_atlas=1003,281
-size_in_atlas=15,53
+position_in_atlas=1888,177
+size_in_atlas=53,15
 crop_offset=0,20
-rotated=0
+rotated=1
 opaque_rect=10,14,3,25
 [image17]
 name=2c_typo
 original_size=15,80
+<<<<<<< HEAD
 position_in_atlas=1003,384
 size_in_atlas=10,15
+=======
+position_in_atlas=1900,486
+size_in_atlas=15,10
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,56
-rotated=0
+rotated=1
 opaque_rect=4,1,4,6
 [image18]
 name=2d_typo
 original_size=19,80
-position_in_atlas=875,218
-size_in_atlas=15,5
+position_in_atlas=2039,74
+size_in_atlas=5,15
 crop_offset=0,44
-rotated=0
+rotated=1
 opaque_rect=1,1,13,4
 [image19]
 name=2e_typo
 original_size=14,80
+<<<<<<< HEAD
 position_in_atlas=1015,384
 size_in_atlas=8,9
+=======
+position_in_atlas=1900,277
+size_in_atlas=9,8
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,54
 rotated=0
 opaque_rect=1,2,6,5
 [image20]
 name=2f_typo
 original_size=24,80
+<<<<<<< HEAD
 position_in_atlas=751,1088
+=======
+position_in_atlas=1706,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,22
 crop_offset=0,20
 rotated=1
@@ -170,15 +200,20 @@ opaque_rect=14,7,3,6
 [image21]
 name=3001_typo
 original_size=61,80
+<<<<<<< HEAD
 position_in_atlas=904,724
 size_in_atlas=17,16
+=======
+position_in_atlas=1921,763
+size_in_atlas=16,17
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,54
-rotated=0
+rotated=1
 opaque_rect=3,2,3,3
 [image22]
 name=3002_typo
 original_size=61,80
-position_in_atlas=1006,188
+position_in_atlas=1902,763
 size_in_atlas=17,17
 crop_offset=0,53
 rotated=0
@@ -186,15 +221,24 @@ opaque_rect=1,6,3,6
 [image23]
 name=3042_typo
 original_size=56,80
+<<<<<<< HEAD
 position_in_atlas=779,1588
 size_in_atlas=51,48
+=======
+position_in_atlas=1623,1205
+size_in_atlas=48,51
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,16
-rotated=1
+rotated=0
 opaque_rect=3,8,40,3
 [image24]
 name=3044_typo
 original_size=56,80
+<<<<<<< HEAD
 position_in_atlas=740,1747
+=======
+position_in_atlas=1977,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=48,46
 crop_offset=0,19
 rotated=0
@@ -202,7 +246,7 @@ opaque_rect=1,2,4,32
 [image25]
 name=3046_typo
 original_size=55,80
-position_in_atlas=587,700
+position_in_atlas=993,763
 size_in_atlas=55,46
 crop_offset=0,15
 rotated=1
@@ -210,15 +254,25 @@ opaque_rect=14,18,24,3
 [image26]
 name=3048_typo
 original_size=56,80
+<<<<<<< HEAD
 position_in_atlas=273,1747
 size_in_atlas=50,52
 crop_offset=0,15
+=======
+position_in_atlas=1519,1205
+size_in_atlas=50,51
+crop_offset=0,16
+>>>>>>> 2fb0aab... Add empty about screen
 rotated=0
 opaque_rect=12,14,22,3
 [image27]
 name=304b_typo
 original_size=56,80
+<<<<<<< HEAD
 position_in_atlas=1,1747
+=======
+position_in_atlas=988,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=53,53
 crop_offset=0,15
 rotated=0
@@ -226,23 +280,33 @@ opaque_rect=29,18,4,23
 [image28]
 name=304c_typo
 original_size=56,80
+<<<<<<< HEAD
 position_in_atlas=955,1219
 size_in_atlas=55,56
+=======
+position_in_atlas=1085,589
+size_in_atlas=56,55
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,12
-rotated=0
+rotated=1
 opaque_rect=29,21,4,23
 [image29]
 name=304d_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=671,1588
 size_in_atlas=52,49
+=======
+position_in_atlas=1313,1205
+size_in_atlas=49,52
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,15
 rotated=1
 opaque_rect=7,20,27,3
 [image30]
 name=304f_typo
 original_size=48,80
-position_in_atlas=884,660
+position_in_atlas=1907,144
 size_in_atlas=55,31
 crop_offset=0,14
 rotated=1
@@ -250,6 +314,7 @@ opaque_rect=2,23,3,6
 [image31]
 name=3051_typo
 original_size=55,80
+<<<<<<< HEAD
 position_in_atlas=616,1588
 size_in_atlas=53,49
 crop_offset=0,15
@@ -260,13 +325,29 @@ name=3053_typo
 original_size=53,80
 position_in_atlas=889,1747
 size_in_atlas=42,44
+=======
+position_in_atlas=1364,1205
+size_in_atlas=49,52
+crop_offset=0,16
+rotated=0
+opaque_rect=1,12,4,37
+[image25]
+name=3053_typo
+original_size=53,80
+position_in_atlas=170,1261
+size_in_atlas=44,42
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,22
-rotated=1
+rotated=0
 opaque_rect=4,1,35,4
 [image33]
 name=3057_typo
 original_size=47,80
+<<<<<<< HEAD
 position_in_atlas=159,1643
+=======
+position_in_atlas=1213,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=50,41
 crop_offset=0,16
 rotated=1
@@ -274,7 +355,7 @@ opaque_rect=2,0,4,33
 [image34]
 name=3059_typo
 original_size=58,80
-position_in_atlas=1,1691
+position_in_atlas=106,1205
 size_in_atlas=54,54
 crop_offset=0,14
 rotated=0
@@ -282,7 +363,11 @@ opaque_rect=1,10,52,3
 [image35]
 name=305b_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=560,1588
+=======
+position_in_atlas=991,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,50
 crop_offset=0,16
 rotated=0
@@ -290,15 +375,24 @@ opaque_rect=1,15,40,4
 [image36]
 name=305d_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=725,1588
 size_in_atlas=52,49
+=======
+position_in_atlas=1415,1205
+size_in_atlas=49,52
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,17
-rotated=0
+rotated=1
 opaque_rect=10,2,29,3
 [image37]
 name=305f_typo
 original_size=57,80
+<<<<<<< HEAD
 position_in_atlas=325,1747
+=======
+position_in_atlas=1261,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=50,52
 crop_offset=0,15
 rotated=0
@@ -306,7 +400,11 @@ opaque_rect=1,11,22,4
 [image38]
 name=3066_typo
 original_size=57,80
+<<<<<<< HEAD
 position_in_atlas=586,1747
+=======
+position_in_atlas=1874,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=50,47
 crop_offset=0,20
 rotated=0
@@ -314,14 +412,20 @@ opaque_rect=7,3,39,3
 [image39]
 name=3067_typo
 original_size=57,80
+<<<<<<< HEAD
 position_in_atlas=938,1588
 size_in_atlas=51,47
+=======
+position_in_atlas=1773,1205
+size_in_atlas=47,51
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,20
-rotated=0
+rotated=1
 opaque_rect=7,3,39,3
 [image40]
 name=3068_typo
 original_size=52,80
+<<<<<<< HEAD
 position_in_atlas=977,1412
 size_in_atlas=44,51
 crop_offset=0,15
@@ -331,6 +435,17 @@ opaque_rect=11,46,32,3
 name=306a_typo
 original_size=57,80
 position_in_atlas=219,1747
+=======
+position_in_atlas=1264,1074
+size_in_atlas=50,44
+crop_offset=0,16
+rotated=1
+opaque_rect=11,45,32,3
+[image34]
+name=306a_typo
+original_size=57,80
+position_in_atlas=1207,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=52,52
 crop_offset=0,15
 rotated=0
@@ -338,7 +453,11 @@ opaque_rect=34,24,4,21
 [image42]
 name=306b_typo
 original_size=53,80
+<<<<<<< HEAD
 position_in_atlas=638,1747
+=======
+position_in_atlas=1926,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=49,47
 crop_offset=0,18
 rotated=1
@@ -346,7 +465,7 @@ opaque_rect=2,5,4,43
 [image43]
 name=306e_typo
 original_size=57,80
-position_in_atlas=916,750
+position_in_atlas=1157,1074
 size_in_atlas=52,46
 crop_offset=0,20
 rotated=0
@@ -354,7 +473,11 @@ opaque_rect=46,15,4,15
 [image44]
 name=306f_typo
 original_size=54,80
+<<<<<<< HEAD
 position_in_atlas=377,1747
+=======
+position_in_atlas=1466,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=51,51
 crop_offset=0,16
 rotated=0
@@ -370,6 +493,7 @@ opaque_rect=38,12,2,33
 [image46]
 name=307e_typo
 original_size=55,80
+<<<<<<< HEAD
 position_in_atlas=832,1588
 size_in_atlas=51,48
 crop_offset=0,16
@@ -379,6 +503,17 @@ opaque_rect=22,0,4,43
 name=3082_typo
 original_size=56,80
 position_in_atlas=430,1747
+=======
+position_in_atlas=1673,1205
+size_in_atlas=48,51
+crop_offset=0,16
+rotated=0
+opaque_rect=2,20,42,4
+[image39]
+name=3082_typo
+original_size=56,80
+position_in_atlas=1571,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=50,51
 crop_offset=0,16
 rotated=0
@@ -386,7 +521,11 @@ opaque_rect=1,24,40,3
 [image48]
 name=308a_typo
 original_size=50,80
+<<<<<<< HEAD
 position_in_atlas=211,1643
+=======
+position_in_atlas=1265,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=50,38
 crop_offset=0,17
 rotated=1
@@ -394,7 +533,11 @@ opaque_rect=2,5,4,30
 [image49]
 name=308b_typo
 original_size=54,80
+<<<<<<< HEAD
 position_in_atlas=790,1747
+=======
+position_in_atlas=1316,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=48,44
 crop_offset=0,18
 rotated=1
@@ -402,7 +545,7 @@ opaque_rect=6,2,26,3
 [image50]
 name=308c_typo
 original_size=58,80
-position_in_atlas=798,801
+position_in_atlas=877,763
 size_in_atlas=56,52
 crop_offset=0,15
 rotated=0
@@ -410,7 +553,7 @@ opaque_rect=12,1,4,50
 [image51]
 name=3092_typo
 original_size=56,80
-position_in_atlas=862,750
+position_in_atlas=1103,1074
 size_in_atlas=52,48
 crop_offset=0,15
 rotated=1
@@ -418,7 +561,11 @@ opaque_rect=1,9,33,4
 [image52]
 name=3093_typo
 original_size=56,80
+<<<<<<< HEAD
 position_in_atlas=482,1747
+=======
+position_in_atlas=1822,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=50,48
 crop_offset=0,16
 rotated=1
@@ -434,7 +581,7 @@ opaque_rect=1,2,46,4
 [image54]
 name=30a4_typo
 original_size=56,80
-position_in_atlas=970,750
+position_in_atlas=1211,1074
 size_in_atlas=51,46
 crop_offset=0,16
 rotated=1
@@ -450,7 +597,11 @@ opaque_rect=36,1,5,41
 [image56]
 name=30b8_typo
 original_size=56,80
+<<<<<<< HEAD
 position_in_atlas=615,1691
+=======
+position_in_atlas=664,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=52,54
 crop_offset=0,13
 rotated=0
@@ -458,15 +609,20 @@ opaque_rect=4,48,9,3
 [image57]
 name=30b9_typo
 original_size=57,80
+<<<<<<< HEAD
 position_in_atlas=885,1588
 size_in_atlas=51,48
+=======
+position_in_atlas=1723,1205
+size_in_atlas=48,51
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,20
-rotated=0
+rotated=1
 opaque_rect=8,2,32,4
 [image58]
 name=30bf_typo
 original_size=55,80
-position_in_atlas=644,700
+position_in_atlas=1050,763
 size_in_atlas=53,46
 crop_offset=0,15
 rotated=1
@@ -474,7 +630,11 @@ opaque_rect=15,8,28,4
 [image59]
 name=30c3_typo
 original_size=52,80
+<<<<<<< HEAD
 position_in_atlas=1,1896
+=======
+position_in_atlas=1,1425
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=40,39
 crop_offset=0,28
 rotated=0
@@ -482,7 +642,7 @@ opaque_rect=34,2,3,17
 [image60]
 name=30c8_typo
 original_size=42,80
-position_in_atlas=107,1545
+position_in_atlas=1895,358
 size_in_atlas=51,33
 crop_offset=0,16
 rotated=1
@@ -490,7 +650,7 @@ opaque_rect=1,0,4,50
 [image61]
 name=30d7_typo
 original_size=53,80
-position_in_atlas=748,750
+position_in_atlas=935,763
 size_in_atlas=56,49
 crop_offset=0,11
 rotated=1
@@ -506,23 +666,37 @@ opaque_rect=2,14,48,5
 [image63]
 name=30e3_typo
 original_size=53,80
+<<<<<<< HEAD
 position_in_atlas=933,1747
 size_in_atlas=42,44
+=======
+position_in_atlas=216,1261
+size_in_atlas=44,42
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,26
-rotated=1
+rotated=0
 opaque_rect=12,9,29,3
 [image64]
 name=30ea_typo
 original_size=49,80
+<<<<<<< HEAD
 position_in_atlas=263,1643
 size_in_atlas=50,34
+=======
+position_in_atlas=2013,589
+size_in_atlas=34,50
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,17
-rotated=1
+rotated=0
 opaque_rect=1,2,5,30
 [image65]
 name=30ec_typo
 original_size=48,80
+<<<<<<< HEAD
 position_in_atlas=106,1643
+=======
+position_in_atlas=1160,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=51,43
 crop_offset=0,17
 rotated=1
@@ -530,7 +704,7 @@ opaque_rect=3,1,4,47
 [image66]
 name=30f3_typo
 original_size=56,80
-position_in_atlas=1,1802
+position_in_atlas=1,1308
 size_in_atlas=49,48
 crop_offset=0,18
 rotated=1
@@ -538,7 +712,7 @@ opaque_rect=3,42,11,3
 [image67]
 name=30fc_typo
 original_size=54,80
-position_in_atlas=852,415
+position_in_atlas=1833,201
 size_in_atlas=44,8
 crop_offset=0,37
 rotated=0
@@ -546,7 +720,11 @@ opaque_rect=1,1,42,6
 [image68]
 name=30_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=591,1643
+=======
+position_in_atlas=676,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,29
 crop_offset=0,19
 rotated=1
@@ -554,7 +732,11 @@ opaque_rect=2,12,4,21
 [image69]
 name=31_typo
 original_size=30,80
+<<<<<<< HEAD
 position_in_atlas=799,724
+=======
+position_in_atlas=1841,568
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,16
 crop_offset=0,20
 rotated=1
@@ -562,7 +744,7 @@ opaque_rect=11,1,4,42
 [image70]
 name=32_typo
 original_size=32,80
-position_in_atlas=254,1545
+position_in_atlas=722,1261
 size_in_atlas=44,28
 crop_offset=0,19
 rotated=1
@@ -570,7 +752,7 @@ opaque_rect=1,40,26,4
 [image71]
 name=33_typo
 original_size=33,80
-position_in_atlas=300,1545
+position_in_atlas=768,1261
 size_in_atlas=44,28
 crop_offset=0,19
 rotated=1
@@ -578,7 +760,11 @@ opaque_rect=4,40,15,3
 [image72]
 name=34_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=418,1802
+=======
+position_in_atlas=552,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,32
 crop_offset=0,20
 rotated=1
@@ -586,7 +772,11 @@ opaque_rect=21,0,4,43
 [image73]
 name=35_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=255,1383
+=======
+position_in_atlas=1090,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,27
 crop_offset=0,20
 rotated=1
@@ -594,7 +784,7 @@ opaque_rect=4,0,19,4
 [image74]
 name=36_typo
 original_size=32,80
-position_in_atlas=346,1545
+position_in_atlas=814,1261
 size_in_atlas=44,28
 crop_offset=0,19
 rotated=1
@@ -602,7 +792,11 @@ opaque_rect=2,13,3,22
 [image75]
 name=37_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=637,1643
+=======
+position_in_atlas=1092,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,29
 crop_offset=0,20
 rotated=1
@@ -610,7 +804,7 @@ opaque_rect=1,0,27,4
 [image76]
 name=38_typo
 original_size=32,80
-position_in_atlas=163,1383
+position_in_atlas=952,1261
 size_in_atlas=44,27
 crop_offset=0,19
 rotated=1
@@ -618,7 +812,7 @@ opaque_rect=2,27,3,12
 [image77]
 name=39_typo
 original_size=32,80
-position_in_atlas=392,1545
+position_in_atlas=860,1261
 size_in_atlas=44,28
 crop_offset=0,19
 rotated=1
@@ -626,7 +820,7 @@ opaque_rect=22,11,4,19
 [image78]
 name=3a_typo
 original_size=14,80
-position_in_atlas=989,415
+position_in_atlas=2007,201
 size_in_atlas=33,8
 crop_offset=0,30
 rotated=1
@@ -634,7 +828,11 @@ opaque_rect=1,2,6,5
 [image79]
 name=3b_typo
 original_size=16,80
+<<<<<<< HEAD
 position_in_atlas=904,700
+=======
+position_in_atlas=1886,568
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=42,11
 crop_offset=0,30
 rotated=1
@@ -642,7 +840,11 @@ opaque_rect=4,2,6,5
 [image80]
 name=3c_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=501,1896
+=======
+position_in_atlas=464,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=30,27
 crop_offset=0,26
 rotated=1
@@ -650,7 +852,7 @@ opaque_rect=1,14,4,3
 [image81]
 name=3d_typo
 original_size=32,80
-position_in_atlas=996,660
+position_in_atlas=2019,144
 size_in_atlas=27,17
 crop_offset=0,33
 rotated=0
@@ -658,7 +860,11 @@ opaque_rect=1,1,26,4
 [image82]
 name=3e_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=533,1896
+=======
+position_in_atlas=496,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=30,27
 crop_offset=0,26
 rotated=1
@@ -682,7 +888,11 @@ opaque_rect=29,13,3,18
 [image85]
 name=411_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=300,1383
+=======
+position_in_atlas=1135,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,27
 crop_offset=0,20
 rotated=1
@@ -690,7 +900,11 @@ opaque_rect=1,0,5,43
 [image86]
 name=412_typo
 original_size=33,80
+<<<<<<< HEAD
 position_in_atlas=682,1643
+=======
+position_in_atlas=1137,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,29
 crop_offset=0,20
 rotated=1
@@ -698,7 +912,7 @@ opaque_rect=1,0,5,43
 [image87]
 name=417_typo
 original_size=33,80
-position_in_atlas=438,1545
+position_in_atlas=906,1261
 size_in_atlas=44,28
 crop_offset=0,19
 rotated=1
@@ -706,7 +920,11 @@ opaque_rect=6,2,15,3
 [image88]
 name=418_typo
 original_size=40,80
+<<<<<<< HEAD
 position_in_atlas=238,1802
+=======
+position_in_atlas=372,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,33
 crop_offset=0,20
 rotated=1
@@ -714,10 +932,10 @@ opaque_rect=1,0,4,43
 [image89]
 name=41a_typo
 original_size=31,80
-position_in_atlas=993,1691
-size_in_atlas=30,43
+position_in_atlas=912,1308
+size_in_atlas=43,30
 crop_offset=0,20
-rotated=0
+rotated=1
 opaque_rect=1,0,5,43
 [image90]
 name=41b_typo
@@ -730,7 +948,11 @@ opaque_rect=29,0,5,43
 [image91]
 name=41c_typo
 original_size=48,80
+<<<<<<< HEAD
 position_in_atlas=46,1852
+=======
+position_in_atlas=102,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,42
 crop_offset=0,20
 rotated=1
@@ -738,7 +960,11 @@ opaque_rect=1,0,4,43
 [image92]
 name=41d_typo
 original_size=38,80
+<<<<<<< HEAD
 position_in_atlas=463,1802
+=======
+position_in_atlas=597,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,32
 crop_offset=0,20
 rotated=1
@@ -754,7 +980,11 @@ opaque_rect=2,13,4,18
 [image94]
 name=41_typo
 original_size=39,80
+<<<<<<< HEAD
 position_in_atlas=226,1852
+=======
+position_in_atlas=237,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,37
 crop_offset=0,20
 rotated=1
@@ -762,15 +992,24 @@ opaque_rect=7,25,22,4
 [image95]
 name=421_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=991,1588
 size_in_atlas=32,44
+=======
+position_in_atlas=400,1261
+size_in_atlas=44,32
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,19
 rotated=0
 opaque_rect=3,11,3,23
 [image96]
 name=422_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=688,1802
+=======
+position_in_atlas=822,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,31
 crop_offset=0,20
 rotated=1
@@ -778,7 +1017,11 @@ opaque_rect=13,0,5,43
 [image97]
 name=423_typo
 original_size=37,80
+<<<<<<< HEAD
 position_in_atlas=271,1852
+=======
+position_in_atlas=282,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,36
 crop_offset=0,20
 rotated=1
@@ -786,7 +1029,7 @@ opaque_rect=3,39,10,3
 [image98]
 name=426_typo
 original_size=38,80
-position_in_atlas=827,660
+position_in_atlas=1776,177
 size_in_atlas=55,36
 crop_offset=0,20
 rotated=1
@@ -794,7 +1037,7 @@ opaque_rect=1,0,5,43
 [image99]
 name=429_typo
 original_size=56,80
-position_in_atlas=107,1488
+position_in_atlas=868,945
 size_in_atlas=55,55
 crop_offset=0,20
 rotated=0
@@ -802,7 +1045,11 @@ opaque_rect=1,0,5,43
 [image100]
 name=42d_typo
 original_size=36,80
+<<<<<<< HEAD
 position_in_atlas=361,1643
+=======
+position_in_atlas=446,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,32
 crop_offset=0,19
 rotated=1
@@ -810,7 +1057,11 @@ opaque_rect=7,19,24,4
 [image101]
 name=42f_typo
 original_size=36,80
+<<<<<<< HEAD
 position_in_atlas=778,1802
+=======
+position_in_atlas=957,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,30
 crop_offset=0,20
 rotated=1
@@ -818,7 +1069,11 @@ opaque_rect=25,0,4,43
 [image102]
 name=42_typo
 original_size=33,80
+<<<<<<< HEAD
 position_in_atlas=727,1643
+=======
+position_in_atlas=1182,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,29
 crop_offset=0,20
 rotated=1
@@ -826,7 +1081,11 @@ opaque_rect=1,0,5,43
 [image103]
 name=430_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=581,1852
+=======
+position_in_atlas=1420,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,26
 crop_offset=0,30
 rotated=1
@@ -834,7 +1093,11 @@ opaque_rect=20,9,5,19
 [image104]
 name=431_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=577,961
+=======
+position_in_atlas=1762,398
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,28
 crop_offset=0,16
 rotated=1
@@ -842,7 +1105,11 @@ opaque_rect=2,15,3,22
 [image105]
 name=432_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=686,1852
+=======
+position_in_atlas=1525,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,26
 crop_offset=0,31
 rotated=1
@@ -850,7 +1117,11 @@ opaque_rect=1,0,4,32
 [image106]
 name=433_typo
 original_size=21,80
+<<<<<<< HEAD
 position_in_atlas=913,1088
+=======
+position_in_atlas=1868,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,18
 crop_offset=0,31
 rotated=1
@@ -858,7 +1129,11 @@ opaque_rect=1,0,4,32
 [image107]
 name=434_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=499,1643
+=======
+position_in_atlas=584,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,31
 crop_offset=0,31
 rotated=1
@@ -866,7 +1141,11 @@ opaque_rect=21,0,5,32
 [image108]
 name=435_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=933,1643
+=======
+position_in_atlas=1350,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,27
 crop_offset=0,30
 rotated=1
@@ -874,7 +1153,11 @@ opaque_rect=1,13,24,4
 [image109]
 name=436_typo
 original_size=46,80
+<<<<<<< HEAD
 position_in_atlas=407,1643
+=======
+position_in_atlas=492,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,32
 crop_offset=0,31
 rotated=0
@@ -882,7 +1165,11 @@ opaque_rect=20,0,3,32
 [image110]
 name=437_typo
 original_size=28,80
+<<<<<<< HEAD
 position_in_atlas=760,1545
+=======
+position_in_atlas=285,1174
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,23
 crop_offset=0,30
 rotated=1
@@ -890,7 +1177,11 @@ opaque_rect=2,29,14,3
 [image111]
 name=438_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=399,1896
+=======
+position_in_atlas=362,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,27
 crop_offset=0,31
 rotated=1
@@ -898,15 +1189,19 @@ opaque_rect=22,0,4,32
 [image112]
 name=439_typo
 original_size=34,80
-position_in_atlas=875,1277
-size_in_atlas=46,27
+position_in_atlas=2019,828
+size_in_atlas=27,46
 crop_offset=0,17
-rotated=1
+rotated=0
 opaque_rect=22,14,4,32
 [image113]
 name=43a_typo
 original_size=27,80
+<<<<<<< HEAD
 position_in_atlas=856,1852
+=======
+position_in_atlas=1304,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,25
 crop_offset=0,31
 rotated=1
@@ -914,7 +1209,11 @@ opaque_rect=1,0,4,32
 [image114]
 name=43b_typo
 original_size=35,80
+<<<<<<< HEAD
 position_in_atlas=263,1896
+=======
+position_in_atlas=226,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,28
 crop_offset=0,31
 rotated=1
@@ -922,7 +1221,11 @@ opaque_rect=23,0,4,32
 [image115]
 name=43c_typo
 original_size=40,80
+<<<<<<< HEAD
 position_in_atlas=1,1937
+=======
+position_in_atlas=155,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,32
 crop_offset=0,31
 rotated=0
@@ -930,7 +1233,11 @@ opaque_rect=1,0,3,32
 [image116]
 name=43d_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=433,1896
+=======
+position_in_atlas=396,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,27
 crop_offset=0,31
 rotated=1
@@ -938,7 +1245,11 @@ opaque_rect=1,0,4,32
 [image117]
 name=43e_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=511,1852
+=======
+position_in_atlas=122,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,29
 crop_offset=0,30
 rotated=1
@@ -946,7 +1257,11 @@ opaque_rect=23,9,4,15
 [image118]
 name=43f_typo
 original_size=33,80
+<<<<<<< HEAD
 position_in_atlas=720,1852
+=======
+position_in_atlas=1559,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,26
 crop_offset=0,31
 rotated=1
@@ -954,7 +1269,11 @@ opaque_rect=1,0,4,32
 [image119]
 name=43_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=453,1643
+=======
+position_in_atlas=538,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,32
 crop_offset=0,19
 rotated=1
@@ -962,7 +1281,11 @@ opaque_rect=3,11,3,23
 [image120]
 name=440_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=626,961
+=======
+position_in_atlas=1811,398
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,27
 crop_offset=0,30
 rotated=1
@@ -970,7 +1293,11 @@ opaque_rect=1,4,4,43
 [image121]
 name=441_typo
 original_size=27,80
+<<<<<<< HEAD
 position_in_atlas=795,1545
+=======
+position_in_atlas=320,1174
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,23
 crop_offset=0,30
 rotated=1
@@ -978,7 +1305,11 @@ opaque_rect=2,8,3,17
 [image122]
 name=442_typo
 original_size=27,80
+<<<<<<< HEAD
 position_in_atlas=890,1852
+=======
+position_in_atlas=1338,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,25
 crop_offset=0,31
 rotated=1
@@ -986,7 +1317,7 @@ opaque_rect=10,0,4,32
 [image123]
 name=443_typo
 original_size=32,80
-position_in_atlas=779,1277
+position_in_atlas=1415,1074
 size_in_atlas=46,30
 crop_offset=0,31
 rotated=1
@@ -994,7 +1325,11 @@ opaque_rect=13,28,3,9
 [image124]
 name=445_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=297,1896
+=======
+position_in_atlas=260,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,28
 crop_offset=1,31
 rotated=1
@@ -1002,7 +1337,11 @@ opaque_rect=11,12,6,7
 [image125]
 name=446_typo
 original_size=33,80
+<<<<<<< HEAD
 position_in_atlas=545,1643
+=======
+position_in_atlas=630,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,31
 crop_offset=0,31
 rotated=1
@@ -1010,7 +1349,11 @@ opaque_rect=1,0,4,32
 [image126]
 name=447_typo
 original_size=33,80
+<<<<<<< HEAD
 position_in_atlas=754,1852
+=======
+position_in_atlas=1593,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,26
 crop_offset=0,31
 rotated=1
@@ -1018,7 +1361,11 @@ opaque_rect=21,0,5,32
 [image127]
 name=448_typo
 original_size=49,80
+<<<<<<< HEAD
 position_in_atlas=508,1802
+=======
+position_in_atlas=642,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,32
 crop_offset=0,31
 rotated=0
@@ -1026,7 +1373,11 @@ opaque_rect=1,28,41,4
 [image128]
 name=449_typo
 original_size=50,80
+<<<<<<< HEAD
 position_in_atlas=840,1747
+=======
+position_in_atlas=1366,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,44
 crop_offset=0,31
 rotated=0
@@ -1034,7 +1385,11 @@ opaque_rect=1,28,45,4
 [image129]
 name=44b_typo
 original_size=42,80
+<<<<<<< HEAD
 position_in_atlas=81,1896
+=======
+position_in_atlas=44,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=35,32
 crop_offset=0,31
 rotated=0
@@ -1042,7 +1397,11 @@ opaque_rect=1,0,4,32
 [image130]
 name=44c_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=788,1852
+=======
+position_in_atlas=1627,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,26
 crop_offset=0,31
 rotated=1
@@ -1050,7 +1409,11 @@ opaque_rect=1,0,4,32
 [image131]
 name=44d_typo
 original_size=28,80
+<<<<<<< HEAD
 position_in_atlas=690,1545
+=======
+position_in_atlas=1966,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,24
 crop_offset=0,30
 rotated=1
@@ -1058,7 +1421,11 @@ opaque_rect=4,14,19,4
 [image132]
 name=44e_typo
 original_size=46,80
+<<<<<<< HEAD
 position_in_atlas=316,1852
+=======
+position_in_atlas=1,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=41,33
 crop_offset=0,30
 rotated=0
@@ -1066,7 +1433,11 @@ opaque_rect=1,1,4,32
 [image133]
 name=44f_typo
 original_size=33,80
+<<<<<<< HEAD
 position_in_atlas=822,1852
+=======
+position_in_atlas=1661,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,26
 crop_offset=1,31
 rotated=1
@@ -1074,7 +1445,11 @@ opaque_rect=21,0,4,32
 [image134]
 name=44_typo
 original_size=37,80
+<<<<<<< HEAD
 position_in_atlas=283,1802
+=======
+position_in_atlas=417,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,33
 crop_offset=0,20
 rotated=1
@@ -1082,15 +1457,25 @@ opaque_rect=1,0,5,43
 [image135]
 name=451_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=345,1383
 size_in_atlas=43,27
 crop_offset=0,20
+=======
+position_in_atlas=998,1261
+size_in_atlas=44,27
+crop_offset=0,19
+>>>>>>> 2fb0aab... Add empty about screen
 rotated=1
 opaque_rect=1,23,24,4
 [image136]
 name=454_typo
 original_size=34,61
+<<<<<<< HEAD
 position_in_atlas=565,1896
+=======
+position_in_atlas=528,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=28,27
 crop_offset=0,22
 rotated=0
@@ -1098,7 +1483,11 @@ opaque_rect=1,13,18,2
 [image137]
 name=456_typo
 original_size=32,61
+<<<<<<< HEAD
 position_in_atlas=571,1545
+=======
+position_in_atlas=2007,398
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=38,26
 crop_offset=0,10
 rotated=1
@@ -1106,7 +1495,11 @@ opaque_rect=12,13,2,25
 [image138]
 name=45_typo
 original_size=28,80
+<<<<<<< HEAD
 position_in_atlas=480,1383
+=======
+position_in_atlas=1792,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,24
 crop_offset=0,20
 rotated=1
@@ -1114,7 +1507,11 @@ opaque_rect=1,0,5,43
 [image139]
 name=46_typo
 original_size=26,80
+<<<<<<< HEAD
 position_in_atlas=525,1383
+=======
+position_in_atlas=1837,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,24
 crop_offset=0,20
 rotated=1
@@ -1122,7 +1519,11 @@ opaque_rect=1,0,5,43
 [image140]
 name=47_typo
 original_size=39,80
+<<<<<<< HEAD
 position_in_atlas=102,1802
+=======
+position_in_atlas=308,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,35
 crop_offset=0,19
 rotated=1
@@ -1130,7 +1531,11 @@ opaque_rect=29,21,5,20
 [image141]
 name=48_typo
 original_size=38,80
+<<<<<<< HEAD
 position_in_atlas=553,1802
+=======
+position_in_atlas=687,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,32
 crop_offset=0,20
 rotated=1
@@ -1138,7 +1543,11 @@ opaque_rect=1,0,5,43
 [image142]
 name=49_typo
 original_size=20,80
+<<<<<<< HEAD
 position_in_atlas=754,724
+=======
+position_in_atlas=1938,739
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,17
 crop_offset=0,20
 rotated=1
@@ -1146,7 +1555,7 @@ opaque_rect=6,0,4,43
 [image143]
 name=4a_typo
 original_size=23,80
-position_in_atlas=949,188
+position_in_atlas=1927,74
 size_in_atlas=55,17
 crop_offset=0,20
 rotated=1
@@ -1154,7 +1563,11 @@ opaque_rect=12,0,4,48
 [image144]
 name=4b_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=823,1802
+=======
+position_in_atlas=1002,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,30
 crop_offset=0,20
 rotated=1
@@ -1162,7 +1575,11 @@ opaque_rect=1,0,5,43
 [image145]
 name=4c_typo
 original_size=26,80
+<<<<<<< HEAD
 position_in_atlas=570,1383
+=======
+position_in_atlas=1882,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,24
 crop_offset=0,20
 rotated=1
@@ -1170,7 +1587,11 @@ opaque_rect=1,0,5,43
 [image146]
 name=4d_typo
 original_size=48,80
+<<<<<<< HEAD
 position_in_atlas=91,1852
+=======
+position_in_atlas=147,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,42
 crop_offset=0,20
 rotated=1
@@ -1178,15 +1599,19 @@ opaque_rect=1,0,4,43
 [image147]
 name=4e00_typo
 original_size=57,80
-position_in_atlas=1010,62
-size_in_atlas=6,51
+position_in_atlas=1988,59
+size_in_atlas=51,6
 crop_offset=0,36
-rotated=1
+rotated=0
 opaque_rect=1,1,49,4
 [image148]
 name=4e4b_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=420,1311
+=======
+position_in_atlas=1143,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,14
 rotated=1
@@ -1194,31 +1619,50 @@ opaque_rect=4,12,45,4
 [image149]
 name=4eae_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=749,1412
 size_in_atlas=55,54
+=======
+position_in_atlas=1267,945
+size_in_atlas=54,55
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,14
-rotated=1
+rotated=0
 opaque_rect=3,26,47,4
 [image150]
 name=4ed6_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=806,1412
 size_in_atlas=55,54
+=======
+position_in_atlas=1323,945
+size_in_atlas=54,55
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,14
-rotated=0
+rotated=1
 opaque_rect=33,1,4,41
 [image151]
 name=4ee5_typo
 original_size=54,80
+<<<<<<< HEAD
 position_in_atlas=448,1588
 size_in_atlas=54,51
+=======
+position_in_atlas=765,1074
+size_in_atlas=55,51
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,14
 rotated=1
 opaque_rect=1,2,4,40
 [image152]
 name=4e_typo
 original_size=40,80
+<<<<<<< HEAD
 position_in_atlas=328,1802
+=======
+position_in_atlas=462,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,33
 crop_offset=0,20
 rotated=1
@@ -1226,23 +1670,33 @@ opaque_rect=1,0,4,43
 [image153]
 name=4f4f_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=863,1412
 size_in_atlas=55,54
+=======
+position_in_atlas=1379,945
+size_in_atlas=54,55
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,14
-rotated=0
+rotated=1
 opaque_rect=9,11,4,43
 [image154]
 name=4f55_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=920,1412
 size_in_atlas=55,54
+=======
+position_in_atlas=1435,945
+size_in_atlas=54,55
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,14
-rotated=0
+rotated=1
 opaque_rect=46,4,4,44
 [image155]
 name=4f60_typo
 original_size=60,80
-position_in_atlas=57,1691
+position_in_atlas=162,1205
 size_in_atlas=54,54
 crop_offset=0,14
 rotated=0
@@ -1250,7 +1704,11 @@ opaque_rect=9,13,4,41
 [image156]
 name=4f86_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=169,1412
+=======
+position_in_atlas=1723,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,14
 rotated=0
@@ -1258,7 +1716,11 @@ opaque_rect=26,1,4,53
 [image157]
 name=4fdd_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=227,1412
+=======
+position_in_atlas=1781,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,14
 rotated=0
@@ -1266,15 +1728,20 @@ opaque_rect=9,10,4,44
 [image158]
 name=4f_typo
 original_size=43,80
+<<<<<<< HEAD
 position_in_atlas=977,1747
 size_in_atlas=38,44
+=======
+position_in_atlas=262,1261
+size_in_atlas=44,38
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,19
 rotated=0
 opaque_rect=2,13,4,18
 [image159]
 name=500b_typo
 original_size=60,80
-position_in_atlas=113,1691
+position_in_atlas=218,1205
 size_in_atlas=54,54
 crop_offset=0,14
 rotated=0
@@ -1282,7 +1749,11 @@ opaque_rect=17,3,4,51
 [image160]
 name=50_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=390,1383
+=======
+position_in_atlas=1180,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,27
 crop_offset=0,20
 rotated=1
@@ -1290,7 +1761,7 @@ opaque_rect=1,0,5,43
 [image161]
 name=51fa_typo
 original_size=56,80
-position_in_atlas=806,750
+position_in_atlas=1047,1074
 size_in_atlas=54,48
 crop_offset=0,14
 rotated=1
@@ -1298,7 +1769,7 @@ opaque_rect=22,1,4,50
 [image162]
 name=51_typo
 original_size=43,80
-position_in_atlas=769,660
+position_in_atlas=1718,177
 size_in_atlas=56,38
 crop_offset=0,19
 rotated=1
@@ -1306,7 +1777,7 @@ opaque_rect=2,13,4,18
 [image163]
 name=5206_typo
 original_size=59,80
-position_in_atlas=164,1488
+position_in_atlas=925,945
 size_in_atlas=55,55
 crop_offset=0,14
 rotated=0
@@ -1314,7 +1785,11 @@ opaque_rect=10,24,34,4
 [image164]
 name=5230_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=669,1691
+=======
+position_in_atlas=718,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=52,54
 crop_offset=1,14
 rotated=0
@@ -1322,7 +1797,11 @@ opaque_rect=47,1,4,48
 [image165]
 name=524d_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=563,1488
+=======
+position_in_atlas=1491,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,55
 crop_offset=0,13
 rotated=0
@@ -1330,7 +1809,11 @@ opaque_rect=1,11,52,3
 [image166]
 name=52_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=868,1802
+=======
+position_in_atlas=1047,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,30
 crop_offset=0,20
 rotated=1
@@ -1338,7 +1821,11 @@ opaque_rect=1,0,5,43
 [image167]
 name=53ef_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=391,1588
+=======
+position_in_atlas=822,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=55,51
 crop_offset=0,17
 rotated=0
@@ -1346,7 +1833,7 @@ opaque_rect=1,1,53,4
 [image168]
 name=53_typo
 original_size=30,80
-position_in_atlas=958,1191
+position_in_atlas=1701,1074
 size_in_atlas=44,26
 crop_offset=0,19
 rotated=1
@@ -1354,7 +1841,11 @@ opaque_rect=6,2,16,3
 [image169]
 name=54_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=733,1802
+=======
+position_in_atlas=867,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,31
 crop_offset=0,20
 rotated=1
@@ -1362,7 +1853,11 @@ opaque_rect=13,0,5,43
 [image170]
 name=55_typo
 original_size=39,80
+<<<<<<< HEAD
 position_in_atlas=598,1802
+=======
+position_in_atlas=732,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,32
 crop_offset=0,20
 rotated=1
@@ -1370,7 +1865,11 @@ opaque_rect=26,0,5,32
 [image171]
 name=56_typo
 original_size=36,80
+<<<<<<< HEAD
 position_in_atlas=193,1802
+=======
+position_in_atlas=327,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,34
 crop_offset=0,20
 rotated=1
@@ -1378,7 +1877,7 @@ opaque_rect=14,37,6,5
 [image172]
 name=57_typo
 original_size=54,80
-position_in_atlas=699,700
+position_in_atlas=1105,763
 size_in_atlas=53,43
 crop_offset=0,20
 rotated=0
@@ -1386,7 +1885,7 @@ opaque_rect=46,3,3,11
 [image173]
 name=5897_typo
 original_size=60,80
-position_in_atlas=169,1691
+position_in_atlas=274,1205
 size_in_atlas=54,54
 crop_offset=0,14
 rotated=0
@@ -1394,7 +1893,11 @@ opaque_rect=8,2,4,40
 [image174]
 name=58_typo
 original_size=35,80
+<<<<<<< HEAD
 position_in_atlas=373,1802
+=======
+position_in_atlas=507,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,33
 crop_offset=0,20
 rotated=1
@@ -1402,23 +1905,36 @@ opaque_rect=14,17,5,7
 [image175]
 name=597d_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=478,1311
 size_in_atlas=56,55
 crop_offset=0,13
 rotated=1
 opaque_rect=36,17,3,36
 [image176]
+=======
+position_in_atlas=982,945
+size_in_atlas=55,55
+crop_offset=0,14
+rotated=0
+opaque_rect=36,16,3,36
+[image161]
+>>>>>>> 2fb0aab... Add empty about screen
 name=5982_typo
 original_size=59,80
-position_in_atlas=856,801
-size_in_atlas=55,52
+position_in_atlas=1995,945
+size_in_atlas=52,55
 crop_offset=0,14
-rotated=1
+rotated=0
 opaque_rect=30,5,4,48
 [image177]
 name=59cb_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=619,1488
+=======
+position_in_atlas=1547,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,55
 crop_offset=0,14
 rotated=0
@@ -1426,7 +1942,11 @@ opaque_rect=26,31,4,23
 [image178]
 name=59_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=643,1802
+=======
+position_in_atlas=777,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=43,32
 crop_offset=0,20
 rotated=1
@@ -1434,7 +1954,7 @@ opaque_rect=14,22,4,21
 [image179]
 name=5a_typo
 original_size=32,80
-position_in_atlas=484,1545
+position_in_atlas=1227,1308
 size_in_atlas=43,28
 crop_offset=0,20
 rotated=1
@@ -1442,7 +1962,11 @@ opaque_rect=1,39,27,4
 [image180]
 name=5c07_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=536,1311
+=======
+position_in_atlas=1201,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,13
 rotated=0
@@ -1450,6 +1974,7 @@ opaque_rect=17,2,3,53
 [image181]
 name=5c4f_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=163,1588
 size_in_atlas=55,53
 crop_offset=0,16
@@ -1459,6 +1984,17 @@ opaque_rect=13,34,41,4
 name=5c_typo
 original_size=27,80
 position_in_atlas=705,1088
+=======
+position_in_atlas=1603,945
+size_in_atlas=54,55
+crop_offset=0,15
+rotated=1
+opaque_rect=13,35,41,4
+[image167]
+name=5c_typo
+original_size=27,80
+position_in_atlas=725,1021
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,23
 crop_offset=0,19
 rotated=1
@@ -1466,7 +2002,11 @@ opaque_rect=4,2,13,3
 [image183]
 name=5e55_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=285,1412
+=======
+position_in_atlas=1839,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=1,14
 rotated=0
@@ -1474,7 +2014,7 @@ opaque_rect=1,4,52,3
 [image184]
 name=5e78_typo
 original_size=59,80
-position_in_atlas=225,1691
+position_in_atlas=330,1205
 size_in_atlas=54,54
 crop_offset=0,14
 rotated=0
@@ -1482,7 +2022,11 @@ opaque_rect=5,28,43,4
 [image185]
 name=5ea6_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=221,1488
+=======
+position_in_atlas=1039,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=55,55
 crop_offset=0,14
 rotated=0
@@ -1490,7 +2034,11 @@ opaque_rect=7,6,46,3
 [image186]
 name=5f7c_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=278,1488
+=======
+position_in_atlas=1096,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=55,55
 crop_offset=0,14
 rotated=0
@@ -1498,7 +2046,11 @@ opaque_rect=9,21,4,33
 [image187]
 name=5f8c_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=594,1311
+=======
+position_in_atlas=1259,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,14
 rotated=0
@@ -1506,15 +2058,24 @@ opaque_rect=9,22,4,32
 [image188]
 name=5f97_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=335,1488
 size_in_atlas=55,55
 crop_offset=0,13
 rotated=0
 opaque_rect=17,35,37,4
 [image189]
+=======
+position_in_atlas=1659,945
+size_in_atlas=54,55
+crop_offset=0,14
+rotated=1
+opaque_rect=17,34,37,4
+[image174]
+>>>>>>> 2fb0aab... Add empty about screen
 name=5f_typo
 original_size=27,80
-position_in_atlas=939,210
+position_in_atlas=1991,186
 size_in_atlas=25,4
 crop_offset=0,68
 rotated=0
@@ -1522,7 +2083,11 @@ opaque_rect=0,0,24,4
 [image190]
 name=61_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=616,1852
+=======
+position_in_atlas=1455,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,26
 crop_offset=0,30
 rotated=1
@@ -1530,23 +2095,32 @@ opaque_rect=20,9,5,19
 [image191]
 name=622_typo
 original_size=26,61
+<<<<<<< HEAD
 position_in_atlas=857,700
 size_in_atlas=45,15
+=======
+position_in_atlas=2029,498
+size_in_atlas=15,45
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,5
 rotated=1
 opaque_rect=6,9,2,34
 [image192]
 name=627_typo
 original_size=21,61
-position_in_atlas=1018,62
-size_in_atlas=4,37
+position_in_atlas=1988,67
+size_in_atlas=37,4
 crop_offset=0,13
-rotated=0
+rotated=1
 opaque_rect=1,1,2,34
 [image193]
 name=628_typo
 original_size=35,61
+<<<<<<< HEAD
 position_in_atlas=900,1545
+=======
+position_in_atlas=425,1174
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,23
 crop_offset=0,35
 rotated=0
@@ -1554,7 +2128,11 @@ opaque_rect=1,11,30,2
 [image194]
 name=62a_typo
 original_size=35,61
+<<<<<<< HEAD
 position_in_atlas=968,1545
+=======
+position_in_atlas=847,1021
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,21
 crop_offset=0,27
 rotated=0
@@ -1562,7 +2140,7 @@ opaque_rect=1,19,30,2
 [image195]
 name=62bc_typo
 original_size=59,80
-position_in_atlas=281,1691
+position_in_atlas=386,1205
 size_in_atlas=54,54
 crop_offset=0,14
 rotated=0
@@ -1570,7 +2148,11 @@ opaque_rect=10,0,4,51
 [image196]
 name=62c_typo
 original_size=34,61
+<<<<<<< HEAD
 position_in_atlas=36,1937
+=======
+position_in_atlas=190,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=31,30
 crop_offset=0,29
 rotated=1
@@ -1578,7 +2160,11 @@ opaque_rect=1,1,24,1
 [image197]
 name=62d_typo
 original_size=34,61
+<<<<<<< HEAD
 position_in_atlas=69,1937
+=======
+position_in_atlas=223,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=31,30
 crop_offset=0,29
 rotated=1
@@ -1586,7 +2172,11 @@ opaque_rect=1,1,24,1
 [image198]
 name=62e_typo
 original_size=34,61
+<<<<<<< HEAD
 position_in_atlas=913,1802
+=======
+position_in_atlas=1,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=42,30
 crop_offset=0,18
 rotated=1
@@ -1594,7 +2184,11 @@ opaque_rect=1,12,24,1
 [image199]
 name=62f_typo
 original_size=30,61
+<<<<<<< HEAD
 position_in_atlas=865,724
+=======
+position_in_atlas=2004,739
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=18,16
 crop_offset=1,32
 rotated=0
@@ -1602,7 +2196,7 @@ opaque_rect=2,14,15,2
 [image200]
 name=62_typo
 original_size=32,80
-position_in_atlas=923,1277
+position_in_atlas=1511,1074
 size_in_atlas=46,27
 crop_offset=0,17
 rotated=1
@@ -1610,7 +2204,11 @@ opaque_rect=1,1,4,41
 [image201]
 name=6309_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=652,1311
+=======
+position_in_atlas=1317,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,14
 rotated=0
@@ -1618,15 +2216,19 @@ opaque_rect=10,0,4,51
 [image202]
 name=631_typo
 original_size=32,61
-position_in_atlas=1004,1191
-size_in_atlas=19,26
+position_in_atlas=2019,876
+size_in_atlas=26,19
 crop_offset=0,34
-rotated=0
+rotated=1
 opaque_rect=17,2,2,12
 [image203]
 name=632_typo
 original_size=32,61
+<<<<<<< HEAD
 position_in_atlas=839,1088
+=======
+position_in_atlas=1794,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=37,19
 crop_offset=0,23
 rotated=1
@@ -1634,7 +2236,11 @@ opaque_rect=17,13,2,12
 [image204]
 name=633_typo
 original_size=38,61
+<<<<<<< HEAD
 position_in_atlas=773,1383
+=======
+position_in_atlas=608,920
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=36,20
 crop_offset=0,36
 rotated=0
@@ -1642,7 +2248,11 @@ opaque_rect=17,10,15,2
 [image205]
 name=634_typo
 original_size=38,61
+<<<<<<< HEAD
 position_in_atlas=43,1896
+=======
+position_in_atlas=43,1425
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=36,34
 crop_offset=0,22
 rotated=0
@@ -1650,7 +2260,11 @@ opaque_rect=17,24,15,2
 [image206]
 name=635_typo
 original_size=38,61
+<<<<<<< HEAD
 position_in_atlas=735,1383
+=======
+position_in_atlas=809,1021
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=36,21
 crop_offset=0,35
 rotated=0
@@ -1658,15 +2272,24 @@ opaque_rect=17,12,15,1
 [image207]
 name=639_typo
 original_size=30,61
+<<<<<<< HEAD
 position_in_atlas=998,1802
 size_in_atlas=25,27
+=======
+position_in_atlas=1406,1261
+size_in_atlas=27,25
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,33
-rotated=0
+rotated=1
 opaque_rect=7,25,16,1
 [image208]
 name=63a_typo
 original_size=30,61
+<<<<<<< HEAD
 position_in_atlas=651,1545
+=======
+position_in_atlas=1265,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=37,25
 crop_offset=0,23
 rotated=1
@@ -1674,7 +2297,11 @@ opaque_rect=7,35,16,1
 [image209]
 name=63_typo
 original_size=27,80
+<<<<<<< HEAD
 position_in_atlas=830,1545
+=======
+position_in_atlas=355,1174
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,23
 crop_offset=0,30
 rotated=1
@@ -1682,7 +2309,11 @@ opaque_rect=2,8,3,17
 [image210]
 name=641_typo
 original_size=35,61
+<<<<<<< HEAD
 position_in_atlas=331,1896
+=======
+position_in_atlas=294,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,28
 crop_offset=0,20
 rotated=0
@@ -1690,7 +2321,11 @@ opaque_rect=1,26,30,2
 [image211]
 name=642_typo
 original_size=32,61
+<<<<<<< HEAD
 position_in_atlas=725,1545
+=======
+position_in_atlas=2001,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,24
 crop_offset=0,27
 rotated=1
@@ -1698,15 +2333,19 @@ opaque_rect=20,14,2,12
 [image212]
 name=644_typo
 original_size=33,61
-position_in_atlas=207,1545
-size_in_atlas=45,28
+position_in_atlas=140,1261
+size_in_atlas=28,45
 crop_offset=0,14
-rotated=1
+rotated=0
 opaque_rect=21,1,2,36
 [image213]
 name=645_typo
 original_size=29,61
+<<<<<<< HEAD
 position_in_atlas=811,1383
+=======
+position_in_atlas=646,920
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,20
 crop_offset=0,28
 rotated=1
@@ -1714,15 +2353,19 @@ opaque_rect=0,11,2,20
 [image214]
 name=646_typo
 original_size=32,61
-position_in_atlas=1000,1311
-size_in_atlas=23,36
+position_in_atlas=771,1021
+size_in_atlas=36,23
 crop_offset=0,23
-rotated=0
+rotated=1
 opaque_rect=20,11,2,19
 [image215]
 name=647_typo
 original_size=27,61
+<<<<<<< HEAD
 position_in_atlas=844,724
+=======
+position_in_atlas=1983,739
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=19,16
 crop_offset=0,30
 rotated=1
@@ -1730,7 +2373,11 @@ opaque_rect=2,8,1,9
 [image216]
 name=648_typo
 original_size=32,61
+<<<<<<< HEAD
 position_in_atlas=846,1383
+=======
+position_in_atlas=681,920
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=23,19
 crop_offset=0,37
 rotated=1
@@ -1738,7 +2385,7 @@ opaque_rect=16,5,2,9
 [image217]
 name=64_typo
 original_size=34,80
-position_in_atlas=971,1277
+position_in_atlas=1559,1074
 size_in_atlas=46,27
 crop_offset=0,17
 rotated=1
@@ -1746,7 +2393,7 @@ opaque_rect=23,1,4,45
 [image218]
 name=6570_typo
 original_size=58,80
-position_in_atlas=392,1488
+position_in_atlas=1153,945
 size_in_atlas=55,55
 crop_offset=0,14
 rotated=0
@@ -1754,7 +2401,11 @@ opaque_rect=2,11,26,3
 [image219]
 name=65b0_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=675,1488
+=======
+position_in_atlas=1715,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,55
 crop_offset=0,14
 rotated=1
@@ -1770,7 +2421,11 @@ opaque_rect=1,11,52,3
 [image221]
 name=65_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=968,1643
+=======
+position_in_atlas=1385,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,27
 crop_offset=0,30
 rotated=1
@@ -1778,6 +2433,7 @@ opaque_rect=1,13,24,4
 [image222]
 name=660e_typo
 original_size=57,80
+<<<<<<< HEAD
 position_in_atlas=166,1747
 size_in_atlas=51,53
 crop_offset=0,16
@@ -1787,6 +2443,17 @@ opaque_rect=46,0,4,47
 name=662f_typo
 original_size=60,80
 position_in_atlas=343,1412
+=======
+position_in_atlas=879,1074
+size_in_atlas=54,51
+crop_offset=0,15
+rotated=1
+opaque_rect=46,1,4,47
+[image207]
+name=662f_typo
+original_size=60,80
+position_in_atlas=1897,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,15
 rotated=0
@@ -1794,7 +2461,11 @@ opaque_rect=2,26,52,3
 [image224]
 name=66f4_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=505,1691
+=======
+position_in_atlas=554,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=53,54
 crop_offset=0,16
 rotated=1
@@ -1802,7 +2473,7 @@ opaque_rect=2,0,50,4
 [image225]
 name=66_typo
 original_size=24,80
-position_in_atlas=809,700
+position_in_atlas=1658,763
 size_in_atlas=46,22
 crop_offset=0,17
 rotated=1
@@ -1818,7 +2489,11 @@ opaque_rect=1,21,52,3
 [image227]
 name=67e_typo
 original_size=35,61
+<<<<<<< HEAD
 position_in_atlas=924,1852
+=======
+position_in_atlas=1372,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,25
 crop_offset=0,35
 rotated=0
@@ -1826,7 +2501,7 @@ opaque_rect=1,11,30,2
 [image228]
 name=67_typo
 original_size=32,80
-position_in_atlas=430,961
+position_in_atlas=1997,358
 size_in_atlas=47,29
 crop_offset=0,30
 rotated=1
@@ -1834,7 +2509,11 @@ opaque_rect=8,29,16,4
 [image229]
 name=686_typo
 original_size=34,61
+<<<<<<< HEAD
 position_in_atlas=102,1937
+=======
+position_in_atlas=256,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=31,30
 crop_offset=0,29
 rotated=1
@@ -1842,7 +2521,11 @@ opaque_rect=1,1,24,1
 [image230]
 name=68_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=516,1088
+=======
+position_in_atlas=1562,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=46,26
 crop_offset=0,17
 rotated=1
@@ -1850,7 +2533,7 @@ opaque_rect=1,1,4,45
 [image231]
 name=69_typo
 original_size=12,80
-position_in_atlas=936,401
+position_in_atlas=1991,177
 size_in_atlas=45,7
 crop_offset=0,18
 rotated=1
@@ -1858,7 +2541,11 @@ opaque_rect=2,13,4,32
 [image232]
 name=6a9_typo
 original_size=35,61
+<<<<<<< HEAD
 position_in_atlas=118,1896
+=======
+position_in_atlas=81,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=35,32
 crop_offset=0,13
 rotated=1
@@ -1866,7 +2553,11 @@ opaque_rect=1,33,29,2
 [image233]
 name=6af_typo
 original_size=35,61
+<<<<<<< HEAD
 position_in_atlas=155,1896
+=======
+position_in_atlas=118,1390
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=35,32
 crop_offset=0,13
 rotated=1
@@ -1874,15 +2565,19 @@ opaque_rect=1,33,29,2
 [image234]
 name=6a_typo
 original_size=19,80
-position_in_atlas=1010,1
-size_in_atlas=13,59
+position_in_atlas=1927,59
+size_in_atlas=59,13
 crop_offset=0,18
-rotated=0
+rotated=1
 opaque_rect=8,13,4,40
 [image235]
 name=6b_typo
 original_size=27,80
+<<<<<<< HEAD
 position_in_atlas=564,1088
+=======
+position_in_atlas=1610,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=46,25
 crop_offset=0,17
 rotated=1
@@ -1890,15 +2585,20 @@ opaque_rect=1,1,3,45
 [image236]
 name=6cc_typo
 original_size=32,61
+<<<<<<< HEAD
 position_in_atlas=958,1852
 size_in_atlas=23,25
+=======
+position_in_atlas=493,1174
+size_in_atlas=25,23
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,34
 rotated=1
 opaque_rect=19,1,5,2
 [image237]
 name=6c_typo
 original_size=12,80
-position_in_atlas=857,210
+position_in_atlas=1964,168
 size_in_atlas=46,6
 crop_offset=0,17
 rotated=1
@@ -1906,7 +2606,11 @@ opaque_rect=1,1,4,45
 [image238]
 name=6d_typo
 original_size=51,80
+<<<<<<< HEAD
 position_in_atlas=315,1643
+=======
+position_in_atlas=354,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,33
 crop_offset=0,30
 rotated=0
@@ -1914,7 +2618,11 @@ opaque_rect=1,4,4,29
 [image239]
 name=6e_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=651,1852
+=======
+position_in_atlas=1490,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,26
 crop_offset=0,30
 rotated=1
@@ -1922,7 +2630,11 @@ opaque_rect=1,4,4,29
 [image240]
 name=6f_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=546,1852
+=======
+position_in_atlas=157,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,29
 crop_offset=0,30
 rotated=1
@@ -1930,7 +2642,11 @@ opaque_rect=23,9,4,15
 [image241]
 name=70b9_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=731,1488
+=======
+position_in_atlas=1771,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,55
 crop_offset=0,14
 rotated=0
@@ -1938,7 +2654,11 @@ opaque_rect=7,19,40,4
 [image242]
 name=70_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=675,961
+=======
+position_in_atlas=1860,398
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,27
 crop_offset=0,30
 rotated=1
@@ -1946,7 +2666,11 @@ opaque_rect=1,4,4,43
 [image243]
 name=7136_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=787,1488
+=======
+position_in_atlas=1827,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,55
 crop_offset=0,14
 rotated=0
@@ -1954,7 +2678,11 @@ opaque_rect=36,1,4,21
 [image244]
 name=71c8_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=710,1311
+=======
+position_in_atlas=1375,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,14
 rotated=0
@@ -1962,7 +2690,11 @@ opaque_rect=18,49,36,4
 [image245]
 name=71_typo
 original_size=34,80
+<<<<<<< HEAD
 position_in_atlas=724,961
+=======
+position_in_atlas=1909,398
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,27
 crop_offset=0,30
 rotated=1
@@ -1970,7 +2702,11 @@ opaque_rect=23,1,4,46
 [image246]
 name=72_typo
 original_size=21,80
+<<<<<<< HEAD
 position_in_atlas=878,1088
+=======
+position_in_atlas=1833,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,18
 crop_offset=0,30
 rotated=1
@@ -1978,7 +2714,7 @@ opaque_rect=1,7,4,26
 [image247]
 name=73a9_typo
 original_size=59,80
-position_in_atlas=913,801
+position_in_atlas=708,1074
 size_in_atlas=55,52
 crop_offset=0,17
 rotated=0
@@ -1986,7 +2722,11 @@ opaque_rect=8,1,4,40
 [image248]
 name=73fe_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=560,1691
+=======
+position_in_atlas=609,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=53,54
 crop_offset=0,16
 rotated=1
@@ -1994,7 +2734,11 @@ opaque_rect=8,2,4,40
 [image249]
 name=73_typo
 original_size=26,80
+<<<<<<< HEAD
 position_in_atlas=865,1545
+=======
+position_in_atlas=390,1174
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=33,23
 crop_offset=0,30
 rotated=1
@@ -2002,7 +2746,11 @@ opaque_rect=6,2,14,3
 [image250]
 name=74_typo
 original_size=21,80
+<<<<<<< HEAD
 position_in_atlas=796,1088
+=======
+position_in_atlas=1751,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=41,20
 crop_offset=0,22
 rotated=1
@@ -2010,7 +2758,11 @@ opaque_rect=6,7,4,27
 [image251]
 name=753b_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=777,1691
+=======
+position_in_atlas=772,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=52,54
 crop_offset=0,16
 rotated=1
@@ -2018,7 +2770,11 @@ opaque_rect=1,0,52,4
 [image252]
 name=75_typo
 original_size=32,80
+<<<<<<< HEAD
 position_in_atlas=467,1896
+=======
+position_in_atlas=430,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,27
 crop_offset=0,31
 rotated=1
@@ -2026,7 +2782,11 @@ opaque_rect=21,0,5,27
 [image253]
 name=7684_typo
 original_size=57,80
+<<<<<<< HEAD
 position_in_atlas=831,1691
+=======
+position_in_atlas=826,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=52,54
 crop_offset=0,14
 rotated=0
@@ -2034,7 +2794,11 @@ opaque_rect=1,9,4,42
 [image254]
 name=76f4_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=56,1747
+=======
+position_in_atlas=1043,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=53,53
 crop_offset=0,14
 rotated=0
@@ -2042,7 +2806,11 @@ opaque_rect=2,6,48,4
 [image255]
 name=76_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=229,1896
+=======
+position_in_atlas=192,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,29
 crop_offset=0,31
 rotated=1
@@ -2050,15 +2818,19 @@ opaque_rect=23,1,3,7
 [image256]
 name=77_typo
 original_size=46,80
-position_in_atlas=160,1545
-size_in_atlas=45,32
+position_in_atlas=106,1261
+size_in_atlas=32,45
 crop_offset=0,31
-rotated=0
+rotated=1
 opaque_rect=3,0,3,9
 [image257]
 name=78_typo
 original_size=31,80
+<<<<<<< HEAD
 position_in_atlas=365,1896
+=======
+position_in_atlas=328,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,28
 crop_offset=1,31
 rotated=1
@@ -2066,7 +2838,11 @@ opaque_rect=11,12,6,7
 [image258]
 name=795d_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=401,1412
+=======
+position_in_atlas=1955,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,14
 rotated=0
@@ -2074,7 +2850,7 @@ opaque_rect=10,24,4,30
 [image259]
 name=79_typo
 original_size=32,80
-position_in_atlas=827,1277
+position_in_atlas=1463,1074
 size_in_atlas=46,30
 crop_offset=0,31
 rotated=1
@@ -2082,7 +2858,11 @@ opaque_rect=13,28,3,9
 [image260]
 name=7aef_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=843,1488
+=======
+position_in_atlas=1883,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,55
 crop_offset=0,14
 rotated=1
@@ -2090,7 +2870,11 @@ opaque_rect=22,22,32,3
 [image261]
 name=7a_typo
 original_size=26,80
+<<<<<<< HEAD
 position_in_atlas=934,1545
+=======
+position_in_atlas=459,1174
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=32,23
 crop_offset=0,31
 rotated=1
@@ -2106,7 +2890,11 @@ opaque_rect=23,6,31,4
 [image263]
 name=7de3_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=459,1412
+=======
+position_in_atlas=587,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,14
 rotated=0
@@ -2114,7 +2902,11 @@ opaque_rect=21,19,33,3
 [image264]
 name=7e7c_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=768,1311
+=======
+position_in_atlas=1433,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,14
 rotated=0
@@ -2122,7 +2914,11 @@ opaque_rect=21,2,4,51
 [image265]
 name=7e8c_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=897,1219
+=======
+position_in_atlas=1971,498
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,56
 crop_offset=0,14
 rotated=0
@@ -2130,7 +2926,11 @@ opaque_rect=21,2,34,3
 [image266]
 name=80fd_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=393,1691
+=======
+position_in_atlas=442,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,54
 crop_offset=1,14
 rotated=0
@@ -2138,7 +2938,11 @@ opaque_rect=20,21,4,30
 [image267]
 name=89e6_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=506,1488
+=======
+position_in_atlas=1210,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=55,55
 crop_offset=0,14
 rotated=0
@@ -2146,7 +2950,11 @@ opaque_rect=40,1,3,49
 [image268]
 name=89f8_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=517,1412
+=======
+position_in_atlas=645,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,14
 rotated=0
@@ -2154,7 +2962,11 @@ opaque_rect=22,15,3,37
 [image269]
 name=8d70_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=826,1311
+=======
+position_in_atlas=1491,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=1,14
 rotated=1
@@ -2162,7 +2974,11 @@ opaque_rect=25,1,4,50
 [image270]
 name=8dd1_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=575,1412
+=======
+position_in_atlas=703,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,14
 rotated=0
@@ -2170,7 +2986,11 @@ opaque_rect=28,19,3,33
 [image271]
 name=8df3_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=884,1311
+=======
+position_in_atlas=1549,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,14
 rotated=0
@@ -2178,7 +2998,11 @@ opaque_rect=40,1,4,50
 [image272]
 name=8e8d_typo
 original_size=60,80
+<<<<<<< HEAD
 position_in_atlas=220,1588
+=======
+position_in_atlas=537,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=55,53
 crop_offset=0,15
 rotated=0
@@ -2186,7 +3010,11 @@ opaque_rect=11,17,4,31
 [image273]
 name=8f15_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=449,1691
+=======
+position_in_atlas=498,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,54
 crop_offset=0,14
 rotated=0
@@ -2194,7 +3022,11 @@ opaque_rect=10,0,3,54
 [image274]
 name=9019_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=942,1311
+=======
+position_in_atlas=1607,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,13
 rotated=0
@@ -2210,7 +3042,11 @@ opaque_rect=21,48,32,4
 [image276]
 name=904b_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=277,1588
+=======
+position_in_atlas=594,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=55,53
 crop_offset=0,15
 rotated=0
@@ -2218,7 +3054,7 @@ opaque_rect=33,7,4,38
 [image277]
 name=904e_typo
 original_size=59,80
-position_in_atlas=740,801
+position_in_atlas=819,763
 size_in_atlas=56,53
 crop_offset=0,15
 rotated=0
@@ -2226,7 +3062,11 @@ opaque_rect=19,18,34,4
 [image278]
 name=907f_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=691,1412
+=======
+position_in_atlas=761,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,54
 crop_offset=0,14
 rotated=0
@@ -2234,7 +3074,11 @@ opaque_rect=21,48,32,4
 [image279]
 name=908a_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=111,1412
+=======
+position_in_atlas=1665,589
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=56,55
 crop_offset=0,13
 rotated=0
@@ -2242,7 +3086,11 @@ opaque_rect=21,49,32,4
 [image280]
 name=90a3_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=504,1588
+=======
+position_in_atlas=935,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,51
 crop_offset=0,17
 rotated=0
@@ -2250,7 +3098,11 @@ opaque_rect=33,1,4,50
 [image281]
 name=91cd_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=885,1691
+=======
+position_in_atlas=880,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=52,54
 crop_offset=0,15
 rotated=1
@@ -2258,7 +3110,11 @@ opaque_rect=3,40,47,4
 [image282]
 name=9577_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=111,1747
+=======
+position_in_atlas=1098,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=53,53
 crop_offset=0,16
 rotated=0
@@ -2266,15 +3122,19 @@ opaque_rect=1,26,50,3
 [image283]
 name=958b_typo
 original_size=57,80
-position_in_atlas=970,801
-size_in_atlas=53,52
+position_in_atlas=1153,1205
+size_in_atlas=52,53
 crop_offset=0,15
-rotated=1
+rotated=0
 opaque_rect=1,1,4,52
 [image284]
 name=96fb_typo
 original_size=58,80
+<<<<<<< HEAD
 position_in_atlas=334,1588
+=======
+position_in_atlas=651,1074
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=55,53
 crop_offset=0,15
 rotated=0
@@ -2282,7 +3142,11 @@ opaque_rect=1,8,51,3
 [image285]
 name=9762_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=939,1691
+=======
+position_in_atlas=934,1205
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=52,54
 crop_offset=0,16
 rotated=1
@@ -2290,7 +3154,11 @@ opaque_rect=1,0,52,4
 [image286]
 name=9ad8_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=899,1488
+=======
+position_in_atlas=1939,945
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=54,55
 crop_offset=0,13
 rotated=0
@@ -2298,115 +3166,196 @@ opaque_rect=1,6,52,3
 [image287]
 name=9ede_typo
 original_size=59,80
+<<<<<<< HEAD
 position_in_atlas=955,1488
 size_in_atlas=54,55
 crop_offset=0,14
 rotated=1
 opaque_rect=13,2,3,37
 [image288]
+=======
+position_in_atlas=480,1074
+size_in_atlas=55,54
+crop_offset=0,14
+rotated=0
+opaque_rect=13,3,3,36
+[image269]
+name=about_bg
+original_size=863,667
+position_in_atlas=1,1
+size_in_atlas=859,664
+crop_offset=2,0
+rotated=0
+opaque_rect=27,20,811,624
+[image270]
+>>>>>>> 2fb0aab... Add empty about screen
 name=about
 original_size=129,93
-position_in_atlas=418,996
+position_in_atlas=1028,667
 size_in_atlas=128,90
 crop_offset=0,1
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image289]
+=======
+[image271]
+>>>>>>> 2fb0aab... Add empty about screen
 name=aide
 original_size=129,93
-position_in_atlas=548,996
+position_in_atlas=1158,667
 size_in_atlas=128,90
 crop_offset=0,1
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image290]
 name=bf_typo
 original_size=26,80
 position_in_atlas=612,1088
+=======
+[image272]
+name=bf_typo
+original_size=26,80
+position_in_atlas=678,1021
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=45,23
 crop_offset=0,30
 rotated=1
 opaque_rect=2,27,3,13
+<<<<<<< HEAD
 [image291]
+=======
+[image273]
+>>>>>>> 2fb0aab... Add empty about screen
 name=c9_typo
 original_size=35,61
-position_in_atlas=986,527
-size_in_atlas=30,47
+position_in_atlas=1948,358
+size_in_atlas=47,30
 crop_offset=0,1
-rotated=0
+rotated=1
 opaque_rect=2,45,27,2
+<<<<<<< HEAD
 [image292]
 name=e0_typo
 original_size=31,80
 position_in_atlas=418,1088
+=======
+[image274]
+name=e0_typo
+original_size=31,80
+position_in_atlas=1464,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,26
 crop_offset=0,16
 rotated=1
 opaque_rect=20,23,5,19
+<<<<<<< HEAD
 [image293]
+=======
+[image275]
+>>>>>>> 2fb0aab... Add empty about screen
 name=e1
 original_size=113,108
-position_in_atlas=52,1802
+position_in_atlas=52,1308
 size_in_atlas=48,48
 crop_offset=33,29
 rotated=0
 opaque_rect=20,5,2,27
+<<<<<<< HEAD
 [image294]
 name=e1_typo
 original_size=31,80
 position_in_atlas=467,1088
+=======
+[image276]
+name=e1_typo
+original_size=31,80
+position_in_atlas=1513,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,26
 crop_offset=0,16
 rotated=1
 opaque_rect=20,23,5,19
+<<<<<<< HEAD
 [image295]
+=======
+[image277]
+>>>>>>> 2fb0aab... Add empty about screen
 name=e2
 original_size=113,108
-position_in_atlas=340,1311
+position_in_atlas=788,945
 size_in_atlas=78,65
 crop_offset=17,18
 rotated=0
 opaque_rect=40,25,25,3
+<<<<<<< HEAD
 [image296]
+=======
+[image278]
+>>>>>>> 2fb0aab... Add empty about screen
 name=e3
 original_size=113,108
-position_in_atlas=938,996
+position_in_atlas=391,1074
 size_in_atlas=87,76
 crop_offset=14,12
 rotated=1
 opaque_rect=2,60,72,1
+<<<<<<< HEAD
 [image297]
 name=e3_typo
 original_size=34,61
 position_in_atlas=435,1852
+=======
+[image279]
+name=e3_typo
+original_size=34,61
+position_in_atlas=84,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=36,29
 crop_offset=0,13
 rotated=1
 opaque_rect=22,14,1,21
+<<<<<<< HEAD
 [image298]
+=======
+[image280]
+>>>>>>> 2fb0aab... Add empty about screen
 name=e4
 original_size=113,108
-position_in_atlas=1,1588
+position_in_atlas=1,1205
 size_in_atlas=103,101
 crop_offset=3,3
 rotated=1
 opaque_rect=35,54,6,21
+<<<<<<< HEAD
 [image299]
 name=e4_typo
 original_size=34,61
 position_in_atlas=816,1643
+=======
+[image281]
+name=e4_typo
+original_size=34,61
+position_in_atlas=45,1358
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=37,29
 crop_offset=0,12
 rotated=1
 opaque_rect=22,15,1,21
+<<<<<<< HEAD
 [image300]
+=======
+[image282]
+>>>>>>> 2fb0aab... Add empty about screen
 name=e5
 original_size=113,108
-position_in_atlas=1,1488
+position_in_atlas=285,1074
 size_in_atlas=104,98
 crop_offset=6,7
 rotated=0
 opaque_rect=61,33,2,25
+<<<<<<< HEAD
 [image301]
 name=e5_typo
 original_size=34,61
@@ -2419,58 +3368,102 @@ opaque_rect=22,20,1,21
 name=e7_typo
 original_size=33,61
 position_in_atlas=855,1643
+=======
+[image283]
+name=e7_typo
+original_size=33,61
+position_in_atlas=1272,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=37,28
 crop_offset=0,21
 rotated=1
 opaque_rect=10,25,8,2
+<<<<<<< HEAD
 [image303]
 name=e8_typo
 original_size=31,80
 position_in_atlas=773,961
+=======
+[image284]
+name=e8_typo
+original_size=31,80
+position_in_atlas=1958,398
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,27
 crop_offset=0,16
 rotated=1
 opaque_rect=1,27,24,4
+<<<<<<< HEAD
 [image304]
 name=e9_typo
 original_size=31,80
 position_in_atlas=822,961
 size_in_atlas=47,27
+=======
+[image285]
+name=e9_typo
+original_size=31,80
+position_in_atlas=2014,431
+size_in_atlas=27,47
+>>>>>>> 2fb0aab... Add empty about screen
 crop_offset=0,16
-rotated=1
+rotated=0
 opaque_rect=1,27,24,4
+<<<<<<< HEAD
 [image305]
 name=ea_typo
 original_size=31,80
 position_in_atlas=871,961
+=======
+[image286]
+name=ea_typo
+original_size=31,80
+position_in_atlas=1317,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,27
 crop_offset=0,16
 rotated=1
 opaque_rect=1,27,24,4
+<<<<<<< HEAD
 [image306]
+=======
+[image287]
+>>>>>>> 2fb0aab... Add empty about screen
 name=ed_typo
 original_size=15,80
-position_in_atlas=1010,115
-size_in_atlas=13,46
+position_in_atlas=1943,177
+size_in_atlas=46,13
 crop_offset=0,17
-rotated=0
+rotated=1
 opaque_rect=1,14,4,32
+<<<<<<< HEAD
 [image307]
 name=ee_typo
 original_size=32,61
 position_in_atlas=611,1545
+=======
+[image288]
+name=ee_typo
+original_size=32,61
+position_in_atlas=1225,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=38,26
 crop_offset=0,10
 rotated=1
 opaque_rect=12,13,2,25
+<<<<<<< HEAD
 [image308]
+=======
+[image289]
+>>>>>>> 2fb0aab... Add empty about screen
 name=exit
 original_size=129,93
-position_in_atlas=678,996
+position_in_atlas=1288,667
 size_in_atlas=128,90
 crop_offset=0,1
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image309]
 name=f1_typo
 original_size=35,61
@@ -2481,12 +3474,17 @@ rotated=1
 opaque_rect=5,10,2,25
 [image310]
 name=f2_typo
+=======
+[image290]
+name=f3_typo
+>>>>>>> 2fb0aab... Add empty about screen
 original_size=34,80
-position_in_atlas=479,961
+position_in_atlas=1713,398
 size_in_atlas=47,29
 crop_offset=0,16
 rotated=1
 opaque_rect=23,23,4,15
+<<<<<<< HEAD
 [image311]
 name=f3_typo
 original_size=34,80
@@ -2499,10 +3497,17 @@ opaque_rect=23,23,4,15
 name=f6_typo
 original_size=34,61
 position_in_atlas=894,1643
+=======
+[image291]
+name=f6_typo
+original_size=34,61
+position_in_atlas=1311,1308
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=37,28
 crop_offset=0,12
 rotated=1
 opaque_rect=6,1,3,4
+<<<<<<< HEAD
 [image313]
 name=f8_typo
 original_size=34,80
@@ -2515,462 +3520,702 @@ opaque_rect=23,10,4,15
 name=f9_typo
 original_size=32,80
 position_in_atlas=920,961
+=======
+[image292]
+name=f9_typo
+original_size=32,80
+position_in_atlas=1366,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,27
 crop_offset=0,16
 rotated=1
 opaque_rect=21,15,5,27
+<<<<<<< HEAD
 [image315]
 name=fa_typo
 original_size=32,80
 position_in_atlas=969,961
+=======
+[image293]
+name=fa_typo
+original_size=32,80
+position_in_atlas=1415,763
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=47,27
 crop_offset=0,16
 rotated=1
 opaque_rect=21,15,5,27
+<<<<<<< HEAD
 [image316]
 name=fc_typo
 original_size=32,80
 position_in_atlas=209,1383
+=======
+[image294]
+name=fc_typo
+original_size=32,80
+position_in_atlas=1044,1261
+>>>>>>> 2fb0aab... Add empty about screen
 size_in_atlas=44,27
 crop_offset=0,19
 rotated=1
 opaque_rect=21,12,5,27
+<<<<<<< HEAD
 [image317]
+=======
+[image295]
+>>>>>>> 2fb0aab... Add empty about screen
 name=fermer
 original_size=129,93
-position_in_atlas=521,1219
+position_in_atlas=1648,828
 size_in_atlas=127,90
 crop_offset=0,2
 rotated=0
 opaque_rect=5,7,119,74
+<<<<<<< HEAD
 [image318]
+=======
+[image296]
+>>>>>>> 2fb0aab... Add empty about screen
 name=ff01_typo
 original_size=36,80
-position_in_atlas=898,415
+position_in_atlas=1879,201
 size_in_atlas=44,8
 crop_offset=0,20
 rotated=1
 opaque_rect=2,1,4,23
+<<<<<<< HEAD
 [image319]
+=======
+[image297]
+>>>>>>> 2fb0aab... Add empty about screen
 name=ff08_typo
 original_size=39,80
-position_in_atlas=941,660
+position_in_atlas=1964,144
 size_in_atlas=53,22
 crop_offset=0,20
 rotated=1
 opaque_rect=3,16,3,21
+<<<<<<< HEAD
 [image320]
+=======
+[image298]
+>>>>>>> 2fb0aab... Add empty about screen
 name=ff09_typo
 original_size=46,80
-position_in_atlas=754,700
+position_in_atlas=1833,177
 size_in_atlas=53,22
 crop_offset=1,20
 rotated=1
 opaque_rect=16,16,3,21
+<<<<<<< HEAD
 [image321]
+=======
+[image299]
+>>>>>>> 2fb0aab... Add empty about screen
 name=ff0c_typo
 original_size=37,80
-position_in_atlas=1010,163
-size_in_atlas=10,16
+position_in_atlas=1882,486
+size_in_atlas=16,10
 crop_offset=0,55
-rotated=0
+rotated=1
 opaque_rect=3,3,3,9
+<<<<<<< HEAD
 [image322]
+=======
+[image300]
+>>>>>>> 2fb0aab... Add empty about screen
 name=ff1a_typo
 original_size=36,80
-position_in_atlas=846,578
+position_in_atlas=1970,201
 size_in_atlas=35,8
 crop_offset=0,29
 rotated=1
 opaque_rect=1,28,6,5
+<<<<<<< HEAD
 [image323]
+=======
+[image301]
+>>>>>>> 2fb0aab... Add empty about screen
 name=ff1f_typo
 original_size=45,80
-position_in_atlas=116,1383
+position_in_atlas=1607,1074
 size_in_atlas=45,27
 crop_offset=0,19
 rotated=1
 opaque_rect=5,2,16,3
+<<<<<<< HEAD
 [image324]
+=======
+[image302]
+>>>>>>> 2fb0aab... Add empty about screen
 name=fleche
 original_size=118,101
-position_in_atlas=1,1311
+position_in_atlas=563,945
 size_in_atlas=113,99
 crop_offset=4,0
 rotated=0
 opaque_rect=7,29,81,43
+<<<<<<< HEAD
 [image325]
+=======
+[image303]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_achievements_active
 original_size=129,93
-position_in_atlas=808,996
+position_in_atlas=1418,667
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image326]
+=======
+[image304]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_achievements
 original_size=129,93
-position_in_atlas=1,1127
+position_in_atlas=1548,667
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image327]
+=======
+[image305]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_leaderboards_active
 original_size=129,93
-position_in_atlas=131,1127
+position_in_atlas=1678,667
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image328]
+=======
+[image306]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_leaderboards
 original_size=129,93
-position_in_atlas=261,1127
+position_in_atlas=1808,667
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image329]
+=======
+[image307]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_signin_active
 original_size=129,93
-position_in_atlas=391,1127
+position_in_atlas=608,828
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image330]
+=======
+[image308]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_signin
 original_size=129,93
-position_in_atlas=521,1127
+position_in_atlas=738,828
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image331]
+=======
+[image309]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_signout_active
 original_size=129,93
-position_in_atlas=651,1127
+position_in_atlas=868,828
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image332]
+=======
+[image310]
+>>>>>>> 2fb0aab... Add empty about screen
 name=gg_signout
 original_size=129,93
-position_in_atlas=781,1127
+position_in_atlas=998,828
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image333]
+=======
+[image311]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0000
 original_size=200,210
-position_in_atlas=846,527
+position_in_atlas=1907,93
 size_in_atlas=138,49
 crop_offset=80,51
 rotated=1
 opaque_rect=8,48,5,1
+<<<<<<< HEAD
 [image334]
+=======
+[image312]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0001
 original_size=200,210
-position_in_atlas=608,801
+position_in_atlas=1882,431
 size_in_atlas=130,53
 crop_offset=78,60
 rotated=1
 opaque_rect=27,66,1,8
+<<<<<<< HEAD
 [image335]
+=======
+[image313]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0002
 original_size=200,210
-position_in_atlas=779,1219
+position_in_atlas=1927,1
 size_in_atlas=116,56
 crop_offset=72,73
 rotated=1
 opaque_rect=23,56,10,2
+<<<<<<< HEAD
 [image336]
+=======
+[image314]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0003
 original_size=200,210
-position_in_atlas=1,1412
+position_in_atlas=678,945
 size_in_atlas=108,74
 crop_offset=57,81
 rotated=1
 opaque_rect=27,49,25,2
+<<<<<<< HEAD
 [image337]
+=======
+[image315]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0004
 original_size=200,210
-position_in_atlas=701,867
+position_in_atlas=1707,498
 size_in_atlas=132,86
 crop_offset=73,58
 rotated=1
 opaque_rect=48,7,9,1
+<<<<<<< HEAD
 [image338]
+=======
+[image316]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0005
 original_size=200,210
-position_in_atlas=587,589
+position_in_atlas=1713,287
 size_in_atlas=180,109
 crop_offset=50,27
 rotated=1
 opaque_rect=77,32,12,1
+<<<<<<< HEAD
 [image339]
+=======
+[image317]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0006
 original_size=200,210
-position_in_atlas=846,431
+position_in_atlas=587,667
 size_in_atlas=168,94
 crop_offset=57,42
 rotated=1
 opaque_rect=31,113,1,10
+<<<<<<< HEAD
 [image340]
+=======
+[image318]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0007
 original_size=200,210
-position_in_atlas=936,226
-size_in_atlas=65,173
+position_in_atlas=1707,431
+size_in_atlas=173,65
 crop_offset=74,32
-rotated=0
+rotated=1
 opaque_rect=11,75,7,1
+<<<<<<< HEAD
 [image341]
+=======
+[image319]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0008
 original_size=200,210
-position_in_atlas=911,1127
+position_in_atlas=862,589
 size_in_atlas=112,62
 crop_offset=77,50
 rotated=1
 opaque_rect=8,52,13,2
+<<<<<<< HEAD
 [image342]
+=======
+[image320]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0009
 original_size=200,210
-position_in_atlas=769,589
+position_in_atlas=1895,287
 size_in_atlas=145,69
 crop_offset=75,31
 rotated=1
 opaque_rect=12,91,7,2
+<<<<<<< HEAD
 [image343]
+=======
+[image321]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0010
 original_size=200,210
-position_in_atlas=852,226
-size_in_atlas=82,187
+position_in_atlas=1718,93
+size_in_atlas=187,82
 crop_offset=68,15
-rotated=0
+rotated=1
 opaque_rect=64,161,2,19
+<<<<<<< HEAD
 [image344]
+=======
+[image322]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0011
 original_size=200,210
-position_in_atlas=857,1
-size_in_atlas=90,207
+position_in_atlas=1718,1
+size_in_atlas=207,90
 crop_offset=50,1
-rotated=0
+rotated=1
 opaque_rect=24,58,1,13
+<<<<<<< HEAD
 [image345]
+=======
+[image323]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0012
 original_size=200,210
-position_in_atlas=949,1
-size_in_atlas=59,185
+position_in_atlas=1713,226
+size_in_atlas=185,59
 crop_offset=76,4
-rotated=0
+rotated=1
 opaque_rect=33,175,1,7
+<<<<<<< HEAD
 [image346]
+=======
+[image324]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0013
 original_size=200,210
-position_in_atlas=229,1311
+position_in_atlas=1938,667
 size_in_atlas=109,70
 crop_offset=75,81
 rotated=1
 opaque_rect=13,43,21,3
+<<<<<<< HEAD
 [image347]
+=======
+[image325]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0014
 original_size=200,210
-position_in_atlas=916,589
+position_in_atlas=976,589
 size_in_atlas=107,59
 crop_offset=77,84
 rotated=1
 opaque_rect=52,14,1,10
+<<<<<<< HEAD
 [image348]
+=======
+[image326]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0015
 original_size=200,210
-position_in_atlas=116,1311
+position_in_atlas=1906,828
 size_in_atlas=111,70
 crop_offset=83,79
 rotated=1
 opaque_rect=22,25,2,4
+<<<<<<< HEAD
 [image349]
+=======
+[image327]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0016
 original_size=200,210
-position_in_atlas=835,867
+position_in_atlas=1841,498
 size_in_atlas=128,68
 crop_offset=77,63
 rotated=1
 opaque_rect=3,50,12,1
+<<<<<<< HEAD
 [image350]
+=======
+[image328]
+>>>>>>> 2fb0aab... Add empty about screen
 name=jump_l2r_0017
 original_size=200,210
-position_in_atlas=608,750
+position_in_atlas=1900,226
 size_in_atlas=138,49
 crop_offset=80,51
 rotated=1
 opaque_rect=8,48,5,1
+<<<<<<< HEAD
 [image351]
+=======
+[image329]
+>>>>>>> 2fb0aab... Add empty about screen
 name=menu-pause
 original_size=857,224
-position_in_atlas=1,1
+position_in_atlas=862,1
 size_in_atlas=854,223
 crop_offset=3,0
 rotated=0
 opaque_rect=28,69,800,96
+<<<<<<< HEAD
 [image352]
+=======
+[image330]
+>>>>>>> 2fb0aab... Add empty about screen
 name=pause
 original_size=129,93
-position_in_atlas=1,1219
+position_in_atlas=1128,828
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image353]
+=======
+[image331]
+>>>>>>> 2fb0aab... Add empty about screen
 name=recommencer
 original_size=129,93
-position_in_atlas=131,1219
+position_in_atlas=1258,828
 size_in_atlas=128,90
 crop_offset=0,2
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image354]
+=======
+[image332]
+>>>>>>> 2fb0aab... Add empty about screen
 name=reprendre
 original_size=129,93
-position_in_atlas=650,1219
+position_in_atlas=1777,828
 size_in_atlas=127,90
 crop_offset=0,2
 rotated=0
 opaque_rect=5,7,119,74
+<<<<<<< HEAD
 [image355]
+=======
+[image333]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0000
 original_size=200,210
-position_in_atlas=292,867
+position_in_atlas=292,945
 size_in_atlas=136,123
 crop_offset=51,54
 rotated=1
 opaque_rect=111,28,1,7
+<<<<<<< HEAD
 [image356]
+=======
+[image334]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0001
 original_size=200,210
-position_in_atlas=566,867
+position_in_atlas=893,667
 size_in_atlas=133,92
 crop_offset=55,56
 rotated=1
 opaque_rect=56,52,12,2
+<<<<<<< HEAD
 [image357]
+=======
+[image335]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0002
 original_size=200,210
-position_in_atlas=466,750
+position_in_atlas=466,828
 size_in_atlas=140,112
 crop_offset=47,48
 rotated=1
 opaque_rect=57,59,12,2
+<<<<<<< HEAD
 [image358]
+=======
+[image336]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0003
 original_size=200,210
-position_in_atlas=1,750
+position_in_atlas=1,828
 size_in_atlas=159,115
 crop_offset=32,49
 rotated=0
 opaque_rect=73,53,5,2
+<<<<<<< HEAD
 [image359]
+=======
+[image337]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0004
 original_size=200,210
-position_in_atlas=1,867
+position_in_atlas=1,945
 size_in_atlas=150,127
 crop_offset=37,52
 rotated=0
 opaque_rect=61,59,12,2
+<<<<<<< HEAD
 [image360]
+=======
+[image338]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0005
 original_size=200,210
-position_in_atlas=153,867
+position_in_atlas=153,945
 size_in_atlas=137,126
 crop_offset=49,53
 rotated=1
 opaque_rect=119,27,1,8
+<<<<<<< HEAD
 [image361]
+=======
+[image339]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0006
 original_size=200,210
-position_in_atlas=285,996
+position_in_atlas=430,945
 size_in_atlas=131,123
 crop_offset=53,59
 rotated=1
 opaque_rect=36,62,19,2
+<<<<<<< HEAD
 [image362]
+=======
+[image340]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0007
 original_size=200,210
-position_in_atlas=430,867
+position_in_atlas=757,667
 size_in_atlas=134,92
 crop_offset=56,56
 rotated=1
 opaque_rect=45,58,14,2
+<<<<<<< HEAD
 [image363]
+=======
+[image341]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0008
 original_size=200,210
-position_in_atlas=323,750
+position_in_atlas=323,828
 size_in_atlas=141,114
 crop_offset=45,47
 rotated=1
 opaque_rect=62,55,13,2
+<<<<<<< HEAD
 [image364]
+=======
+[image342]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0009
 original_size=200,210
-position_in_atlas=162,750
+position_in_atlas=162,828
 size_in_atlas=159,115
 crop_offset=32,48
 rotated=0
 opaque_rect=63,69,7,3
+<<<<<<< HEAD
 [image365]
+=======
+[image343]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0010
 original_size=200,210
-position_in_atlas=1,996
+position_in_atlas=1,1074
 size_in_atlas=149,129
 crop_offset=38,52
 rotated=0
 opaque_rect=58,66,16,2
+<<<<<<< HEAD
 [image366]
+=======
+[image344]
+>>>>>>> 2fb0aab... Add empty about screen
 name=run_l2r_0011
 original_size=200,210
-position_in_atlas=152,996
+position_in_atlas=152,1074
 size_in_atlas=131,124
 crop_offset=54,58
 rotated=1
 opaque_rect=34,66,7,3
+<<<<<<< HEAD
 [image367]
+=======
+[image345]
+>>>>>>> 2fb0aab... Add empty about screen
 name=score
 original_size=591,166
-position_in_atlas=1,589
+position_in_atlas=1,667
 size_in_atlas=584,159
 crop_offset=6,0
 rotated=0
 opaque_rect=15,56,557,86
+<<<<<<< HEAD
 [image368]
+=======
+[image346]
+>>>>>>> 2fb0aab... Add empty about screen
 name=son-off
 original_size=129,92
-position_in_atlas=261,1219
+position_in_atlas=1388,828
 size_in_atlas=128,90
 crop_offset=0,1
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image369]
+=======
+[image347]
+>>>>>>> 2fb0aab... Add empty about screen
 name=son-on
 original_size=129,92
-position_in_atlas=391,1219
+position_in_atlas=1518,828
 size_in_atlas=128,90
 crop_offset=0,1
 rotated=0
 opaque_rect=6,7,119,74
+<<<<<<< HEAD
 [image370]
+=======
+[image348]
+>>>>>>> 2fb0aab... Add empty about screen
 name=taptostart
 original_size=843,156
-position_in_atlas=1,431
+position_in_atlas=862,431
 size_in_atlas=843,156
 crop_offset=0,0
 rotated=0
 opaque_rect=22,69,800,73
+<<<<<<< HEAD
 [image371]
+=======
+[image349]
+>>>>>>> 2fb0aab... Add empty about screen
 name=titre
 original_size=849,203
-position_in_atlas=1,226
+position_in_atlas=862,226
 size_in_atlas=849,203
 crop_offset=0,0
 rotated=0

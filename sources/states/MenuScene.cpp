@@ -240,12 +240,16 @@ void backgroundUpdate(float) {
                 }
             }
 
+
             // Handle help button
             if (!game->ignoreClick) {
                 if (BUTTON(buttons[Button::Help])->clicked) {
                     return Scene::Tutorial;
                 }
-                game->ignoreClick = BUTTON(buttons[Button::Help])->mouseOver;
+                if (BUTTON(buttons[Button::About])->clicked) {
+                   return Scene::About;
+                }
+                game->ignoreClick = BUTTON(buttons[Button::Help])->mouseOver | BUTTON(buttons[Button::About])->mouseOver;
             }
             RENDERING(buttons[Button::Help])->color = BUTTON(buttons[Button::Help])->mouseOver ? Color("gray") : Color();
             RENDERING(buttons[Button::About])->color = BUTTON(buttons[Button::About])->mouseOver ? Color("gray") : Color();

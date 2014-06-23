@@ -31,6 +31,7 @@ namespace Scene {
       Pause,
       Rate,
       RestartGame,
+      About,
    };
 
 #define DECLARE_SCENE_HANDLER_FACTORY(name) \
@@ -43,4 +44,5 @@ namespace Scene {
   DECLARE_SCENE_HANDLER_FACTORY(Pause)
   DECLARE_SCENE_HANDLER_FACTORY(Rate)
   DECLARE_SCENE_HANDLER_FACTORY(RestartGame)
+  DECLARE_SCENE_HANDLER_FACTORY(About)
 }
