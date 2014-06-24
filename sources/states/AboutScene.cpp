@@ -60,6 +60,7 @@ class AboutScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
 
     Entity background;
+    Entity text;
     float alpha, targetAlpha;
 
     public:
@@ -71,6 +72,8 @@ class AboutScene : public StateHandler<Scene::Enum> {
         void setup() {
             background  = theEntityManager.CreateEntityFromTemplate("menu/about/bg");
             targetAlpha = RENDERING(background)->color.a;
+
+            text = theEntityManager.CreateEntityFromTemplate("menu/about/text");
         }
 
 
@@ -80,11 +83,12 @@ class AboutScene : public StateHandler<Scene::Enum> {
         void onPreEnter(Scene::Enum) {
             alpha = 0;
             RENDERING(background)->show = true;
+            TEXT(text)->show = true;
         }
 
         bool updatePreEnter(Scene::Enum, float dt) {
             alpha += dt * 2;
-            RENDERING(background)->color.a = glm::min(targetAlpha, alpha);
+            TEXT(text)->color.a = RENDERING(background)->color.a = glm::min(targetAlpha, alpha);
             return (RENDERING(background)->color.a >= targetAlpha);
         }
 
@@ -110,12 +114,12 @@ class AboutScene : public StateHandler<Scene::Enum> {
 
         bool updatePreExit(Scene::Enum, float dt) {
             alpha -= dt * 2;
-            RENDERING(background)->color.a = glm::max(0.0f, alpha);
+            TEXT(text)->color.a = RENDERING(background)->color.a = glm::max(0.0f, alpha);
             return (RENDERING(background)->color.a <= 0.0);
         }
 
         void onExit(Scene::Enum) {
-            RENDERING(background)->show = false;
+            TEXT(text)->show = RENDERING(background)->show = false;
             RENDERING(game->muteBtn)->show = BUTTON(game->muteBtn)->enabled = true;
         }
 };

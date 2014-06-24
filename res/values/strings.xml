@@ -15,4 +15,5 @@
   <string name="good_luck">"Good luck!"</string>
   <string name="Best">"Best"</string>
   <string name="points">"points"</string>
+  <string name="about_us">"\nRecursive Runner\n\nVersion: 1.1.1\nSoupe au Caillou\nhttp://soupeaucaillou.com/"</string>
 </resources>
