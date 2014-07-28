@@ -98,14 +98,11 @@ RecursiveRunnerGame::~RecursiveRunnerGame() {
 bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
     switch (api) {
         case ContextAPI::Asset:
-        case ContextAPI::Communication:
-        case ContextAPI::Exit:
         #if SAC_RESTRICTIVE_PLUGINS
         case ContextAPI::GameCenter:
+        case ContextAPI::InAppPurchase:
         #endif
-        // case ContextAPI::InAppPurchase:
         case ContextAPI::Localize:
-        case ContextAPI::Music:
         case ContextAPI::Sound:
         case ContextAPI::Storage:
         case ContextAPI::Vibrate:
