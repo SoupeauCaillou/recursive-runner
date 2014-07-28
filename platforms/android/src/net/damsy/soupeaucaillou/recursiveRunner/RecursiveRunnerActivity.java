@@ -28,9 +28,12 @@ import net.damsy.soupeaucaillou.recursiveRunner.R;
 //import net.damsy.soupeaucaillou.sacgoogleplayinappbilling.SacGooglePlayInAppBillingPlugin;
 import net.damsy.soupeaucaillou.SacActivity;
 import net.damsy.soupeaucaillou.api.AssetAPI;
+import net.damsy.soupeaucaillou.api.CommunicationAPI;
 import net.damsy.soupeaucaillou.api.GameCenterAPI;
 import net.damsy.soupeaucaillou.api.InAppPurchaseAPI;
 import net.damsy.soupeaucaillou.api.LocalizeAPI;
+import net.damsy.soupeaucaillou.api.MusicAPI;
+import net.damsy.soupeaucaillou.api.OpenURLAPI;
 import net.damsy.soupeaucaillou.api.SoundAPI;
 import net.damsy.soupeaucaillou.api.StorageAPI;
 import net.damsy.soupeaucaillou.api.VibrateAPI;
@@ -65,31 +68,33 @@ public class RecursiveRunnerActivity extends SacActivity {
 
 	@Override
 	public void initRequiredAPI() {
-		StorageAPI.Instance().init(getApplicationContext());
-		VibrateAPI.Instance().init((Vibrator) getSystemService(Context.VIBRATOR_SERVICE));
-		AssetAPI.Instance().init(this, getAssets());
-		SoundAPI.Instance().init(getAssets());
-		LocalizeAPI.Instance().init(this.getResources(), this.getPackageName());
-/*
-        SacGooglePlayGameServicesPlugin sgpgsp = new SacGooglePlayGameServicesPlugin();
-        sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(false, 
-                Arrays.asList(new String[] { 
-                    "CgkI-af7kuELEAIQAw",
-                    "CgkI-af7kuELEAIQBA",
-                    "CgkI-af7kuELEAIQBQ",
-                    "CgkI-af7kuELEAIQBg",
-                    "CgkI-af7kuELEAIQBw",
-                    "CgkI-af7kuELEAIQCA",
-                    "CgkI-af7kuELEAIQCQ",
-                    "CgkI-af7kuELEAIQCg"
-                }), 
-                Arrays.asList(new String[] {
-                    "CgkI-af7kuELEAIQAQ"
-                })
-            )
-        );
-        GameCenterAPI.Instance().init(this, sgpgsp);
-        */
+        AssetAPI.Instance().init(this, getAssets());
+        CommunicationAPI.Instance().init(this, getPreferences(MODE_PRIVATE));
+        LocalizeAPI.Instance().init(this.getResources(), this.getPackageName());
+        MusicAPI.Instance();
+        OpenURLAPI.Instance().init(this);
+        SoundAPI.Instance().init(getAssets());
+        StorageAPI.Instance().init(getApplicationContext());
+        VibrateAPI.Instance().init((Vibrator) getSystemService(Context.VIBRATOR_SERVICE));
+        // SacGooglePlayGameServicesPlugin sgpgsp = new SacGooglePlayGameServicesPlugin();
+        // sgpgsp.init(this, sgpgsp.new GooglePlayGameServicesParams(false, 
+        //         Arrays.asList(new String[] { 
+        //             "CgkI-af7kuELEAIQAw",
+        //             "CgkI-af7kuELEAIQBA",
+        //             "CgkI-af7kuELEAIQBQ",
+        //             "CgkI-af7kuELEAIQBg",
+        //             "CgkI-af7kuELEAIQBw",
+        //             "CgkI-af7kuELEAIQCA",
+        //             "CgkI-af7kuELEAIQCQ",
+        //             "CgkI-af7kuELEAIQCg"
+        //         }), 
+        //         Arrays.asList(new String[] {
+        //             "CgkI-af7kuELEAIQAQ"
+        //         })
+        //     )
+        // );
+        // GameCenterAPI.Instance().init(this, sgpgsp);
+        
         // SacGooglePlayInAppBillingPlugin inapp = new SacGooglePlayInAppBillingPlugin();
         // InAppPurchaseAPI.Instance().init(this, inapp);        
 	}

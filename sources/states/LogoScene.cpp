@@ -177,7 +177,7 @@ public:
         theEntityManager.DeleteEntity(animLogo);
         theEntityManager.DeleteEntity(logofade);
 
-        theRenderingSystem.unloadAtlas("logo");
+        // theRenderingSystem.unloadAtlas("logo");
 
         delete logoSM;
     }

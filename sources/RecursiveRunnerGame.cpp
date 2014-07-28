@@ -152,11 +152,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "pianojournal", "pianojournal");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "runL2R", "runL2R");
 
-#if ! SAC_DESKTOP
-    //used for gamecenter api debug...
-    AutoDestroySystem::DestroyInstance();
-#endif
-
     Game::buildOrderedSystemsToUpdateList();
 
     LOGI("SAC engine initialisation done.");
