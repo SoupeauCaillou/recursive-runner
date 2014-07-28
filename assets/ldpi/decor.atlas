@@ -126,7 +126,7 @@ position_in_atlas=1,1
 size_in_atlas=240,30
 crop_offset=0,0
 rotated=0
-opaque_rect=0,1,239,29
+opaque_rect=0,0,239,30
 [image16]
 name=usine2
 original_size=84,107
