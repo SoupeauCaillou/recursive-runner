@@ -138,9 +138,6 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
     sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this), "Scene::About");
 
-    LOGI("\t- Load FX...");
-    theRenderingSystem.effectLibrary.load("desaturate.fs");
-
     // load anim files
     LOGI("\t- Load animations...");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "disappear2", "disappear2");
@@ -154,7 +151,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "piano2", "piano2");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "pianojournal", "pianojournal");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "runL2R", "runL2R");
-    
+
 #if ! SAC_DESKTOP
     //used for gamecenter api debug...
     AutoDestroySystem::DestroyInstance();
