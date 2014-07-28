@@ -79,24 +79,7 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 float RecursiveRunnerGame::nextRunnerStartTime[100];
 int RecursiveRunnerGame::nextRunnerStartTimeIndex;
 
-RecursiveRunnerGame::RecursiveRunnerGame() {
-   RunnerSystem::CreateInstance();
-   CameraTargetSystem::CreateInstance();
-   PlayerSystem::CreateInstance();
-   RangeFollowerSystem::CreateInstance();
-   SessionSystem::CreateInstance();
-   PlatformerSystem::CreateInstance();
-
-   sceneStateMachine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(this), "Scene::Logo");
-   sceneStateMachine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(this), "Scene::Menu");
-   sceneStateMachine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(this), "Scene::Pause");
-   sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this), "Scene::Rate");
-   sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
-   sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this), "Scene::RestartGame");
-   sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
-   sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this), "Scene::About");
-
-   Game::buildOrderedSystemsToUpdateList();
+RecursiveRunnerGame::RecursiveRunnerGame(): Game() {
 }
 
 
@@ -126,6 +109,7 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
         case ContextAPI::Sound:
         case ContextAPI::Storage:
         case ContextAPI::Vibrate:
+        case ContextAPI::OpenURL:
             return true;
         default:
             return false;
@@ -133,11 +117,32 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
 }
 
 void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
+    LOGI("SAC engine initialisation begins:");
     Game::sacInit(windowW, windowH);
 
-    PlacementHelper::GimpSize = glm::vec2(1280, 800);
+    LOGI("\t- Create RecursiveRunner specific systems...");
+    RunnerSystem::CreateInstance();
+    CameraTargetSystem::CreateInstance();
+    PlayerSystem::CreateInstance();
+    RangeFollowerSystem::CreateInstance();
+    SessionSystem::CreateInstance();
+    PlatformerSystem::CreateInstance();
+
+    LOGI("\t- Init sceneStateMachine...");
+    sceneStateMachine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(this), "Scene::Logo");
+    sceneStateMachine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(this), "Scene::Menu");
+    sceneStateMachine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(this), "Scene::Pause");
+    sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this), "Scene::Rate");
+    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
+    sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this), "Scene::RestartGame");
+    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
+    sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this), "Scene::About");
+
+    LOGI("\t- Load FX...");
+    theRenderingSystem.effectLibrary.load("desaturate.fs");
 
     // load anim files
+    LOGI("\t- Load animations...");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "disappear2", "disappear2");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "fumee_start", "fumee_start");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "fumee_loop", "fumee_loop");
@@ -149,6 +154,16 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "piano2", "piano2");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "pianojournal", "pianojournal");
     theAnimationSystem.loadAnim(renderThreadContext->assetAPI, "runL2R", "runL2R");
+    
+#if ! SAC_DESKTOP
+    //used for gamecenter api debug...
+    AutoDestroySystem::DestroyInstance();
+#endif
+
+    Game::buildOrderedSystemsToUpdateList();
+
+    LOGI("SAC engine initialisation done.");
+    PlacementHelper::GimpSize = glm::vec2(1280, 800);
 }
 
 void fumee(Entity building) {
@@ -488,6 +503,9 @@ void RecursiveRunnerGame::initGame() {
 }
 
 void RecursiveRunnerGame::init(const uint8_t* in, int size) {
+    LOGI("RecursiveRunnerGame initialisation begins...");
+
+    LOGI("\t- Init database...");
     gameThreadContext->storageAPI->init(gameThreadContext->assetAPI, "RecursiveRunner");
     gameThreadContext->storageAPI->setOption("sound", std::string(), "on");
     gameThreadContext->storageAPI->setOption("gameCount", std::string(), "0");
@@ -495,11 +513,10 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     ScoreStorageProxy ssp;
     gameThreadContext->storageAPI->createTable(&ssp);
 
+    LOGI("\t- Create camera...");
+
     successManager.init(this);
 
-#if SAC_INGAME_EDITORS && SAC_DEBUG
-   RecursiveRunnerDebugConsole::init(this);
-#endif
 
     level = Level::Level1;
     initGame();
@@ -517,15 +534,20 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     if (size > 0 && in) {
         sceneStateMachine.start(Scene::Pause);
     } else {
-        #if SAC_DEBUG
-            sceneStateMachine.start(Scene::Logo);
-        #elif SAC_BENCHMARK_MODE
-            sceneStateMachine.start(Scene::Game);
-        #else
-            sceneStateMachine.start(Scene::Logo);
-        #endif
+#if SAC_DEBUG
+        sceneStateMachine.start(Scene::Logo);
+#elif SAC_BENCHMARK_MODE
+        sceneStateMachine.start(Scene::Game);
+#else
+        sceneStateMachine.start(Scene::Logo);
+#endif
     }
 
+#if SAC_INGAME_EDITORS && SAC_DEBUG
+   RecursiveRunnerDebugConsole::init(this);
+#endif
+
+   LOGI("RecursiveRunnerGame initialisation done.");
 }
 
 void RecursiveRunnerGame::quickInit() {

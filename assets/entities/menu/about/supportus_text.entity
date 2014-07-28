@@ -1,0 +1,16 @@
+[Transformation]
+#position%gimp_pos = 140, 230
+size%screen = 1,1
+z = 0.51
+
+[Anchor]
+parent%name = camera1
+z = 0.97
+position%gimp_size = 0, 300
+
+[Text]
+color = 0.254,0.254,0.254,1
+char_height%gimp_h = 75
+flags = 0
+positioning = 0.5
+text%loc = support_us

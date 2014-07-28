@@ -10,6 +10,6 @@ z = 0
 flags = 1
 
 [Button]
-overSize = 1.2
+over_size = 1.2
 texture_inactive = gg_signin
 texture_active = gg_signin_active

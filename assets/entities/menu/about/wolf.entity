@@ -1,0 +1,14 @@
+[Transformation]
+size%texture = 1
+z = 0.9
+
+position = 0, 0
+
+[Anchor]
+parent%name = camera1
+z = 0.97
+position%gimp_pos = 1000, 75
+
+[Rendering]
+flags = 1
+texture = loup2

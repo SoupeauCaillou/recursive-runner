@@ -10,6 +10,6 @@ z = 0.95
 flags = 1
 
 [Button]
-overSize = 1.2
+over_size = 1.2
 texture_inactive = gg_leaderboards
 texture_active = gg_leaderboards_active

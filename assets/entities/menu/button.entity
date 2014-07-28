@@ -9,4 +9,4 @@ show = 1
 flags = 1
 
 [Button]
-overSize = 1.2
+over_size = 1.2

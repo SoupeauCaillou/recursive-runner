@@ -2,7 +2,7 @@
 size%gimp_size = 129, 92
 
 [Anchor]
-z = 0
+z=0.05
 position%gimp_size = 1092, 0
 
 [Rendering]

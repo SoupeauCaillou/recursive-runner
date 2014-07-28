@@ -61,7 +61,7 @@ namespace Button {
     enum Enum {
         Help = 0,
         About,
-        Exit,
+        // Exit,
         Count
     };
 }
@@ -109,13 +109,13 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
 
             buttons[Button::About] = theEntityManager.CreateEntityFromTemplate("menu/about_btn");
-            ANCHOR(buttons[Button::About])->parent = buttons[Button::Help];
-            buttons[Button::Exit] = theEntityManager.CreateEntityFromTemplate("menu/exit_btn");
-            ANCHOR(buttons[Button::Exit])->parent = game->muteBtn;
+            ANCHOR(buttons[Button::About])->parent = game->muteBtn;
+            // buttons[Button::Exit] = theEntityManager.CreateEntityFromTemplate("menu/exit_btn");
+            // ANCHOR(buttons[Button::Exit])->parent = game->muteBtn;
             // sigh
             LOGI("OFFSET: " << (game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5));
             TRANSFORM(buttons[Button::About])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
-            TRANSFORM(buttons[Button::Exit])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
+            // TRANSFORM(buttons[Button::Exit])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
 
             weeklyRank = -1;
         }
@@ -177,10 +177,9 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 RENDERING(buttons[i])->show = true;
                 RENDERING(buttons[i])->color = Color(1,1,1,0);
             }
+            RENDERING(game->muteBtn)->show = true;
+            RENDERING(game->muteBtn)->color = Color(1,1,1,0);
 
-            #if SAC_RESTRICTIVE_PLUGINS
-                game->gamecenterAPIHelper.displayUI();
-            #endif
         }
 
         bool updatePreEnter(Scene::Enum, float) {
@@ -192,6 +191,12 @@ class MenuScene : public StateHandler<Scene::Enum> {
             for (int i=0; i<(int)Button::Count; i++) {
                 RENDERING(buttons[i])->color.a = progress;
             }
+            RENDERING(game->muteBtn)->color.a = progress;
+
+            #if SAC_RESTRICTIVE_PLUGINS
+                game->gamecenterAPIHelper.displayUI(progress);
+            #endif
+
             return (adsr->value == adsr->sustainValue);
         }
 
@@ -203,6 +208,11 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 BUTTON(buttons[i])->enabled = true;
                 RENDERING(buttons[i])->color.a = 1;
             }
+            BUTTON(game->muteBtn)->enabled = true;
+            RENDERING(game->muteBtn)->color.a = 1;
+            #if SAC_RESTRICTIVE_PLUGINS
+                game->gamecenterAPIHelper.displayUI();
+            #endif
         }
 
 #if 0
@@ -284,7 +294,7 @@ void backgroundUpdate(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-        void onPreExit(Scene::Enum ) {
+        void onPreExit(Scene::Enum nextScene ) {
             // stop menu music
             MUSIC(title)->control = MusicControl::Stop;
 
@@ -292,16 +302,14 @@ void backgroundUpdate(float) {
             for (int i=0; i<(int)Button::Count; i++) {
                 BUTTON(buttons[i])->enabled = false;
             }
-
-            #if SAC_RESTRICTIVE_PLUGINS
-                game->gamecenterAPIHelper.hideUI();
-            #endif
+            if(nextScene == Scene::About)
+                BUTTON(game->muteBtn)->enabled = false;
 
             // activate animation
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
         }
 
-        bool updatePreExit(Scene::Enum, float) {
+        bool updatePreExit(Scene::Enum nextScene, float) {
             updateTitleSubTitle(titleGroup, subtitle);
             const ADSRComponent* adsr = ADSR(titleGroup);
             float progress = (adsr->value - adsr->attackValue) /
@@ -310,14 +318,27 @@ void backgroundUpdate(float) {
             for (int i=0; i<(int)Button::Count; i++) {
                 RENDERING(buttons[i])->color.a = 1 - progress;
             }
+            if(nextScene == Scene::About)
+                RENDERING(game->muteBtn)->color.a = 1 - progress;
+
+            #if SAC_RESTRICTIVE_PLUGINS
+                game->gamecenterAPIHelper.hideUI(1 - progress);
+            #endif
+
             // check if animation is finished
             return (adsr->value >= adsr->idleValue);
         }
 
-        void onExit(Scene::Enum) {
+        void onExit(Scene::Enum nextScene) {
             for (int i=0; i<(int)Button::Count; i++) {
                 RENDERING(buttons[i])->show = false;
             }
+            if(nextScene == Scene::About)
+                RENDERING(game->muteBtn)->show = false;
+
+            #if SAC_RESTRICTIVE_PLUGINS
+                game->gamecenterAPIHelper.hideUI();
+            #endif
         }
 };
 

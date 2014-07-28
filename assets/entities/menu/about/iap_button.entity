@@ -1,0 +1,13 @@
+[Transformation]
+size%texture = 1
+
+[Anchor]
+parent%name = camera1
+z = 0.97
+position%gimp_pos = 640, 425
+
+[Rendering]
+flags = 1
+texture = iap_playstore
+
+[Button]

@@ -39,6 +39,7 @@
 
 #include "api/LocalizeAPI.h"
 #include "api/StorageAPI.h"
+#include "api/OpenURLAPI.h"
 #include "util/ScoreStorageProxy.h"
 
 #include "../RecursiveRunnerGame.h"
@@ -47,11 +48,34 @@
 #include <vector>
 #include <mutex>
 
+#if SAC_RESTRICTIVE_PLUGINS
+#include "api/InAppPurchaseAPI.h"
+#endif
+
+namespace Image {
+    enum Enum {
+        Background = 0,
+        Wolf,
+        Count
+    };
+}
+
 namespace Button {
     enum Enum {
-        Help = 0,
-        About,
-        Exit,
+        Flattr = 0,
+#if SAC_RESTRICTIVE_PLUGINS
+        Iap,
+#endif
+        Web,
+        Back,
+        Count
+    };
+}
+
+namespace Text {
+    enum Enum {
+        SupportUs = 0,
+        AboutUs,
         Count
     };
 }
@@ -59,69 +83,94 @@ namespace Button {
 class AboutScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
 
-    Entity background;
-    Entity text;
-    float alpha, targetAlpha;
+    Entity images[Image::Count];
+    Entity buttons[Button::Count];
+    Entity texts[Text::Count];
 
-    public:
-        AboutScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
-            this->game = game;
+public:
+    AboutScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>(), game(game) {
+    }
+
+
+    void setup() {
+        images[Image::Background] = theEntityManager.CreateEntityFromTemplate("menu/about/background");
+        images[Image::Wolf] = theEntityManager.CreateEntityFromTemplate("menu/about/wolf");
+
+        texts[Text::SupportUs] = theEntityManager.CreateEntityFromTemplate("menu/about/supportus_text");
+        texts[Text::AboutUs] = theEntityManager.CreateEntityFromTemplate("menu/about/aboutus_text");
+
+        buttons[Button::Flattr] = theEntityManager.CreateEntityFromTemplate("menu/about/flattr_button");
+#if SAC_RESTRICTIVE_PLUGINS
+        buttons[Button::Iap] = theEntityManager.CreateEntityFromTemplate("menu/about/iap_button");
+#endif
+        buttons[Button::Web] = theEntityManager.CreateEntityFromTemplate("menu/about/web_button");
+        buttons[Button::Back] = theEntityManager.CreateEntityFromTemplate("menu/about/back_button");
+        ANCHOR(buttons[Button::Back])->parent = game->muteBtn;
+        TRANSFORM(buttons[Button::Back])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
+    }
+
+
+    ///----------------------------------------------------------------------------//
+    ///--------------------- ENTER SECTION ----------------------------------------//
+    ///----------------------------------------------------------------------------//
+    void onEnter(Scene::Enum) {
+        for (int i=0; i<Text::Count; i++) {
+            TEXT(texts[i])->show = true;
+        }
+        for (int i=0; i<Button::Count; i++) {
+            RENDERING(buttons[i])->show =
+                BUTTON(buttons[i])->enabled = true;
+        }
+        for (int i=0; i<Image::Count; i++) {
+            RENDERING(images[i])->show = true;
+        }
+    }
+
+    ///----------------------------------------------------------------------------//
+    ///--------------------- UPDATE SECTION ---------------------------------------//
+    ///----------------------------------------------------------------------------//
+
+    Scene::Enum update(float) override {
+        if (BUTTON(buttons[Button::Flattr])->clicked) {
+            std::string url = game->gameThreadContext->localizeAPI->text("donate_flattr_url");
+            game->gameThreadContext->openURLAPI->openURL(url);
+        } else if (BUTTON(buttons[Button::Back])->clicked) {
+            return Scene::Menu;
+        } else if (BUTTON(buttons[Button::Web])->clicked) {
+            std::string url = "http://soupeaucaillou.com";
+            game->gameThreadContext->openURLAPI->openURL(url);
         }
 
-
-        void setup() {
-            background  = theEntityManager.CreateEntityFromTemplate("menu/about/bg");
-            targetAlpha = RENDERING(background)->color.a;
-
-            text = theEntityManager.CreateEntityFromTemplate("menu/about/text");
+#if SAC_RESTRICTIVE_PLUGINS
+        if (BUTTON(buttons[Button::Iap])->clicked) {
+            game->gameThreadContext->inAppPurchaseAPI->purchase("donate");
         }
+#endif
 
-
-        ///----------------------------------------------------------------------------//
-        ///--------------------- ENTER SECTION ----------------------------------------//
-        ///----------------------------------------------------------------------------//
-        void onPreEnter(Scene::Enum) {
-            alpha = 0;
-            RENDERING(background)->show = true;
-            TEXT(text)->show = true;
-        }
-
-        bool updatePreEnter(Scene::Enum, float dt) {
-            alpha += dt * 2;
-            TEXT(text)->color.a = RENDERING(background)->color.a = glm::min(targetAlpha, alpha);
-            return (RENDERING(background)->color.a >= targetAlpha);
-        }
-
-        void onEnter(Scene::Enum) {
-            RENDERING(game->muteBtn)->show = BUTTON(game->muteBtn)->enabled = false;
-        }
-
-
-        Scene::Enum update(float) {
-            if (!theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0)) {
-                return Scene::Menu;
-            }
-            return Scene::About;
-        }
+        return Scene::About;
+    }
 
 
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-        void onPreExit(Scene::Enum ) {
-            alpha = 1;
+    void onPreExit(Scene::Enum ) override {
+        for (int i=0; i<Text::Count; i++) {
+            TEXT(texts[i])->show = false;
         }
+        for (int i=0; i<Button::Count; i++) {
+            RENDERING(buttons[i])->show =
+                BUTTON(buttons[i])->enabled = false;
+        }
+        for (int i=0; i<Image::Count; i++) {
+            RENDERING(images[i])->show = false;
+        }
+    }
 
-        bool updatePreExit(Scene::Enum, float dt) {
-            alpha -= dt * 2;
-            TEXT(text)->color.a = RENDERING(background)->color.a = glm::max(0.0f, alpha);
-            return (RENDERING(background)->color.a <= 0.0);
-        }
 
-        void onExit(Scene::Enum) {
-            TEXT(text)->show = RENDERING(background)->show = false;
-            RENDERING(game->muteBtn)->show = BUTTON(game->muteBtn)->enabled = true;
-        }
+    void onExit(Scene::Enum) override {
+        
+    }
 };
 
 namespace Scene {

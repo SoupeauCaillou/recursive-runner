@@ -3,6 +3,6 @@ z = .7
 rotation = 0.02
 
 [ADSR]
-attackTiming = 2
-decayTiming = 0.2
-releaseTiming = 1.5
+attack_timing = 2
+decay_timing = 0.2
+release_timing = 1.5

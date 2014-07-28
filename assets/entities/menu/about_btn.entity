@@ -11,4 +11,4 @@ flags = 1
 texture = about
 
 [Button]
-overSize = 1.2
+over_size = 1.2
