@@ -102,14 +102,15 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
         case ContextAPI::Exit:
         #if SAC_RESTRICTIVE_PLUGINS
         case ContextAPI::GameCenter:
+        // case ContextAPI::InAppPurchase:
         #endif
         // case ContextAPI::InAppPurchase:
         case ContextAPI::Localize:
         case ContextAPI::Music:
+        case ContextAPI::OpenURL:
         case ContextAPI::Sound:
         case ContextAPI::Storage:
         case ContextAPI::Vibrate:
-        case ContextAPI::OpenURL:
             return true;
         default:
             return false;

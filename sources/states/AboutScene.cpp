@@ -63,9 +63,6 @@ namespace Image {
 namespace Button {
     enum Enum {
         Flattr = 0,
-#if SAC_RESTRICTIVE_PLUGINS
-        Iap,
-#endif
         Web,
         Back,
         Count
@@ -100,9 +97,6 @@ public:
         texts[Text::AboutUs] = theEntityManager.CreateEntityFromTemplate("menu/about/aboutus_text");
 
         buttons[Button::Flattr] = theEntityManager.CreateEntityFromTemplate("menu/about/flattr_button");
-#if SAC_RESTRICTIVE_PLUGINS
-        buttons[Button::Iap] = theEntityManager.CreateEntityFromTemplate("menu/about/iap_button");
-#endif
         buttons[Button::Web] = theEntityManager.CreateEntityFromTemplate("menu/about/web_button");
         buttons[Button::Back] = theEntityManager.CreateEntityFromTemplate("menu/about/back_button");
         ANCHOR(buttons[Button::Back])->parent = game->muteBtn;
@@ -140,12 +134,6 @@ public:
             std::string url = "http://soupeaucaillou.com";
             game->gameThreadContext->openURLAPI->openURL(url);
         }
-
-#if SAC_RESTRICTIVE_PLUGINS
-        if (BUTTON(buttons[Button::Iap])->clicked) {
-            game->gameThreadContext->inAppPurchaseAPI->purchase("donate");
-        }
-#endif
 
         return Scene::About;
     }

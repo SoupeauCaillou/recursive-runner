@@ -4,7 +4,7 @@ size%texture = 1
 [Anchor]
 parent%name = camera1
 z = 0.97
-position%gimp_pos = 640, 740
+position%gimp_size = 0, -200
 
 [Rendering]
 flags = 1

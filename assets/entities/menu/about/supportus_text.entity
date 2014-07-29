@@ -6,7 +6,7 @@ z = 0.51
 [Anchor]
 parent%name = camera1
 z = 0.97
-position%gimp_size = 0, 300
+position%gimp_size = 0, 250
 
 [Text]
 color = 0.254,0.254,0.254,1

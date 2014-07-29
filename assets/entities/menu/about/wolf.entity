@@ -7,7 +7,7 @@ position = 0, 0
 [Anchor]
 parent%name = camera1
 z = 0.97
-position%gimp_pos = 1000, 75
+position%gimp_size = 400, 250
 
 [Rendering]
 flags = 1
