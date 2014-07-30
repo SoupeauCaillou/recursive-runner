@@ -1,12 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <string name="tap_screen_to_start">"Нажмите на экран, чтобы играть!"</string>
-  <string name="tap_screen_to_restart">"Нажмите на экран, чтобы ещё раз играть!"</string>
-  <string name="how_to_play">"Как играть? (Нажмите на экран, чтобы продолжать)"</string>
-  <string name="tap_jump">"Нажмите на экран, чтобы прыгать"</string>
-  <string name="turn_on">"Включите светы, чтобы набрать очки"</string>
-  <string name="longer_press">"Нажмите дольше, чтобы выше прыгать"</string>
-  <string name="good_luck">"Удачи !"</string>
+  <string name="tap_screen_to_restart">"нажмите на экран, чтобы начать заново"</string>
+  <string name="how_to_play">"Как играть? (Нажмите на экран, чтобы продолжить)"</string>
+  <string name="this_is_you">"Это ты"</string>
+  <string name="tap_jump">"Нажмите на экран, чтобы прыгнуть"</string>
+  <string name="turn_on">"Включайте свет, чтобы набрать очки"</string>
+  <string name="longer_press">"Зажмите, чтобы прыгнуть выше"</string>
+  <string name="run_edge">"Бег заканчивается вместе с экраном"</string>
+  <string name="new_hero">"Снова начал заново, а?"</string>
+  <string name="previous_hero_replay">"Ваша прошлая личность повторяет свою судьбу"</string>
+  <string name="avoid_him">"Избегайте прошлого себя, чтобы он мог собирать очки!"</string>
+  <string name="ten_heroes">"Попробуйте набрать лучший результат с и против 10 самих себя!"</string>
+  <string name="good_luck">"Удачи!"</string>
   <string name="Best">"Лучше всего"</string>
-  <string name="points">"Очки"</string>
+  <string name="points">"очков"</string>
 </resources>
