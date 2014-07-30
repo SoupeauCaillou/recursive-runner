@@ -5,8 +5,8 @@ Estàs acostumat a jugar fins que et toca un obstacle?
 Cada partida dura 90 segons.
 Normalment controles 1 heroi en moviment? Te'n donem 10.
 El truc?
-You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
-Several achievements to earn and a leaderboard to climb!
-There are no ads in the game, since we like you, and that you dont like ads that dont like you
-We hope you like avoiding recursivly running into a phantom-mime.
+En controles un a la vegada, en acabar amb un, entrarà en un bucle fent punts per a tu.
+El repta és fer punts amb el teu propi personatge mentre s'eviten els personatges anteriors - si en toques un desapareixerà per sempre.
+Diferents fites per assolir i una taula de classificació on ascendir!
+No hi ha publicitat en el joc, atès que ens agrades i que no t'agrada la publicitat que no vols
+Desitgem que t'agradi evitar-te un propi fantasma corrent recursivament.

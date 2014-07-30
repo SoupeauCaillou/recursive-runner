@@ -1,12 +1,12 @@
 Corra, pule e marque pontos! Parece fácil?
 Claro, exceto que há um obstáculo correndo e pulando para se evitar: Você! (e Você (e Você (e Você (e...))))
-Experimente um jogo de corredor completamente novo!
+Experimente um jogo de correr completamente novo!
 Acostumado a jogar até ser acertado por um obstáculo?
 Você vai jogar por 90 segundos cada jogo.
-Acostumado a controlar 1 herói correndo? Nós vamos dar a você 10 deles.
+Acostumado a controlar 1 herói correndo? Nós vamos te dar 10 deles.
 O truque?
-You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
-Several achievements to earn and a leaderboard to climb!
-There are no ads in the game, since we like you, and that you dont like ads that dont like you
-We hope you like avoiding recursivly running into a phantom-mime.
+Você controla eles um de cada vez e, quando você terminar com um, ele vai fazer a mesma corrida de novo e de novo e vai continuar ganhando pontos para você.
+O desafio é ganhar pontos com seu personagem atual evitando os seus outros-eu - se você trombar em um deles, ele desaparecerá para sempre.
+Há várias conquistas para desbloquear e um quadro dos melhores jogadores para você conquistar!
+Não há propagandas no jogo, já que gostamos de você e que você não gosta de propagandas
+Esperamos que você goste do Recursive Runner.

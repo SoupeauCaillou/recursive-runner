@@ -5,8 +5,8 @@
 1ゲームで90秒遊べます。
 1人の走者でプレイするんですか？いいえ、10人です。
 幻覚？
-You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+一度に操作するのは一人だけですが、走り終わると以前の操作を繰り返し、得点を増やします。
+The challenge is to score points with your current person while avoiding your previous doppelgangers - if you hit one of them it will disappear forever.
 Several achievements to earn and a leaderboard to climb!
 There are no ads in the game, since we like you, and that you dont like ads that dont like you
 We hope you like avoiding recursivly running into a phantom-mime.
