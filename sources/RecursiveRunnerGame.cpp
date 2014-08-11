@@ -172,7 +172,7 @@ void fumee(Entity building) {
     unsigned count = 6;//MathUtil::RandomIntInRange(1, 4);
     std::vector<int> indexes;
     do {
-        int idx = (int) glm::linearRand(0.f, 6.f);
+        int idx = Random::Int(0, 6);
         if (std::find(indexes.begin(), indexes.end(), idx) == indexes.end()) {
             indexes.push_back(idx);
         }
@@ -184,14 +184,13 @@ void fumee(Entity building) {
             EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/fumee"));
         TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * glm::linearRand(0.5f, 0.8f);
 
-        AnchorComponent ac;
-        ac.z = -0.1;
-        ac.parent = building;
-        ac.position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
+        glm::vec2 position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
         if (RENDERING(building)->flags & RenderingFlags::MirrorHorizontal)
-            ac.position.x = -ANCHOR(fumee)->position.x;
-        AnchorSystem::adjustTransformWithAnchor(TRANSFORM(fumee), TRANSFORM(building), &ac);
-        ANIMATION(fumee)->waitAccum = glm::linearRand(0.0f, 10.f);
+            position.x = -ANCHOR(fumee)->position.x;
+        ANCHOR(fumee)->parent = building;
+        ANCHOR(fumee)->z = -0.1;
+        ANCHOR(fumee)->position = position;
+        ANIMATION(fumee)->waitAccum = Random::Float(0.0f, 10.f);
     }
 }
 
