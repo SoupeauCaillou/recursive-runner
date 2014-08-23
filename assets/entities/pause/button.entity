@@ -1,8 +1,10 @@
 [Transformation]
+size%texture = 1
 
 [Anchor]
 z = 0.9
-             
+parent%name = camera1
+
 [Rendering]
 show = 0
 flags = 1

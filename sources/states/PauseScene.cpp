@@ -49,22 +49,9 @@ class PauseScene : public StateHandler<Scene::Enum> {
     }
 
     void setup() {
-        const char* textures[] = {"fermer", "recommencer", "reprendre"};
-        Entity buttons[3];
-
-        for (int i = 0; i < 3; ++i) {
-            buttons[i] = theEntityManager.CreateEntityFromTemplate("pause/button");
-
-            TRANSFORM(buttons[i])->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize(textures[i])) * 1.2f;
-
-            ANCHOR(buttons[i])->parent = game->cameraEntity;
-            ANCHOR(buttons[i])->position = glm::vec2((i-1) * TRANSFORM(game->scorePanel)->size.x * 0.35, 0);
-
-            RENDERING(buttons[i])->texture = theRenderingSystem.loadTextureFile(textures[i]);
-        }
-        stopButton = buttons[0];
-        restartButton = buttons[1];
-        continueButton = buttons[2];
+        stopButton = theEntityManager.CreateEntityFromTemplate("pause/fermer");
+        restartButton = theEntityManager.CreateEntityFromTemplate("pause/recommencer");
+        continueButton = theEntityManager.CreateEntityFromTemplate("pause/reprendre");
     }
 
 

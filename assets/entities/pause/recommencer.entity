@@ -1,0 +1,7 @@
+extends = pause/button
+
+[Rendering]
+texture = recommencer
+
+[Anchor]
+position%gimp_size = 0, 0
