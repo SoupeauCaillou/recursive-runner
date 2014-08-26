@@ -1,9 +1,12 @@
 [Transformation]
 
 [Anchor]
-z = 0.99
+z = 0.01
+parent%name = logo/logo
+position%gimp_size = 0, 0
 
 [Rendering]
 texture = soupe_logo2_365_331
+show = 0
 
 [Sound]

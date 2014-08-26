@@ -74,12 +74,12 @@ class MenuScene : public StateHandler<Scene::Enum> {
     int weeklyRank;
 
     public:
-        MenuScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
+        MenuScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>("menu") {
             this->game = game;
         }
 
 
-        void setup() {
+        void setup(AssetAPI*) override {
             titleGroup  = theEntityManager.CreateEntity(HASH("menu/title_group", 0x5affe5af),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title_group"));
             ADSR(titleGroup)->idleValue = PlacementHelper::ScreenSize.y + PlacementHelper::GimpYToScreen(400);

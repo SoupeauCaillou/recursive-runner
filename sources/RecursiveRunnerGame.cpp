@@ -130,14 +130,14 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     PlatformerSystem::CreateInstance();
 
     LOGI("\t- Init sceneStateMachine...");
-    sceneStateMachine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(this), "Scene::Logo");
-    sceneStateMachine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(this), "Scene::Menu");
-    sceneStateMachine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(this), "Scene::Pause");
-    sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this), "Scene::Rate");
-    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this), "Scene::Game");
-    sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this), "Scene::RestartGame");
-    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this), "Scene::Tutorial");
-    sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this), "Scene::About");
+    sceneStateMachine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(this));
+    sceneStateMachine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(this));
+    sceneStateMachine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(this));
+    sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this));
+    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this));
+    sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this));
+    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this));
+    sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this));
 
     // load anim files
     LOGI("\t- Load animations...");
@@ -520,7 +520,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     }
     updateBestScore();
 
-    sceneStateMachine.setup();
+    sceneStateMachine.setup(gameThreadContext->assetAPI);
 
     //recover
     if (size > 0 && in) {

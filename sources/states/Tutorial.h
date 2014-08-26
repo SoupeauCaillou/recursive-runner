@@ -59,7 +59,9 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
     int runnerPointedByArrow;
     glm::vec2 arrowOffset;
 
-    TutorialStep(Tutorial::Enum pSelf, const std::function<bool(void)>& cond, const std::string& pTextId, int r = -1, const glm::vec2& arr = glm::vec2(0.0f)) {
+    TutorialStep(Tutorial::Enum pSelf, const std::function<bool(void)>& cond,
+        const std::string& pTextId, int r = -1, const glm::vec2& arr = glm::vec2(0.0f)) :
+        StateHandler<Tutorial::Enum>("tutorial") {
         self = pSelf;
         enterCondition = cond;
         textId = pTextId;
@@ -68,7 +70,9 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
         exitAction = [] () {};
     }
 
-    TutorialStep(Tutorial::Enum pSelf, const std::function<bool(void)>& cond, const std::function<void(void)>& pExitAction, const std::string& pTextId, int r = -1, const glm::vec2& arr = glm::vec2(0.0f)) {
+    TutorialStep(Tutorial::Enum pSelf, const std::function<bool(void)>& cond, const std::function<void(void)>& pExitAction, const std::string& pTextId, int r = -1, const glm::vec2& arr = glm::vec2(0.0f))
+         :
+        StateHandler<Tutorial::Enum>("tutorial") {
         self = pSelf;
         enterCondition = cond;
         textId = pTextId;
@@ -79,9 +83,6 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
 
     void init(GameScene* pGameScene, LocalizeAPI* pLoc, SessionComponent* pSc, TutorialEntities* pEntities) {
         gameScene = pGameScene; loc = pLoc; sc = pSc; entities = pEntities;
-    }
-
-    void setup() {
     }
 
     // Update game until entering condition is met (e.g : runner is at x = 12)
@@ -166,12 +167,12 @@ class TutorialScene : public StateHandler<Scene::Enum> {
 
 public:
 
-    TutorialScene(RecursiveRunnerGame* game) : gameScene(game) {
+    TutorialScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>("tutorial"), gameScene(game) {
        this->game = game;
     }
 
-    void setup() {
-        gameScene.setup();
+    void setup(AssetAPI* asset) override {
+        gameScene.setup(asset);
         theAnimationSystem.loadAnim(game->gameThreadContext->assetAPI, "arrow_tuto", "arrow_tuto");
     }
 
@@ -264,8 +265,7 @@ public:
             new TutorialStep(
                 Tutorial::Title,
                 [] () { return true; },
-                "how_to_play"),
-            "Title");
+                "how_to_play"));
         // 2. Hero
         tutorialStateMachine.registerState(
             Tutorial::IntroduceHero,
@@ -275,8 +275,7 @@ public:
                 [] () {},
                 "this_is_you",
                 0,
-                glm::vec2(0.5, 1)),
-            "IntroduceHero");
+                glm::vec2(0.5, 1)));
         // 3. Small Jump
         tutorialStateMachine.registerState(
             Tutorial::SmallJump,
@@ -288,16 +287,14 @@ public:
                     rc->jumpTimes.push_back(rc->elapsed);
                     rc->jumpDurations.push_back(0.06);
                 },
-                "tap_jump"),
-            "SmallJump");
+                "tap_jump"));
         // 4. ScorePoints
         tutorialStateMachine.registerState(
             Tutorial::ScorePoints,
             new TutorialStep(
                 Tutorial::ScorePoints,
                 [session] () { return (PHYSICS(session->currentRunner)->linearVelocity.y < 0); },
-                "turn_on"),
-            "ScorePoints");
+                "turn_on"));
         // 5. BigJump
         tutorialStateMachine.registerState(
             Tutorial::BigJump,
@@ -309,16 +306,14 @@ public:
                     rc->jumpTimes.push_back(rc->elapsed);
                     rc->jumpDurations.push_back(RunnerSystem::MaxJumpDuration);
                 },
-                "longer_press"),
-            "BigJump");
+                "longer_press"));
         // 6. RunTilTheEdge
         tutorialStateMachine.registerState(
             Tutorial::RunTilTheEdge,
             new TutorialStep(
                 Tutorial::RunTilTheEdge,
                 [session] () { return (TRANSFORM(session->currentRunner)->position.x >= 29); },
-                "run_edge"),
-            "RunTilTheEdge");
+                "run_edge"));
         // 7. NewHero
         tutorialStateMachine.registerState(
             Tutorial::NewHero,
@@ -327,8 +322,7 @@ public:
                 [session] () { return session->runners.size() == 2 && (TRANSFORM(session->runners[1])->position.x <= 29); },
                 "new_hero",
                 1,
-                glm::vec2(-0.5, 1)),
-            "NewHero");
+                glm::vec2(-0.5, 1)));
         // 8. MeetYourself
         tutorialStateMachine.registerState(
             Tutorial::MeetYourself,
@@ -341,8 +335,7 @@ public:
                 },
                 "previous_hero_replay",
                 0,
-                glm::vec2(0.5, 1)),
-            "MeetYourself");
+                glm::vec2(0.5, 1)));
         // 9. AvoidYourself
         tutorialStateMachine.registerState(
             Tutorial::AvoidYourself,
@@ -358,32 +351,28 @@ public:
                     rc->jumpTimes.push_back(rc->elapsed);
                     rc->jumpDurations.push_back(RunnerSystem::MaxJumpDuration * 0.8);
                 },
-                "avoid_him"),
-            "AvoidYourself");
+                "avoid_him"));
         // 10. BestScore
         tutorialStateMachine.registerState(
             Tutorial::BestScore,
             new TutorialStep(
                 Tutorial::BestScore,
                 [session] () { return (TRANSFORM(session->currentRunner)->position.x < -15); },
-                "ten_heroes"),
-            "BestScore");
+                "ten_heroes"));
         // 11. TheEnd
         tutorialStateMachine.registerState(
             Tutorial::TheEnd,
             new TutorialStep(
                 Tutorial::TheEnd,
                 [session] () { return (TRANSFORM(session->currentRunner)->position.x < -29); },
-                "good_luck"),
-            "TheEnd");
+                "good_luck"));
         // 12. Finished
         tutorialStateMachine.registerState(
             Tutorial::Finished,
             new TutorialStep(
                 Tutorial::TheEnd, // <- not a c/p error
                 [session] () { return true; },
-                ""),
-            "Finished");
+                ""));
 
         auto hdl = tutorialStateMachine.getHandlers();
         for(auto it = hdl.begin(); it!=hdl.end(); ++it) {
@@ -415,7 +404,7 @@ public:
         gameScene.onEnter(Scene::Tutorial);
         waitingClick = true;
 
-        tutorialStateMachine.setup();
+        tutorialStateMachine.setup(game->gameThreadContext->assetAPI);
         tutorialStateMachine.start(Tutorial::Title);
 
         RENDERING(game->muteBtn)->show = RENDERING(game->scorePanel)->show = TEXT(game->scoreText)->show = false;

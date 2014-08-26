@@ -4,6 +4,8 @@ size%screen_h = 0.8, 0.8
 [Anchor]
 position = 0, 0
 z = 0.98
+parent%name = camera1
 
 [Rendering]
 texture = soupe_logo
+show = 1

@@ -3,7 +3,9 @@ size%screen = 1, 1
 
 [Anchor]
 position = 0, 0
-z = 0.97
+z = -0.01
+parent%name = logo/logo
 
 [Rendering]
 color = 0.,0,0,1
+show = 1

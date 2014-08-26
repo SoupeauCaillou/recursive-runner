@@ -35,41 +35,29 @@
 #include "../systems/SessionSystem.h"
 #include "../systems/CameraTargetSystem.h"
 
+#include "base/SceneState.h"
 
-class PauseScene : public StateHandler<Scene::Enum> {
+
+class PauseScene : public SceneState<Scene::Enum> {
     RecursiveRunnerGame* game;
 
-    Entity continueButton, restartButton, stopButton;
     std::vector<Entity> pausedMusic;
 
     public:
 
-    PauseScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
+    PauseScene(RecursiveRunnerGame* game) : SceneState<Scene::Enum>("pause", SceneEntityMode::Fading, SceneEntityMode::Fading) {
         this->game = game;
     }
 
-    void setup() {
-        stopButton = theEntityManager.CreateEntityFromTemplate("pause/fermer");
-        restartButton = theEntityManager.CreateEntityFromTemplate("pause/recommencer");
-        continueButton = theEntityManager.CreateEntityFromTemplate("pause/reprendre");
-    }
+    void onEnter(Scene::Enum f) {
+        SceneState<Scene::Enum>::onEnter(f);
 
-
-    void onEnter(Scene::Enum) {
         const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
         // disable physics for runners
         for (unsigned i=0; i<session->runners.size(); i++) {
             PHYSICS(session->runners[i])->mass = 0;
             ANIMATION(session->runners[i])->playbackSpeed = 0;
         }
-
-        //show text & buttons
-        RENDERING(continueButton)->show = true;
-        BUTTON(continueButton)->enabled = true;
-        RENDERING(restartButton)->show = true;
-        BUTTON(restartButton)->enabled = true;
-        RENDERING(stopButton)->show = true;
-        BUTTON(stopButton)->enabled = true;
 
         TRANSFORM(game->scorePanel)->position.x = TRANSFORM(game->cameraEntity)->position.x;
         TEXT(game->scoreText)->text = "Pause";
@@ -87,38 +75,34 @@ class PauseScene : public StateHandler<Scene::Enum> {
     }
 
     Scene::Enum update(float) {
-        RENDERING(continueButton)->color = BUTTON(continueButton)->mouseOver ? Color("gray") : Color();
-        RENDERING(restartButton)->color = BUTTON(restartButton)->mouseOver ? Color("gray") : Color();
-        RENDERING(stopButton)->color = BUTTON(stopButton)->mouseOver ? Color("gray") : Color();
+        RENDERING(entities[HASH("pause/reprendre", 0x6f650d56)])->color = BUTTON(entities[HASH("pause/reprendre", 0x6f650d56)])->mouseOver ? Color("gray") : Color();
+        RENDERING(entities[HASH("pause/recommencer", 0x1829bb20)])->color = BUTTON(entities[HASH("pause/recommencer", 0x1829bb20)])->mouseOver ? Color("gray") : Color();
+        RENDERING(entities[HASH("pause/fermer", 0x1375e49c)])->color = BUTTON(entities[HASH("pause/fermer", 0x1375e49c)])->mouseOver ? Color("gray") : Color();
 
-        if (BUTTON(continueButton)->clicked) {
+        if (BUTTON(entities[HASH("pause/reprendre", 0x6f650d56)])->clicked) {
             return Scene::Game;
-        } else if (BUTTON(restartButton)->clicked) {
+        } else if (BUTTON(entities[HASH("pause/recommencer", 0x1829bb20)])->clicked) {
             // stop music :-[
             RecursiveRunnerGame::endGame();
             game->setupCamera(CameraMode::Single);
             return Scene::RestartGame;
-        } else if (BUTTON(stopButton)->clicked) {
+        } else if (BUTTON(entities[HASH("pause/fermer", 0x1375e49c)])->clicked) {
             RecursiveRunnerGame::endGame();
             return Scene::Menu;
         }
         return Scene::Pause;
     }
 
-    void onPreExit(Scene::Enum) {
-        RENDERING(continueButton)->show = false;
-        BUTTON(continueButton)->enabled = false;
-        RENDERING(restartButton)->show = false;
-        BUTTON(restartButton)->enabled = false;
-        RENDERING(stopButton)->show = false;
-        BUTTON(stopButton)->enabled = false;
+    void onPreExit(Scene::Enum f) {
+        SceneState<Scene::Enum>::onPreExit(f);
 
-        // TEXT(game->scoreText)->hide = RENDERING(game->scorePanel)->hide = false;
         TRANSFORM(game->scorePanel)->position.x = 0;
         TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
     }
 
     void onExit(Scene::Enum to) {
+        SceneState<Scene::Enum>::onExit(to);
+
         const auto& sessions = theSessionSystem.RetrieveAllEntityWithComponent();
         if (!sessions.empty()) {
             const SessionComponent* session = SESSION(sessions.front());

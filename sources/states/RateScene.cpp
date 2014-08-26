@@ -33,12 +33,12 @@ class RateScene : public StateHandler<Scene::Enum> {
    Entity rateText, btnNow, btnLater, btnNever;
 
    public:
-      RateScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
+      RateScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>("rate") {
          this->game = game;
       }
 
 
-      void setup() {
+      void setup(AssetAPI*) override {
 #if 0
          Entity entity[4];
          entity[0] = rateText = theEntityManager.CreateEntityFromTemplate("rate/text");

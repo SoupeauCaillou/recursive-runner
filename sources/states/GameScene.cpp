@@ -60,11 +60,11 @@ class GameScene : public StateHandler<Scene::Enum> {
     Entity transition;
 
 public:
-        GameScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>() {
+        GameScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>("game") {
             this->game = game;
         }
 
-        void setup() {
+        void setup(AssetAPI*) override {
             pauseButton = theEntityManager.CreateEntity(HASH("pause_buttton", 0x62b4dbd4),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
             ANCHOR(pauseButton)->parent = game->cameraEntity;

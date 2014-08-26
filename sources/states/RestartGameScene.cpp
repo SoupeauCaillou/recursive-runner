@@ -21,8 +21,10 @@
 
 class RestartGameScene : public StateHandler<Scene::Enum> {
    public:
-      void setup() {
-         
+        RestartGameScene() : StateHandler<Scene::Enum>("restartgame") {}
+
+      void setup(AssetAPI*) override {
+
       }
       Scene::Enum update(float) {
          return Scene::Game;

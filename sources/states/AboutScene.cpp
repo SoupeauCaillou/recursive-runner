@@ -85,11 +85,11 @@ class AboutScene : public StateHandler<Scene::Enum> {
     Entity texts[Text::Count];
 
 public:
-    AboutScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>(), game(game) {
+    AboutScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>("about"), game(game) {
     }
 
 
-    void setup() {
+    void setup(AssetAPI*) override {
         images[Image::Background] = theEntityManager.CreateEntityFromTemplate("menu/about/background");
         images[Image::Wolf] = theEntityManager.CreateEntityFromTemplate("menu/about/wolf");
 
@@ -157,7 +157,7 @@ public:
 
 
     void onExit(Scene::Enum) override {
-        
+
     }
 };
 
