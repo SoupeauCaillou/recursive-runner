@@ -1,3 +1,5 @@
+auto = 0
+
 [Transformation]
 size%texture = 1
 

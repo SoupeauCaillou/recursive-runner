@@ -42,11 +42,30 @@ class PauseScene : public SceneState<Scene::Enum> {
     RecursiveRunnerGame* game;
 
     std::vector<Entity> pausedMusic;
+    float panelPosition, panelAccum;
 
     public:
 
     PauseScene(RecursiveRunnerGame* game) : SceneState<Scene::Enum>("pause", SceneEntityMode::Fading, SceneEntityMode::Fading) {
         this->game = game;
+    }
+
+    void onPreEnter(Scene::Enum f) override {
+        SceneState<Scene::Enum>::onPreEnter(f);
+
+        TEXT(game->scoreText)->text = "";
+        panelPosition = TRANSFORM(game->scorePanel)->position.x;
+        panelAccum = 0;
+    }
+
+    bool updatePreEnter(Scene::Enum f, float dt) override {
+        bool b = SceneState<Scene::Enum>::updatePreEnter(f, dt);
+        panelAccum += dt;
+        float t = glm::min(1.0f, panelAccum / 0.5f);
+        TRANSFORM(game->scorePanel)->position.x =
+            glm::lerp(panelPosition, TRANSFORM(game->cameraEntity)->position.x, t);
+
+        return b && t>=1.0;
     }
 
     void onEnter(Scene::Enum f) {
@@ -97,7 +116,19 @@ class PauseScene : public SceneState<Scene::Enum> {
         SceneState<Scene::Enum>::onPreExit(f);
 
         TRANSFORM(game->scorePanel)->position.x = 0;
+        TEXT(game->scoreText)->text = "";
         TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
+        panelAccum = 0;
+    }
+
+    bool updatePreExit(Scene::Enum f, float dt) override {
+        bool b = SceneState<Scene::Enum>::updatePreExit(f, dt);
+        panelAccum += dt;
+        float t = glm::min(1.0f, panelAccum / 0.5f);
+        TRANSFORM(game->scorePanel)->position.x =
+            glm::lerp(TRANSFORM(game->cameraEntity)->position.x, panelPosition, t);
+
+        return b && t>=1.0;
     }
 
     void onExit(Scene::Enum to) {

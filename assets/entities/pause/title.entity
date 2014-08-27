@@ -1,9 +1,0 @@
-[Transformation]
-size%gimp_size = 857, 224
-
-[Anchor]
-z = 0.85
-             
-[Rendering]
-texture = menu-pause
-show = 0

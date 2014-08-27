@@ -1,9 +1,0 @@
-[Transformation]
-
-[Anchor]
-z = 0.05
-             
-[Text]
-text = PAUSE
-char_height = 1
-show = 0
