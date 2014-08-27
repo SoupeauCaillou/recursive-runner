@@ -1,9 +1,10 @@
 [Transformation]
+size%screen_h = 0.049, 0.0368
 
 [Anchor]
 z = 0.01
 parent%name = logo/logo
-position%gimp_size = 0, 0
+position%gimp_size = -9, 74
 
 [Rendering]
 texture = soupe_logo2_365_331
