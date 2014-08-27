@@ -295,10 +295,14 @@ void RecursiveRunnerGame::decor() {
         {glm::vec2(8, 0), glm::vec2(249, 0), glm::vec2(573, 69), glm::vec2(0.0f)},
 
     };
+
+    char* fullname = (char*)alloca(256);
     for (int i=0; i<count; i++) {
         const Decor& bdef = def[i];
+        strcpy(fullname, "decor/");
+        strcat(fullname, bdef.texture);
 
-        Entity b = theEntityManager.CreateEntity(Murmur::RuntimeHash(bdef.texture));
+        Entity b = theEntityManager.CreateEntity(Murmur::RuntimeHash(fullname));
         {
             ADD_COMPONENT(b, Transformation);
             auto tb = TRANSFORM(b);
@@ -357,10 +361,11 @@ void RecursiveRunnerGame::decor() {
             for (int j=0; j<4; j++) {
                 if (zPrepassSize[j] == glm::vec2(0.0f))
                     break;
-                char tmp[1024];
-                strcpy(tmp, bdef.texture);
-                strcpy(&tmp[strlen(bdef.texture)], "_z_pre-pass");
-                Entity bb = theEntityManager.CreateEntity(Murmur::RuntimeHash(tmp));
+
+                strcpy(fullname, "decor/");
+                strcat(fullname, bdef.texture);
+                strcat(fullname, "_z_pre-pass");
+                Entity bb = theEntityManager.CreateEntity(Murmur::RuntimeHash(fullname));
                 ADD_COMPONENT(bb, Transformation);
                 TRANSFORM(bb)->size = PlacementHelper::GimpSizeToScreen(zPrepassSize[j]);
                 glm::vec2 ratio(zPrepassOffset[j] / theRenderingSystem.getTextureSize(bdef.texture));
