@@ -180,9 +180,7 @@ void fumee(Entity building) {
 
     for (unsigned i=0; i<indexes.size(); i++) {
         int idx = indexes[i];
-        Entity fumee = theEntityManager.CreateEntity(HASH("fumee", 0x1ff6ee0c),
-            EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/fumee"));
-        TRANSFORM(fumee)->size = PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("fumee0")) * glm::linearRand(0.5f, 0.8f);
+        Entity fumee = theEntityManager.CreateEntityFromTemplate("background/fumee");
 
         glm::vec2 position = possible[idx] * TRANSFORM(building)->size + glm::vec2(0, TRANSFORM(fumee)->size.y * 0.5);
         if (RENDERING(building)->flags & RenderingFlags::MirrorHorizontal)

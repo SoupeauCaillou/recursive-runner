@@ -1,9 +1,11 @@
 [Transformation]
+size%texture = 1
 
 [Rendering]
 show = 0
 color = 1, 1, 1, 1
 flags = 1
+texture = fumee0
 
 [Anchor]
 
