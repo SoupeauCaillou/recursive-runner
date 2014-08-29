@@ -6,3 +6,12 @@ z = 0.91
 texture = score
 show = 1
 flags = 1
+
+[ADSR]
+attack_timing = 0.5
+decay_timing = 0.
+release_timing = 0.5
+idle_value = 0
+attack_value%gimp_h = 150
+sustain_value%gimp_h = 150
+active = 1

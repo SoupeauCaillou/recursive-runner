@@ -20,6 +20,7 @@
 #include "base/EntityManager.h"
 #include "base/TouchInputManager.h"
 
+#include "systems/ADSRSystem.h"
 #include "systems/TransformationSystem.h"
 #include "systems/TextSystem.h"
 #include "systems/MusicSystem.h"
@@ -53,19 +54,15 @@ class PauseScene : public SceneState<Scene::Enum> {
     void onPreEnter(Scene::Enum f) override {
         SceneState<Scene::Enum>::onPreEnter(f);
 
-        TEXT(game->scoreText)->text = "";
+        // move up score panel
+        ADSR(game->scorePanel)->active = false;
         panelPosition = TRANSFORM(game->scorePanel)->position.x;
-        panelAccum = 0;
     }
 
     bool updatePreEnter(Scene::Enum f, float dt) override {
         bool b = SceneState<Scene::Enum>::updatePreEnter(f, dt);
-        panelAccum += dt;
-        float t = glm::min(1.0f, panelAccum / 0.5f);
-        TRANSFORM(game->scorePanel)->position.x =
-            glm::lerp(panelPosition, TRANSFORM(game->cameraEntity)->position.x, t);
 
-        return b && t>=1.0;
+        return b && ADSR(game->scorePanel)->value <= ADSR(game->scorePanel)->idleValue;
     }
 
     void onEnter(Scene::Enum f) {
@@ -81,6 +78,8 @@ class PauseScene : public SceneState<Scene::Enum> {
         TRANSFORM(game->scorePanel)->position.x = TRANSFORM(game->cameraEntity)->position.x;
         TEXT(game->scoreText)->text = "Pause";
         TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
+        ADSR(game->scorePanel)->active = true;
+
         //mute music
         if (!theMusicSystem.isMuted()) {
             const auto& musics = theMusicSystem.RetrieveAllEntityWithComponent();
@@ -115,25 +114,20 @@ class PauseScene : public SceneState<Scene::Enum> {
     void onPreExit(Scene::Enum f) {
         SceneState<Scene::Enum>::onPreExit(f);
 
-        TRANSFORM(game->scorePanel)->position.x = 0;
-        TEXT(game->scoreText)->text = "";
-        TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
-        panelAccum = 0;
+        ADSR(game->scorePanel)->active = false;
     }
 
     bool updatePreExit(Scene::Enum f, float dt) override {
         bool b = SceneState<Scene::Enum>::updatePreExit(f, dt);
-        panelAccum += dt;
-        float t = glm::min(1.0f, panelAccum / 0.5f);
-        TRANSFORM(game->scorePanel)->position.x =
-            glm::lerp(TRANSFORM(game->cameraEntity)->position.x, panelPosition, t);
-
-        return b && t>=1.0;
+        return b && ADSR(game->scorePanel)->value <= ADSR(game->scorePanel)->idleValue;
     }
 
     void onExit(Scene::Enum to) {
         SceneState<Scene::Enum>::onExit(to);
-
+        TRANSFORM(game->scorePanel)->position.x = 0;
+        TEXT(game->scoreText)->text = "";
+        TEXT(game->scoreText)->flags &= ~TextComponent::IsANumberBit;
+        ADSR(game->scorePanel)->active = true;
         const auto& sessions = theSessionSystem.RetrieveAllEntityWithComponent();
         if (!sessions.empty()) {
             const SessionComponent* session = SESSION(sessions.front());

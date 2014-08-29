@@ -30,6 +30,7 @@
 #include "base/ObjectSerializer.h"
 #include "base/StateMachine.inl"
 
+#include "systems/ADSRSystem.h"
 #include "systems/AnchorSystem.h"
 #include "systems/TransformationSystem.h"
 #include "systems/RenderingSystem.h"
@@ -453,11 +454,8 @@ void RecursiveRunnerGame::initGame() {
 
     decor();
 
-    scorePanel = theEntityManager.CreateEntity(HASH("background/score_panel", 0xcd25a15f),
-        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/score_panel"));
-    TRANSFORM(scorePanel)->position = AnchorSystem::adjustPositionWithCardinal(
-        glm::vec2(0, baseLine + PlacementHelper::ScreenSize.y + PlacementHelper::GimpHeightToScreen(20)), TRANSFORM(scorePanel)->size, Cardinal::N);
-
+    scorePanel = theEntityManager.CreateEntityFromTemplate("background/score_panel");
+    TRANSFORM(scorePanel)->position = glm::vec2(0, 0);
     scoreText = theEntityManager.CreateEntity(HASH("score_text", 0xa032241b),
         EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("background/score_text"));
 
@@ -583,6 +581,12 @@ void RecursiveRunnerGame::togglePause(bool pause) {
 }
 
 void RecursiveRunnerGame::tick(float dt) {
+    TRANSFORM(scorePanel)->position.y =
+        AnchorSystem::adjustPositionWithCardinal(
+            glm::vec2(0, baseLine + PlacementHelper::ScreenSize.y - ADSR(scorePanel)->value),
+            TRANSFORM(scorePanel)->size,
+            Cardinal::S).y;
+
     if (BUTTON(muteBtn)->clicked) {
         //retrieve current state
         bool muted =
