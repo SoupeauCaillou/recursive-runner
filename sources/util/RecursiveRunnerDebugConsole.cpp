@@ -10,10 +10,11 @@ RecursiveRunnerGame* RecursiveRunnerDebugConsole::game = 0;
 
 void RecursiveRunnerDebugConsole::init(RecursiveRunnerGame* g) {
     game = g;
-
+#if 0
     static float score = 10.f;
     DebugConsole::RegisterMethod("Force end game", callbackForceEndGame, "Score multiplier",
         TW_TYPE_FLOAT, &score);
+#endif
 }
 
 void RecursiveRunnerDebugConsole::callbackForceEndGame(void* arg) {
