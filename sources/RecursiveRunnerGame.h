@@ -33,7 +33,7 @@
 #include "util/GameCenterAPIHelper.h"
 #include "util/SuccessManager.h"
 
-#include "states/Scenes.h"
+#include "scenes/Scenes.h"
 
 #include "base/StateMachine.h"
 class NameInputAPI;

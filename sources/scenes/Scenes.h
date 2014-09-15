@@ -23,7 +23,7 @@
 class RecursiveRunnerGame;
 
 namespace Scene {
-   enum Enum {
+   enum Enum : int {
       Logo,
       Menu,
       Game,

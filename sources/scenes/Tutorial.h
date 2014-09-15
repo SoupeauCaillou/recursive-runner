@@ -7,7 +7,7 @@
 
 #include "api/LocalizeAPI.h"
 
-#include "states/Scenes.h"
+#include "scenes/Scenes.h"
 
 #include "systems/SessionSystem.h"
 #include "systems/AnchorSystem.h"
