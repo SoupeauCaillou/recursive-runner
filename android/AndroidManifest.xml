@@ -5,7 +5,7 @@
     android:versionName="2.0.3"
     android:installLocation="auto"
     >
-    
+
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 
 	<uses-feature android:glEsVersion="0x00020000" />
@@ -16,18 +16,18 @@
 
     <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
 
-    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerApplication" android:allowBackup="true" android:debuggable="false">
-        
+    <application android:label="RecursiveRunner" android:icon="@drawable/ic_launcher" android:allowBackup="true" android:debuggable="false">
+
         <!-- Our activity is the built-in NativeActivity framework class.
              This will take care of integrating with our NDK code. -->
-        <activity android:name="net.damsy.soupeaucaillou.recursiveRunner.RecursiveRunnerActivity"
+        <activity android:name="net.damsy.soupeaucaillou.SacActivity"
                 android:label="Recursive Runner" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		
+
         <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 404035130361" /> <!-- the space is important since we cannot write int values without making the app crash -->
     </application>
 </manifest>

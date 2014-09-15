@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">"Toca a pantalla para xogar"</string>
+  <string name="tap_screen_to_restart">"toca a pantalla para volver xogar"</string>
+  <string name="how_to_play">"Como xogar? (toca para continuar)"</string>
+  <string name="tap_jump">"Toca a pantalla para dar chimpos"</string>
+  <string name="turn_on">"Prende as luces para gañar puntos"</string>
+  <string name="longer_press">"Toque longo para facer chimpos máis altos"</string>
+  <string name="good_luck">"Boa sorte!"</string>
+  <string name="Best">"Mellor"</string>
+  <string name="points">"puntos"</string>
+</resources>

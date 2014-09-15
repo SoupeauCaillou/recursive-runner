@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="tap_screen_to_start">"輕觸屏幕開始"</string>
+  <string name="tap_screen_to_restart">"輕觸屏幕重新開始"</string>
+  <string name="how_to_play">"如何玩？（輕觸以繼續）"</string>
+  <string name="tap_jump">"點觸屏幕跳躍"</string>
+  <string name="turn_on">"點亮電燈可以得分"</string>
+  <string name="longer_press">"長按可以跳得更高"</string>
+  <string name="good_luck">"祝好運！"</string>
+</resources>

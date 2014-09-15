@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="gpgs_debug_log_enabled">
+        false
+    </bool>
+
+    <string-array name="gpgs_achievements">
+        <item>CgkI-af7kuELEAIQAw</item>
+        <item>CgkI-af7kuELEAIQBA</item>
+        <item>CgkI-af7kuELEAIQBQ</item>
+        <item>CgkI-af7kuELEAIQBg</item>
+        <item>CgkI-af7kuELEAIQBw</item>
+        <item>CgkI-af7kuELEAIQCA</item>
+        <item>CgkI-af7kuELEAIQCQ</item>
+        <item>CgkI-af7kuELEAIQCg</item>
+    </string-array>
+
+    <string-array name="gpgs_leaderboards">
+        <item>CgkI-af7kuELEAIQAQ</item>
+        <item>CgkI-af7kuELEAIQDQ</item>
+    </string-array>
+</resources>
