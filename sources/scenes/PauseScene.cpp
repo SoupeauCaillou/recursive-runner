@@ -43,7 +43,7 @@ class PauseScene : public SceneState<Scene::Enum> {
     RecursiveRunnerGame* game;
 
     std::vector<Entity> pausedMusic;
-    float panelPosition, panelAccum;
+    float panelPosition/*, panelAccum*/;
 
     public:
 

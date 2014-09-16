@@ -207,7 +207,7 @@ public:
 
         bool isMuted = theMusicSystem.isMuted();
         theMusicSystem.toggleMute(true);
-        gameScene.onPreEnter(Scene::Tutorial);
+        gameScene.onPreEnter(SCENE_TUTORIAL);
         theMusicSystem.toggleMute(isMuted);
 
         waitBeforeEnterExit = TimeUtil::GetTime();
@@ -401,7 +401,7 @@ public:
         session->userInputEnabled = false;
         TEXT(entities.text)->show = true;
 
-        gameScene.onEnter(Scene::Tutorial);
+        gameScene.onEnter(SCENE_TUTORIAL);
         waitingClick = true;
 
         tutorialStateMachine.setup(game->gameThreadContext->assetAPI);
@@ -420,7 +420,7 @@ public:
         if (tutorialStateMachine.getCurrentState() == Tutorial::Finished)
             return Scene::Menu;
         else
-            return Scene::Tutorial;
+            return SCENE_TUTORIAL;
     }
 
     ///----------------------------------------------------------------------------//

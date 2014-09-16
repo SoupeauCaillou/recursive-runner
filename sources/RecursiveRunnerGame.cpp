@@ -137,7 +137,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this));
     sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this));
     sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this));
-    sceneStateMachine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(this));
+    sceneStateMachine.registerState(SCENE_TUTORIAL, Scene::CreateTutorialSceneHandler(this));
     sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this));
 
     // load anim files
@@ -565,7 +565,7 @@ void RecursiveRunnerGame::backPressed() {
         case Scene::Pause:
             sceneStateMachine.forceNewState(Scene::Menu);
             break;
-        case Scene::Tutorial:
+        case SCENE_TUTORIAL:
             sceneStateMachine.forceNewState(Scene::Menu);
             break;
         default:

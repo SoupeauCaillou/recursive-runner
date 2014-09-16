@@ -1,48 +1,50 @@
 /*
-	This file is part of RecursiveRunner.
+    This file is part of RecursiveRunner.
 
-	@author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
-	@author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Jordane Pelloux-Prayer
+    @author Soupe au Caillou - Gautier Pelloux-Prayer
+    @author Soupe au Caillou - Pierre-Eric Pelloux-Prayer
 
-	RecursiveRunner is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3.
+    RecursiveRunner is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3.
 
-	RecursiveRunner is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    RecursiveRunner is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
-
-#include "base/StateMachine.h"
-
+#include <base/Game.h>
+#include <base/StateMachine.h>
 class RecursiveRunnerGame;
-
 namespace Scene {
-   enum Enum : int {
-      Logo,
-      Menu,
-      Game,
-      Tutorial,
-      Pause,
-      Rate,
-      RestartGame,
-      About,
-   };
-
-#define DECLARE_SCENE_HANDLER_FACTORY(name) \
-  StateHandler<Scene::Enum>* Create##name##SceneHandler(RecursiveRunnerGame* game);
-
-  DECLARE_SCENE_HANDLER_FACTORY(Logo)
-  DECLARE_SCENE_HANDLER_FACTORY(Menu)
-  DECLARE_SCENE_HANDLER_FACTORY(Game)
-  DECLARE_SCENE_HANDLER_FACTORY(Tutorial)
-  DECLARE_SCENE_HANDLER_FACTORY(Pause)
-  DECLARE_SCENE_HANDLER_FACTORY(Rate)
-  DECLARE_SCENE_HANDLER_FACTORY(RestartGame)
-  DECLARE_SCENE_HANDLER_FACTORY(About)
+	enum Enum : int {
+		About,
+		Game,
+		Menu,
+		Logo,
+		Pause,
+		Rate,
+		RestartGame,
+	};
+	StateHandler<Scene::Enum>* CreateAboutSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateGameSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateMenuSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateLogoSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreatePauseSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateRateSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateRestartGameSceneHandler(RecursiveRunnerGame* game);
+}
+inline void registerScenes(RecursiveRunnerGame * game, StateMachine<Scene::Enum> machine) {	machine.registerState(Scene::About, Scene::CreateAboutSceneHandler(game));
+	machine.registerState(Scene::Game, Scene::CreateGameSceneHandler(game));
+	machine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(game));
+	machine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(game));
+	machine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(game));
+	machine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(game));
+	machine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(game));
 }

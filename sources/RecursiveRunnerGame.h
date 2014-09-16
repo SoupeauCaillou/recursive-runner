@@ -116,3 +116,8 @@ class RecursiveRunnerGame : public Game {
 
         static void createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition);
 };
+
+#define SCENE_TUTORIAL (Scene::Enum)42
+namespace Scene {
+    StateHandler<Enum>* CreateTutorialSceneHandler(RecursiveRunnerGame* game);
+}
