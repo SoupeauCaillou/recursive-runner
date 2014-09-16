@@ -56,7 +56,7 @@ public:
         faderHelper.start(Fading::In, FADE);
 
         // preload sound
-        theSoundSystem.loadSoundFile("audio/son_monte.ogg");
+        theSoundSystem.loadSoundFile("sounds/logo_blink.ogg");
     }
 
     bool updatePreEnter(Scene::Enum f, float dt) override {
@@ -88,7 +88,7 @@ public:
         }
         else if (timeAccum > 0.8 + 0.05) {
             if (!soundPlayed) {
-                SOUND(animLogo)->sound = theSoundSystem.loadSoundFile("audio/son_monte.ogg");
+                SOUND(animLogo)->sound = theSoundSystem.loadSoundFile("sounds/logo_blink.ogg");
                 soundPlayed = true;
             }
             RENDERING(animLogo)->texture = theRenderingSystem.loadTextureFile("soupe_logo3_365_331");

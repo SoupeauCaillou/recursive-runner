@@ -113,7 +113,6 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // buttons[Button::Exit] = theEntityManager.CreateEntityFromTemplate("menu/exit_btn");
             // ANCHOR(buttons[Button::Exit])->parent = game->muteBtn;
             // sigh
-            LOGI("OFFSET: " << (game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5));
             TRANSFORM(buttons[Button::About])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
             // TRANSFORM(buttons[Button::Exit])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
 
