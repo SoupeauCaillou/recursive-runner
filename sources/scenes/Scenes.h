@@ -40,7 +40,7 @@ namespace Scene {
 	StateHandler<Scene::Enum>* CreateRateSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateRestartGameSceneHandler(RecursiveRunnerGame* game);
 }
-inline void registerScenes(RecursiveRunnerGame * game, StateMachine<Scene::Enum> machine) {	machine.registerState(Scene::About, Scene::CreateAboutSceneHandler(game));
+inline void registerScenes(RecursiveRunnerGame * game, StateMachine<Scene::Enum> & machine) {	machine.registerState(Scene::About, Scene::CreateAboutSceneHandler(game));
 	machine.registerState(Scene::Game, Scene::CreateGameSceneHandler(game));
 	machine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(game));
 	machine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(game));
