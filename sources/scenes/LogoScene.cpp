@@ -119,11 +119,12 @@ public:
 
     void onExit(Scene::Enum f) override {
         SceneState<Scene::Enum>::onExit(f);
-        /*
-        theEntityManager.DeleteEntity(logo);
-        theEntityManager.DeleteEntity(logobg);
-        theEntityManager.DeleteEntity(animLogo);
-        */
+
+        for (auto p: entities) {
+            theEntityManager.DeleteEntity(p.second);
+        }
+        entities.clear();
+
         theRenderingSystem.unloadAtlas("logo");
 
         faderHelper.clearFadingEntities();
