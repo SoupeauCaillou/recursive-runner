@@ -85,9 +85,6 @@ RecursiveRunnerGame::RecursiveRunnerGame(): Game() {
 
 
 RecursiveRunnerGame::~RecursiveRunnerGame() {
-    LOGW("Delete game instance " << this << " " << &theEntityManager);
-    theEntityManager.deleteAllEntities();
-
     RunnerSystem::DestroyInstance();
     CameraTargetSystem::DestroyInstance();
     PlayerSystem::DestroyInstance();
@@ -344,7 +341,7 @@ void RecursiveRunnerGame::decor() {
             zPrepassSize = vBat[3];
             zPrepassOffset = oBat[3];
         }
-        if (zPrepassSize) {
+        if (0 && zPrepassSize) {
             const glm::vec2 size = TRANSFORM(b)->size;
             #if 0
             Color color = Color::random();
