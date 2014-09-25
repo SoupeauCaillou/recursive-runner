@@ -1,3 +1,9 @@
+// (Hackish but...)
+// This file is meant to be included from GameScene.cpp, because it needs knowledge of GameScene class.
+// But cmake based Scenes.h generation only handle .cpp files so this file needs to be a .cpp
+// But we don't want to compile it as a standalone source file, hence the #ifdef GUARD
+#ifdef TUTORIAL_COMPILE_GUARD
+
 #pragma once
 
 #include "base/Entity.h"
@@ -207,7 +213,7 @@ public:
 
         bool isMuted = theMusicSystem.isMuted();
         theMusicSystem.toggleMute(true);
-        gameScene.onPreEnter(SCENE_TUTORIAL);
+        gameScene.onPreEnter(Scene::Tutorial);
         theMusicSystem.toggleMute(isMuted);
 
         waitBeforeEnterExit = TimeUtil::GetTime();
@@ -401,7 +407,7 @@ public:
         session->userInputEnabled = false;
         TEXT(entities.text)->show = true;
 
-        gameScene.onEnter(SCENE_TUTORIAL);
+        gameScene.onEnter(Scene::Tutorial);
         waitingClick = true;
 
         tutorialStateMachine.setup(game->gameThreadContext->assetAPI);
@@ -420,7 +426,7 @@ public:
         if (tutorialStateMachine.getCurrentState() == Tutorial::Finished)
             return Scene::Menu;
         else
-            return SCENE_TUTORIAL;
+            return Scene::Tutorial;
     }
 
     ///----------------------------------------------------------------------------//
@@ -470,3 +476,11 @@ public:
         theEntityManager.DeleteEntity(titleGroup);
     }
 };
+
+namespace Scene {
+    StateHandler<Scene::Enum>* CreateTutorialSceneHandler(RecursiveRunnerGame* game) {
+        return new TutorialScene(game);
+    }
+}
+
+#endif

@@ -253,7 +253,7 @@ void backgroundUpdate(float) {
             // Handle help button
             if (!game->ignoreClick) {
                 if (BUTTON(buttons[Button::Help])->clicked) {
-                    return SCENE_TUTORIAL;
+                    return Scene::Tutorial;
                 }
                 if (BUTTON(buttons[Button::About])->clicked) {
                    return Scene::About;
@@ -276,7 +276,7 @@ void backgroundUpdate(float) {
                     game->gameThreadContext->storageAPI->setOption("gameCount", ObjectSerializer<int>::object2string(current + 1), "0");
 
                     if (current == 0) {
-                        return SCENE_TUTORIAL;
+                        return Scene::Tutorial;
                     } else {
                         return Scene::Game;
                     }

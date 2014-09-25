@@ -131,14 +131,7 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
     PlatformerSystem::CreateInstance();
 
     LOGI("\t- Init sceneStateMachine...");
-    sceneStateMachine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(this));
-    sceneStateMachine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(this));
-    sceneStateMachine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(this));
-    sceneStateMachine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(this));
-    sceneStateMachine.registerState(Scene::Game, Scene::CreateGameSceneHandler(this));
-    sceneStateMachine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(this));
-    sceneStateMachine.registerState(SCENE_TUTORIAL, Scene::CreateTutorialSceneHandler(this));
-    sceneStateMachine.registerState(Scene::About, Scene::CreateAboutSceneHandler(this));
+    registerScenes(this, sceneStateMachine);
 
     // load anim files
     LOGI("\t- Load animations...");
@@ -565,7 +558,7 @@ void RecursiveRunnerGame::backPressed() {
         case Scene::Pause:
             sceneStateMachine.forceNewState(Scene::Menu);
             break;
-        case SCENE_TUTORIAL:
+        case Scene::Tutorial:
             sceneStateMachine.forceNewState(Scene::Menu);
             break;
         default:
@@ -860,7 +853,7 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
 
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
-        Entity e = theEntityManager.CreateEntity(HASH("coin", 0x844c8381),
+        Entity e = theEntityManager.CreateEntity(HASH("coin/coin", 0x38fb9dd5),
             EntityType::Persistent, coinTemplate);
 
         TRANSFORM(e)->size *= param::CoinScale;
@@ -882,14 +875,14 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
         else
             topI = glm::vec2(param::LevelSize * PlacementHelper::ScreenSize.x * 0.5, 0);
 
-        Entity link = theEntityManager.CreateEntity(HASH("link", 0xcacec0a0),
+        Entity link = theEntityManager.CreateEntity(HASH("link/normal", 0xf4f248b8),
             EntityType::Persistent, linkTemplate);
         TRANSFORM(link)->position = (topI + previous) * 0.5f;
         TRANSFORM(link)->size = glm::vec2(glm::length(topI - previous), PlacementHelper::GimpHeightToScreen(54));
         TRANSFORM(link)->rotation = -/*glm::radians*/(glm::orientedAngle(glm::normalize(topI - previous), glm::vec2(1.0f, 0.0f)));
         RENDERING(link)->color.a =  (transition ? 0 : 1);
 
-        Entity link3 = theEntityManager.CreateEntity(HASH("link3", 0xba31ef20),
+        Entity link3 = theEntityManager.CreateEntity(HASH("link/particule", 0x5c2067ee),
             EntityType::Persistent, link3Template);
         TRANSFORM(link3)->size = TRANSFORM(link)->size * glm::vec2(1, 0.1);
         ANCHOR(link3)->parent = link;

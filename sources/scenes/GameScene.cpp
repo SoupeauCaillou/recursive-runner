@@ -98,7 +98,7 @@ public:
             } else {
                 MUSIC(transition)->control = MusicControl::Play;
             }
-            if (from != SCENE_TUTORIAL) {
+            if (from != Scene::Tutorial) {
                 RENDERING(pauseButton)->show = true;
                 RENDERING(pauseButton)->color = Color(1,1,1,0);
             }
@@ -128,9 +128,9 @@ public:
                 }
                 game->setupCamera(CameraMode::Single);
 
-                game->successManager.gameStart(from == SCENE_TUTORIAL);
+                game->successManager.gameStart(from == Scene::Tutorial);
             }
-            if (from != SCENE_TUTORIAL)
+            if (from != Scene::Tutorial)
                 BUTTON(pauseButton)->enabled = true;
 
 
@@ -516,10 +516,5 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
     }
 }
 
-#include "TutorialScene.h"
-
-namespace Scene {
-    StateHandler<Scene::Enum>* CreateTutorialSceneHandler(RecursiveRunnerGame* game) {
-        return new TutorialScene(game);
-    }
-}
+#define TUTORIAL_COMPILE_GUARD
+#include "TutorialScene.cpp"
