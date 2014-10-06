@@ -24,30 +24,30 @@
 class RecursiveRunnerGame;
 namespace Scene {
 	enum Enum : int {
-		Pause,
-		Logo,
 		About,
+		Game,
+		Logo,
 		Menu,
+		Pause,
+		Rate,
 		RestartGame,
 		Tutorial,
-		Rate,
-		Game,
 	};
-	StateHandler<Scene::Enum>* CreatePauseSceneHandler(RecursiveRunnerGame* game);
-	StateHandler<Scene::Enum>* CreateLogoSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateAboutSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateGameSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateLogoSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateMenuSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreatePauseSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateRateSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateRestartGameSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateTutorialSceneHandler(RecursiveRunnerGame* game);
-	StateHandler<Scene::Enum>* CreateRateSceneHandler(RecursiveRunnerGame* game);
-	StateHandler<Scene::Enum>* CreateGameSceneHandler(RecursiveRunnerGame* game);
 }
-inline void registerScenes(RecursiveRunnerGame * game, StateMachine<Scene::Enum> & machine) {	machine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(game));
+inline void registerScenes(RecursiveRunnerGame * game, StateMachine<Scene::Enum> & machine) {	machine.registerState(Scene::About, Scene::CreateAboutSceneHandler(game));
+	machine.registerState(Scene::Game, Scene::CreateGameSceneHandler(game));
 	machine.registerState(Scene::Logo, Scene::CreateLogoSceneHandler(game));
-	machine.registerState(Scene::About, Scene::CreateAboutSceneHandler(game));
 	machine.registerState(Scene::Menu, Scene::CreateMenuSceneHandler(game));
+	machine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(game));
+	machine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(game));
 	machine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(game));
 	machine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(game));
-	machine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(game));
-	machine.registerState(Scene::Game, Scene::CreateGameSceneHandler(game));
 }

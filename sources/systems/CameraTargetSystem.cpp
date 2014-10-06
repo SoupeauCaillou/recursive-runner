@@ -49,6 +49,7 @@ void CameraTargetSystem::DoUpdate(float dt) {
             target.x = PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
         }
 
+        #if 0
         glm::vec2 force = SteeringBehavior::arrive(
             TRANSFORM(ctc->camera)->position,
             ctc->cameraSpeed,
@@ -57,6 +58,9 @@ void CameraTargetSystem::DoUpdate(float dt) {
             0.3);
         // accel = force
         ctc->cameraSpeed = force; //+= force;
+        #else
+        LOGT("Fix me!");
+        #endif
         // and camera must move in the same direction as the target
         if (ctc->cameraSpeed.x * RUNNER(a)->speed < 0) {
             ctc->cameraSpeed = glm::vec2(0.0f);
