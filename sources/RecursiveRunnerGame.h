@@ -97,7 +97,7 @@ class RecursiveRunnerGame : public Game {
         bool ignoreClick;
         Entity silhouette, route, cameraEntity, bestScore;
         std::vector<Entity> decorEntities;
-        #if SAC_RESTRICTIVE_PLUGINS
+        #if SAC_USE_PROPRIETARY_PLUGINS
         GameCenterAPIHelper gamecenterAPIHelper;
         #endif
         SuccessManager successManager;

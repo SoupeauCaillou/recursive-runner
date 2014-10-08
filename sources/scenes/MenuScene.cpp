@@ -149,7 +149,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
                 game->updateBestScore();
 
-                #if SAC_RESTRICTIVE_PLUGINS
+                #if SAC_USE_PROPRIETARY_PLUGINS
                     // Submit score to generic leaderboard
                     game->gameThreadContext->gameCenterAPI->submitScore(0, ssp.getValue("points"));
                     if (game->level == Level::Level2) {
@@ -193,7 +193,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             }
             RENDERING(game->muteBtn)->color.a = progress;
 
-            #if SAC_RESTRICTIVE_PLUGINS
+            #if SAC_USE_PROPRIETARY_PLUGINS
                 game->gamecenterAPIHelper.displayUI(progress);
             #endif
 
@@ -210,7 +210,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             }
             BUTTON(game->muteBtn)->enabled = true;
             RENDERING(game->muteBtn)->color.a = 1;
-            #if SAC_RESTRICTIVE_PLUGINS
+            #if SAC_USE_PROPRIETARY_PLUGINS
                 game->gamecenterAPIHelper.displayUI();
             #endif
         }
@@ -223,7 +223,7 @@ void backgroundUpdate(float) {
 #endif
 
         Scene::Enum update(float) {
-            #if SAC_RESTRICTIVE_PLUGINS
+            #if SAC_USE_PROPRIETARY_PLUGINS
                 // Game center UI - if any button clicked, break the loop
                 if (game->gamecenterAPIHelper.updateUI()) {
                     return Scene::Menu;
@@ -321,7 +321,7 @@ void backgroundUpdate(float) {
             if(nextScene == Scene::About)
                 RENDERING(game->muteBtn)->color.a = 1 - progress;
 
-            #if SAC_RESTRICTIVE_PLUGINS
+            #if SAC_USE_PROPRIETARY_PLUGINS
                 game->gamecenterAPIHelper.hideUI(1 - progress);
             #endif
 
@@ -336,7 +336,7 @@ void backgroundUpdate(float) {
             if(nextScene == Scene::About)
                 RENDERING(game->muteBtn)->show = false;
 
-            #if SAC_RESTRICTIVE_PLUGINS
+            #if SAC_USE_PROPRIETARY_PLUGINS
                 game->gamecenterAPIHelper.hideUI();
             #endif
         }

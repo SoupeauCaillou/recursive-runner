@@ -69,7 +69,7 @@ void SuccessManager::oneLessRunner() {
     LOGV(1, "One less: " << totalLiving);
 }
 
-#if SAC_RESTRICTIVE_PLUGINS
+#if SAC_USE_PROPRIETARY_PLUGINS
 void SuccessManager::gameEnd(SessionComponent* sc) {
     if (isTuto) {
         LOGW_EVERY_N(120, "This is the tuto! Do not unlock successes there...");

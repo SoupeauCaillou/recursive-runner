@@ -49,7 +49,7 @@
 #include <vector>
 #include <mutex>
 
-#if SAC_RESTRICTIVE_PLUGINS
+#if SAC_USE_PROPRIETARY_PLUGINS
 #include "api/InAppPurchaseAPI.h"
 #endif
 
