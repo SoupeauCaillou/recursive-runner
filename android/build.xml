@@ -9,14 +9,6 @@
         <isset property="env.ANDROID_HOME" />
     </condition>
 
-    <loadproperties srcFile="project.properties" />
-    <fail
-            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through the ANDROID_HOME environment variable."
-            unless="sdk.dir"
-    />
-
-    <import file="custom_rules.xml" optional="true" />
-
     <!-- !!!!!!!!!!!!!! Import sac release key if available. !!!!!!!!!!!!!! -->
      <condition property="sac.release.keystore" value="../../sac-release-keystore.properties">
             <available file="../../sac-release-keystore.properties"/>
@@ -28,6 +20,17 @@
 
     <!-- !!!!!!!!!!!!!! SAC REQUIRED -> Or build.xml will be overwritten !!!!!!!!!!!!!! -->
     <!-- version-tag:custom -->
+
+    <!-- import project.properties AFTER sac release because ant properties are IMMUABLES, so if
+    we already set the key.store, we won't be able to change it anymore! -->
+    <loadproperties srcFile="project.properties" />
+
+    <fail
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through the ANDROID_HOME environment variable."
+            unless="sdk.dir"
+    />
+
+     <import file="custom_rules.xml" optional="true" />
 
     <import file="${sdk.dir}/tools/ant/build.xml" />
 </project>
