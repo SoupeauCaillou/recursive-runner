@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="gpgs_debug_log_enabled">
-        false
-    </bool>
+    <bool name="gpgs_debug_log_enabled">false</bool>
 
     <string-array name="gpgs_achievements">
         <item>CgkI-af7kuELEAIQAw</item>
@@ -19,4 +17,5 @@
         <item>CgkI-af7kuELEAIQAQ</item>
         <item>CgkI-af7kuELEAIQDQ</item>
     </string-array>
+    <string name="google_play_app_id">404035130361</string>
 </resources>
