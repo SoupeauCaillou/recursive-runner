@@ -37,6 +37,20 @@ CameraTargetSystem::CameraTargetSystem() : ComponentSystemImpl<CameraTargetCompo
     componentSerializer.add(new Property<glm::vec2>(HASH("camera_speed", 0x7c76c3a2), OFFSET(cameraSpeed, tc), glm::vec2(0.001, 0)));
 }
 
+static glm::vec2 arrive(const glm::vec2& pos, const glm::vec2& ,const glm::vec2& targetPos, float maxSpeed, float deceleration) {
+    glm::vec2 toTarget (targetPos - pos);
+    float d = glm::length(toTarget);
+
+    if (d > 0) {
+        toTarget = glm::normalize(toTarget);
+        float speed = glm::min(d / deceleration, maxSpeed);
+        glm::vec2 desiredVelocity(toTarget * speed);
+        return desiredVelocity;
+    }
+    return glm::vec2(0.0f, 0.0f);
+}
+
+
 void CameraTargetSystem::DoUpdate(float dt) {
     FOR_EACH_ENTITY_COMPONENT(CameraTarget, a, ctc)
         if (!ctc->enabled)
@@ -50,8 +64,7 @@ void CameraTargetSystem::DoUpdate(float dt) {
             target.x = PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5);
         }
 
-        #if 0
-        glm::vec2 force = SteeringBehavior::arrive(
+        glm::vec2 force = arrive(
             TRANSFORM(ctc->camera)->position,
             ctc->cameraSpeed,
             target,
@@ -59,9 +72,7 @@ void CameraTargetSystem::DoUpdate(float dt) {
             0.3);
         // accel = force
         ctc->cameraSpeed = force; //+= force;
-        #else
-        LOGT("Fix me!");
-        #endif
+
         // and camera must move in the same direction as the target
         if (ctc->cameraSpeed.x * RUNNER(a)->speed < 0) {
             ctc->cameraSpeed = glm::vec2(0.0f);
