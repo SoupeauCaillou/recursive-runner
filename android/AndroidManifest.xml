@@ -5,6 +5,8 @@
     android:versionCode="1403161642"
     android:versionName="2.0.3"
     android:installLocation="auto">
+    <!-- everything is in sac! -->
+    <application />
 </manifest>
 
 
