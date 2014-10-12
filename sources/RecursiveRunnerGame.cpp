@@ -437,8 +437,9 @@ void RecursiveRunnerGame::initGame() {
         baseLine + theRenderingSystem.screenH * 0.5);
 
     LOGI("Creating cameras");
-    Entity camera = cameraEntity = theEntityManager.CreateEntity(HASH("camera1", 0xc6993429),
-        EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("camera"));
+    cameraEntity = camera;
+    CAMERA(camera)->clearColor = Color(0.58, 0.58, 0.58);
+    TRANSFORM(camera)->z = 0;
     TRANSFORM(camera)->position = leftMostCameraPos;
     theTouchInputManager.setCamera(camera);
 

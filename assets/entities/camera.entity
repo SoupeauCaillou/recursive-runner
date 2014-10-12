@@ -1,6 +1,0 @@
-[Transformation]
-size%screen = 1, 1
-z = 0
-
-[Camera]
-clear_color = .58, .58, .58

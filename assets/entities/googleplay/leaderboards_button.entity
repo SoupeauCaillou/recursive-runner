@@ -2,7 +2,7 @@
 size%gimp_size = 129, 92
 
 [Anchor]
-parent%name = camera1
+parent%name = camera
 positionSW%screen = -0.476, -.25
 z = 0.95
 

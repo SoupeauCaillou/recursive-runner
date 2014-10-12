@@ -5,7 +5,7 @@ size%texture = 1
 
 [Anchor]
 z = 0.9
-parent%name = camera1
+parent%name = camera
 
 [Rendering]
 show = 0

@@ -5,7 +5,7 @@ z = 0.9
 position = 0, 0
 
 [Anchor]
-parent%name = camera1
+parent%name = camera
 z = 0.97
 position%gimp_size = 400, 250
 

@@ -2,9 +2,9 @@
 size%screen = 1,1
 
 [Anchor]
-parent%name = camera1
+parent%name = camera
 z = 0.98
-position%gimp_size = 0, -50 
+position%gimp_size = 0, -50
 
 [Text]
 color = 0.254,0.254,0.254,1
