@@ -3,8 +3,18 @@
   <string name="tap_screen_to_start">"Tocca lo schermo per iniziare"</string>
   <string name="tap_screen_to_restart">"tocca lo schermo per riavviare"</string>
   <string name="how_to_play">"Come si gioca? (tocca per continuare)"</string>
+  <string name="this_is_you">"Questo sei Tu"</string>
   <string name="tap_jump">"Tocca lo schermo per saltare"</string>
   <string name="turn_on">"Accendi le luci per collezionare punti"</string>
   <string name="longer_press">"Tieni premuto più a lungo per saltare più in alto"</string>
+  <string name="run_edge">"Corri fino alla fine della schermata"</string>
+  <string name="new_hero">"Duplica ancora te stesso"</string>
+  <string name="previous_hero_replay">"Il te stesso precedente ripeterà il tuo destino"</string>
+  <string name="avoid_him">"Evita te stesso, il quale continuerà a produrre punti!"</string>
+  <string name="ten_heroes">"Prova a fare il tuo miglior punteggio contro 10 copie di te stesso!"</string>
   <string name="good_luck">"Buona fortuna!"</string>
+  <string name="Best">"Il Migliore"</string>
+  <string name="points">"punti"</string>
+  <string name="about_us">"Chi siamo"</string>
+  <string name="support_us">"Supportaci"</string>
 </resources>
