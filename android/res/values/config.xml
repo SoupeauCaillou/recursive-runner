@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <!-- game name could be in strings.xml... but we don't want to translate it -->
-    <string name="game_name">"Recursive Runner"</string>
-    <string name="game_orientation">"landscape"</string>
+    <string name="game_name">"Heriswap"</string>
+    <integer name="game_orientation">0</integer>
 </resources>
