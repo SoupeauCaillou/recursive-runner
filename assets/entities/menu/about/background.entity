@@ -3,7 +3,7 @@ size%screen = 0.95, 0.95
 
 [Anchor]
 parent%name = camera
-z = 0.97
+z = 0.9
 position = 0, 0
 
 [Rendering]
