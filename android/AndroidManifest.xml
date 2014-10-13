@@ -5,8 +5,10 @@
     android:versionCode="1410131814"
     android:versionName="3.0.0"
     android:installLocation="auto">
-    <!-- everything is in sac! -->
-    <application />
+
+    <uses-feature android:glEsVersion="0x00020000" />
+    <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="11"/>
+
+    <application android:label="@string/game_name" android:icon="@drawable/ic_launcher" android:allowBackup="true" android:debuggable="false" />
 </manifest>
-
-
