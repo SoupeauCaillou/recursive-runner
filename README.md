@@ -3,10 +3,10 @@ Recursive Runner is a runner game, published on Android ([Google Play](https://p
 [It uses sac (Soupe au Caillou) 2D engine](https://github.com/soupeaucaillou/sac).
 
 #Get the sources
-`git clone --recursive git@github.com:SoupeauCaillou/recursive-runner.git`
+`git clone --recursive https://github.com/SoupeauCaillou/recursive-runner.git`
 
 #How to build
-To build the game, you can use script 'sac/tools/build/build-all.sh'.
+To build the game, you can use script `sac/tools/build/build-all.sh`.
 Use -h to get available options.
 
 ##For Unix/Linux
@@ -21,7 +21,7 @@ Use -h to get available options.
 `./sac/tools/build/android_generate_signed_apk.sh`
 
 * Generate a free build (excluding Google Play services):
-`./android_fdroid_APK.sh`
+`./sac/tools/build/android_free_native_build.sh && cd android/ && ant release`
 
 #License
 See [License file](LICENSE).
