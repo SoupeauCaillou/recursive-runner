@@ -3,7 +3,7 @@ size%gimp_size = 129, 92
 
 [Anchor]
 parent%name = googleplay/leaderboards_button
-position%gimp_size= 0, -100
+position%gimp_size= 0, 100
 z = 0
 
 [Rendering]

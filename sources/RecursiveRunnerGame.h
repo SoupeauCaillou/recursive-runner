@@ -68,13 +68,15 @@ class RecursiveRunnerGame : public Game {
       RecursiveRunnerGame();
       ~RecursiveRunnerGame();
       bool wantsAPI(ContextAPI::Enum api) const;
-      void sacInit(int windowW, int windowH);
+      void sacInit() override;
       void init(const uint8_t* in = 0, int size = 0);
       void quickInit();
       void tick(float dt);
       void backPressed();
       bool willConsumeBackEvent();
       void togglePause(bool pause);
+
+      void changeResolution(int windowW, int windowH);
 
       int saveState(uint8_t** out);
       void setupCamera(CameraMode::Enum mode);

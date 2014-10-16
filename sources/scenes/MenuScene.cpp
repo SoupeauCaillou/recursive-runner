@@ -83,21 +83,18 @@ class MenuScene : public StateHandler<Scene::Enum> {
         void setup(AssetAPI*) override {
             titleGroup  = theEntityManager.CreateEntity(HASH("menu/title_group", 0x5affe5af),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title_group"));
-            ADSR(titleGroup)->idleValue = PlacementHelper::ScreenSize.y + PlacementHelper::GimpYToScreen(400);
-            ADSR(titleGroup)->sustainValue = game->baseLine + PlacementHelper::ScreenSize.y
+            ADSR(titleGroup)->idleValue = PlacementHelper::GimpYToScreen(400);
+            ADSR(titleGroup)->sustainValue = game->baseLine
                 - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y * 0.5
                 + PlacementHelper::GimpHeightToScreen(10);
             ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
             TRANSFORM(titleGroup)->position = glm::vec2(game->leftMostCameraPos.x + TRANSFORM(titleGroup)->size.x * 0.5, ADSR(titleGroup)->idleValue);
 
-            title = theEntityManager.CreateEntity(HASH("menu/title", 0x29a5b815),
-                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/title"));
+            title = theEntityManager.CreateEntityFromTemplate("menu/title");
 
-            subtitle = theEntityManager.CreateEntity(HASH("menu/subtitle", 0xc7be6a96),
-                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle"));
+            subtitle = theEntityManager.CreateEntityFromTemplate("menu/subtitle");
 
-            subtitleText = theEntityManager.CreateEntity(HASH("menu/subtitle_text", 0x5b9b7415),
-                EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/subtitle_text"));
+            subtitleText = theEntityManager.CreateEntityFromTemplate("menu/subtitle_text");
             TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
             TEXT(subtitleText)->charHeight *= 1.5;
 
@@ -223,6 +220,8 @@ void backgroundUpdate(float) {
 #endif
 
         Scene::Enum update(float) {
+            updateTitleSubTitle(titleGroup, subtitle);
+
             #if SAC_USE_PROPRIETARY_PLUGINS
                 // Game center UI - if any button clicked, break the loop
                 if (game->gamecenterAPIHelper.updateUI()) {
@@ -349,6 +348,6 @@ namespace Scene {
 }
 
 static void updateTitleSubTitle(Entity titleGroup, Entity subtitle) {
-    TRANSFORM(titleGroup)->position.y = ADSR(titleGroup)->value;
-    TRANSFORM(subtitle)->position.y = ADSR(subtitle)->value;
+    TRANSFORM(titleGroup)->position.y = + PlacementHelper::ScreenSize.y + ADSR(titleGroup)->value;
+    TRANSFORM(subtitle)->position.y = PlacementHelper::ScreenSize.y + ADSR(subtitle)->value;
 }

@@ -115,9 +115,9 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
     }
 }
 
-void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
+void RecursiveRunnerGame::sacInit() {
     LOGI("SAC engine initialisation begins:");
-    Game::sacInit(windowW, windowH);
+    Game::sacInit();
 
     LOGI("\t- Create RecursiveRunner specific systems...");
     RunnerSystem::CreateInstance();
@@ -148,6 +148,18 @@ void RecursiveRunnerGame::sacInit(int windowW, int windowH) {
 
     LOGI("SAC engine initialisation done.");
     PlacementHelper::GimpSize = glm::vec2(1280, 800);
+}
+
+void RecursiveRunnerGame::changeResolution(int windowW, int windowH) {
+    Game::changeResolution(windowW, windowH);
+
+    ANCHOR(muteBtn)->position = TRANSFORM(cameraEntity)->size * glm::vec2(-0.5, 0.5)
+        + glm::vec2(buttonSpacing.H, -buttonSpacing.V);
+
+    #if SAC_USE_PROPRIETARY_PLUGINS
+    Entity e = theEntityManager.getEntityByName(HASH("googleplay/leaderboards_button", 0x7f314878));
+    ANCHOR(e)->position.y = ANCHOR(muteBtn)->position.y - PlacementHelper::ScreenSize.y + 2 * buttonSpacing.V;
+    #endif
 }
 
 void fumee(Entity building) {

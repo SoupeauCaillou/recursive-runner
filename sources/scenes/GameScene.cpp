@@ -68,10 +68,10 @@ public:
         void setup(AssetAPI*) override {
             pauseButton = theEntityManager.CreateEntity(HASH("pause_buttton", 0x62b4dbd4),
                 EntityType::Persistent, theEntityManager.entityTemplateLibrary.load("menu/button"));
-            ANCHOR(pauseButton)->parent = game->cameraEntity;
+            ANCHOR(pauseButton)->parent = game->muteBtn;
+            ANCHOR(pauseButton)->z = 0;
             ANCHOR(pauseButton)->position =
-                TRANSFORM(game->cameraEntity)->size * glm::vec2(0.5, 0.5)
-                - glm::vec2(game->buttonSpacing.H, game->buttonSpacing.V);
+                PlacementHelper::GimpSizeToScreen(glm::vec2(1092, 0));
             RENDERING(pauseButton)->texture = HASH("pause", 0xaf9ecc33);
             RENDERING(pauseButton)->show = false;
 
