@@ -702,28 +702,7 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
         default:
             return 0;
     }
-
-    /* save all entities/components */
-    uint8_t* entities = 0;
-    int eSize = theEntityManager.serialize(&entities);
-
-    if (eSize == 0)
-        return 0;
-
-    uint8_t* systems = 0;
-    int sSize = theRenderingSystem.saveInternalState(&systems);
-
-    int finalSize = eSize + sSize + 2 * sizeof(int);
-    uint8_t* ptr = *out = new uint8_t[finalSize + 2 * sizeof(int)];
-
-    /* save entity/system thingie */
-    MEMPCPY(uint8_t*, ptr, &eSize, sizeof(eSize));
-    MEMPCPY(uint8_t*, ptr, &sSize, sizeof(sSize));
-    MEMPCPY(uint8_t*, ptr, entities, eSize);
-    MEMPCPY(uint8_t*, ptr, systems, sSize);
-
-    LOGV(1, eSize << ", " << sSize);
-    return finalSize;
+    return 0;
 }
 
 static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMin, float heightMax);
