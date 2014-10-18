@@ -86,7 +86,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             ADSR(titleGroup)->idleValue = PlacementHelper::GimpYToScreen(400);
             ADSR(titleGroup)->sustainValue = game->baseLine
                 - PlacementHelper::GimpSizeToScreen(theRenderingSystem.getTextureSize("titre")).y * 0.5
-                + PlacementHelper::GimpHeightToScreen(10);
+                + PlacementHelper::GimpHeightToScreen(30);
             ADSR(titleGroup)->attackValue = ADSR(titleGroup)->sustainValue - PlacementHelper::GimpHeightToScreen(5);
             TRANSFORM(titleGroup)->position = glm::vec2(game->leftMostCameraPos.x + TRANSFORM(titleGroup)->size.x * 0.5, ADSR(titleGroup)->idleValue);
 
@@ -267,7 +267,8 @@ void backgroundUpdate(float) {
             if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
                 //only if we did not hit left area zone (buttons)
                 auto touchPos = theTouchInputManager.getTouchLastPosition(0);
-                if (touchPos.x >= TRANSFORM(game->muteBtn)->position.x + TRANSFORM(game->muteBtn)->size.x * BUTTON(game->muteBtn)->overSize * 0.5) {
+                if (touchPos.x >= (TRANSFORM(game->muteBtn)->position.x + TRANSFORM(game->muteBtn)->size.x * BUTTON(game->muteBtn)->overSize * 0.5) &&
+                touchPos.y < TRANSFORM(subtitleText)->position.y) {
 
 #if SAC_EMSCRIPTEN
                     return Scene::Game;
