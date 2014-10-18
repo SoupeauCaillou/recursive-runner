@@ -49,7 +49,6 @@
 #include <glm/gtx/compatibility.hpp>
 #include <cmath>
 
-static void spawnGainEntity(int gain, Entity t, const Color& c, bool isGhost);
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc);
 static void updateSessionTransition(const SessionComponent* session, float progress);
 static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc);
@@ -380,21 +379,6 @@ namespace Scene {
     }
 }
 
-
-
-static void spawnGainEntity(int, Entity parent, const Color& color, bool isGhost) {
-    Entity e = theEntityManager.CreateEntityFromTemplate("ingame/gain");
-
-    TRANSFORM(e)->position = TRANSFORM(parent)->position;
-    TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
-    TRANSFORM(e)->size = TRANSFORM(parent)->size;
-    TRANSFORM(e)->z = TRANSFORM(parent)->z + (isGhost ? 0.1 : 0.11);
-
-    RENDERING(e)->color = color;
-
-    PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
-}
-
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc) {
     int direction = ((p->runnersCount + playerIndex) % 2) ? -1 : 1;
     Entity e = theEntityManager.CreateEntityFromTemplate("ingame/runner");
@@ -475,8 +459,9 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
     const int end = sc->coins.size();
     Entity prev = 0;
 
-    for(int idx=0; idx<end; idx++) {
-        Entity coin = rc->speed > 0 ? sc->coins[idx] : sc->coins[end - idx - 1];
+    for(int i=0; i<end; i++) {
+        int idx = rc->speed > 0 ? i : (end - i - 1);
+        Entity coin = sc->coins[idx];
         /* lookup if runner has already picked up that coin */
         if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
             /* if not, test for intersection */
@@ -520,7 +505,10 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                 if (sc->currentRunner == e)
                     player->coins++;
 
-                spawnGainEntity(gain, coin, rc->color, rc->ghost);
+                /* reset lifetime of gain entity */
+                AUTO_DESTROY(sc->gains[idx])->params.lifetime.freq.accum = 0;
+                RENDERING(sc->gains[idx])->show = 1;
+                RENDERING(sc->gains[idx])->color = rc->color;
             }
         }
         prev = coin;

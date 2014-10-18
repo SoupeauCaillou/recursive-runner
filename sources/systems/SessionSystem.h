@@ -40,7 +40,7 @@ struct SessionComponent {
     unsigned numPlayers;
     Entity currentRunner;
     bool userInputEnabled;
-    std::vector<Entity> runners, coins, players, links, sparkling;
+    std::vector<Entity> runners, coins, players, links, sparkling, gains;
     std::vector<Platform> platforms;
 };
 

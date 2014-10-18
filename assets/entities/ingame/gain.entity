@@ -2,10 +2,11 @@
 
 [Rendering]
 texture = lumiere
-show = 1
+show = 0
 flags = 1
 
 [AutoDestroy]
 type = 1
+dontDestroy = 1
 lifetime/value = 3.5
 lifetime/map2AlphaRendering = 1

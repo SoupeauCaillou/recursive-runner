@@ -786,6 +786,7 @@ void RecursiveRunnerGame::endGame() {
         std::for_each(sc->players.begin(), sc->players.end(), deleteEntityFunctor);
         std::for_each(sc->links.begin(), sc->links.end(), deleteEntityFunctor);
         std::for_each(sc->sparkling.begin(), sc->sparkling.end(), deleteEntityFunctor);
+        std::for_each(sc->gains.begin(), sc->gains.end(), deleteEntityFunctor);
         theEntityManager.DeleteEntity(sessions.front());
     }
     // on supprime aussi tous les trucs temporaires (lumières, ...)
@@ -841,6 +842,18 @@ static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMi
     return positions;
 }
 
+static Entity createGainEntity(Entity parent, const Color& color) {
+    Entity e = theEntityManager.CreateEntityFromTemplate("ingame/gain");
+
+    TRANSFORM(e)->position = TRANSFORM(parent)->position;
+    TRANSFORM(e)->rotation = TRANSFORM(parent)->rotation;
+    TRANSFORM(e)->size = TRANSFORM(parent)->size;
+    TRANSFORM(e)->z = TRANSFORM(parent)->z + 0.1;
+
+    PARTICULE(parent)->initialColor = PARTICULE(parent)->finalColor = Interval<Color> (color, color);
+    return e;
+}
+
 void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates, SessionComponent* session, bool transition) {
     LOGI("Coins creation started");
 
@@ -850,6 +863,7 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
 
     std::vector<Entity> coins;
     for (unsigned i=0; i<coordinates.size(); i++) {
+        /* Create coin */
         Entity e = theEntityManager.CreateEntity(HASH("coin/coin", 0x38fb9dd5),
             EntityType::Persistent, coinTemplate);
 
@@ -893,6 +907,12 @@ void RecursiveRunnerGame::createCoins(const std::vector<glm::vec2>& coordinates,
 
     for (unsigned i=0; i<coins.size(); i++) {
         session->coins.push_back(coins[i]);
+
+        /* Create gain */
+        Color c(RENDERING(coins[i])->color);
+        c.a = 1.0f;
+        Entity gain = createGainEntity(coins[i], c);
+        session->gains.push_back(gain);
     }
     LOGI("Coins creation finished");
 }

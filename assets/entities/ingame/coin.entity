@@ -9,7 +9,7 @@ show = 1
 flags = 1
 
 [Particule]
-emission_rate = 150
+emission_rate = 0
 duration = 0
 lifetime = 0.1, 0.1
 initial_color = 0.529, 0.529,0.529,0.8, 0.568, 0.568,0.568,0.8
