@@ -693,7 +693,7 @@ void RecursiveRunnerGame::updateBestScore() {
     }
 }
 
-int RecursiveRunnerGame::saveState(uint8_t** out) {
+int RecursiveRunnerGame::saveState(uint8_t** ) {
     switch (sceneStateMachine.getCurrentState()) {
         case Scene::Game:
             sceneStateMachine.forceNewState(Scene::Pause);
@@ -707,23 +707,31 @@ int RecursiveRunnerGame::saveState(uint8_t** out) {
 
 static std::vector<glm::vec2> generateCoinsCoordinates(int count, float heightMin, float heightMax);
 
+static hash_t computeSeed() {
+    time_t t = time(NULL);
+    struct tm * timeinfo = localtime (&t);
+    int base[3];
+    base[0] = timeinfo->tm_mday;
+    base[1] = timeinfo->tm_mon;
+    base[2] = timeinfo->tm_year;
+    hash_t seed = Murmur::RuntimeHash(&base, 3 * sizeof(int));
+    LOGI("SEED: " << seed);
+    return seed;
+}
+
 void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     LOGF_IF(theSessionSystem.entityCount() != 0, "Incoherent state. " << theSessionSystem.entityCount() << " sessions existing");
     LOGF_IF(thePlayerSystem.entityCount() != 0, "Incoherent state. " << thePlayerSystem.entityCount() << " players existing");
 
-    // Level2 => fixed srand
-    if (level == Level::Level2) {
-        time_t t = time(NULL);
-        struct tm * timeinfo = localtime (&t);
-        int base[3];
-        base[0] = timeinfo->tm_mday;
-        base[1] = timeinfo->tm_mon;
-        base[2] = timeinfo->tm_year;
-        hash_t seed = Murmur::RuntimeHash(&base, 3 * sizeof(int));
-        LOGI("SEED: " << seed);
-        Random::Init(seed);
-    }
+    hash_t seed = computeSeed();
 
+    Random::Init(seed);
+
+    const auto coinsPosition = generateCoinsCoordinates(20, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450));
+    if (level != Level::Level2) {
+        // we only want coin position to be identical
+        Random::Init(time(0));
+    }
 
     for (int i=0; i<100; i++) {
         nextRunnerStartTime[i] = Random::Float(0.0f, 2.0f);
@@ -754,10 +762,10 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
 
     switch (level) {
         case Level::Level1:
-            createCoins(generateCoinsCoordinates(20, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
+            createCoins(coinsPosition, sc, transition);
             break;
         case Level::Level2:
-            createCoins(generateCoinsCoordinates(20, PlacementHelper::GimpYToScreen(700), PlacementHelper::GimpYToScreen(450)), sc, transition);
+            createCoins(coinsPosition, sc, transition);
             break;
     }
 
