@@ -21,7 +21,7 @@
 
 INSTANCE_IMPL(SessionSystem);
 
-SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>(HASH("Session", 0xf3f607e6)) {
+SessionSystem::SessionSystem() : ComponentSystemImpl<SessionComponent>(HASH("Session", 0xf3f607e6), ComponentType::Complex) {
     SessionComponent tc;
     componentSerializer.add(new Property<int>(HASH("num_players", 0xead54286), OFFSET(numPlayers, tc)));
     componentSerializer.add(new EntityProperty(HASH("current_runner", 0x893ac6b3), OFFSET(currentRunner, tc)));

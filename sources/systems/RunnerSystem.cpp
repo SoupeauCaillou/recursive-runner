@@ -35,7 +35,7 @@ INSTANCE_IMPL(RunnerSystem);
 float RunnerSystem::MinJumpDuration = 0.005;
 float RunnerSystem::MaxJumpDuration = 0.2;
 
-RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>(HASH("Runner", 0xe5dc730a)) {
+RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>(HASH("Runner", 0xe5dc730a), ComponentType::Complex) {
     RunnerComponent tc;
     componentSerializer.add(new EntityProperty(HASH("player_owner", 0xd5181aa0), OFFSET(playerOwner, tc)));
     componentSerializer.add(new EntityProperty(HASH("collision_zone", 0x2a513634), OFFSET(collisionZone, tc)));
@@ -55,6 +55,11 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>(HASH("Runner
     componentSerializer.add(new VectorProperty<float>(HASH("jump_durations", 0xa9048c79), OFFSET(jumpDurations, tc)));
     componentSerializer.add(new Property<int>(HASH("total_coins_earned", 0x7852232e), OFFSET(totalCoinsEarned, tc)));
     componentSerializer.add(new VectorProperty<float>(HASH("coins", 0xb2cf216c), OFFSET(coins, tc)));
+
+
+    componentSerializer.add(new Property<int>(HASH("stats.coins", 0x0), OFFSET(stats.coinsCollected, tc)));
+    componentSerializer.add(new Property<float>(HASH("stats.lifetime", 0x7852232e), OFFSET(stats.lifetime, tc)));
+    componentSerializer.add(new Property<int>(HASH("stats.points", 0x0), OFFSET(stats.pointScored, tc)));
 }
 
 static void killRunner(Entity runner) {

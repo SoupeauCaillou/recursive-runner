@@ -36,7 +36,11 @@ struct CollisionZone {
 
 struct RunnerComponent {
     RunnerComponent() : finished(false), ghost(false), killed(false), startTime(0), elapsed(0),
-        jumpingSince(0), currentJump(0), oldNessBonus(0), coinSequenceBonus(1), totalCoinsEarned(0) { }
+        jumpingSince(0), currentJump(0), oldNessBonus(0), coinSequenceBonus(1), totalCoinsEarned(0) {
+        stats.coinsCollected = 0;
+        stats.lifetime = 0;
+        stats.pointScored = 0;
+    }
     Entity playerOwner, collisionZone;
     glm::vec2 startPoint, endPoint;
     Color color;
@@ -48,6 +52,11 @@ struct RunnerComponent {
     std::vector<float> jumpDurations;
     int totalCoinsEarned;
     std::vector<Entity> coins;
+    struct {
+        int coinsCollected;
+        float lifetime;
+        int pointScored;
+    } stats;
 };
 
 #define theRunnerSystem RunnerSystem::GetInstance()

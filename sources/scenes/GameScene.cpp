@@ -289,6 +289,7 @@ public:
         #endif
                     // check coins
                     checkCoinsPickupForRunner(player, e, rc, sc);
+                    rc->stats.lifetime += dt;
 
                     // check platform switch
                     const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
@@ -476,11 +477,14 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
 
     for(int idx=0; idx<end; idx++) {
         Entity coin = rc->speed > 0 ? sc->coins[idx] : sc->coins[end - idx - 1];
+        /* lookup if runner has already picked up that coin */
         if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
+            /* if not, test for intersection */
             const TransformationComponent* tCoin = TRANSFORM(coin);
             if (IntersectionUtil::rectangleRectangle(
                 collisionZone->position, collisionZone->size, collisionZone->rotation,
-                tCoin->position, tCoin->size * glm::vec2(0.5, 0.6), tCoin->rotation)) {
+                tCoin->position, tCoin->size * glm::vec2(0.5, 0.6) /* why ? */, tCoin->rotation)) {
+                /* if coin isn't the 1st one picked, check for consecutive pickup bonus */
                 if (!rc->coins.empty()) {
                  int linkIdx = (rc->speed > 0) ? idx : end - idx;
                     if (rc->coins.back() == prev) {
@@ -505,6 +509,12 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                 rc->coins.push_back(coin);
                 int gain = 10 * pow(2.0f, rc->oldNessBonus) * rc->coinSequenceBonus;
                 player->points += gain;
+
+                /* update statistics */
+                {
+                    rc->stats.coinsCollected++;
+                    rc->stats.pointScored += gain;
+                }
 
                 //coins++ only for player, not his ghosts
                 if (sc->currentRunner == e)
