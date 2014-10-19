@@ -116,8 +116,8 @@ public:
     #undef ___COLOR
 
     template<class T>
-    void addBarWithLegend(const char* text, int color, float xOffset, int offset, const char* format, T maxValue, T minValue, T minDisplay) {
-        bool addGlobalLegend = true;
+    void addBarWithLegend(float maxBarHeight, const char* text, int color, float xOffset, int offset, const char* format, T maxValue, T minValue, T minDisplay) {
+
         char tmp[64];
         /* score bar */
         for (int i=0; i<10; i++) {
@@ -129,7 +129,7 @@ public:
 
 
             Entity bar = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
-            TRANSFORM(bar)->size.y = glm::lerp(0.1f, 8.0f, value / (float)maxValue);
+            TRANSFORM(bar)->size.y = glm::lerp(0.1f, maxBarHeight, value / (float)maxValue);
             ANCHOR(bar)->anchor.y = - TRANSFORM(bar)->size.y * 0.5;
             ANCHOR(bar)->position.x = xOffset;
 
@@ -154,7 +154,6 @@ public:
                 ANCHOR(t)->parent = bar;
                 ANCHOR(t)->position.y = 0.5 + TRANSFORM(bar)->size.y * 0.5;
                 texts.push_back(t);
-                addGlobalLegend = false;
             }
         }
     }
@@ -170,6 +169,12 @@ public:
         }
         TRANSFORM(buttons[Button::LastScore])->position.x = TRANSFORM(game->camera)->position.x + TRANSFORM(buttons[Button::LastScore])->size.x;
         TRANSFORM(buttons[Button::BestScore])->position.x = TRANSFORM(game->camera)->position.x - TRANSFORM(buttons[Button::BestScore])->size.x;
+
+        TRANSFORM(buttons[Button::LastScore])->position.y =
+            TRANSFORM(buttons[Button::BestScore])->position.y =
+                TRANSFORM(images[Image::Background])->position.y +
+                TRANSFORM(images[Image::Background])->size.y * 0.5 - (0.5 + TRANSFORM(buttons[Button::BestScore])->size.y * 0.5);
+
     }
 
     ///----------------------------------------------------------------------------//
@@ -193,21 +198,24 @@ public:
         for (int i=0; i<10; i++) {
             texts.push_back(theEntityManager.CreateEntityFromTemplate("menu/stats/runner_text"));
             TRANSFORM(texts[i])->position.x += 1.6 * (i % 10);
+            TRANSFORM(texts[i])->position.y = TRANSFORM(images[Image::Background])->position.y + TRANSFORM(images[Image::Background])->size.y * -0.5 + 1;
 
             snprintf(tmp, 20, "%d", i+1);
             TEXT(texts[i])->text = tmp;
         }
 
+        float maxBarHeight = TRANSFORM(images[Image::Background])->size.y - 4;
+
         /* score bar */
-        addBarWithLegend<int>("Points", 4, -0.45, OFFSET(pointScored, statisticsToDisplay->runner[0]), "%d", maxPointScored, 0, maxPointScored / 20);
+        addBarWithLegend<int>(maxBarHeight, "Points", 4, -0.45, OFFSET(pointScored, statisticsToDisplay->runner[0]), "%d", maxPointScored, 0, maxPointScored / 20);
         /* score bar */
-        addBarWithLegend<int>("Coins", 7, -.15, OFFSET(coinsCollected, statisticsToDisplay->runner[0]), "%d", 20, 0, 1);
+        addBarWithLegend<int>(maxBarHeight, "Coins", 7, -.15, OFFSET(coinsCollected, statisticsToDisplay->runner[0]), "%d", 20, 0, 1);
         /* killed bar */
         /* addBarWithLegend<int>("%d kills", 1, -0.15, OFFSET(killed, statisticsToDisplay->runner[0]), "%d", maxKilledScore, 0, 1); */
         /* time bar */
-        addBarWithLegend<float>("Seconds", 2, 0.15, OFFSET(lifetime, statisticsToDisplay->runner[0]), "%.0f", 91, 0, 1);
+        addBarWithLegend<float>(maxBarHeight, "Seconds", 2, 0.15, OFFSET(lifetime, statisticsToDisplay->runner[0]), "%.0f", 91, 0, 1);
         /* jump bar */
-        addBarWithLegend<int>("Jumps", 3, 0.45, OFFSET(jumps, statisticsToDisplay->runner[0]), "%d", maxJumps, 0, 1);
+        addBarWithLegend<int>(maxBarHeight, "Jumps", 3, 0.45, OFFSET(jumps, statisticsToDisplay->runner[0]), "%d", maxJumps, 0, 1);
 
         for (auto t: texts) {
             TEXT(t)->show = true;
