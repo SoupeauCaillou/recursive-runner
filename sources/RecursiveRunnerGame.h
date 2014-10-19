@@ -26,6 +26,7 @@
 #include "base/Game.h"
 
 #include "systems/RenderingSystem.h"
+#include "systems/SessionSystem.h"
 
 #include "api/AdAPI.h"
 #include "api/ExitAPI.h"
@@ -55,6 +56,8 @@ namespace Level {
     };
 }
 
+
+
 class RecursiveRunnerGame : public Game {
 #ifdef SAC_INGAME_EDITORS
     friend class RecursiveRunnerDebugConsole;
@@ -62,7 +65,7 @@ class RecursiveRunnerGame : public Game {
 
    public:
       static void startGame(Level::Enum level, bool transition);
-      static void endGame();
+      void endGame(Statistics* stat);
 
    public:
       RecursiveRunnerGame();
@@ -113,6 +116,8 @@ class RecursiveRunnerGame : public Game {
         struct {
         float H, V;
         } buttonSpacing;
+
+        Statistics* bestGameStatistics, *lastGameStatistics;
 
         static float nextRunnerStartTime[100];
         static int nextRunnerStartTimeIndex;

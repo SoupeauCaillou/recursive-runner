@@ -3,9 +3,9 @@ size%gimp_size = 843, 156
 
 [Anchor]
 parent%name = menu/title_group
-position%gimp_size = 0, -150 
+position%gimp_size = 0, -150
 z = -.1
-             
+
 [Rendering]
 texture = taptostart
 show = 1

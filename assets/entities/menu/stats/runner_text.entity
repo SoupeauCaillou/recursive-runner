@@ -1,0 +1,9 @@
+[Transformation]
+z = 0.9
+position = -28, -4.75
+
+[Text]
+show = 1
+color = 0.157, 0.125, .118, 0.8
+# flags = 2
+char_height%gimp_h = 40

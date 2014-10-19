@@ -55,6 +55,7 @@
 #include "api/StorageAPI.h"
 #include "api/InAppPurchaseAPI.h"
 #include "util/ScoreStorageProxy.h"
+#include "util/StatsStorageProxy.h"
 
 #include "util/RecursiveRunnerDebugConsole.h"
 #include "util/Random.h"
@@ -81,7 +82,7 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 float RecursiveRunnerGame::nextRunnerStartTime[100];
 int RecursiveRunnerGame::nextRunnerStartTimeIndex;
 
-RecursiveRunnerGame::RecursiveRunnerGame(): Game() {
+RecursiveRunnerGame::RecursiveRunnerGame(): Game(), bestGameStatistics(0) {
 }
 
 
@@ -506,8 +507,30 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     gameThreadContext->storageAPI->setOption("sound", std::string(), "on");
     gameThreadContext->storageAPI->setOption("gameCount", std::string(), "0");
 
-    ScoreStorageProxy ssp;
-    gameThreadContext->storageAPI->createTable(&ssp);
+    {
+        ScoreStorageProxy ssp;
+        gameThreadContext->storageAPI->createTable(&ssp);
+    }
+
+    {
+        bestGameStatistics = new Statistics();
+        lastGameStatistics = new Statistics();
+
+        StatsStorageProxy ssp;
+        gameThreadContext->storageAPI->createTable(&ssp);
+
+        gameThreadContext->storageAPI->loadEntries(&ssp, "*", "");
+        LOGI(ssp._queue.size());
+        int index = 0;
+        bestGameStatistics->score = 0;
+        while (! ssp.isEmpty() && index < 10) {
+            bestGameStatistics->runner[index] = ssp._queue.front();
+            ssp.popAnElement();
+            bestGameStatistics->score += bestGameStatistics->runner[index].pointScored;
+            index++;
+        }
+        LOGI("BEST SCORE: " << bestGameStatistics->score);
+    }
 
     LOGI("\t- Create camera...");
 
@@ -775,10 +798,35 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     }
 }
 
-void RecursiveRunnerGame::endGame() {
+void RecursiveRunnerGame::endGame(Statistics* stats) {
+
     const auto& sessions = theSessionSystem.RetrieveAllEntityWithComponent();
     if (!sessions.empty()) {
         SessionComponent* sc = SESSION(sessions.front());
+
+        /* store stats */
+        if (stats) {
+            memset(stats, 0, sizeof(Statistics));
+            const auto& players = thePlayerSystem.RetrieveAllEntityWithComponent();
+            stats->score = PLAYER(players.front())->points;
+
+            for(unsigned i=0; i<10; i++) {
+                stats->runner[i] = sc->stats.runner[i];
+                stats->color[i] = sc->stats.color[i];
+            }
+
+            /* store as best stats */
+            if (stats->score > bestGameStatistics->score) {
+                StatsStorageProxy ssp;
+                gameThreadContext->storageAPI->dropAll(&ssp);
+                for (int i=0; i<10; i++) {
+                    ssp._queue.push(stats->runner[i]);
+                }
+                gameThreadContext->storageAPI->saveEntries(&ssp);
+            }
+        }
+
+
         for(unsigned i=0; i<sc->runners.size(); i++)
             theEntityManager.DeleteEntity(RUNNER(sc->runners[i])->collisionZone);
         std::for_each(sc->runners.begin(), sc->runners.end(), deleteEntityFunctor);

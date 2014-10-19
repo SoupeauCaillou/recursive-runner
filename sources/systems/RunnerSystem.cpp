@@ -55,11 +55,6 @@ RunnerSystem::RunnerSystem() : ComponentSystemImpl<RunnerComponent>(HASH("Runner
     componentSerializer.add(new VectorProperty<float>(HASH("jump_durations", 0xa9048c79), OFFSET(jumpDurations, tc)));
     componentSerializer.add(new Property<int>(HASH("total_coins_earned", 0x7852232e), OFFSET(totalCoinsEarned, tc)));
     componentSerializer.add(new VectorProperty<float>(HASH("coins", 0xb2cf216c), OFFSET(coins, tc)));
-
-
-    componentSerializer.add(new Property<int>(HASH("stats.coins", 0x0), OFFSET(stats.coinsCollected, tc)));
-    componentSerializer.add(new Property<float>(HASH("stats.lifetime", 0x7852232e), OFFSET(stats.lifetime, tc)));
-    componentSerializer.add(new Property<int>(HASH("stats.points", 0x0), OFFSET(stats.pointScored, tc)));
 }
 
 static void killRunner(Entity runner) {

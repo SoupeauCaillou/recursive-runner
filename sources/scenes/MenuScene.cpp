@@ -62,6 +62,7 @@ namespace Button {
     enum Enum {
         Help = 0,
         About,
+        Stats,
         // Exit,
         Count
     };
@@ -112,7 +113,8 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // ANCHOR(buttons[Button::Exit])->parent = game->muteBtn;
             // sigh
             TRANSFORM(buttons[Button::About])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
-            // TRANSFORM(buttons[Button::Exit])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
+
+            buttons[Button::Stats] = theEntityManager.CreateEntityFromTemplate("menu/stat_button");
 
             weeklyRank = -1;
         }
@@ -122,9 +124,6 @@ class MenuScene : public StateHandler<Scene::Enum> {
         ///--------------------- ENTER SECTION ----------------------------------------//
         ///----------------------------------------------------------------------------//
         void onPreEnter(Scene::Enum from) {
-            const auto temp = theAutoDestroySystem.RetrieveAllEntityWithComponent();
-            std::for_each(temp.begin(), temp.end(), deleteEntityFunctor);
-
             // activate animation
             ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
 
@@ -171,7 +170,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             }
             // unhide UI
             for (int i=0; i<(int)Button::Count; i++) {
-                RENDERING(buttons[i])->show = true;
+                RENDERING(buttons[i])->show = (i != (int)Button::Stats) || game->bestGameStatistics;
                 RENDERING(buttons[i])->color = Color(1,1,1,0);
             }
             RENDERING(game->muteBtn)->show = true;
@@ -199,10 +198,10 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
 
         void onEnter(Scene::Enum) {
-            RecursiveRunnerGame::endGame();
+            game->endGame(game->lastGameStatistics);
             // enable UI
             for (int i=0; i<(int)Button::Count; i++) {
-                BUTTON(buttons[i])->enabled = true;
+                BUTTON(buttons[i])->enabled = (i != (int)Button::Stats) || game->bestGameStatistics;;
                 RENDERING(buttons[i])->color.a = 1;
             }
             BUTTON(game->muteBtn)->enabled = true;
@@ -258,7 +257,13 @@ void backgroundUpdate(float) {
                 if (BUTTON(buttons[Button::About])->clicked) {
                    return Scene::About;
                 }
-                game->ignoreClick = BUTTON(buttons[Button::Help])->mouseOver | BUTTON(buttons[Button::About])->mouseOver;
+                if (BUTTON(buttons[Button::Stats])->clicked) {
+                   return Scene::Stats;
+                }
+
+                for (int i=0; i<Button::Count; i++) {
+                    game->ignoreClick |= BUTTON(buttons[i])->mouseOver;
+                }
             }
             RENDERING(buttons[Button::Help])->color = BUTTON(buttons[Button::Help])->mouseOver ? Color("gray") : Color();
             RENDERING(buttons[Button::About])->color = BUTTON(buttons[Button::About])->mouseOver ? Color("gray") : Color();
@@ -302,7 +307,7 @@ void backgroundUpdate(float) {
             for (int i=0; i<(int)Button::Count; i++) {
                 BUTTON(buttons[i])->enabled = false;
             }
-            if(nextScene == Scene::About)
+            if(nextScene == Scene::About || nextScene == Scene::Stats)
                 BUTTON(game->muteBtn)->enabled = false;
 
             // activate animation
@@ -318,7 +323,7 @@ void backgroundUpdate(float) {
             for (int i=0; i<(int)Button::Count; i++) {
                 RENDERING(buttons[i])->color.a = 1 - progress;
             }
-            if(nextScene == Scene::About)
+            if(nextScene == Scene::About || nextScene == Scene::Stats)
                 RENDERING(game->muteBtn)->color.a = 1 - progress;
 
             #if SAC_USE_PROPRIETARY_PLUGINS
@@ -333,7 +338,7 @@ void backgroundUpdate(float) {
             for (int i=0; i<(int)Button::Count; i++) {
                 RENDERING(buttons[i])->show = false;
             }
-            if(nextScene == Scene::About)
+            if(nextScene == Scene::About || nextScene == Scene::Stats)
                 RENDERING(game->muteBtn)->show = false;
 
             #if SAC_USE_PROPRIETARY_PLUGINS

@@ -102,11 +102,11 @@ class PauseScene : public SceneState<Scene::Enum> {
             return Scene::Game;
         } else if (BUTTON(entities[HASH("pause/recommencer", 0x1829bb20)])->clicked) {
             // stop music :-[
-            RecursiveRunnerGame::endGame();
+            game->endGame(NULL);
             game->setupCamera(CameraMode::Single);
             return Scene::RestartGame;
         } else if (BUTTON(entities[HASH("pause/fermer", 0x1375e49c)])->clicked) {
-            RecursiveRunnerGame::endGame();
+            game->endGame(NULL);
             return Scene::Menu;
         }
         return Scene::Pause;

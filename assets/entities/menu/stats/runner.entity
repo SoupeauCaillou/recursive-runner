@@ -1,0 +1,10 @@
+[Transformation]
+size%gimp_size = 120, 122
+z = 0.98
+position = -12.2, -4.2
+
+[Rendering]
+show = 0
+flags = 1
+texture = run_l2r_0006
+color = 0.105, 0.0078, 0.0078, 0.8

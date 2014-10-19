@@ -31,6 +31,7 @@ namespace Scene {
 		Pause,
 		Rate,
 		RestartGame,
+		Stats,
 		Tutorial,
 	};
 	StateHandler<Scene::Enum>* CreateAboutSceneHandler(RecursiveRunnerGame* game);
@@ -40,6 +41,7 @@ namespace Scene {
 	StateHandler<Scene::Enum>* CreatePauseSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateRateSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateRestartGameSceneHandler(RecursiveRunnerGame* game);
+	StateHandler<Scene::Enum>* CreateStatsSceneHandler(RecursiveRunnerGame* game);
 	StateHandler<Scene::Enum>* CreateTutorialSceneHandler(RecursiveRunnerGame* game);
 }
 inline void registerScenes(RecursiveRunnerGame * game, StateMachine<Scene::Enum> & machine) {	machine.registerState(Scene::About, Scene::CreateAboutSceneHandler(game));
@@ -49,5 +51,6 @@ inline void registerScenes(RecursiveRunnerGame * game, StateMachine<Scene::Enum>
 	machine.registerState(Scene::Pause, Scene::CreatePauseSceneHandler(game));
 	machine.registerState(Scene::Rate, Scene::CreateRateSceneHandler(game));
 	machine.registerState(Scene::RestartGame, Scene::CreateRestartGameSceneHandler(game));
+	machine.registerState(Scene::Stats, Scene::CreateStatsSceneHandler(game));
 	machine.registerState(Scene::Tutorial, Scene::CreateTutorialSceneHandler(game));
 }

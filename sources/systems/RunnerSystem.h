@@ -22,6 +22,7 @@
 #include "systems/System.h"
 #include "base/Color.h"
 #include <glm/glm.hpp>
+#include "../RecursiveRunnerGame.h"
 
 struct CollisionZone {
     CollisionZone(float x=0,float y=0,float w=0, float h=0, float r=0) {
@@ -36,10 +37,7 @@ struct CollisionZone {
 
 struct RunnerComponent {
     RunnerComponent() : finished(false), ghost(false), killed(false), startTime(0), elapsed(0),
-        jumpingSince(0), currentJump(0), oldNessBonus(0), coinSequenceBonus(1), totalCoinsEarned(0) {
-        stats.coinsCollected = 0;
-        stats.lifetime = 0;
-        stats.pointScored = 0;
+        jumpingSince(0), currentJump(0), oldNessBonus(0), coinSequenceBonus(1), totalCoinsEarned(0), index(-1) {
     }
     Entity playerOwner, collisionZone;
     glm::vec2 startPoint, endPoint;
@@ -52,11 +50,7 @@ struct RunnerComponent {
     std::vector<float> jumpDurations;
     int totalCoinsEarned;
     std::vector<Entity> coins;
-    struct {
-        int coinsCollected;
-        float lifetime;
-        int pointScored;
-    } stats;
+    int index;
 };
 
 #define theRunnerSystem RunnerSystem::GetInstance()

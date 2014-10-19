@@ -51,7 +51,7 @@
 
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc);
 static void updateSessionTransition(const SessionComponent* session, float progress);
-static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc);
+static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, SessionComponent* sc);
 
 class GameScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
@@ -288,7 +288,7 @@ public:
         #endif
                     // check coins
                     checkCoinsPickupForRunner(player, e, rc, sc);
-                    rc->stats.lifetime += dt;
+                    sc->stats.runner[j].lifetime += dt;
 
                     // check platform switch
                     const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
@@ -400,22 +400,9 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
         PLATFORMER(e)->platforms.insert(std::make_pair(sc->platforms[i].platform, sc->platforms[i].active));
     }
 
-    #if 0
-        do {
-            Color c(Color::random());
-            c.a = 1;
-            float sum = c.r + c.b + c.g;
-            float maxDiff = MathUtil::Max(MathUtil::Max(MathUtil::Abs(c.r - c.g), MathUtil::Abs(c.r - c.b)), MathUtil::Abs(c.b - c.g));
-            if ((sum > 1.5 || c.r > 0.7 || c.g > 0.7 || c.b > 0.7) && maxDiff > 0.5) {
-                RUNNER(e)->color = c;
-                break;
-            }
-        } while (true);
-    #else
-        int idx = (int)glm::linearRand(0.0f, (float)p->colors.size());
-        RUNNER(e)->color = p->colors[idx];
-        p->colors.erase(p->colors.begin() + idx);
-    #endif
+    int idx = (int)glm::linearRand(0.0f, (float)p->colors.size());
+    RUNNER(e)->color = p->colors[idx];
+    p->colors.erase(p->colors.begin() + idx);
 
     CAM_TARGET(e)->camera = game->cameraEntity;
     CAM_TARGET(e)->maxCameraSpeed = direction * RUNNER(e)->speed;
@@ -427,13 +414,8 @@ static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, Player
 
     Entity collisionZone = theEntityManager.CreateEntityFromTemplate("ingame/collision_zone");
     ANCHOR(collisionZone)->parent = e;
-    #if 0
-        ADD_COMPONENT(collisionZone, Rendering);
-        RENDERING(collisionZone)->show = true;
-        RENDERING(collisionZone)->color = Color(1,0,0,1);
-    #endif
     RUNNER(e)->collisionZone = collisionZone;
-
+    RUNNER(e)->index = p->runnersCount;
 
     p->runnersCount++;
     LOGI("Add runner " << e << " at pos : " << TRANSFORM(e)->position << "}, speed: " <<
@@ -454,13 +436,13 @@ static void updateSessionTransition(const SessionComponent* session, float progr
     });
 }
 
-static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, const SessionComponent* sc) {
+static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerComponent* rc, SessionComponent* sc) {
     const auto* collisionZone = TRANSFORM(rc->collisionZone);
     const int end = sc->coins.size();
     Entity prev = 0;
 
     for(int i=0; i<end; i++) {
-        int idx = rc->speed > 0 ? i : (end - i - 1);
+        int idx = (rc->speed > 0) ? i : (end - i - 1);
         Entity coin = sc->coins[idx];
         /* lookup if runner has already picked up that coin */
         if (std::find(rc->coins.begin(), rc->coins.end(), coin) == rc->coins.end()) {
@@ -471,7 +453,7 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                 tCoin->position, tCoin->size * glm::vec2(0.5, 0.6) /* why ? */, tCoin->rotation)) {
                 /* if coin isn't the 1st one picked, check for consecutive pickup bonus */
                 if (!rc->coins.empty()) {
-                 int linkIdx = (rc->speed > 0) ? idx : end - idx;
+                 int linkIdx = idx;
                     if (rc->coins.back() == prev) {
                         rc->coinSequenceBonus++;
                         if (!rc->ghost) {
@@ -497,8 +479,8 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
 
                 /* update statistics */
                 {
-                    rc->stats.coinsCollected++;
-                    rc->stats.pointScored += gain;
+                    sc->stats.runner[rc->index].coinsCollected++;
+                    sc->stats.runner[rc->index].pointScored += gain;
                 }
 
                 //coins++ only for player, not his ghosts

@@ -21,6 +21,16 @@
 
 #include "systems/System.h"
 
+struct Statistics {
+    int score;
+    struct Runner {
+        int coinsCollected;
+        float lifetime;
+        int pointScored;
+    } runner[10];
+    Color color[10];
+};
+
 struct Platform {
     Platform() {
         active = false;
@@ -36,12 +46,13 @@ struct Platform {
 };
 
 struct SessionComponent {
-    SessionComponent() : numPlayers(1), currentRunner(0), userInputEnabled(true) {}
+    SessionComponent() : numPlayers(1), currentRunner(0), userInputEnabled(true) {memset(&stats, 0 ,sizeof(Statistics));}
     unsigned numPlayers;
     Entity currentRunner;
     bool userInputEnabled;
     std::vector<Entity> runners, coins, players, links, sparkling, gains;
     std::vector<Platform> platforms;
+    Statistics stats;
 };
 
 #define theSessionSystem SessionSystem::GetInstance()
