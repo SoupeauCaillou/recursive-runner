@@ -8,5 +8,5 @@ rotation = 1.57079
 show = 1
 color = 0.157, 0.125, .118, 0.8
 # flags = 2
-char_height = 0.4
+char_height = 0.45
 positioning = 0

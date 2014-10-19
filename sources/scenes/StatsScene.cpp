@@ -59,6 +59,8 @@ namespace Image {
 namespace Button {
     enum Enum {
         Back = 0,
+        BestScore,
+        LastScore,
         Count
     };
 }
@@ -85,6 +87,12 @@ public:
 
     void setup(AssetAPI*) override {
         buttons[Button::Back] = theEntityManager.CreateEntityFromTemplate("menu/about/back_button");
+        buttons[Button::BestScore] = theEntityManager.CreateEntityFromTemplate("menu/stats/stat_button");
+        TEXT(buttons[Button::BestScore])->text = "Best score";
+
+        buttons[Button::LastScore] = theEntityManager.CreateEntityFromTemplate("menu/stats/stat_button");
+        TEXT(buttons[Button::LastScore])->text = "Last score";
+
         images[Image::Background] = theEntityManager.CreateEntityFromTemplate("menu/about/background");
         images[Image::Runner] = theEntityManager.CreateEntityFromTemplate("menu/stats/runner");
         ANCHOR(buttons[Button::Back])->parent = game->muteBtn;
@@ -113,7 +121,7 @@ public:
         char tmp[64];
         /* score bar */
         for (int i=0; i<10; i++) {
-            const T value = *((T*) ((uint8_t*)&game->bestGameStatistics->runner[i] + offset));
+            const T value = *((T*) ((uint8_t*)&statisticsToDisplay->runner[i] + offset));
             if (value < minValue) continue;
 
             /* legend */
@@ -132,14 +140,14 @@ public:
 
             if (value >= minDisplay) {
                 Entity legend = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
-                snprintf(tmp, 64, text, value);
+                snprintf(tmp, 64, format, value);
                 TEXT(legend)->text = tmp;
                 TEXT(legend)->positioning = 0.5;
                 ANCHOR(legend)->parent = bar;
                 texts.push_back(legend);
             }
 
-            if (0)/* if (addGlobalLegend && value < maxValue)*/ {
+            if (1)/* if (addGlobalLegend && value < maxValue)*/ {
                 Entity t = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
                 TEXT(t)->text = text;
                 TEXT(t)->color = colors[color];
@@ -151,15 +159,33 @@ public:
         }
     }
 
+    Statistics* statisticsToDisplay;
+    void onPreEnter(Scene::Enum) {
+        if (game->lastGameStatistics->score > 0) {
+            RENDERING(buttons[Button::LastScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
+            statisticsToDisplay = game->lastGameStatistics;
+        } else {
+            RENDERING(buttons[Button::BestScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
+            statisticsToDisplay = game->bestGameStatistics;
+        }
+        TRANSFORM(buttons[Button::LastScore])->position.x = TRANSFORM(game->camera)->position.x + TRANSFORM(buttons[Button::LastScore])->size.x;
+        TRANSFORM(buttons[Button::BestScore])->position.x = TRANSFORM(game->camera)->position.x - TRANSFORM(buttons[Button::BestScore])->size.x;
+    }
+
     ///----------------------------------------------------------------------------//
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
     void onEnter(Scene::Enum) {
+        TEXT(buttons[Button::LastScore])->show = 1;
+        TEXT(buttons[Button::BestScore])->show = 1;
+
+        int maxPointScored = 1;
         int maxJumps = 1; /* avoid divide by 0 */
         int maxKilledScore = 1; /* avoid divide by 0 */
         for (int i=0; i<10; i++) {
-            maxJumps = glm::max(maxJumps, game->bestGameStatistics->runner[i].jumps);
-            maxKilledScore = glm::max(maxKilledScore, game->bestGameStatistics->runner[i].killed);
+            maxPointScored = glm::max(maxPointScored, statisticsToDisplay->runner[i].pointScored);
+            maxJumps = glm::max(maxJumps, statisticsToDisplay->runner[i].jumps);
+            maxKilledScore = glm::max(maxKilledScore, statisticsToDisplay->runner[i].killed);
         }
 
         char tmp[64];
@@ -173,13 +199,15 @@ public:
         }
 
         /* score bar */
-        addBarWithLegend<int>("%d coins", 0, -.45, OFFSET(coinsCollected, game->bestGameStatistics->runner[0]), "%d", 20, 0, 1);
+        addBarWithLegend<int>("Points", 4, -0.45, OFFSET(pointScored, statisticsToDisplay->runner[0]), "%d", maxPointScored, 0, maxPointScored / 20);
+        /* score bar */
+        addBarWithLegend<int>("Coins", 7, -.15, OFFSET(coinsCollected, statisticsToDisplay->runner[0]), "%d", 20, 0, 1);
         /* killed bar */
-        addBarWithLegend<int>("%d kills", 1, -0.15, OFFSET(killed, game->bestGameStatistics->runner[0]), "%d", maxKilledScore, 0, 1);
+        /* addBarWithLegend<int>("%d kills", 1, -0.15, OFFSET(killed, statisticsToDisplay->runner[0]), "%d", maxKilledScore, 0, 1); */
         /* time bar */
-        addBarWithLegend<float>("%.1f sec.", 2, 0.15, OFFSET(lifetime, game->bestGameStatistics->runner[0]), "%.1f", 91, 0, 1);
+        addBarWithLegend<float>("Seconds", 2, 0.15, OFFSET(lifetime, statisticsToDisplay->runner[0]), "%.0f", 91, 0, 1);
         /* jump bar */
-        addBarWithLegend<int>("%d jumps", 3, 0.45, OFFSET(jumps, game->bestGameStatistics->runner[0]), "%d", maxJumps, 0, 1);
+        addBarWithLegend<int>("Jumps", 3, 0.45, OFFSET(jumps, statisticsToDisplay->runner[0]), "%d", maxJumps, 0, 1);
 
         for (auto t: texts) {
             TEXT(t)->show = true;
@@ -203,6 +231,22 @@ public:
     Scene::Enum update(float) override {
         RENDERING(buttons[Button::Back])->color = BUTTON(buttons[Button::Back])->mouseOver ? Color("gray") : Color();
 
+        if (BUTTON(buttons[Button::BestScore])->clicked) {
+            onPreExit(Scene::Stats);
+            statisticsToDisplay = game->bestGameStatistics;
+
+            RENDERING(buttons[Button::BestScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
+            RENDERING(buttons[Button::LastScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back");
+            onEnter(Scene::Stats);
+        }
+        if (BUTTON(buttons[Button::LastScore])->clicked) {
+            onPreExit(Scene::Stats);
+            statisticsToDisplay = game->lastGameStatistics;
+            RENDERING(buttons[Button::LastScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
+            RENDERING(buttons[Button::BestScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back");
+            onEnter(Scene::Stats);
+        }
+
         if (BUTTON(buttons[Button::Back])->clicked) {
             return Scene::Menu;
         }
@@ -215,9 +259,6 @@ public:
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
     void onPreExit(Scene::Enum ) override {
-        // for (int i=0; i<Text::Count; i++) {
-        //     TEXT(texts[i])->show = false;
-        // }
         for (int i=0; i<Button::Count; i++) {
             RENDERING(buttons[i])->show =
                 BUTTON(buttons[i])->enabled = false;
@@ -225,6 +266,18 @@ public:
         for (int i=0; i<Image::Count; i++) {
             RENDERING(images[i])->show = false;
         }
+
+        for (auto b: bars) {
+            theEntityManager.DeleteEntity(b);
+        }
+        bars.clear();
+
+        for (auto b: texts) {
+            theEntityManager.DeleteEntity(b);
+        }
+        texts.clear();
+        TEXT(buttons[Button::LastScore])->show = 0;
+        TEXT(buttons[Button::BestScore])->show = 0;
     }
 
 

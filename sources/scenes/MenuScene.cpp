@@ -170,7 +170,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             }
             // unhide UI
             for (int i=0; i<(int)Button::Count; i++) {
-                RENDERING(buttons[i])->show = (i != (int)Button::Stats) || game->bestGameStatistics;
+                RENDERING(buttons[i])->show = (i != (int)Button::Stats) || game->bestGameStatistics->score;
                 RENDERING(buttons[i])->color = Color(1,1,1,0);
             }
             RENDERING(game->muteBtn)->show = true;
@@ -201,7 +201,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             game->endGame(game->lastGameStatistics);
             // enable UI
             for (int i=0; i<(int)Button::Count; i++) {
-                BUTTON(buttons[i])->enabled = (i != (int)Button::Stats) || game->bestGameStatistics;;
+                BUTTON(buttons[i])->enabled = (i != (int)Button::Stats) || game->bestGameStatistics->score;
                 RENDERING(buttons[i])->color.a = 1;
             }
             BUTTON(game->muteBtn)->enabled = true;

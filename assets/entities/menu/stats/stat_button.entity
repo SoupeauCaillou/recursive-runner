@@ -1,0 +1,17 @@
+[Transformation]
+size%texture = 1
+position = 0, 6
+z = 0.9
+
+[Rendering]
+texture = stats_btn_back
+flags = 1
+
+[Button]
+over_size = 1.2
+
+[Text]
+show = 0
+color = 0.157, 0.125, .118, 0.8
+char_height = 0.45
+
