@@ -1,0 +1,25 @@
+
+[Button]
+enabled = 0
+over_size = 1.000
+
+[Transformation]
+position = -14.750, -4.700
+size = 1.691, 1.691
+z = 0.85
+
+[Text]
+show = 1
+text = Stats
+font_name = typo
+color = 0.157, 0.125, .118, 0.8
+char_height = 1.000
+flags = 0
+camera_bitmask = 1
+positioning = 0.500
+
+[Rendering]
+show = 1
+flags = 0
+camera_bitmask = 1
+color = 0.486, 0.486, 0.459, 1.000

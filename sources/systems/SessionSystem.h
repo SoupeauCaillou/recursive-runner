@@ -27,6 +27,8 @@ struct Statistics {
         int coinsCollected;
         float lifetime;
         int pointScored;
+        int killed;
+        int jumps;
     } runner[10];
     Color color[10];
 };

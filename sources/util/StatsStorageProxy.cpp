@@ -28,11 +28,17 @@ StatsStorageProxy::StatsStorageProxy() {
     _columnsNameAndType["coins"] = "int";
     _columnsNameAndType["lifetime"] = "float";
     _columnsNameAndType["points"] = "int";
+    _columnsNameAndType["killed"] = "int";
+    _columnsNameAndType["jumps"] = "int";
 }
 
 std::string StatsStorageProxy::getValue(const std::string& columnName) {
     if (columnName == "coins") {
         return ObjectSerializer<int>::object2string(_queue.front().coinsCollected);
+    } else if (columnName == "killed") {
+        return ObjectSerializer<int>::object2string(_queue.front().killed);
+    } else if (columnName == "jumps") {
+        return ObjectSerializer<int>::object2string(_queue.front().jumps);
     } else if (columnName == "points") {
         return ObjectSerializer<int>::object2string(_queue.front().pointScored);
     } else if (columnName == "lifetime") {
@@ -50,6 +56,10 @@ void StatsStorageProxy::setValue(const std::string& columnName, const std::strin
 
     if (columnName == "points") {
         _queue.back().pointScored =  ObjectSerializer<int>::string2object(value);
+    } else if (columnName == "killed") {
+        _queue.back().killed =  ObjectSerializer<int>::string2object(value);
+    } else if (columnName == "jumps") {
+        _queue.back().jumps =  ObjectSerializer<int>::string2object(value);
     } else if (columnName == "coins") {
         _queue.back().coinsCollected = ObjectSerializer<int>::string2object(value);
     } else if (columnName == "lifetime") {

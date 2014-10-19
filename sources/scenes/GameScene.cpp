@@ -152,6 +152,7 @@ public:
             double distanceAbs = glm::abs(TRANSFORM(sc->currentRunner)->position.x -
             TRANSFORM(game->pianist)->position.x) / (PlacementHelper::ScreenSize.x * param::LevelSize);
             MUSIC(transition)->volume = 0.2 + 0.8 * (1 - distanceAbs);
+            int runnerIdx = RUNNER(sc->currentRunner)->index;
 
             // Manage player's current runner
             for (unsigned i=0; i<sc->numPlayers; i++) {
@@ -208,6 +209,8 @@ public:
                                 if (rc->jumpingSince <= 0 && pc->linearVelocity.y == 0) {
                                     rc->jumpTimes.push_back(rc->elapsed);
                                     rc->jumpDurations.push_back(dt);
+
+                                    sc->stats.runner[runnerIdx].jumps = sc->stats.runner[runnerIdx].jumps + 1;
                                 }
                             } else if (!rc->jumpTimes.empty()) {
                                 float& d = *(rc->jumpDurations.rbegin());
@@ -253,6 +256,7 @@ public:
                                 continue;
                             if (IntersectionUtil::rectangleRectangle(ghostColl, activesColl[k])) {
                                 rc->killed = true;
+                                sc->stats.runner[runnerIdx].killed ++;
                                 sc->runners.erase(sc->runners.begin() + j);
                                 j--;
 
@@ -288,7 +292,7 @@ public:
         #endif
                     // check coins
                     checkCoinsPickupForRunner(player, e, rc, sc);
-                    sc->stats.runner[j].lifetime += dt;
+                    sc->stats.runner[rc->index].lifetime += dt;
 
                     // check platform switch
                     const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
@@ -299,7 +303,6 @@ public:
                                 sc->platforms[k].switches[l].owner = e;
                                 if (!sc->platforms[k].switches[l].state) {
                                     sc->platforms[k].switches[l].state = true;
-                                    std::cout << e << " activated " << sc->platforms[k].switches[l].entity << std::endl;
                                 }
                             }
                         }
@@ -479,13 +482,14 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
 
                 /* update statistics */
                 {
-                    sc->stats.runner[rc->index].coinsCollected++;
                     sc->stats.runner[rc->index].pointScored += gain;
                 }
 
                 //coins++ only for player, not his ghosts
-                if (sc->currentRunner == e)
+                if (sc->currentRunner == e) {
                     player->coins++;
+                    sc->stats.runner[rc->index].coinsCollected = sc->stats.runner[rc->index].coinsCollected + 1;
+                }
 
                 /* reset lifetime of gain entity */
                 AUTO_DESTROY(sc->gains[idx])->params.lifetime.freq.accum = 0;

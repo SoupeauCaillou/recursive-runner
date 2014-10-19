@@ -1,0 +1,12 @@
+[Transformation]
+
+[Anchor]
+z = 0.05
+rotation = 1.57079
+
+[Text]
+show = 1
+color = 0.157, 0.125, .118, 0.8
+# flags = 2
+char_height = 0.4
+positioning = 0

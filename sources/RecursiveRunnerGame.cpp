@@ -823,6 +823,8 @@ void RecursiveRunnerGame::endGame(Statistics* stats) {
                     ssp._queue.push(stats->runner[i]);
                 }
                 gameThreadContext->storageAPI->saveEntries(&ssp);
+
+                memcpy(bestGameStatistics, stats, sizeof(Statistics));
             }
         }
 
