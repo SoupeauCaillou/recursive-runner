@@ -456,7 +456,7 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                 tCoin->position, tCoin->size * glm::vec2(0.5, 0.6) /* why ? */, tCoin->rotation)) {
                 /* if coin isn't the 1st one picked, check for consecutive pickup bonus */
                 if (!rc->coins.empty()) {
-                 int linkIdx = idx;
+                 int linkIdx = rc->speed > 0 ? idx : idx + 1;
                     if (rc->coins.back() == prev) {
                         rc->coinSequenceBonus++;
                         if (!rc->ghost) {
