@@ -1,5 +1,6 @@
 [Anchor]
 position = 0, 0.5
+z = 0.02
 
 
 [Transformation]
@@ -8,4 +9,4 @@ size = 0.3, 1
 [Rendering]
 show = 0
 flags = 1
-color = 0.403, 0.364, 0.466, 1.0
+color = 0.403, 0.364, 0.466, 0.2

@@ -82,7 +82,11 @@ extern std::map<TextureRef, CollisionZone> texture2Collision;
 float RecursiveRunnerGame::nextRunnerStartTime[100];
 int RecursiveRunnerGame::nextRunnerStartTimeIndex;
 
-RecursiveRunnerGame::RecursiveRunnerGame(): Game(), bestGameStatistics(0) {
+RecursiveRunnerGame::RecursiveRunnerGame(): Game() {
+    LOGI(sizeof(Game));
+    statistics.allTimeBest = 0;
+    statistics.sessionBest = 0;
+    statistics.lastGame = 0;
 }
 
 
@@ -513,8 +517,9 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     }
 
     {
-        bestGameStatistics = new Statistics();
-        lastGameStatistics = new Statistics();
+        statistics.allTimeBest = new Statistics();
+        statistics.sessionBest = new Statistics();
+        statistics.lastGame = new Statistics();
 
         StatsStorageProxy ssp;
         gameThreadContext->storageAPI->createTable(&ssp);
@@ -522,14 +527,14 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         gameThreadContext->storageAPI->loadEntries(&ssp, "*", "");
         LOGI(ssp._queue.size());
         int index = 0;
-        bestGameStatistics->score = 0;
+        statistics.allTimeBest->score = 0;
         while (! ssp.isEmpty() && index < 10) {
-            bestGameStatistics->runner[index] = ssp._queue.front();
+            statistics.allTimeBest->runner[index] = ssp._queue.front();
             ssp.popAnElement();
-            bestGameStatistics->score += bestGameStatistics->runner[index].pointScored;
+            statistics.allTimeBest->score += statistics.allTimeBest->runner[index].pointScored;
             index++;
         }
-        LOGI("BEST SCORE: " << bestGameStatistics->score);
+        LOGI("BEST SCORE: " << statistics.allTimeBest->score);
     }
 
     LOGI("\t- Create camera...");
@@ -798,6 +803,12 @@ void RecursiveRunnerGame::startGame(Level::Enum level, bool transition) {
     }
 }
 
+bool RecursiveRunnerGame::statisticsAvailable() const {
+    return statistics.allTimeBest->score > 0 ||
+        statistics.sessionBest->score > 0 ||
+        statistics.lastGame->score > 0;
+}
+
 void RecursiveRunnerGame::endGame(Statistics* stats) {
 
     const auto& sessions = theSessionSystem.RetrieveAllEntityWithComponent();
@@ -816,7 +827,7 @@ void RecursiveRunnerGame::endGame(Statistics* stats) {
             }
 
             /* store as best stats */
-            if (stats->score > bestGameStatistics->score) {
+            if (stats->score > statistics.allTimeBest->score) {
                 StatsStorageProxy ssp;
                 gameThreadContext->storageAPI->dropAll(&ssp);
                 for (int i=0; i<10; i++) {
@@ -824,7 +835,10 @@ void RecursiveRunnerGame::endGame(Statistics* stats) {
                 }
                 gameThreadContext->storageAPI->saveEntries(&ssp);
 
-                memcpy(bestGameStatistics, stats, sizeof(Statistics));
+                memcpy(statistics.allTimeBest, stats, sizeof(Statistics));
+            }
+            if (stats->score > statistics.sessionBest->score) {
+                memcpy(statistics.sessionBest, statistics.lastGame, sizeof(Statistics));
             }
         }
 

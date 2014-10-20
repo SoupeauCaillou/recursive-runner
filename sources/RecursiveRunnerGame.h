@@ -85,6 +85,8 @@ class RecursiveRunnerGame : public Game {
       void setupCamera(CameraMode::Enum mode);
       void updateBestScore();
 
+      bool statisticsAvailable() const;
+
    private:
       void decor();
       void initGame();
@@ -117,7 +119,11 @@ class RecursiveRunnerGame : public Game {
         float H, V;
         } buttonSpacing;
 
-        Statistics* bestGameStatistics, *lastGameStatistics;
+        struct {
+            Statistics* allTimeBest;
+            Statistics* sessionBest;
+            Statistics* lastGame;
+        } statistics;
 
         static float nextRunnerStartTime[100];
         static int nextRunnerStartTimeIndex;

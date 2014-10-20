@@ -59,19 +59,19 @@ namespace Image {
 namespace Button {
     enum Enum {
         Back = 0,
-        BestScore,
-        LastScore,
         Count
     };
 }
 
-/*
+
 namespace Text {
     enum Enum {
+        /*AllTimeBest = 0,
+        SessionBest,
+        LastGame,*/
         Count
     };
 }
-*/
 
 class StatsScene : public StateHandler<Scene::Enum> {
     RecursiveRunnerGame* game;
@@ -87,11 +87,6 @@ public:
 
     void setup(AssetAPI*) override {
         buttons[Button::Back] = theEntityManager.CreateEntityFromTemplate("menu/about/back_button");
-        buttons[Button::BestScore] = theEntityManager.CreateEntityFromTemplate("menu/stats/stat_button");
-        TEXT(buttons[Button::BestScore])->text = "Best score";
-
-        buttons[Button::LastScore] = theEntityManager.CreateEntityFromTemplate("menu/stats/stat_button");
-        TEXT(buttons[Button::LastScore])->text = "Last score";
 
         images[Image::Background] = theEntityManager.CreateEntityFromTemplate("menu/about/background");
         images[Image::Runner] = theEntityManager.CreateEntityFromTemplate("menu/stats/runner");
@@ -100,122 +95,117 @@ public:
     }
 
 
-    #define ___COLOR(n) Color(((0x##n >> 16) & 0xff) / 255.0, ((0x##n >> 8) & 0xff) / 255.0, ((0x##n >> 0) & 0xff) / 255.0, 0.8)
-    const Color colors[10] = {
-        ___COLOR(c30101),
-        ___COLOR(ea6c06),
-        ___COLOR(f4cf00),
-        ___COLOR(8ec301),
-        ___COLOR(01c373),
-        ___COLOR(12bbd9),
-        ___COLOR(1e49d7),
-        ___COLOR(5d00bd),
-        ___COLOR(a910db),
-        ___COLOR(dc52b0),
-    };
-    #undef ___COLOR
-
-    template<class T>
-    void addBarWithLegend(float maxBarHeight, const char* text, int color, float xOffset, int offset, const char* format, T maxValue, T minValue, T minDisplay) {
-
-        char tmp[64];
-        /* score bar */
-        for (int i=0; i<10; i++) {
-            const T value = *((T*) ((uint8_t*)&statisticsToDisplay->runner[i] + offset));
-            if (value < minValue) continue;
-
-            /* legend */
-
-
-
-            Entity bar = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
-            TRANSFORM(bar)->size.y = glm::lerp(0.1f, maxBarHeight, value / (float)maxValue);
-            ANCHOR(bar)->anchor.y = - TRANSFORM(bar)->size.y * 0.5;
-            ANCHOR(bar)->position.x = xOffset;
-
-            ANCHOR(bar)->parent = texts[i];
-            RENDERING(bar)->color = colors[color];
-
-            bars.push_back(bar);
-
-            if (value >= minDisplay) {
-                Entity legend = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
-                snprintf(tmp, 64, format, value);
-                TEXT(legend)->text = tmp;
-                TEXT(legend)->positioning = 0.5;
-                ANCHOR(legend)->parent = bar;
-                texts.push_back(legend);
-            }
-
-            if (1)/* if (addGlobalLegend && value < maxValue)*/ {
-                Entity t = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
-                TEXT(t)->text = text;
-                TEXT(t)->color = colors[color];
-                ANCHOR(t)->parent = bar;
-                ANCHOR(t)->position.y = 0.5 + TRANSFORM(bar)->size.y * 0.5;
-                texts.push_back(t);
-            }
-        }
+    Entity createText(const char* text, const glm::vec2& pos) {
+        Entity t = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
+        TEXT(t)->text = text;
+        ANCHOR(t)->parent = images[Image::Background];
+        ANCHOR(t)->position = pos;
+        texts.push_back(t);
+        return t;
     }
 
-    Statistics* statisticsToDisplay;
-    void onPreEnter(Scene::Enum) {
-        if (game->lastGameStatistics->score > 0) {
-            RENDERING(buttons[Button::LastScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
-            statisticsToDisplay = game->lastGameStatistics;
-        } else {
-            RENDERING(buttons[Button::BestScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
-            statisticsToDisplay = game->bestGameStatistics;
-        }
-        TRANSFORM(buttons[Button::LastScore])->position.x = TRANSFORM(game->camera)->position.x + TRANSFORM(buttons[Button::LastScore])->size.x;
-        TRANSFORM(buttons[Button::BestScore])->position.x = TRANSFORM(game->camera)->position.x - TRANSFORM(buttons[Button::BestScore])->size.x;
+    template<class T>
+    Entity createTextWithValue(T value, const char* format, const glm::vec2& pos) {
+        char tmp[128];
+        sprintf(tmp, format, value);
+        return createText(tmp, pos);
+    }
 
-        TRANSFORM(buttons[Button::LastScore])->position.y =
-            TRANSFORM(buttons[Button::BestScore])->position.y =
-                TRANSFORM(images[Image::Background])->position.y +
-                TRANSFORM(images[Image::Background])->size.y * 0.5 - (0.5 + TRANSFORM(buttons[Button::BestScore])->size.y * 0.5);
 
+    int runnerPointMax(const Statistics* s) {
+        int m = 0;
+        for (int i=0; i<10; i++) m = glm::max(m, s->runner[i].pointScored);
+        return m;
+    }
+    int runnerCoinAverage(const Statistics* s) {
+        int sum = 0;
+        for (int i=0; i<10; i++) sum += s->runner[i].coinsCollected;
+        return sum * 0.1;
+    }
+    int runnerLifetimeAverage(const Statistics* s) {
+        float sum = 0;
+        for (int i=0; i<10; i++) sum += s->runner[i].lifetime;
+        return (int) (sum * 0.1);
+    }
+    int runnerJumpsAverage(const Statistics* s) {
+        float sum = 0;
+        for (int i=0; i<10; i++) sum += s->runner[i].jumps;
+        return (int) (sum * 0.1);
     }
 
     ///----------------------------------------------------------------------------//
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
     void onEnter(Scene::Enum) {
-        TEXT(buttons[Button::LastScore])->show = 1;
-        TEXT(buttons[Button::BestScore])->show = 1;
+        const glm::vec2& area = TRANSFORM(images[Image::Background])->size;
+        const glm::vec2 spacing = area * 0.05f;
 
-        int maxPointScored = 1;
-        int maxJumps = 1; /* avoid divide by 0 */
-        int maxKilledScore = 1; /* avoid divide by 0 */
-        for (int i=0; i<10; i++) {
-            maxPointScored = glm::max(maxPointScored, statisticsToDisplay->runner[i].pointScored);
-            maxJumps = glm::max(maxJumps, statisticsToDisplay->runner[i].jumps);
-            maxKilledScore = glm::max(maxKilledScore, statisticsToDisplay->runner[i].killed);
+        int rows = 6;
+        int columns = 4;
+        glm::vec2 cellSize = (area - 2.0f * spacing) * glm::vec2(1.0f / columns, 1.0f / rows);
+
+        glm::vec2 cell0 = area * - 0.5f + spacing + cellSize * 0.5f;
+
+        #define P(x, y) (cell0 + cellSize * glm::vec2(y, rows - x - 1))
+
+        #define Q(__x, __y) (cell0 + cellSize * glm::vec2(__y, rows - __x - 1) +  glm::vec2(cellSize.x * 0.35f, 0.0f))
+
+        TRANSFORM(images[Image::Runner])->position = TRANSFORM(images[Image::Background])->position + P(0, 0);
+        /* Columns header */
+        createText("Last game", P(0, 1));
+        TEXT(texts.back())->positioning = 0.5;
+        createText("Session best", P(0, 2));
+        TEXT(texts.back())->positioning = 0.5;
+        createText("All time best", P(0, 3));
+        TEXT(texts.back())->positioning = 0.5;
+
+        /* Total points */
+        createText("Points", P(1, 0));
+        TEXT(texts.back())->positioning = 0.5;
+        createTextWithValue<int>(game->statistics.lastGame->score, "%d", Q(1, 1));
+        createTextWithValue<int>(game->statistics.sessionBest->score, "%d", Q(1, 2));
+        createTextWithValue<int>(game->statistics.allTimeBest->score, "%d", Q(1, 3));
+
+        /* Points per runner */
+        createText("Max runner point", P(2, 0));
+        TEXT(texts.back())->positioning = 0.5;
+        createTextWithValue<int>(runnerPointMax(game->statistics.lastGame), "%d", Q(2, 1));
+        createTextWithValue<int>(runnerPointMax(game->statistics.sessionBest), "%d", Q(2, 2));
+        createTextWithValue<int>(runnerPointMax(game->statistics.allTimeBest), "%d", Q(2, 3));
+
+        /* Coins per runner */
+        createText("Average switches", P(3, 0));
+        TEXT(texts.back())->positioning = 0.5;
+        createTextWithValue<int>(runnerCoinAverage(game->statistics.lastGame), "%d", Q(3, 1));
+        createTextWithValue<int>(runnerCoinAverage(game->statistics.sessionBest), "%d", Q(3, 2));
+        createTextWithValue<int>(runnerCoinAverage(game->statistics.allTimeBest), "%d", Q(3, 3));
+
+        /* Lifetime per runner */
+        createText("Average lifetime", P(4, 0));
+        TEXT(texts.back())->positioning = 0.5;
+        createTextWithValue<int>(runnerLifetimeAverage(game->statistics.lastGame), "%d", Q(4, 1));
+        createTextWithValue<int>(runnerLifetimeAverage(game->statistics.sessionBest), "%d", Q(4, 2));
+        createTextWithValue<int>(runnerLifetimeAverage(game->statistics.allTimeBest), "%d", Q(4, 3));
+
+        /* Jumps per runner */
+        /* Lifetime per runner */
+        createText("Average jumps", P(5, 0));
+        TEXT(texts.back())->positioning = 0.5;
+        createTextWithValue<int>(runnerJumpsAverage(game->statistics.lastGame), "%d", Q(5, 1));
+        createTextWithValue<int>(runnerJumpsAverage(game->statistics.sessionBest), "%d", Q(5, 2));
+        createTextWithValue<int>(runnerJumpsAverage(game->statistics.allTimeBest), "%d", Q(5, 3));
+
+        /* create backgrounds */
+        for (int i=1; i<rows; i+=2) {
+            Entity b = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
+            ANCHOR(b)->position.y = P(i, 0).y;
+            ANCHOR(b)->parent = images[Image::Background];
+            TRANSFORM(b)->size = cellSize * glm::vec2(columns, 1);
+            bars.push_back(b);
         }
 
-        char tmp[64];
-        /* x-axis legend */
-        for (int i=0; i<10; i++) {
-            texts.push_back(theEntityManager.CreateEntityFromTemplate("menu/stats/runner_text"));
-            TRANSFORM(texts[i])->position.x += 1.6 * (i % 10);
-            TRANSFORM(texts[i])->position.y = TRANSFORM(images[Image::Background])->position.y + TRANSFORM(images[Image::Background])->size.y * -0.5 + 1;
-
-            snprintf(tmp, 20, "%d", i+1);
-            TEXT(texts[i])->text = tmp;
-        }
-
-        float maxBarHeight = TRANSFORM(images[Image::Background])->size.y - 4;
-
-        /* score bar */
-        addBarWithLegend<int>(maxBarHeight, "Points", 4, -0.45, OFFSET(pointScored, statisticsToDisplay->runner[0]), "%d", maxPointScored, 0, maxPointScored / 20);
-        /* score bar */
-        addBarWithLegend<int>(maxBarHeight, "Coins", 7, -.15, OFFSET(coinsCollected, statisticsToDisplay->runner[0]), "%d", 20, 0, 1);
-        /* killed bar */
-        /* addBarWithLegend<int>("%d kills", 1, -0.15, OFFSET(killed, statisticsToDisplay->runner[0]), "%d", maxKilledScore, 0, 1); */
-        /* time bar */
-        addBarWithLegend<float>(maxBarHeight, "Seconds", 2, 0.15, OFFSET(lifetime, statisticsToDisplay->runner[0]), "%.0f", 91, 0, 1);
-        /* jump bar */
-        addBarWithLegend<int>(maxBarHeight, "Jumps", 3, 0.45, OFFSET(jumps, statisticsToDisplay->runner[0]), "%d", maxJumps, 0, 1);
+        #undef P
+        #undef Q
 
         for (auto t: texts) {
             TEXT(t)->show = true;
@@ -238,22 +228,6 @@ public:
 
     Scene::Enum update(float) override {
         RENDERING(buttons[Button::Back])->color = BUTTON(buttons[Button::Back])->mouseOver ? Color("gray") : Color();
-
-        if (BUTTON(buttons[Button::BestScore])->clicked) {
-            onPreExit(Scene::Stats);
-            statisticsToDisplay = game->bestGameStatistics;
-
-            RENDERING(buttons[Button::BestScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
-            RENDERING(buttons[Button::LastScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back");
-            onEnter(Scene::Stats);
-        }
-        if (BUTTON(buttons[Button::LastScore])->clicked) {
-            onPreExit(Scene::Stats);
-            statisticsToDisplay = game->lastGameStatistics;
-            RENDERING(buttons[Button::LastScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back_active");
-            RENDERING(buttons[Button::BestScore])->texture = theRenderingSystem.loadTextureFile("stats_btn_back");
-            onEnter(Scene::Stats);
-        }
 
         if (BUTTON(buttons[Button::Back])->clicked) {
             return Scene::Menu;
@@ -284,8 +258,6 @@ public:
             theEntityManager.DeleteEntity(b);
         }
         texts.clear();
-        TEXT(buttons[Button::LastScore])->show = 0;
-        TEXT(buttons[Button::BestScore])->show = 0;
     }
 
 
