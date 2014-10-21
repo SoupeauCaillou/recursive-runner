@@ -95,9 +95,10 @@ public:
     }
 
 
-    Entity createText(const char* text, const glm::vec2& pos) {
+    Entity createText(const char* text, const glm::vec2& pos, const Color& c) {
         Entity t = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
         TEXT(t)->text = text;
+        TEXT(t)->color = c;
         ANCHOR(t)->parent = images[Image::Background];
         ANCHOR(t)->position = pos;
         texts.push_back(t);
@@ -105,13 +106,68 @@ public:
     }
 
     template<class T>
-    Entity createTextWithValue(T value, const char* format, const glm::vec2& pos) {
+    Entity createTextWithValue(T value, const char* format, const glm::vec2& pos, const Color& c) {
         char tmp[128];
         sprintf(tmp, format, value);
-        return createText(tmp, pos);
+        return createText(tmp, pos, c);
     }
 
+    #define ___COLOR(n) Color(((0x##n >> 16) & 0xff) / 255.0, ((0x##n >> 8) & 0xff) / 255.0, ((0x##n >> 0) & 0xff) / 255.0, 1)
+    const Color colors[10] = {
+        ___COLOR(3a4246),
+        ___COLOR(575362),
+        ___COLOR(5e696f),
+        ___COLOR(8ec301),
+        ___COLOR(01c373),
+        ___COLOR(12bbd9),
+        ___COLOR(1e49d7),
+        ___COLOR(5d00bd),
+        ___COLOR(a910db),
+        ___COLOR(dc52b0),
+    };
 
+
+#if 0
+     template<class T>
+    void addBarWithLegend(float maxBarHeight, const char* text, int color, float xOffset, int offset, const char* format, T maxValue, T minValue, T minDisplay) {
+
+        char tmp[64];
+        /* score bar */
+        for (int i=0; i<10; i++) {
+            const T value = *((T*) ((uint8_t*)&statisticsToDisplay->runner[i] + offset));
+            if (value < minValue) continue;
+
+            /* legend */
+            Entity bar = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
+            TRANSFORM(bar)->size.y = glm::lerp(0.1f, maxBarHeight, value / (float)maxValue);
+            ANCHOR(bar)->anchor.y = - TRANSFORM(bar)->size.y * 0.5;
+            ANCHOR(bar)->position.x = xOffset;
+
+            ANCHOR(bar)->parent = texts[i];
+            RENDERING(bar)->color = colors[color];
+
+            bars.push_back(bar);
+
+            if (value >= minDisplay) {
+                Entity legend = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
+                snprintf(tmp, 64, format, value);
+                TEXT(legend)->text = tmp;
+                TEXT(legend)->positioning = 0.5;
+                ANCHOR(legend)->parent = bar;
+                texts.push_back(legend);
+            }
+
+            if (1)/* if (addGlobalLegend && value < maxValue)*/ {
+                Entity t = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
+                TEXT(t)->text = text;
+                TEXT(t)->color = colors[color];
+                ANCHOR(t)->parent = bar;
+                ANCHOR(t)->position.y = 0.5 + TRANSFORM(bar)->size.y * 0.5;
+                texts.push_back(t);
+            }
+        }
+    }
+#endif
     int runnerPointMax(const Statistics* s) {
         int m = 0;
         for (int i=0; i<10; i++) m = glm::max(m, s->runner[i].pointScored);
@@ -128,34 +184,28 @@ public:
         return m * 0.1;
     }
 
-
-    int runnerCoinAverage(const Statistics* s) {
-        int sum = 0;
-        for (int i=0; i<10; i++) sum += s->runner[i].coinsCollected;
-        return sum * 0.1;
+    float indexToScale(int idx) {
+        switch (idx) {
+            case 2: return 0.8;
+            case 1: return 0.5f;
+            default: return 0.2;
+        }
     }
-    int runnerLifetimeAverage(const Statistics* s) {
-        float sum = 0;
-        for (int i=0; i<10; i++) sum += s->runner[i].lifetime;
-        return (int) (sum * 0.1);
-    }
-#if 0
-    int runnerJumpsAverage(const Statistics* s) {
-        float sum = 0;
-        for (int i=0; i<10; i++) sum += s->runner[i].jumps;
-        return (int) (sum * 0.1);
-    }
-#endif
-
     ///----------------------------------------------------------------------------//
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
     void onEnter(Scene::Enum) {
+        int maxPointScored = 1;
+        for (int i=0; i<10; i++) {
+            for (int j=0; j<3; j++) {
+                    maxPointScored = glm::max(maxPointScored, game->statistics.s[j]->runner[i].pointScored);
+            }
+        }
         const glm::vec2& area = TRANSFORM(images[Image::Background])->size;
-        const glm::vec2 spacing = area * 0.05f;
+        const glm::vec2 spacing = area * glm::vec2(0.1f, 0.1f);
 
         int rows = 6;
-        int columns = 4;
+        int columns = 3;
         glm::vec2 cellSize = (area - 2.0f * spacing) * glm::vec2(1.0f / columns, 1.0f / rows);
 
         glm::vec2 cell0 = area * - 0.5f + spacing + cellSize * 0.5f;
@@ -164,15 +214,97 @@ public:
 
         #define Q(__x, __y) (cell0 + cellSize * glm::vec2(__y, rows - __x - 1) +  glm::vec2(cellSize.x * 0.35f, 0.0f))
 
-        TRANSFORM(images[Image::Runner])->position = TRANSFORM(images[Image::Background])->position + P(0, 0);
         /* Columns header */
-        createText("Last game", P(0, 1));
+        createText("Last game", P(0, 0), colors[2]);
         TEXT(texts.back())->positioning = 0.5;
-        createText("Session best", P(0, 2));
+        createText("Session best", P(0, 1), colors[1]);
         TEXT(texts.back())->positioning = 0.5;
-        createText("All time best", P(0, 3));
+        createText("All time best", P(0, 2), colors[0]);
         TEXT(texts.back())->positioning = 0.5;
+        for (int i=0; i<3; i++) {
+            ANCHOR(texts[i])->position.y = area.y * 0.5 - TEXT(texts[i])->charHeight * 1.5;
+        }
 
+
+
+        float maxScoreTextWidth = 0;
+        /* Add y-axis label */
+        {
+            Entity yaxis = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
+            ANCHOR(yaxis)->position.x = -area.x * 0.5 + spacing.x * 0.5;
+            ANCHOR(yaxis)->rotation = glm::pi<float>() * 0.5f;
+            ANCHOR(yaxis)->position.y = 0;
+            ANCHOR(yaxis)->parent = images[Image::Background];
+
+            TEXT(yaxis)->text = "1000000";
+            maxScoreTextWidth = theTextSystem.computeTextComponentWidth(TEXT(yaxis));
+            TEXT(yaxis)->text = "Points";
+            texts.push_back(yaxis);
+        }
+
+        char tmp[64];
+        float maxBarHeight = 2 * ANCHOR(texts[0])->position.y - spacing.y - maxScoreTextWidth;
+        float width = (area.x - spacing.x * 2.0f) / 10.0f;
+        glm::vec2 base = area * -0.5f + spacing + glm::vec2(width * 0.5f, 0.f);
+        for (int i=0; i<10; i++) {
+            int scores[3], sorted[3];
+            for (int j=0; j<3; j++) {
+                scores[j] = game->statistics.s[j]->runner[i].pointScored;
+                sorted[j] = scores[j];
+            }
+            std::sort(sorted, sorted + 3);
+
+            for (int j=0; j<3; j++) {
+                int value = game->statistics.s[j]->runner[i].pointScored;
+                int index = std::find(scores, scores + 3, value) - scores; // d € [0, 1, 2]
+                int indexSorted = std::find(sorted, sorted + 3, value) - sorted; // d € [0, 1, 2]
+                LOGE_IF(index < 0 || index > 2, "Uh");
+                Entity bar = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
+                TRANSFORM(bar)->size = glm::vec2(width * indexToScale(index), glm::lerp(0.1f, maxBarHeight, value / (float)maxPointScored));
+                ANCHOR(bar)->position = base;
+                ANCHOR(bar)->anchor.y = -TRANSFORM(bar)->size.y * 0.5f;
+                ANCHOR(bar)->parent = images[Image::Background];
+                ANCHOR(bar)->z = 0.02 + (2 - index) * 0.02;
+                RENDERING(bar)->color = colors[j];
+
+                if (indexSorted == 2) { //&&  value > maxPointScored * 0.9) {
+                    // add legend
+                    Entity legend = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
+                    ANCHOR(legend)->position.y = TRANSFORM(bar)->size.y * 0.5;
+                    ANCHOR(legend)->parent = bar;
+                    ANCHOR(legend)->rotation = glm::pi<float>() * 0.5;
+
+                    snprintf(tmp, 64, " %d", value);
+                    TEXT(legend)->text = tmp;
+                    TEXT(legend)->positioning = 0;
+                    TEXT(legend)->color = colors[j];//___COLOR(827475);
+
+                    // float w = computeTextComponentWidth(TEXT(legend));
+                    texts.push_back(legend);
+                }
+
+
+                bars.push_back(bar);
+            }
+
+            {
+                Entity t = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
+                ANCHOR(t)->position.x = base.x;
+                ANCHOR(t)->position.y = base.y - spacing.y * 0.3;
+                ANCHOR(t)->parent = images[Image::Background];
+
+                snprintf(tmp, 20, "%d", i+1);
+                TEXT(t)->text = tmp;
+                TEXT(t)->positioning = 0.5;
+                texts.push_back(t);
+            }
+            base.x += width;
+        }
+
+        TRANSFORM(images[Image::Runner])->position = TRANSFORM(images[Image::Background])->position + base - glm::vec2(spacing.x * 0.25f, 0.0f);
+
+
+#if 0
         /* Total points */
         createText("Points", P(1, 0));
         TEXT(texts.back())->positioning = 0.5;
@@ -200,7 +332,7 @@ public:
         createTextWithValue<int>(runnerPointAverage(game->statistics.lastGame), "%d", Q(4, 1));
         createTextWithValue<int>(runnerPointAverage(game->statistics.sessionBest), "%d", Q(4, 2));
         createTextWithValue<int>(runnerPointAverage(game->statistics.allTimeBest), "%d", Q(4, 3));
-
+#endif
 #if 0
         /* Jumps per runner */
         /* Lifetime per runner */
@@ -209,7 +341,6 @@ public:
         createTextWithValue<int>(runnerJumpsAverage(game->statistics.lastGame), "%d", Q(5, 1));
         createTextWithValue<int>(runnerJumpsAverage(game->statistics.sessionBest), "%d", Q(5, 2));
         createTextWithValue<int>(runnerJumpsAverage(game->statistics.allTimeBest), "%d", Q(5, 3));
-#endif
         /* create backgrounds */
         for (int i=1; i<rows; i+=2) {
             Entity b = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
@@ -218,6 +349,7 @@ public:
             TRANSFORM(b)->size = cellSize * glm::vec2(columns, 1);
             bars.push_back(b);
         }
+#endif
 
         #undef P
         #undef Q
@@ -280,7 +412,7 @@ public:
 
     }
 };
-
+#undef ___COLOR
 namespace Scene {
     StateHandler<Scene::Enum>* CreateStatsSceneHandler(RecursiveRunnerGame* game) {
         return new StatsScene(game);

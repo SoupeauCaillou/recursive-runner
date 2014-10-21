@@ -120,9 +120,14 @@ class RecursiveRunnerGame : public Game {
         } buttonSpacing;
 
         struct {
-            Statistics* allTimeBest;
-            Statistics* sessionBest;
-            Statistics* lastGame;
+            union {
+                Statistics* s[3];
+                struct {
+                    Statistics* allTimeBest;
+                    Statistics* sessionBest;
+                    Statistics* lastGame;
+                };
+            };
         } statistics;
 
         static float nextRunnerStartTime[100];

@@ -535,6 +535,12 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
             statistics.allTimeBest->score += statistics.allTimeBest->runner[index].pointScored;
             index++;
         }
+        for (int i=1; i<3; i++) {
+            memcpy(statistics.s[i], statistics.s[0], sizeof(Statistics));
+            for (int j=0; j<10; j++) {
+                statistics.s[i]->runner[j].pointScored *= Random::Float(0.2, 3);
+            }
+        }
         LOGI("BEST SCORE: " << statistics.allTimeBest->score);
     }
 
