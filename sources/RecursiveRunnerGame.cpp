@@ -560,8 +560,6 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
     } else {
 #if SAC_DEBUG
         sceneStateMachine.start(Scene::Logo);
-#elif SAC_BENCHMARK_MODE
-        sceneStateMachine.start(Scene::Game);
 #else
         sceneStateMachine.start(Scene::Logo);
 #endif

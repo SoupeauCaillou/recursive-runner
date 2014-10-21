@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 2.6)
 #set the name of the project...
 project(RecursiveRunner)
 
+option(BENCHMARK_MODE "Build benchmark-mode" OFF)
+if (BENCHMARK_MODE STREQUAL "ON")
+    message("Benchmark mode enabled")
+    add_definitions(-DSAC_BENCHMARK_MODE=1)
+endif()
+
 add_definitions(
     -DDISABLE_SCROLLING_SYSTEM=1
     -DDISABLE_AUTONOMOUS_SYSTEM=1
