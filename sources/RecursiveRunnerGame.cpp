@@ -407,6 +407,9 @@ void RecursiveRunnerGame::decor() {
     ANIMATION(pianist)->name = muted ? HASH("pianojournal", 0xfd122906) : HASH("piano", 0x62205ad5);
     ANCHOR(pianist)->parent = trees;
 
+    statman = theEntityManager.CreateEntityFromTemplate("menu/stat_button");
+    ANCHOR(statman)->parent = trees;
+
     ADD_COMPONENT(cameraEntity, RangeFollower);
     RANGE_FOLLOWER(cameraEntity)->range = Interval<float>(
         leftMostCameraPos.x, -leftMostCameraPos.x);

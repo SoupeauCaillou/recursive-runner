@@ -1,25 +1,17 @@
-
 [Button]
 enabled = 0
-over_size = 1.000
+over_size = 1.200
+
+[Anchor]
+position%gimp_pos = 1060, 750
+anchor%gimp_size = 0, -90
+z = 0.55
 
 [Transformation]
-position = -14.750, -4.700
-size = 1.691, 1.691
-z = 0.85
-
-[Text]
-show = 1
-text = Stats
-font_name = typo
-color = 0.157, 0.125, .118, 0.8
-char_height = 1.000
-flags = 0
-camera_bitmask = 1
-positioning = 0.500
+size%texture = 1
 
 [Rendering]
 show = 1
-flags = 0
+flags = 1
 camera_bitmask = 1
-color = 0.486, 0.486, 0.459, 1.000
+texture = statman_gauche

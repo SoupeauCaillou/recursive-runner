@@ -182,6 +182,12 @@ public:
                         sc->runners.push_back(sc->currentRunner);
 
                     }
+                } else {
+                    if (TRANSFORM(game->statman)->position.x > TRANSFORM(sc->currentRunner)->position.x) {
+                        RENDERING(game->statman)->texture = theRenderingSystem.loadTextureFile("statman_gauche");
+                    } else {
+                        RENDERING(game->statman)->texture = theRenderingSystem.loadTextureFile("statman_droite");
+                    }
                 }
                 if (!game->ignoreClick && sc->userInputEnabled) {
                     // Input (jump) handling
@@ -359,6 +365,11 @@ public:
         ///--------------------- EXIT SECTION -----------------------------------------//
         ///----------------------------------------------------------------------------//
         void onPreExit(Scene::Enum to) {
+            if (to == Scene::Menu) {
+                RENDERING(game->statman)->texture = theRenderingSystem.loadTextureFile("statman_panneau");
+                BUTTON(game->statman)->enabled = true;
+            }
+
             BUTTON(pauseButton)->enabled = false;
             if (to != Scene::Pause) {
                 ADSR(transition)->active = false;

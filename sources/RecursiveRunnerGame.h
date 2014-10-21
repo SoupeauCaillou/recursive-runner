@@ -113,6 +113,7 @@ class RecursiveRunnerGame : public Game {
         Entity scoreText, scorePanel;
         Entity muteBtn, ground;
         Entity pianist;
+        Entity statman;
         glm::vec2 leftMostCameraPos;
         Level::Enum level;
         struct {

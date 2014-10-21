@@ -272,6 +272,7 @@ public:
                     Entity legend = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
                     ANCHOR(legend)->position.y = TRANSFORM(bar)->size.y * 0.5;
                     ANCHOR(legend)->parent = bar;
+                    ANCHOR(legend)->z = 0;
                     ANCHOR(legend)->rotation = glm::pi<float>() * 0.5;
 
                     snprintf(tmp, 64, " %d", value);

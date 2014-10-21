@@ -62,7 +62,6 @@ namespace Button {
     enum Enum {
         Help = 0,
         About,
-        Stats,
         // Exit,
         Count
     };
@@ -113,8 +112,6 @@ class MenuScene : public StateHandler<Scene::Enum> {
             // ANCHOR(buttons[Button::Exit])->parent = game->muteBtn;
             // sigh
             TRANSFORM(buttons[Button::About])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
-
-            buttons[Button::Stats] = theEntityManager.CreateEntityFromTemplate("menu/stat_button");
 
             weeklyRank = -1;
         }
@@ -170,7 +167,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             }
             // unhide UI
             for (int i=0; i<(int)Button::Count; i++) {
-                RENDERING(buttons[i])->show = (i != (int)Button::Stats) || game->statisticsAvailable();
+                RENDERING(buttons[i])->show = true;
                 RENDERING(buttons[i])->color = Color(1,1,1,0);
             }
             RENDERING(game->muteBtn)->show = true;
@@ -198,10 +195,18 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
 
         void onEnter(Scene::Enum) {
+            if (game->statisticsAvailable()) {
+                BUTTON(game->statman)->enabled = true;
+                RENDERING(game->statman)->texture = theRenderingSystem.loadTextureFile("statman_panneau");
+            } else {
+                BUTTON(game->statman)->enabled = false;
+                RENDERING(game->statman)->texture = theRenderingSystem.loadTextureFile("statman_gauche");
+            }
+
             game->endGame(game->statistics.lastGame);
             // enable UI
             for (int i=0; i<(int)Button::Count; i++) {
-                BUTTON(buttons[i])->enabled = (i != (int)Button::Stats) || game->statisticsAvailable();
+                BUTTON(buttons[i])->enabled = true;
                 RENDERING(buttons[i])->color.a = 1;
             }
             BUTTON(game->muteBtn)->enabled = true;
@@ -261,19 +266,21 @@ void backgroundUpdate(float) {
                 if (BUTTON(buttons[Button::About])->clicked) {
                    return Scene::About;
                 }
-                if (BUTTON(buttons[Button::Stats])->clicked) {
+                if (BUTTON(game->statman)->clicked) {
+                    game->ignoreClick = true;
                    return Scene::Stats;
                 }
 
                 for (int i=0; i<Button::Count; i++) {
                     game->ignoreClick |= BUTTON(buttons[i])->mouseOver;
                 }
+                game->ignoreClick |= BUTTON(game->statman)->mouseOver;
             }
             RENDERING(buttons[Button::Help])->color = BUTTON(buttons[Button::Help])->mouseOver ? Color("gray") : Color();
             RENDERING(buttons[Button::About])->color = BUTTON(buttons[Button::About])->mouseOver ? Color("gray") : Color();
 
             // Start game? (tutorial if no game done)
-            if (theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
+            if (!theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
                 //only if we did not hit left area zone (buttons)
                 auto touchPos = theTouchInputManager.getTouchLastPosition(0);
                 if (touchPos.x >= (TRANSFORM(game->muteBtn)->position.x + TRANSFORM(game->muteBtn)->size.x * BUTTON(game->muteBtn)->overSize * 0.5) &&
