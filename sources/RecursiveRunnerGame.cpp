@@ -398,7 +398,8 @@ void RecursiveRunnerGame::decor() {
     const bool muted =
 #if SAC_EMSCRIPTEN
             false;
-#else
+#elif SAC_BENCHMARK_MODE
+            true;
             gameThreadContext->storageAPI->isOption("sound", "off");
 #endif
     pianist = theEntityManager.CreateEntity(HASH("background/pianist", 0x136d34ba),
@@ -521,7 +522,7 @@ void RecursiveRunnerGame::init(const uint8_t* in, int size) {
         statistics.sessionBest = new Statistics();
         statistics.lastGame = new Statistics();
 
-        StatsStorageProxy ssp;
+        StatsStorageProxy ssp(0);
         gameThreadContext->storageAPI->createTable(&ssp);
 
         gameThreadContext->storageAPI->loadEntries(&ssp, "*", "");
@@ -808,7 +809,9 @@ bool RecursiveRunnerGame::statisticsAvailable() const {
 }
 
 void RecursiveRunnerGame::endGame(Statistics* stats) {
-
+/*todo:
+ TextureInfo à revisiter (et si possible rotateUV à dégager)
+ ne pas faire un lookup 2 fois (une fois dans Update, une fois dans Render)*/
     const auto& sessions = theSessionSystem.RetrieveAllEntityWithComponent();
     if (!sessions.empty()) {
         SessionComponent* sc = SESSION(sessions.front());
@@ -825,9 +828,23 @@ void RecursiveRunnerGame::endGame(Statistics* stats) {
             }
 
             /* store as best stats */
+            #if SAC_BENCHMARK_MODE
+            if (1) {
+            #else
             if (stats->score > statistics.allTimeBest->score) {
-                StatsStorageProxy ssp;
-                gameThreadContext->storageAPI->dropAll(&ssp);
+            #endif
+                #if SAC_BENCHMARK_MODE
+                Random::Init(time(0) * stats->score);
+                #endif
+                int gameId = Random::Int(0, INT_MAX);
+                StatsStorageProxy ssp(gameId);
+
+                #if SAC_BENCHMARK_MODE
+                static int gameCount = 0;
+                std::cout << "END GAME #" << gameCount++ <<  ' ' << gameId << std::endl;
+                #endif
+
+                // gameThreadContext->storageAPI->dropAll(&ssp);
                 for (int i=0; i<10; i++) {
                     ssp._queue.push(stats->runner[i]);
                 }

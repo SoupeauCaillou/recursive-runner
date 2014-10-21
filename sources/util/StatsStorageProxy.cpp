@@ -22,23 +22,29 @@
 #include "base/Log.h"
 #include "base/ObjectSerializer.h"
 
-StatsStorageProxy::StatsStorageProxy() {
+StatsStorageProxy::StatsStorageProxy(uint32_t id) : gameId(id) {
     _tableName = "Stats";
 
+    _columnsNameAndType["game_id"] = "int";
     _columnsNameAndType["coins"] = "int";
     _columnsNameAndType["lifetime"] = "float";
     _columnsNameAndType["points"] = "int";
     _columnsNameAndType["killed"] = "int";
-    _columnsNameAndType["jumps"] = "int";
+    _columnsNameAndType["oldness"] = "int";
+    _columnsNameAndType["bonus"] = "int";
 }
 
 std::string StatsStorageProxy::getValue(const std::string& columnName) {
     if (columnName == "coins") {
         return ObjectSerializer<int>::object2string(_queue.front().coinsCollected);
+    } else if (columnName == "game_id") {
+        return ObjectSerializer<int>::object2string(gameId);
     } else if (columnName == "killed") {
         return ObjectSerializer<int>::object2string(_queue.front().killed);
-    } else if (columnName == "jumps") {
-        return ObjectSerializer<int>::object2string(_queue.front().jumps);
+    } else if (columnName == "oldness") {
+        return ObjectSerializer<int>::object2string(_queue.front().maxOldness);
+    } else if (columnName == "bonus") {
+        return ObjectSerializer<int>::object2string(_queue.front().maxBonus);
     } else if (columnName == "points") {
         return ObjectSerializer<int>::object2string(_queue.front().pointScored);
     } else if (columnName == "lifetime") {
@@ -58,14 +64,16 @@ void StatsStorageProxy::setValue(const std::string& columnName, const std::strin
         _queue.back().pointScored =  ObjectSerializer<int>::string2object(value);
     } else if (columnName == "killed") {
         _queue.back().killed =  ObjectSerializer<int>::string2object(value);
-    } else if (columnName == "jumps") {
-        _queue.back().jumps =  ObjectSerializer<int>::string2object(value);
     } else if (columnName == "coins") {
         _queue.back().coinsCollected = ObjectSerializer<int>::string2object(value);
+    } else if (columnName == "oldness") {
+        _queue.back().maxOldness = ObjectSerializer<int>::string2object(value);
+    } else if (columnName == "bonus") {
+        _queue.back().maxBonus = ObjectSerializer<int>::string2object(value);
     } else if (columnName == "lifetime") {
         _queue.back().lifetime = ObjectSerializer<float>::string2object(value);
     } else {
-        LOGE("No such column name: " << columnName);
+        // LOGE("No such column name: " << columnName);
     }
 }
 

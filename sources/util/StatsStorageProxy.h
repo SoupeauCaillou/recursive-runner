@@ -25,9 +25,12 @@
 
 class StatsStorageProxy : public StorageProxy<Statistics::Runner> {
     public:
-        StatsStorageProxy();
+        StatsStorageProxy(uint32_t gameId);
 
         std::string getValue(const std::string& columnName);
 
         void setValue(const std::string& columnName, const std::string& value, bool pushNewElement = false);
+
+    private:
+        uint32_t gameId;
 };

@@ -127,11 +127,13 @@ public:
         for (int i=0; i<10; i++) sum += s->runner[i].lifetime;
         return (int) (sum * 0.1);
     }
+#if 0
     int runnerJumpsAverage(const Statistics* s) {
         float sum = 0;
         for (int i=0; i<10; i++) sum += s->runner[i].jumps;
         return (int) (sum * 0.1);
     }
+#endif
 
     ///----------------------------------------------------------------------------//
     ///--------------------- ENTER SECTION ----------------------------------------//
@@ -187,6 +189,7 @@ public:
         createTextWithValue<int>(runnerLifetimeAverage(game->statistics.sessionBest), "%d", Q(4, 2));
         createTextWithValue<int>(runnerLifetimeAverage(game->statistics.allTimeBest), "%d", Q(4, 3));
 
+#if 0
         /* Jumps per runner */
         /* Lifetime per runner */
         createText("Average jumps", P(5, 0));
@@ -194,7 +197,7 @@ public:
         createTextWithValue<int>(runnerJumpsAverage(game->statistics.lastGame), "%d", Q(5, 1));
         createTextWithValue<int>(runnerJumpsAverage(game->statistics.sessionBest), "%d", Q(5, 2));
         createTextWithValue<int>(runnerJumpsAverage(game->statistics.allTimeBest), "%d", Q(5, 3));
-
+#endif
         /* create backgrounds */
         for (int i=1; i<rows; i+=2) {
             Entity b = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");

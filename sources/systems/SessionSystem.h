@@ -28,7 +28,8 @@ struct Statistics {
         float lifetime;
         int pointScored;
         int killed;
-        int jumps;
+        int maxOldness;
+        int maxBonus;
     } runner[10];
     Color color[10];
 };

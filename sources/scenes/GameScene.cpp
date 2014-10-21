@@ -187,7 +187,15 @@ public:
                     // Input (jump) handling
                     for (int j=0; j<1; j++) {
 #if SAC_BENCHMARK_MODE
-                        if (true) {
+                    static bool simulateDown = false, simulateWasDown = false;
+                    static float stateDuration = 0;
+                        stateDuration -= dt;
+                        simulateWasDown = simulateDown;
+                        if (stateDuration < 0) {
+                            simulateDown = !simulateDown;
+                            stateDuration = simulateDown ? Random::Float(0, 0.5) : Random::Float(0, 3);
+                        }
+                        if (simulateDown) {
 #else
                         if (theTouchInputManager.isTouched(j)) {
 #endif
@@ -202,15 +210,13 @@ public:
                             RunnerComponent* rc = RUNNER(sc->currentRunner);
 
 #if SAC_BENCHMARK_MODE
-                            if (Random::Float() > 0.9) {
+                            if (! simulateWasDown) {
 #else
-                            if (!theTouchInputManager.wasTouched(j)) {
+                            if (! theTouchInputManager.wasTouched(j)) {
 #endif
                                 if (rc->jumpingSince <= 0 && pc->linearVelocity.y == 0) {
                                     rc->jumpTimes.push_back(rc->elapsed);
                                     rc->jumpDurations.push_back(dt);
-
-                                    sc->stats.runner[runnerIdx].jumps = sc->stats.runner[runnerIdx].jumps + 1;
                                 }
                             } else if (!rc->jumpTimes.empty()) {
                                 float& d = *(rc->jumpDurations.rbegin());
@@ -293,6 +299,9 @@ public:
                     // check coins
                     checkCoinsPickupForRunner(player, e, rc, sc);
                     sc->stats.runner[rc->index].lifetime += dt;
+                    sc->stats.runner[rc->index].maxOldness = glm::max(
+                        rc->oldNessBonus,
+                        sc->stats.runner[rc->index].maxOldness);
 
                     // check platform switch
                     const TransformationComponent* collisionZone = TRANSFORM(rc->collisionZone);
@@ -459,6 +468,7 @@ static void checkCoinsPickupForRunner(PlayerComponent* player, Entity e, RunnerC
                  int linkIdx = rc->speed > 0 ? idx : idx + 1;
                     if (rc->coins.back() == prev) {
                         rc->coinSequenceBonus++;
+                        sc->stats.runner[rc->index].maxBonus = glm::max(sc->stats.runner[rc->index].maxBonus, rc->coinSequenceBonus);
                         if (!rc->ghost) {
                             if (rc->speed > 0) {
                                 for (int j=1; j<rc->coinSequenceBonus; j++) {

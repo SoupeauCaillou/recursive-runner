@@ -219,6 +219,10 @@ void backgroundUpdate(float) {
 #endif
 
         Scene::Enum update(float) {
+#if SAC_BENCHMARK_MODE
+            return Scene::Game;
+#endif
+
             updateTitleSubTitle(titleGroup, subtitle);
 
             #if SAC_USE_PROPRIETARY_PLUGINS
@@ -289,9 +293,7 @@ void backgroundUpdate(float) {
 #endif
                 }
             }
-#if SAC_BENCHMARK_MODE
-            return Scene::Game;
-#endif
+
             return Scene::Menu;
         }
 
