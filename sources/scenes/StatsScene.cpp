@@ -117,6 +117,18 @@ public:
         for (int i=0; i<10; i++) m = glm::max(m, s->runner[i].pointScored);
         return m;
     }
+    int runnerPointMin(const Statistics* s) {
+        int m = INT_MAX;
+        for (int i=0; i<10; i++) m = glm::min(m, s->runner[i].pointScored);
+        return m;
+    }
+    int runnerPointAverage(const Statistics* s) {
+        int m = 0;
+        for (int i=0; i<10; i++) m += s->runner[i].pointScored;
+        return m * 0.1;
+    }
+
+
     int runnerCoinAverage(const Statistics* s) {
         int sum = 0;
         for (int i=0; i<10; i++) sum += s->runner[i].coinsCollected;
@@ -169,25 +181,25 @@ public:
         createTextWithValue<int>(game->statistics.allTimeBest->score, "%d", Q(1, 3));
 
         /* Points per runner */
-        createText("Max runner point", P(2, 0));
+        createText("Max points", P(2, 0));
         TEXT(texts.back())->positioning = 0.5;
         createTextWithValue<int>(runnerPointMax(game->statistics.lastGame), "%d", Q(2, 1));
         createTextWithValue<int>(runnerPointMax(game->statistics.sessionBest), "%d", Q(2, 2));
         createTextWithValue<int>(runnerPointMax(game->statistics.allTimeBest), "%d", Q(2, 3));
 
         /* Coins per runner */
-        createText("Average switches", P(3, 0));
+        createText("Min points", P(3, 0));
         TEXT(texts.back())->positioning = 0.5;
-        createTextWithValue<int>(runnerCoinAverage(game->statistics.lastGame), "%d", Q(3, 1));
-        createTextWithValue<int>(runnerCoinAverage(game->statistics.sessionBest), "%d", Q(3, 2));
-        createTextWithValue<int>(runnerCoinAverage(game->statistics.allTimeBest), "%d", Q(3, 3));
+        createTextWithValue<int>(runnerPointMin(game->statistics.lastGame), "%d", Q(3, 1));
+        createTextWithValue<int>(runnerPointMin(game->statistics.sessionBest), "%d", Q(3, 2));
+        createTextWithValue<int>(runnerPointMin(game->statistics.allTimeBest), "%d", Q(3, 3));
 
         /* Lifetime per runner */
-        createText("Average lifetime", P(4, 0));
+        createText("Average", P(4, 0));
         TEXT(texts.back())->positioning = 0.5;
-        createTextWithValue<int>(runnerLifetimeAverage(game->statistics.lastGame), "%d", Q(4, 1));
-        createTextWithValue<int>(runnerLifetimeAverage(game->statistics.sessionBest), "%d", Q(4, 2));
-        createTextWithValue<int>(runnerLifetimeAverage(game->statistics.allTimeBest), "%d", Q(4, 3));
+        createTextWithValue<int>(runnerPointAverage(game->statistics.lastGame), "%d", Q(4, 1));
+        createTextWithValue<int>(runnerPointAverage(game->statistics.sessionBest), "%d", Q(4, 2));
+        createTextWithValue<int>(runnerPointAverage(game->statistics.allTimeBest), "%d", Q(4, 3));
 
 #if 0
         /* Jumps per runner */
