@@ -78,7 +78,7 @@ class StatsScene : public StateHandler<Scene::Enum> {
 
     Entity images[Image::Count];
     Entity buttons[Button::Count];
-    std::vector<Entity> bars, texts;
+    std::vector<Entity> bars, texts, legends;
 
 public:
     StatsScene(RecursiveRunnerGame* game) : StateHandler<Scene::Enum>("stats"), game(game) {
@@ -266,17 +266,24 @@ public:
                 int indexSorted = std::find(sorted, sorted + 3, value) - sorted; // d € [0, 1, 2]
                 LOGE_IF(index < 0 || index > 2, "Uh");
                 Entity bar = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
-                TRANSFORM(bar)->size = glm::vec2(width * indexToScale(index), glm::lerp(0.1f, maxBarHeight, value / (float)maxPointScored));
                 ANCHOR(bar)->position = base;
-                ANCHOR(bar)->anchor.y = -TRANSFORM(bar)->size.y * 0.5f;
                 ANCHOR(bar)->parent = images[Image::Background];
                 ANCHOR(bar)->z = 0.02 + (2 - index) * 0.02;
                 RENDERING(bar)->color = colors[j];
 
+                float height = glm::lerp(0.1f, maxBarHeight, value / (float)maxPointScored);
+                TRANSFORM(bar)->size = glm::vec2(width * indexToScale(index), 0.1);
+                ANCHOR(bar)->anchor.y = 0; //-TRANSFORM(bar)->size.y * 0.5f;
+                ADSR(bar)->idleValue = 0.1;
+                ADSR(bar)->attackValue =
+                    ADSR(bar)->sustainValue = height;
+                ADSR(bar)->attackTiming = 1;
+                ADSR(bar)->active = true;
+
                 if (indexSorted == 0) {
                     // add legend
                     Entity legend = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
-                    ANCHOR(legend)->position.y = TRANSFORM(bar)->size.y * 0.5;
+                    ANCHOR(legend)->position.y = 0;//TRANSFORM(bar)->size.y * 0.5;
                     ANCHOR(legend)->parent = bar;
                     ANCHOR(legend)->z = 0;
                     ANCHOR(legend)->rotation = glm::pi<float>() * 0.5;
@@ -288,6 +295,7 @@ public:
 
                     // float w = computeTextComponentWidth(TEXT(legend));
                     texts.push_back(legend);
+                    legends.push_back(legend);
                 }
 
 
@@ -383,6 +391,15 @@ public:
     Scene::Enum update(float) override {
         RENDERING(buttons[Button::Back])->color = BUTTON(buttons[Button::Back])->mouseOver ? Color("gray") : Color();
 
+        for (auto b: bars) {
+            float height = ADSR(b)->value;
+            TRANSFORM(b)->size.y = height;
+            ANCHOR(b)->anchor.y = -height * 0.5;
+        }
+        for (auto l: legends) {
+            ANCHOR(l)->position.y = TRANSFORM(ANCHOR(l)->parent)->size.y * 0.5;
+        }
+
         if (BUTTON(buttons[Button::Back])->clicked) {
             return Scene::Menu;
         }
@@ -395,6 +412,7 @@ public:
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
     void onPreExit(Scene::Enum ) override {
+        legends.clear();
         for (int i=0; i<Button::Count; i++) {
             RENDERING(buttons[i])->show =
                 BUTTON(buttons[i])->enabled = false;

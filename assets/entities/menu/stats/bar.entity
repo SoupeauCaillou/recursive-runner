@@ -10,3 +10,6 @@ size = 0.3, 1
 show = 0
 flags = 1
 color = 0.403, 0.364, 0.466, 0.2
+
+[ADSR]
+idle_value = 0.1
