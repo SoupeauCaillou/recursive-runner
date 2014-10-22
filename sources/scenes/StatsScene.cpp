@@ -215,12 +215,18 @@ public:
         #define Q(__x, __y) (cell0 + cellSize * glm::vec2(__y, rows - __x - 1) +  glm::vec2(cellSize.x * 0.35f, 0.0f))
 
         /* Columns header */
-        createText("Last game", P(0, 0), colors[2]);
+        createTextWithValue(game->statistics.lastGame->score, "Last game\n%d", P(0, 0), colors[2]);
         TEXT(texts.back())->positioning = 0.5;
-        createText("Session best", P(0, 1), colors[1]);
+        TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
+        TRANSFORM(texts.back())->size.x = cellSize.x;
+        createTextWithValue(game->statistics.sessionBest->score, "Session best\n%d", P(0, 1), colors[1]);
         TEXT(texts.back())->positioning = 0.5;
-        createText("All time best", P(0, 2), colors[0]);
+        TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
+        TRANSFORM(texts.back())->size.x = cellSize.x;
+        createTextWithValue(game->statistics.allTimeBest->score, "All time best\n%d", P(0, 2), colors[0]);
         TEXT(texts.back())->positioning = 0.5;
+        TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
+        TRANSFORM(texts.back())->size.x = cellSize.x;
         for (int i=0; i<3; i++) {
             ANCHOR(texts[i])->position.y = area.y * 0.5 - TEXT(texts[i])->charHeight * 1.5;
         }
