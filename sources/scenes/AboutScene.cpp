@@ -41,6 +41,8 @@
 #include "api/LocalizeAPI.h"
 #include "api/StorageAPI.h"
 #include "api/OpenURLAPI.h"
+#include "api/CommunicationAPI.h"
+
 #include "util/ScoreStorageProxy.h"
 
 #include "../RecursiveRunnerGame.h"
@@ -56,7 +58,6 @@
 namespace Image {
     enum Enum {
         Background = 0,
-        Wolf,
         Count
     };
 }
@@ -66,6 +67,7 @@ namespace Button {
         Flattr = 0,
         Web,
         Back,
+        Wolf,
         Count
     };
 }
@@ -92,7 +94,6 @@ public:
 
     void setup(AssetAPI*) override {
         images[Image::Background] = theEntityManager.CreateEntityFromTemplate("menu/about/background");
-        images[Image::Wolf] = theEntityManager.CreateEntityFromTemplate("menu/about/wolf");
 
         texts[Text::SupportUs] = theEntityManager.CreateEntityFromTemplate("menu/about/supportus_text");
         texts[Text::AboutUs] = theEntityManager.CreateEntityFromTemplate("menu/about/aboutus_text");
@@ -100,6 +101,8 @@ public:
         buttons[Button::Flattr] = theEntityManager.CreateEntityFromTemplate("menu/about/flattr_button");
         buttons[Button::Web] = theEntityManager.CreateEntityFromTemplate("menu/about/web_button");
         buttons[Button::Back] = theEntityManager.CreateEntityFromTemplate("menu/about/back_button");
+        buttons[Button::Wolf] = theEntityManager.CreateEntityFromTemplate("menu/about/wolf");
+
         ANCHOR(buttons[Button::Back])->parent = game->muteBtn;
         TRANSFORM(buttons[Button::Back])->position.y += game->baseLine + TRANSFORM(game->cameraEntity)->size.y * 0.5;
     }
@@ -136,8 +139,11 @@ public:
         } else if (BUTTON(buttons[Button::Back])->clicked) {
             return Scene::Menu;
         } else if (BUTTON(buttons[Button::Web])->clicked) {
-            std::string url = "http://soupeaucaillou.com";
+            const std::string url = "http://soupeaucaillou.com";
             game->gameThreadContext->openURLAPI->openURL(url);
+        } else if (BUTTON(buttons[Button::Wolf])->clicked) {
+            // display version information
+            game->gameThreadContext->communicationAPI->show("__version__");
         }
 
         return Scene::About;

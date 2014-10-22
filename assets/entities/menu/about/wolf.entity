@@ -12,3 +12,5 @@ position%gimp_size = 400, 250
 [Rendering]
 flags = 1
 texture = loup2
+
+[Button]
