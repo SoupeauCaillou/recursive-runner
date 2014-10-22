@@ -852,9 +852,10 @@ void RecursiveRunnerGame::endGame(Statistics* stats) {
                 #if SAC_BENCHMARK_MODE
                 static int gameCount = 0;
                 std::cout << "END GAME #" << gameCount++ <<  ' ' << gameId << std::endl;
+                #else
+                gameThreadContext->storageAPI->dropAll(&ssp);
                 #endif
 
-                // gameThreadContext->storageAPI->dropAll(&ssp);
                 for (int i=0; i<10; i++) {
                     ssp._queue.push(stats->runner[i]);
                 }

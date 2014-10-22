@@ -195,6 +195,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
 
         void onEnter(Scene::Enum) {
+            game->endGame(game->statistics.lastGame);
             if (game->statisticsAvailable()) {
                 BUTTON(game->statman)->enabled = true;
                 RENDERING(game->statman)->texture = theRenderingSystem.loadTextureFile("statman_panneau");
@@ -203,7 +204,6 @@ class MenuScene : public StateHandler<Scene::Enum> {
                 RENDERING(game->statman)->texture = theRenderingSystem.loadTextureFile("statman_gauche");
             }
 
-            game->endGame(game->statistics.lastGame);
             // enable UI
             for (int i=0; i<(int)Button::Count; i++) {
                 BUTTON(buttons[i])->enabled = true;
