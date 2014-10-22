@@ -400,6 +400,7 @@ void RecursiveRunnerGame::decor() {
             false;
 #elif SAC_BENCHMARK_MODE
             true;
+#else
             gameThreadContext->storageAPI->isOption("sound", "off");
 #endif
     pianist = theEntityManager.CreateEntity(HASH("background/pianist", 0x136d34ba),
