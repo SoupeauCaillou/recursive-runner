@@ -252,11 +252,11 @@ public:
                 scores[j] = game->statistics.s[j]->runner[i].pointScored;
                 sorted[j] = scores[j];
             }
-            std::sort(sorted, sorted + 3);
+            std::sort(sorted, sorted + 3, [] (int p, int q) -> bool { return p > q; });
 
             for (int j=0; j<3; j++) {
                 int value = game->statistics.s[j]->runner[i].pointScored;
-                int index = std::find(scores, scores + 3, value) - scores; // d € [0, 1, 2]
+                int index = j;
                 int indexSorted = std::find(sorted, sorted + 3, value) - sorted; // d € [0, 1, 2]
                 LOGE_IF(index < 0 || index > 2, "Uh");
                 Entity bar = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
@@ -267,7 +267,7 @@ public:
                 ANCHOR(bar)->z = 0.02 + (2 - index) * 0.02;
                 RENDERING(bar)->color = colors[j];
 
-                if (indexSorted == 2) { //&&  value > maxPointScored * 0.9) {
+                if (indexSorted == 0) {
                     // add legend
                     Entity legend = theEntityManager.CreateEntityFromTemplate("menu/stats/bar_legend");
                     ANCHOR(legend)->position.y = TRANSFORM(bar)->size.y * 0.5;
