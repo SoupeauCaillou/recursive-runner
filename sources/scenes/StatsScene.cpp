@@ -106,9 +106,9 @@ public:
     }
 
     template<class T>
-    Entity createTextWithValue(T value, const char* format, const glm::vec2& pos, const Color& c) {
+    Entity createTextWithValue(T value, const std::string& format, const glm::vec2& pos, const Color& c) {
         char tmp[128];
-        sprintf(tmp, format, value);
+        snprintf(tmp, 128, format.c_str(), value);
         return createText(tmp, pos, c);
     }
 
@@ -186,7 +186,7 @@ public:
 
     float indexToScale(int idx) {
         switch (idx) {
-            case 2: return 0.8;
+            case 0: return 0.8;
             case 1: return 0.5f;
             default: return 0.2;
         }
@@ -215,15 +215,16 @@ public:
         #define Q(__x, __y) (cell0 + cellSize * glm::vec2(__y, rows - __x - 1) +  glm::vec2(cellSize.x * 0.35f, 0.0f))
 
         /* Columns header */
-        createTextWithValue(game->statistics.lastGame->score, "Last game\n%d", P(0, 0), colors[2]);
+        const std::string form = "\n%d";
+        createTextWithValue(game->statistics.lastGame->score, game->gameThreadContext->localizeAPI->text("last_game") + form, P(0, 0), colors[2]);
         TEXT(texts.back())->positioning = 0.5;
         TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
         TRANSFORM(texts.back())->size.x = cellSize.x;
-        createTextWithValue(game->statistics.sessionBest->score, "Session best\n%d", P(0, 1), colors[1]);
+        createTextWithValue(game->statistics.sessionBest->score, game->gameThreadContext->localizeAPI->text("today_best") + form, P(0, 1), colors[1]);
         TEXT(texts.back())->positioning = 0.5;
         TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
         TRANSFORM(texts.back())->size.x = cellSize.x;
-        createTextWithValue(game->statistics.allTimeBest->score, "All time best\n%d", P(0, 2), colors[0]);
+        createTextWithValue(game->statistics.allTimeBest->score, game->gameThreadContext->localizeAPI->text("all_time_best") + form, P(0, 2), colors[0]);
         TEXT(texts.back())->positioning = 0.5;
         TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
         TRANSFORM(texts.back())->size.x = cellSize.x;
@@ -244,7 +245,8 @@ public:
 
             TEXT(yaxis)->text = "1000000";
             maxScoreTextWidth = theTextSystem.computeTextComponentWidth(TEXT(yaxis));
-            TEXT(yaxis)->text = "Points";
+            TEXT(yaxis)->text = game->gameThreadContext->localizeAPI->text("points");
+            TEXT(yaxis)->positioning = 0.5;
             texts.push_back(yaxis);
         }
 
@@ -268,7 +270,7 @@ public:
                 Entity bar = theEntityManager.CreateEntityFromTemplate("menu/stats/bar");
                 ANCHOR(bar)->position = base;
                 ANCHOR(bar)->parent = images[Image::Background];
-                ANCHOR(bar)->z = 0.02 + (2 - index) * 0.02;
+                ANCHOR(bar)->z = 0.02 + index * 0.02;
                 RENDERING(bar)->color = colors[j];
 
                 float height = glm::lerp(0.1f, maxBarHeight, value / (float)maxPointScored);

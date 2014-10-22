@@ -17,4 +17,7 @@
   <string name="points">"points"</string>
   <string name="about_us">"Pour nous encourager"</string>
   <string name="support_us">"Pour nous aider..."</string>
+  <string name="last_game">"Dernière partie"</string>
+  <string name="today_best">"Record du jour"</string>
+  <string name="all_time_best">"Record"</string>
 </resources>
