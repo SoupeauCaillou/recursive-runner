@@ -1,4 +1,4 @@
-atlas_size=1024,2048
+atlas_size=2048,2048
 [image0]
 name=ampoule
 original_size=99,107

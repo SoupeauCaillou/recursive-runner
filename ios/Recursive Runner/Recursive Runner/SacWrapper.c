@@ -19,8 +19,8 @@ void sac_init(float w, float h) {
     struct SetupInfo s;
     s.name = "Test";
     s.version = "0.0.1";
-    s.resolution.x = w;
-    s.resolution.y = h;
+    s.resolution.x = (w > h) ? w : h;
+    s.resolution.y = (w > h) ? h : w;
     
     setupEngine(game, &s);
 }
