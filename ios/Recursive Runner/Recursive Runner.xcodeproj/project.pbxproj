@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		70B8029E1A62DBBD004581FC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B8029D1A62DBBD004581FC /* main.m */; };
 		70B802A11A62DBBD004581FC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B802A01A62DBBD004581FC /* AppDelegate.m */; };
-		70B802A31A62DBBD004581FC /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 70B802A21A62DBBD004581FC /* Shader.fsh */; };
-		70B802A51A62DBBD004581FC /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 70B802A41A62DBBD004581FC /* Shader.vsh */; };
 		70B802A81A62DBBD004581FC /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B802A71A62DBBD004581FC /* GameViewController.m */; };
 		70B802AB1A62DBBD004581FC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70B802A91A62DBBD004581FC /* Main.storyboard */; };
 		70B802AD1A62DBBD004581FC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70B802AC1A62DBBD004581FC /* Images.xcassets */; };
@@ -42,8 +40,6 @@
 		70B8029D1A62DBBD004581FC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		70B8029F1A62DBBD004581FC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		70B802A01A62DBBD004581FC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		70B802A21A62DBBD004581FC /* Shader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.fsh; path = Shaders/Shader.fsh; sourceTree = "<group>"; };
-		70B802A41A62DBBD004581FC /* Shader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.vsh; path = Shaders/Shader.vsh; sourceTree = "<group>"; };
 		70B802A61A62DBBD004581FC /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
 		70B802A71A62DBBD004581FC /* GameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
 		70B802AA1A62DBBD004581FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -119,8 +115,6 @@
 				70B802CF1A62DC0C004581FC /* SacWrapper.h */,
 				70B8029F1A62DBBD004581FC /* AppDelegate.h */,
 				70B802A01A62DBBD004581FC /* AppDelegate.m */,
-				70B802A21A62DBBD004581FC /* Shader.fsh */,
-				70B802A41A62DBBD004581FC /* Shader.vsh */,
 				70B802A61A62DBBD004581FC /* GameViewController.h */,
 				70B802A71A62DBBD004581FC /* GameViewController.m */,
 				70B802A91A62DBBD004581FC /* Main.storyboard */,
@@ -241,8 +235,6 @@
 				70B802AB1A62DBBD004581FC /* Main.storyboard in Resources */,
 				70B802AD1A62DBBD004581FC /* Images.xcassets in Resources */,
 				70B805551A62E61F004581FC /* assets in Resources */,
-				70B802A51A62DBBD004581FC /* Shader.vsh in Resources */,
-				70B802A31A62DBBD004581FC /* Shader.fsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +466,7 @@
 				70B802C11A62DBBD004581FC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		70B802C21A62DBBD004581FC /* Build configuration list for PBXNativeTarget "Recursive RunnerTests" */ = {
 			isa = XCConfigurationList;
@@ -482,6 +475,7 @@
 				70B802C41A62DBBD004581FC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
