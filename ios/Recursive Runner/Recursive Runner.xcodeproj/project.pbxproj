@@ -1,0 +1,489 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		70B8029E1A62DBBD004581FC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B8029D1A62DBBD004581FC /* main.m */; };
+		70B802A11A62DBBD004581FC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B802A01A62DBBD004581FC /* AppDelegate.m */; };
+		70B802A31A62DBBD004581FC /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 70B802A21A62DBBD004581FC /* Shader.fsh */; };
+		70B802A51A62DBBD004581FC /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 70B802A41A62DBBD004581FC /* Shader.vsh */; };
+		70B802A81A62DBBD004581FC /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B802A71A62DBBD004581FC /* GameViewController.m */; };
+		70B802AB1A62DBBD004581FC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70B802A91A62DBBD004581FC /* Main.storyboard */; };
+		70B802AD1A62DBBD004581FC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70B802AC1A62DBBD004581FC /* Images.xcassets */; };
+		70B802B01A62DBBD004581FC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 70B802AE1A62DBBD004581FC /* LaunchScreen.xib */; };
+		70B802BC1A62DBBD004581FC /* Recursive_RunnerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B802BB1A62DBBD004581FC /* Recursive_RunnerTests.m */; };
+		70B802D01A62DC0C004581FC /* SacWrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 70B802CE1A62DC0C004581FC /* SacWrapper.c */; };
+		70B802D71A62DC33004581FC /* libsac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B802D11A62DC33004581FC /* libsac.a */; };
+		70B802D81A62DC33004581FC /* libsqlite3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B802D21A62DC33004581FC /* libsqlite3.a */; };
+		70B802D91A62DC33004581FC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B802D31A62DC33004581FC /* CoreFoundation.framework */; };
+		70B802DA1A62DC33004581FC /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B802D41A62DC33004581FC /* libc++.dylib */; };
+		70B802DB1A62DC33004581FC /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B802D51A62DC33004581FC /* OpenAL.framework */; };
+		70B802DC1A62DC33004581FC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70B802D61A62DC33004581FC /* OpenGLES.framework */; };
+		70B805551A62E61F004581FC /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 70B805541A62E61F004581FC /* assets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		70B802B61A62DBBD004581FC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70B802901A62DBBD004581FC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70B802971A62DBBD004581FC;
+			remoteInfo = "Recursive Runner";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		70B802981A62DBBD004581FC /* Recursive Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Recursive Runner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		70B8029C1A62DBBD004581FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		70B8029D1A62DBBD004581FC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		70B8029F1A62DBBD004581FC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		70B802A01A62DBBD004581FC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		70B802A21A62DBBD004581FC /* Shader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.fsh; path = Shaders/Shader.fsh; sourceTree = "<group>"; };
+		70B802A41A62DBBD004581FC /* Shader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.vsh; path = Shaders/Shader.vsh; sourceTree = "<group>"; };
+		70B802A61A62DBBD004581FC /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
+		70B802A71A62DBBD004581FC /* GameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
+		70B802AA1A62DBBD004581FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		70B802AC1A62DBBD004581FC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		70B802AF1A62DBBD004581FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		70B802B51A62DBBD004581FC /* Recursive RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Recursive RunnerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		70B802BA1A62DBBD004581FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		70B802BB1A62DBBD004581FC /* Recursive_RunnerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Recursive_RunnerTests.m; sourceTree = "<group>"; };
+		70B802CE1A62DC0C004581FC /* SacWrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SacWrapper.c; sourceTree = "<group>"; };
+		70B802CF1A62DC0C004581FC /* SacWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SacWrapper.h; sourceTree = "<group>"; };
+		70B802D11A62DC33004581FC /* libsac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsac.a; path = "../../build_ios/Debug-iphonesimulator/libsac.a"; sourceTree = "<group>"; };
+		70B802D21A62DC33004581FC /* libsqlite3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlite3.a; path = "../../build_ios/Debug-iphonesimulator/libsqlite3.a"; sourceTree = "<group>"; };
+		70B802D31A62DC33004581FC /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		70B802D41A62DC33004581FC /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		70B802D51A62DC33004581FC /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		70B802D61A62DC33004581FC /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		70B805541A62E61F004581FC /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../../assets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		70B802951A62DBBD004581FC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70B802D71A62DC33004581FC /* libsac.a in Frameworks */,
+				70B802D81A62DC33004581FC /* libsqlite3.a in Frameworks */,
+				70B802D91A62DC33004581FC /* CoreFoundation.framework in Frameworks */,
+				70B802DA1A62DC33004581FC /* libc++.dylib in Frameworks */,
+				70B802DB1A62DC33004581FC /* OpenAL.framework in Frameworks */,
+				70B802DC1A62DC33004581FC /* OpenGLES.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70B802B21A62DBBD004581FC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		70B8028F1A62DBBD004581FC = {
+			isa = PBXGroup;
+			children = (
+				70B802D11A62DC33004581FC /* libsac.a */,
+				70B802D21A62DC33004581FC /* libsqlite3.a */,
+				70B802D31A62DC33004581FC /* CoreFoundation.framework */,
+				70B802D41A62DC33004581FC /* libc++.dylib */,
+				70B802D51A62DC33004581FC /* OpenAL.framework */,
+				70B802D61A62DC33004581FC /* OpenGLES.framework */,
+				70B8029A1A62DBBD004581FC /* Recursive Runner */,
+				70B802B81A62DBBD004581FC /* Recursive RunnerTests */,
+				70B802991A62DBBD004581FC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		70B802991A62DBBD004581FC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				70B802981A62DBBD004581FC /* Recursive Runner.app */,
+				70B802B51A62DBBD004581FC /* Recursive RunnerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		70B8029A1A62DBBD004581FC /* Recursive Runner */ = {
+			isa = PBXGroup;
+			children = (
+				70B805541A62E61F004581FC /* assets */,
+				70B802CE1A62DC0C004581FC /* SacWrapper.c */,
+				70B802CF1A62DC0C004581FC /* SacWrapper.h */,
+				70B8029F1A62DBBD004581FC /* AppDelegate.h */,
+				70B802A01A62DBBD004581FC /* AppDelegate.m */,
+				70B802A21A62DBBD004581FC /* Shader.fsh */,
+				70B802A41A62DBBD004581FC /* Shader.vsh */,
+				70B802A61A62DBBD004581FC /* GameViewController.h */,
+				70B802A71A62DBBD004581FC /* GameViewController.m */,
+				70B802A91A62DBBD004581FC /* Main.storyboard */,
+				70B802AC1A62DBBD004581FC /* Images.xcassets */,
+				70B802AE1A62DBBD004581FC /* LaunchScreen.xib */,
+				70B8029B1A62DBBD004581FC /* Supporting Files */,
+			);
+			path = "Recursive Runner";
+			sourceTree = "<group>";
+		};
+		70B8029B1A62DBBD004581FC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				70B8029C1A62DBBD004581FC /* Info.plist */,
+				70B8029D1A62DBBD004581FC /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		70B802B81A62DBBD004581FC /* Recursive RunnerTests */ = {
+			isa = PBXGroup;
+			children = (
+				70B802BB1A62DBBD004581FC /* Recursive_RunnerTests.m */,
+				70B802B91A62DBBD004581FC /* Supporting Files */,
+			);
+			path = "Recursive RunnerTests";
+			sourceTree = "<group>";
+		};
+		70B802B91A62DBBD004581FC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				70B802BA1A62DBBD004581FC /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		70B802971A62DBBD004581FC /* Recursive Runner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70B802BF1A62DBBD004581FC /* Build configuration list for PBXNativeTarget "Recursive Runner" */;
+			buildPhases = (
+				70B802941A62DBBD004581FC /* Sources */,
+				70B802951A62DBBD004581FC /* Frameworks */,
+				70B802961A62DBBD004581FC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Recursive Runner";
+			productName = "Recursive Runner";
+			productReference = 70B802981A62DBBD004581FC /* Recursive Runner.app */;
+			productType = "com.apple.product-type.application";
+		};
+		70B802B41A62DBBD004581FC /* Recursive RunnerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70B802C21A62DBBD004581FC /* Build configuration list for PBXNativeTarget "Recursive RunnerTests" */;
+			buildPhases = (
+				70B802B11A62DBBD004581FC /* Sources */,
+				70B802B21A62DBBD004581FC /* Frameworks */,
+				70B802B31A62DBBD004581FC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				70B802B71A62DBBD004581FC /* PBXTargetDependency */,
+			);
+			name = "Recursive RunnerTests";
+			productName = "Recursive RunnerTests";
+			productReference = 70B802B51A62DBBD004581FC /* Recursive RunnerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		70B802901A62DBBD004581FC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Soupe au Caillou";
+				TargetAttributes = {
+					70B802971A62DBBD004581FC = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					70B802B41A62DBBD004581FC = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = 70B802971A62DBBD004581FC;
+					};
+				};
+			};
+			buildConfigurationList = 70B802931A62DBBD004581FC /* Build configuration list for PBXProject "Recursive Runner" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 70B8028F1A62DBBD004581FC;
+			productRefGroup = 70B802991A62DBBD004581FC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				70B802971A62DBBD004581FC /* Recursive Runner */,
+				70B802B41A62DBBD004581FC /* Recursive RunnerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		70B802961A62DBBD004581FC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70B802B01A62DBBD004581FC /* LaunchScreen.xib in Resources */,
+				70B802AB1A62DBBD004581FC /* Main.storyboard in Resources */,
+				70B802AD1A62DBBD004581FC /* Images.xcassets in Resources */,
+				70B805551A62E61F004581FC /* assets in Resources */,
+				70B802A51A62DBBD004581FC /* Shader.vsh in Resources */,
+				70B802A31A62DBBD004581FC /* Shader.fsh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70B802B31A62DBBD004581FC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		70B802941A62DBBD004581FC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70B802A11A62DBBD004581FC /* AppDelegate.m in Sources */,
+				70B802D01A62DC0C004581FC /* SacWrapper.c in Sources */,
+				70B802A81A62DBBD004581FC /* GameViewController.m in Sources */,
+				70B8029E1A62DBBD004581FC /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70B802B11A62DBBD004581FC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70B802BC1A62DBBD004581FC /* Recursive_RunnerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		70B802B71A62DBBD004581FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 70B802971A62DBBD004581FC /* Recursive Runner */;
+			targetProxy = 70B802B61A62DBBD004581FC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		70B802A91A62DBBD004581FC /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				70B802AA1A62DBBD004581FC /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		70B802AE1A62DBBD004581FC /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				70B802AF1A62DBBD004581FC /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		70B802BD1A62DBBD004581FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		70B802BE1A62DBBD004581FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		70B802C01A62DBBD004581FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/pierre-eric/perso/recursive-runner/sac/",
+				);
+				INFOPLIST_FILE = "Recursive Runner/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/pierre-eric/perso/recursive-runner/build_ios/Debug-iphonesimulator",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		70B802C11A62DBBD004581FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/pierre-eric/perso/recursive-runner/sac/",
+				);
+				INFOPLIST_FILE = "Recursive Runner/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/pierre-eric/perso/recursive-runner/build_ios/Debug-iphonesimulator",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		70B802C31A62DBBD004581FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Recursive RunnerTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Recursive Runner.app/Recursive Runner";
+			};
+			name = Debug;
+		};
+		70B802C41A62DBBD004581FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Recursive RunnerTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Recursive Runner.app/Recursive Runner";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		70B802931A62DBBD004581FC /* Build configuration list for PBXProject "Recursive Runner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70B802BD1A62DBBD004581FC /* Debug */,
+				70B802BE1A62DBBD004581FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70B802BF1A62DBBD004581FC /* Build configuration list for PBXNativeTarget "Recursive Runner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70B802C01A62DBBD004581FC /* Debug */,
+				70B802C11A62DBBD004581FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		70B802C21A62DBBD004581FC /* Build configuration list for PBXNativeTarget "Recursive RunnerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70B802C31A62DBBD004581FC /* Debug */,
+				70B802C41A62DBBD004581FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 70B802901A62DBBD004581FC /* Project object */;
+}
