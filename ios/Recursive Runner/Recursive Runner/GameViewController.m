@@ -24,6 +24,8 @@
 
 @implementation GameViewController
 
+extern char* iosWritablePath;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -38,6 +40,10 @@
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     [EAGLContext setCurrentContext:self.context];
+    
+    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDirectory, YES);
+    NSString* dir = [paths objectAtIndex:0];
+    iosWritablePath = strdup(dir.UTF8String);
     
     sac_init(view.bounds.size.width, view.bounds.size.height);
 }
