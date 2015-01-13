@@ -99,6 +99,54 @@
     return UIInterfaceOrientationMaskLandscape;
 }
 
+bool touching[3];
+CGPoint position[3];
+UITouch* association[3];
+int iosIsTouching(int index, float* x, float* y) {
+    *x = position[index].x;
+    *y = position[index].y;
+    return touching[index];
+}
 
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch* aTouch in touches) {
+        for (int i=0; i<3; i++) {
+            if (association[i] == NULL) {
+                association[i] = aTouch;
+                touching[i] = true;
+                position[i] = [aTouch locationInView:self.view];
+                break;
+            }
+            // ignored touch
+        }
+    }
+}
+
+- (void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch* aTouch in touches) {
+        for (int i=0; i<3; i++) {
+            if (association[i] == aTouch) {
+                position[i] = [aTouch locationInView:self.view];
+                break;
+            }
+        }
+    }
+}
+
+- (void) touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self touchesEnded:touches withEvent:event];
+}
+
+- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch* aTouch in touches) {
+        for (int i=0; i<3; i++) {
+            if (association[i] == aTouch) {
+                association[i] = NULL;
+                touching[i] = false;
+                break;
+            }
+        }
+    }
+}
 
 @end

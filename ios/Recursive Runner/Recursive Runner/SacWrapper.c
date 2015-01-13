@@ -13,6 +13,9 @@ struct Game;
 
 struct Game* game;
 
+extern int iosIsTouching(int index, float* x, float* y);
+extern int (*iosIsTouchingFn) (int, float* winX, float* winY);
+
 void sac_init(float w, float h) {
     game = buildGameInstance();
     
@@ -23,6 +26,8 @@ void sac_init(float w, float h) {
     s.resolution.y = (w > h) ? h : w;
     
     setupEngine(game, &s);
+    
+    iosIsTouchingFn = &iosIsTouching;
 }
 
 void sac_tick() {
