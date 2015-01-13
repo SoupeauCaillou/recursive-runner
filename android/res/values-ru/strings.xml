@@ -15,4 +15,6 @@
   <string name="good_luck">"Удачи!"</string>
   <string name="Best">"Лучше всего"</string>
   <string name="points">"очков"</string>
+  <string name="about_us">"О нас"</string>
+  <string name="support_us">"Поддержите нас"</string>
 </resources>
