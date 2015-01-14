@@ -6,7 +6,7 @@ Xogarás durante 90 segundos en cada partida.
 Estás afeito a controlar 1 corredor? Nós darémosche ata 10.
 Cal é o truco?
 You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+O reto é sumar puntos co corredor actual ao tempo que evitas colidir cos anteriores; se te espetas cun deles, desaparecerá para sempre.
 Several achievements to earn and a leaderboard to climb!
 There are no ads in the game, since we like you, and that you dont like ads that dont like you
 We hope you like avoiding recursivly running into a phantom-mime.

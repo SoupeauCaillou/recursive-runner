@@ -6,7 +6,7 @@ Jugarás 90 segundos por cada partida.
 ¿Acostumbrado a controlar 1 personaje? Te daremos 10 de ellos.
 ¿El truco?
 You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+El reto es ganar puntuación con el personaje actual mientras evitas chocar con los anteriores - si chocas con uno de ellos, desaparecerá para siempre.
 Several achievements to earn and a leaderboard to climb!
 There are no ads in the game, since we like you, and that you dont like ads that dont like you
 We hope you like avoiding recursivly running into a phantom-mime.

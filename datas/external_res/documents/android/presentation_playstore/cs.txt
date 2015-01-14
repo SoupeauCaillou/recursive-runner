@@ -6,7 +6,7 @@ Každou hru budete hrát 90 sekund.
 Jste zvyklí řídit 1 běžícího hrdinu? My vám jich dáme 10.
 Kde vězí trik?
 Budete je ovládat jednoho po druhém, až skončíte s prvním, bude opakovat cestu a sbírat pro vás body.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Výzvou bude sbírat body s vaší momentální postavou a vyhnout se předchozím dvojníkům - pokud se srazí, jeden z nich navždy zmizí.
 Několi úkolů k dosažení a vedoucí listina ke zdolání!
 Ve hře nejsou žádné reklamy, protože vás máme rádi a protože nemáte rádi reklamy, které nemají rády vás
 Doufáme, že se vám bude líbit vyhýbání rekurzivním běžcům.

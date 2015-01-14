@@ -6,7 +6,7 @@ Hver runde varer 90 sekunder.
 Vant til å kontrollere 1 springende helt? Vi gir deg 10 stykker.
 Trikset?
 You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Utfordringen er å oppnå poeng med din nåværende helt, mens du unngår tidligere gjengangere - hvis du treffer en av dem så forsvinner vedkommende for godt.
 Several achievements to earn and a leaderboard to climb!
 There are no ads in the game, since we like you, and that you dont like ads that dont like you
 We hope you like avoiding recursivly running into a phantom-mime.

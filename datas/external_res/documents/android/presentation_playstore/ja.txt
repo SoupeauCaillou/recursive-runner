@@ -6,7 +6,7 @@
 1人の走者でプレイするんですか？いいえ、10人です。
 幻覚？
 一度に操作するのは一人だけですが、走り終わると以前の操作を繰り返し、得点を増やします。
-The challenge is to score points with your current person while avoiding your previous doppelgangers - if you hit one of them it will disappear forever.
+あなたの現在の走者で、以前の走者を避けながらポイントを稼ぐことは難しいです。-もし以前の走者に触れてしまったら、彼は永遠に消えてしまいます。
 Several achievements to earn and a leaderboard to climb!
 There are no ads in the game, since we like you, and that you dont like ads that dont like you
 We hope you like avoiding recursivly running into a phantom-mime.

@@ -6,7 +6,7 @@ Du wirst 90 Sekunden spielen!
 Du bist es gewohnt einen rennenden Helden zu spielen? Wir geben dir 10 von ihm!
 Der Trick?
 Du kontrollierst immer nur einen. Wenn du mit diesem fertig bist, steckt dieser in einer Schleife und sammelt Punkte für dich. 
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+Versuche mit deinem Helden punkte zu erzielen während du deinen früheren Helden ausweichst. Wenn du sie triffst, verschwinden sie für immer.
 Verbuche mehrere Erfolge und klettere das Leaderboard rauf!
 Es gibt keine Werbung im Spiel, da wir Dich lieben, und dass Du Werbung hasst, die Dich nicht mag
 Wir hoffen, dass Du die Vermeidung des rekursiv Laufens einer Pantomime magst.

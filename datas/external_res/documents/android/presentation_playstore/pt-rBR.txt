@@ -6,7 +6,7 @@ Você vai jogar por 90 segundos cada jogo.
 Acostumado a controlar 1 herói correndo? Nós vamos te dar 10 deles.
 O truque?
 Você controla eles um de cada vez e, quando você terminar com um, ele vai fazer a mesma corrida de novo e de novo e vai continuar ganhando pontos para você.
-O desafio é ganhar pontos com seu personagem atual evitando os seus outros-eu - se você trombar em um deles, ele desaparecerá para sempre.
+O desafio é pontuar com seu herói atual enquanto evita seus anteriores - se você acertar um deles, ele vai desaparecer para sempre.
 Há várias conquistas para desbloquear e um quadro dos melhores jogadores para você conquistar!
 Não há propagandas no jogo, já que gostamos de você e que você não gosta de propagandas
 Esperamos que você goste do Recursive Runner.

@@ -6,7 +6,7 @@
 فقط با یک قهرمان بازی میکردید؟ ما به شما 10 قهرمان میدهیم
 یعنی چی؟
 You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
-The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
+چالش بازی این است که شما با شخصیت جدید خود به کسب امتیاز بپردازید و از برخورد با شخصیت قبلی اجتناب کنید ,در اثر برخورد با شخصیت های قبلی آنها برای همیشه محو خواهند شد
 Several achievements to earn and a leaderboard to climb!
 There are no ads in the game, since we like you, and that you dont like ads that dont like you
 We hope you like avoiding recursivly running into a phantom-mime.
