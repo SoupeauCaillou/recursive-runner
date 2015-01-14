@@ -95,7 +95,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             subtitle = theEntityManager.CreateEntityFromTemplate("menu/subtitle");
 
             subtitleText = theEntityManager.CreateEntityFromTemplate("menu/subtitle_text");
-            TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("tap_screen_to_start");
+            TEXT(subtitleText)->text = game->gameThreadContext->localizeAPI->text("Tap screen to start");
             TEXT(subtitleText)->charHeight *= 1.5;
 
             buttons[Button::Help] = theEntityManager.CreateEntity(HASH("menu/help_button", 0xf0532382),
@@ -131,7 +131,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
             const auto& players = thePlayerSystem.RetrieveAllEntityWithComponent();
             if (!players.empty() && from == Scene::Game) {
                 TEXT(subtitleText)->text = ObjectSerializer<int>::object2string(PLAYER(players.front())->points)
-                + " " + game->gameThreadContext->localizeAPI->text("points") + " - " + game->gameThreadContext->localizeAPI->text("tap_screen_to_restart");
+                + " " + game->gameThreadContext->localizeAPI->text("points") + " - " + game->gameThreadContext->localizeAPI->text("tap screen to restart");
 
                 //save the score in DB
                 ScoreStorageProxy ssp;

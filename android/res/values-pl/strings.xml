@@ -1,20 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="tap_screen_to_start">"Dotknij ekranu, aby rozpocząć"</string>
-  <string name="tap_screen_to_restart">"dotknij ekran, aby uruchomić ponownie"</string>
-  <string name="how_to_play">"Jak zagrać? (dotknij, aby kontynuować)"</string>
-  <string name="this_is_you">"To jesteś ty"</string>
-  <string name="tap_jump">"Dotknij ekranu, aby wykonać skok"</string>
-  <string name="turn_on">"Włącz światła, aby zdobyć punkty"</string>
-  <string name="longer_press">"Dotknij dłużej, aby wykonać wyższe skoki"</string>
-  <string name="run_edge">"Bieg kończy się tam gdzie ekran"</string>
-  <string name="new_hero">"Naprawdę ponowny spawn?"</string>
-  <string name="previous_hero_replay">"Twoje poprzednie ja powtarza swój los"</string>
-  <string name="avoid_him">"Unikaj siebie samego, który będzie dalej zbierał punkty!"</string>
-  <string name="ten_heroes">"Staraj się uzyskać jak najlepszy wynik przeciwko 10-cioma siebie!"</string>
-  <string name="good_luck">"Powodzenia!"</string>
-  <string name="Best">"Najlepszy"</string>
-  <string name="points">"punkty"</string>
-  <string name="about_us">"O nas"</string>
-  <string name="support_us">"Wesprzyj nas"</string>
+  <string name="tap_screen_to_start">Dotknij ekranu, aby rozpocząć</string>
+  <string name="tap_screen_to_restart">dotknij ekran, aby uruchomić ponownie</string>
+  <string name="how_to_play">Jak zagrać? (dotknij, aby kontynuować)</string>
+  <string name="this_is_you">To jesteś ty</string>
+  <string name="tap_jump">Dotknij ekranu, aby wykonać skok</string>
+  <string name="turn_on">Włącz światła, aby zdobyć punkty</string>
+  <string name="longer_press">Dotknij dłużej, aby wykonać wyższe skoki</string>
+  <string name="run_edge">Bieg kończy się tam gdzie ekran</string>
+  <string name="new_hero">Naprawdę ponowny spawn?</string>
+  <string name="previous_hero_replay">Twoje poprzednie ja powtarza swój los</string>
+  <string name="avoid_him">Unikaj siebie samego, który będzie dalej zbierał punkty!</string>
+  <string name="ten_heroes">Staraj się uzyskać jak najlepszy wynik przeciwko 10-cioma siebie!</string>
+  <string name="good_luck">Powodzenia!</string>
+  <string name="Best">Najlepszy</string>
+  <string name="points">punkty</string>
+  <string name="about_us">O nas</string>
+  <string name="support_us">Wesprzyj nas</string>
 </resources>

@@ -1,0 +1,20 @@
+Touchez l'écran pour jouer
+touchez l'écran pour rejouer
+Comment jouer ? (touchez l'écran pour continuer)
+Ce personnage : c'est Vous
+Appuyez sur l'écran pour sauter
+Allumez les lumières pour marquer des points
+Un appui long provoque un saut plus haut
+Vous courrez jusqu'au bord de l'écran
+Puis, un nouveau Vous apparaît
+Votre précédent-Vous refait sa course
+Évitez-le : il marque encore des points !
+Donnez le meilleur de vous même avec 10 Vous !
+Bonne chance !
+Record 
+points
+Pour nous encourager
+Pour nous aider...
+Dernière partie
+Record du jour
+Record

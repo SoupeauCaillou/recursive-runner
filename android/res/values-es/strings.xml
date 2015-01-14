@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="tap_screen_to_start">"Presiona la pantalla para comenzar"</string>
-  <string name="tap_screen_to_restart">"presiona la pantalla para comenzar"</string>
-  <string name="how_to_play">"¿Cómo jugar? (presiona para continuar)"</string>
-  <string name="tap_jump">"Presiona la pantalla para Saltar"</string>
-  <string name="turn_on">"Enciende las luces para ganar puntos"</string>
-  <string name="longer_press">"Mantén presionado para saltar más alto"</string>
-  <string name="good_luck">"Buena suerte!"</string>
+  <string name="tap_screen_to_start">Presiona la pantalla para comenzar</string>
+  <string name="tap_screen_to_restart">presiona la pantalla para comenzar</string>
+  <string name="how_to_play">¿Cómo jugar? (presiona para continuar)</string>
+  <string name="tap_jump">Presiona la pantalla para Saltar</string>
+  <string name="turn_on">Enciende las luces para ganar puntos</string>
+  <string name="longer_press">Mantén presionado para saltar más alto</string>
+  <string name="good_luck">Buena suerte!</string>
 </resources>

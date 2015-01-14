@@ -1,0 +1,20 @@
+Dotknij ekranu, aby rozpocząć
+dotknij ekran, aby uruchomić ponownie
+Jak zagrać? (dotknij, aby kontynuować)
+To jesteś ty
+Dotknij ekranu, aby wykonać skok
+Włącz światła, aby zdobyć punkty
+Dotknij dłużej, aby wykonać wyższe skoki
+Bieg kończy się tam gdzie ekran
+Naprawdę ponowny spawn?
+Twoje poprzednie ja powtarza swój los
+Unikaj siebie samego, który będzie dalej zbierał punkty!
+Staraj się uzyskać jak najlepszy wynik przeciwko 10-cioma siebie!
+Powodzenia!
+Najlepszy
+punkty
+O nas
+Wesprzyj nas
+Last Game
+Today's Best
+All Time Best

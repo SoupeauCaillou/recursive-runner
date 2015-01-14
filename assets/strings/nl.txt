@@ -1,0 +1,20 @@
+Voel de scherm om te spelen
+Voel de scherm om opnieuw te spelen
+Hoe spel je ? (Voel de scherm om door te gaan)
+This is you
+Druk op de scherm om te springen
+Zet de licht aan om punten te scoren
+Do longer press to make higher jumps
+Running ends where the screen does
+Respawned again, are you
+Your previous self is repeating its fate
+Avoid yourself, who will continue scoring points!
+Try for the best score with and against 10 instances of yourself!
+Succes!
+Best
+points
+About us
+Support us
+Last Game
+Today's Best
+All Time Best

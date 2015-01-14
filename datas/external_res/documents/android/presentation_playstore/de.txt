@@ -5,8 +5,8 @@ Du bist es gewohnt solange zu spielen bis du auf irgendetwas triffst?
 Du wirst 90 Sekunden spielen!
 Du bist es gewohnt einen rennenden Helden zu spielen? Wir geben dir 10 von ihm!
 Der Trick?
-You control them one at a time, when done with one, it will be stuck in a loop scoring points for you.
+Du kontrollierst immer nur einen. Wenn du mit diesem fertig bist, steckt dieser in einer Schleife und sammelt Punkte für dich. 
 The challenge is to score with your current herowhile avoiding your previous doppelgangers - if you hit one of them he will disappear forever.
-Several achievements to earn and a leaderboard to climb!
-There are no ads in the game, since we like you, and that you dont like ads that dont like you
-We hope you like avoiding recursivly running into a phantom-mime.
+Verbuche mehrere Erfolge und klettere das Leaderboard rauf!
+Es gibt keine Werbung im Spiel, da wir Dich lieben, und dass Du Werbung hasst, die Dich nicht mag
+Wir hoffen, dass Du die Vermeidung des rekursiv Laufens einer Pantomime magst.

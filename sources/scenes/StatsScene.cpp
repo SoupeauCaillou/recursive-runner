@@ -216,15 +216,15 @@ public:
 
         /* Columns header */
         const std::string form = "\n%d";
-        createTextWithValue(game->statistics.lastGame->score, game->gameThreadContext->localizeAPI->text("last_game") + form, P(0, 0), colors[2]);
+        createTextWithValue(game->statistics.lastGame->score, game->gameThreadContext->localizeAPI->text("Last Game") + form, P(0, 0), colors[2]);
         TEXT(texts.back())->positioning = 0.5;
         TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
         TRANSFORM(texts.back())->size.x = cellSize.x;
-        createTextWithValue(game->statistics.sessionBest->score, game->gameThreadContext->localizeAPI->text("today_best") + form, P(0, 1), colors[1]);
+        createTextWithValue(game->statistics.sessionBest->score, game->gameThreadContext->localizeAPI->text("Today's Best") + form, P(0, 1), colors[1]);
         TEXT(texts.back())->positioning = 0.5;
         TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
         TRANSFORM(texts.back())->size.x = cellSize.x;
-        createTextWithValue(game->statistics.allTimeBest->score, game->gameThreadContext->localizeAPI->text("all_time_best") + form, P(0, 2), colors[0]);
+        createTextWithValue(game->statistics.allTimeBest->score, game->gameThreadContext->localizeAPI->text("All Time Best") + form, P(0, 2), colors[0]);
         TEXT(texts.back())->positioning = 0.5;
         TEXT(texts.back())->flags |= TextComponent::MultiLineBit;
         TRANSFORM(texts.back())->size.x = cellSize.x;

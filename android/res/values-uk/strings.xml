@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="tap_screen_to_start">"Натисніть на екран, щоб почати"</string>
-  <string name="tap_screen_to_restart">"натисніть на екран, щоб почати сочатку"</string>
-  <string name="how_to_play">"Як грати? (натисніть для продовження)"</string>
-  <string name="tap_jump">"Натисніть на екран, щоб стрибнути"</string>
-  <string name="turn_on">"Увімкніть світло, щоб отримати очки"</string>
-  <string name="longer_press">"Тривале натискання зумовить вищий прижок"</string>
-  <string name="good_luck">"Щасти!"</string>
-  <string name="Best">"Кращий"</string>
-  <string name="points">"очків"</string>
+  <string name="tap_screen_to_start">Натисніть на екран, щоб почати</string>
+  <string name="tap_screen_to_restart">натисніть на екран, щоб почати сочатку</string>
+  <string name="how_to_play">Як грати? (натисніть для продовження)</string>
+  <string name="tap_jump">Натисніть на екран, щоб стрибнути</string>
+  <string name="turn_on">Увімкніть світло, щоб отримати очки</string>
+  <string name="longer_press">Тривале натискання зумовить вищий прижок</string>
+  <string name="good_luck">Щасти!</string>
+  <string name="Best">Кращий</string>
+  <string name="points">очків</string>
 </resources>

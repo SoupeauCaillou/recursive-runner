@@ -1,20 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="tap_screen_to_start">"Začít tapnutím na obrazovku"</string>
-  <string name="tap_screen_to_restart">"Restartovat tapnutím na obrazovku"</string>
-  <string name="how_to_play">"Jak hrát? (pokračovat tapnutím)"</string>
-  <string name="this_is_you">"To jsi ty"</string>
-  <string name="tap_jump">"Tapnutím na obrazovku skočíš"</string>
-  <string name="turn_on">"Body sbíráš zapnutím světel"</string>
-  <string name="longer_press">"Pro vyšší skoky podrž déle"</string>
-  <string name="run_edge">"Běh končí na konci obrazovky"</string>
-  <string name="new_hero">"A je tu další kolo"</string>
-  <string name="previous_hero_replay">"Tvé předchozí já opakuje svůj osud"</string>
-  <string name="avoid_him">"Vyhni se sobě, kdo bude pokračovat ve sbírání bodů!"</string>
-  <string name="ten_heroes">"Zkus dosáhnout nejlepších výsledků společně, nebo proti svým 10 avatarům!"</string>
-  <string name="good_luck">"Hodně štěstí!"</string>
-  <string name="Best">"Nejlepší"</string>
-  <string name="points">"body"</string>
-  <string name="about_us">"O nás"</string>
-  <string name="support_us">"Podpořte nás"</string>
+  <string name="tap_screen_to_start">Začít tapnutím na obrazovku</string>
+  <string name="tap_screen_to_restart">Restartovat tapnutím na obrazovku</string>
+  <string name="how_to_play">Jak hrát? (pokračovat tapnutím)</string>
+  <string name="this_is_you">To jsi ty</string>
+  <string name="tap_jump">Tapnutím na obrazovku skočíš</string>
+  <string name="turn_on">Body sbíráš zapnutím světel</string>
+  <string name="longer_press">Pro vyšší skoky podrž déle</string>
+  <string name="run_edge">Běh končí na konci obrazovky</string>
+  <string name="new_hero">A je tu další kolo</string>
+  <string name="previous_hero_replay">Tvé předchozí já opakuje svůj osud</string>
+  <string name="avoid_him">Vyhni se sobě, kdo bude pokračovat ve sbírání bodů!</string>
+  <string name="ten_heroes">Zkus dosáhnout nejlepších výsledků společně, nebo proti svým 10 avatarům!</string>
+  <string name="good_luck">Hodně štěstí!</string>
+  <string name="Best">Nejlepší</string>
+  <string name="points">body</string>
+  <string name="about_us">O nás</string>
+  <string name="support_us">Podpořte nás</string>
 </resources>

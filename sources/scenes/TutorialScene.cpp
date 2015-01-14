@@ -278,7 +278,7 @@ public:
 
         PlacementHelper::ScreenSize.x = 20;
         PlacementHelper::GimpSize.x = 1280;
-        TEXT(entities.text)->text = game->gameThreadContext->localizeAPI->text("how_to_play");
+        TEXT(entities.text)->text = game->gameThreadContext->localizeAPI->text("How to play? (tap to continue)");
         TEXT(entities.text)->show = false;
 
         BUTTON(game->muteBtn)->enabled = false;
@@ -290,7 +290,7 @@ public:
             new TutorialStep(
                 Tutorial::Title,
                 [] () { return true; },
-                "how_to_play"));
+                "How to play? (tap to continue)"));
         // 2. Hero
         tutorialStateMachine.registerState(
             Tutorial::IntroduceHero,
@@ -298,7 +298,7 @@ public:
                 Tutorial::IntroduceHero,
                 [session] () { return (TRANSFORM(session->currentRunner)->position.x >= -23); },
                 [] () {},
-                "this_is_you",
+                "This is you",
                 0,
                 glm::vec2(0.5, 1)));
         // 3. Small Jump
@@ -312,14 +312,14 @@ public:
                     rc->jumpTimes.push_back(rc->elapsed);
                     rc->jumpDurations.push_back(0.06);
                 },
-                "tap_jump"));
+                "Tap the screen to jump"));
         // 4. ScorePoints
         tutorialStateMachine.registerState(
             Tutorial::ScorePoints,
             new TutorialStep(
                 Tutorial::ScorePoints,
                 [session] () { return (PHYSICS(session->currentRunner)->linearVelocity.y < 0); },
-                "turn_on"));
+                "Turn on lights to score points"));
         // 5. BigJump
         tutorialStateMachine.registerState(
             Tutorial::BigJump,
@@ -331,21 +331,21 @@ public:
                     rc->jumpTimes.push_back(rc->elapsed);
                     rc->jumpDurations.push_back(RunnerSystem::MaxJumpDuration);
                 },
-                "longer_press"));
+                "Do longer press to make higher jumps"));
         // 6. RunTilTheEdge
         tutorialStateMachine.registerState(
             Tutorial::RunTilTheEdge,
             new TutorialStep(
                 Tutorial::RunTilTheEdge,
                 [session] () { return (TRANSFORM(session->currentRunner)->position.x >= 29); },
-                "run_edge"));
+                "Running ends where the screen does"));
         // 7. NewHero
         tutorialStateMachine.registerState(
             Tutorial::NewHero,
             new TutorialStep(
                 Tutorial::NewHero,
                 [session] () { return session->runners.size() == 2 && (TRANSFORM(session->runners[1])->position.x <= 29); },
-                "new_hero",
+                "Respawned again, are you",
                 1,
                 glm::vec2(-0.5, 1)));
         // 8. MeetYourself
@@ -358,7 +358,7 @@ public:
                         TRANSFORM(session->runners[0])->position,
                         TRANSFORM(session->runners[1])->position) < theRenderingSystem.screenW * 0.7);
                 },
-                "previous_hero_replay",
+                "Your previous self is repeating its fate",
                 0,
                 glm::vec2(0.5, 1)));
         // 9. AvoidYourself
