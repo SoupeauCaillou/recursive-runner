@@ -120,7 +120,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
         ///----------------------------------------------------------------------------//
         ///--------------------- ENTER SECTION ----------------------------------------//
         ///----------------------------------------------------------------------------//
-        void onPreEnter(Scene::Enum from) {
+        void onPreEnter(Scene::Enum from) override {
             // activate animation
             ADSR(titleGroup)->active = ADSR(subtitle)->active = true;
 
@@ -175,7 +175,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
 
         }
 
-        bool updatePreEnter(Scene::Enum, float) {
+        bool updatePreEnter(Scene::Enum, float) override {
             updateTitleSubTitle(titleGroup, subtitle);
             // check if adsr is complete
             ADSRComponent* adsr = ADSR(titleGroup);
@@ -194,7 +194,7 @@ class MenuScene : public StateHandler<Scene::Enum> {
         }
 
 
-        void onEnter(Scene::Enum) {
+        void onEnter(Scene::Enum) override {
             game->endGame(game->statistics.lastGame);
             if (game->statisticsAvailable()) {
                 BUTTON(game->statman)->enabled = true;
@@ -223,7 +223,7 @@ void backgroundUpdate(float) {
 }
 #endif
 
-        Scene::Enum update(float) {
+        Scene::Enum update(float) override {
 #if SAC_BENCHMARK_MODE
             return Scene::Game;
 #endif
@@ -308,7 +308,7 @@ void backgroundUpdate(float) {
 ///----------------------------------------------------------------------------//
 ///--------------------- EXIT SECTION -----------------------------------------//
 ///----------------------------------------------------------------------------//
-        void onPreExit(Scene::Enum nextScene ) {
+        void onPreExit(Scene::Enum nextScene) override {
             // stop menu music
             MUSIC(title)->control = MusicControl::Stop;
 
@@ -323,7 +323,7 @@ void backgroundUpdate(float) {
             ADSR(titleGroup)->active = ADSR(subtitle)->active = false;
         }
 
-        bool updatePreExit(Scene::Enum nextScene, float) {
+        bool updatePreExit(Scene::Enum nextScene, float) override {
             updateTitleSubTitle(titleGroup, subtitle);
             const ADSRComponent* adsr = ADSR(titleGroup);
             float progress = (adsr->value - adsr->attackValue) /
@@ -343,7 +343,7 @@ void backgroundUpdate(float) {
             return (adsr->value >= adsr->idleValue);
         }
 
-        void onExit(Scene::Enum nextScene) {
+        void onExit(Scene::Enum nextScene) override {
             for (int i=0; i<(int)Button::Count; i++) {
                 RENDERING(buttons[i])->show = false;
             }

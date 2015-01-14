@@ -61,7 +61,7 @@ class RateScene : public StateHandler<Scene::Enum> {
 #endif
       }
 
-      void onEnter(Scene::Enum) {
+      void onEnter(Scene::Enum) override {
          TEXT(rateText)->show =
          TEXT(btnNow)->show =
          BUTTON(btnNow)->enabled =
@@ -71,7 +71,7 @@ class RateScene : public StateHandler<Scene::Enum> {
          BUTTON(btnNever)->enabled = true;
       }
 
-      Scene::Enum update(float) {
+      Scene::Enum update(float) override {
          if (BUTTON(btnNow)->clicked) {
             game->gameThreadContext->communicationAPI->rateItNow();
             return Scene::Menu;
@@ -86,7 +86,7 @@ class RateScene : public StateHandler<Scene::Enum> {
          return Scene::Rate;
       }
 
-      void onPreExit(Scene::Enum) {
+      void onPreExit(Scene::Enum) override {
          TEXT(rateText)->show =
          TEXT(btnNow)->show =
          BUTTON(btnNow)->enabled =

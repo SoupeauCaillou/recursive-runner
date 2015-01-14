@@ -66,7 +66,7 @@ class PauseScene : public SceneState<Scene::Enum> {
         return b && ADSR(game->scorePanel)->value <= ADSR(game->scorePanel)->idleValue;
     }
 
-    void onEnter(Scene::Enum f) {
+    void onEnter(Scene::Enum f) override {
         SceneState<Scene::Enum>::onEnter(f);
 
         const SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
@@ -93,7 +93,7 @@ class PauseScene : public SceneState<Scene::Enum> {
         }
     }
 
-    Scene::Enum update(float) {
+    Scene::Enum update(float) override {
         RENDERING(entities[HASH("pause/reprendre", 0x6f650d56)])->color = BUTTON(entities[HASH("pause/reprendre", 0x6f650d56)])->mouseOver ? Color("gray") : Color();
         RENDERING(entities[HASH("pause/recommencer", 0x1829bb20)])->color = BUTTON(entities[HASH("pause/recommencer", 0x1829bb20)])->mouseOver ? Color("gray") : Color();
         RENDERING(entities[HASH("pause/fermer", 0x1375e49c)])->color = BUTTON(entities[HASH("pause/fermer", 0x1375e49c)])->mouseOver ? Color("gray") : Color();
@@ -112,7 +112,7 @@ class PauseScene : public SceneState<Scene::Enum> {
         return Scene::Pause;
     }
 
-    void onPreExit(Scene::Enum f) {
+    void onPreExit(Scene::Enum f) override {
         SceneState<Scene::Enum>::onPreExit(f);
 
         ADSR(game->scorePanel)->active = false;
@@ -123,7 +123,7 @@ class PauseScene : public SceneState<Scene::Enum> {
         return b && ADSR(game->scorePanel)->value <= ADSR(game->scorePanel)->idleValue;
     }
 
-    void onExit(Scene::Enum to) {
+    void onExit(Scene::Enum to) override {
         SceneState<Scene::Enum>::onExit(to);
         TRANSFORM(game->scorePanel)->position.x = 0;
         TEXT(game->scoreText)->text = "";

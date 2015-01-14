@@ -111,13 +111,13 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
     }
 
     // Update game until entering condition is met (e.g : runner is at x = 12)
-    virtual bool updatePreEnter(Tutorial::Enum , float dt) {
+    virtual bool updatePreEnter(Tutorial::Enum , float dt) override {
         gameScene->update(dt);
         return enterCondition();
     }
 
     // Setup text/arrow and everything when entering the state
-    virtual void onEnter(Tutorial::Enum ) {
+    virtual void onEnter(Tutorial::Enum ) override {
         LOGV(1, "Entering tutorial state: " << self);
         // change text
         setupText(textId);
@@ -139,7 +139,7 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
     }
 
     // Loop until click occurs
-    Tutorial::Enum update(float ) {
+    Tutorial::Enum update(float ) override {
         if (theTouchInputManager.hasClicked()) {
             return (Tutorial::Enum)(self + 1);
         } else {
@@ -148,7 +148,7 @@ struct TutorialStep : public StateHandler<Tutorial::Enum> {
     }
 
     // Prepare intermediate state (blinking text, no arrow)
-    virtual void onPreExit(Tutorial::Enum ) {
+    virtual void onPreExit(Tutorial::Enum ) override {
         LOGV(1, "Will exit tutorial state: " << self);
         // setup blinking text
         TEXT(entities->text)->show = true;
@@ -227,7 +227,7 @@ public:
     ///----------------------------------------------------------------------------//
     ///--------------------- ENTER SECTION ----------------------------------------//
     ///----------------------------------------------------------------------------//
-    void onPreEnter(Scene::Enum) {
+    void onPreEnter(Scene::Enum) override {
         createEntities();
 
         bool isMuted = theMusicSystem.isMuted();
@@ -405,7 +405,7 @@ public:
         }
     }
 
-    bool updatePreEnter(Scene::Enum from, float dt) {
+    bool updatePreEnter(Scene::Enum from, float dt) override {
         bool gameCanEnter = gameScene.updatePreEnter(from, dt);
 
         if (TimeUtil::GetTime() - waitBeforeEnterExit < ADSR(titleGroup)->attackTiming) {
@@ -421,7 +421,7 @@ public:
         return (adsr->value == adsr->sustainValue) && gameCanEnter;
     }
 
-    void onEnter(Scene::Enum) {
+    void onEnter(Scene::Enum) override {
         SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
         session->userInputEnabled = false;
         TEXT(entities.text)->show = true;
@@ -440,7 +440,7 @@ public:
     ///--------------------- UPDATE SECTION ---------------------------------------//
     ///----------------------------------------------------------------------------//
 
-    Scene::Enum update(float dt) {
+    Scene::Enum update(float dt) override {
         tutorialStateMachine.update(dt);
         if (tutorialStateMachine.getCurrentState() == Tutorial::Finished)
             return Scene::Menu;
@@ -451,7 +451,7 @@ public:
     ///----------------------------------------------------------------------------//
     ///--------------------- EXIT SECTION -----------------------------------------//
     ///----------------------------------------------------------------------------//
-    void onPreExit(Scene::Enum to) {
+    void onPreExit(Scene::Enum to) override {
         SessionComponent* session = SESSION(theSessionSystem.RetrieveAllEntityWithComponent().front());
         session->userInputEnabled = false;
         RENDERING(hideText)->show = false;
@@ -467,7 +467,7 @@ public:
 
     }
 
-    bool updatePreExit(Scene::Enum to, float dt) {
+    bool updatePreExit(Scene::Enum to, float dt) override {
 
         ADSRComponent* adsr = ADSR(titleGroup);
         adsr->active = false;
@@ -479,7 +479,7 @@ public:
         return gameScene.updatePreExit(to, dt);
     }
 
-    void onExit(Scene::Enum) {
+    void onExit(Scene::Enum) override {
         RENDERING(title)->show = false;
 
         auto hdl = tutorialStateMachine.getHandlers();
