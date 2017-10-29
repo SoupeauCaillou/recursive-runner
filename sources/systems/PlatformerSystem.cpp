@@ -24,6 +24,7 @@
 #include "systems/RenderingSystem.h"
 #include "systems/RunnerSystem.h"
 #include "util/IntersectionUtil.h"
+#include "util/SerializerProperty.h"
 #include <glm/gtx/rotate_vector.hpp>
 
 static bool onPlatform(const glm::vec2& position, float yEpsilon, Entity platform);

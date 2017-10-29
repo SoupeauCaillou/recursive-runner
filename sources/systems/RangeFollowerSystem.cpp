@@ -19,6 +19,7 @@
 */
 #include "RangeFollowerSystem.h"
 #include "systems/TransformationSystem.h"
+#include "util/SerializerProperty.h"
 
 INSTANCE_IMPL(RangeFollowerSystem);
 

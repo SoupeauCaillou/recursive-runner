@@ -94,9 +94,9 @@ class PauseScene : public SceneState<Scene::Enum> {
     }
 
     Scene::Enum update(float) override {
-        RENDERING(entities[HASH("pause/reprendre", 0x6f650d56)])->color = BUTTON(entities[HASH("pause/reprendre", 0x6f650d56)])->mouseOver ? Color("gray") : Color();
-        RENDERING(entities[HASH("pause/recommencer", 0x1829bb20)])->color = BUTTON(entities[HASH("pause/recommencer", 0x1829bb20)])->mouseOver ? Color("gray") : Color();
-        RENDERING(entities[HASH("pause/fermer", 0x1375e49c)])->color = BUTTON(entities[HASH("pause/fermer", 0x1375e49c)])->mouseOver ? Color("gray") : Color();
+        RENDERING(entities[HASH("pause/reprendre", 0x6f650d56)])->color = BUTTON(entities[HASH("pause/reprendre", 0x6f650d56)])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
+        RENDERING(entities[HASH("pause/recommencer", 0x1829bb20)])->color = BUTTON(entities[HASH("pause/recommencer", 0x1829bb20)])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
+        RENDERING(entities[HASH("pause/fermer", 0x1375e49c)])->color = BUTTON(entities[HASH("pause/fermer", 0x1375e49c)])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
 
         if (BUTTON(entities[HASH("pause/reprendre", 0x6f650d56)])->clicked) {
             return Scene::Game;

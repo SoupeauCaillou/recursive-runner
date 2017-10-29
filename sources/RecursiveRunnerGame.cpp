@@ -120,9 +120,9 @@ bool RecursiveRunnerGame::wantsAPI(ContextAPI::Enum api) const {
     }
 }
 
-void RecursiveRunnerGame::sacInit() {
+void RecursiveRunnerGame::sacInitFromGameThread() {
     LOGI("SAC engine initialisation begins:");
-    Game::sacInit();
+    Game::sacInitFromGameThread();
 
     LOGI("\t- Create RecursiveRunner specific systems...");
     RunnerSystem::CreateInstance();
@@ -452,7 +452,7 @@ void RecursiveRunnerGame::decor() {
 }
 
 void RecursiveRunnerGame::initGame() {
-    Color::nameColor(Color(0.8, 0.8, 0.8), "gray");
+    Color::nameColor(Color(0.8, 0.8, 0.8), HASH("gray", 0xd8a86c30));
     baseLine = PlacementHelper::GimpYToScreen(800);
     leftMostCameraPos =
         glm::vec2(-PlacementHelper::ScreenSize.x * (param::LevelSize * 0.5 - 0.5),
@@ -643,7 +643,7 @@ void RecursiveRunnerGame::tick(float dt) {
         ignoreClick = true;
     } else {
         ignoreClick = BUTTON(muteBtn)->mouseOver;
-        RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color("gray") : Color();
+        RENDERING(muteBtn)->color = BUTTON(muteBtn)->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
     }
 
     {

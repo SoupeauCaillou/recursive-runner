@@ -19,6 +19,7 @@
 */
 #include "PlayerSystem.h"
 #include "RunnerSystem.h"
+#include "util/SerializerProperty.h"
 
 INSTANCE_IMPL(PlayerSystem);
 

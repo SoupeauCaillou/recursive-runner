@@ -26,6 +26,7 @@
 #include "systems/AnchorSystem.h"
 #include "systems/AutoDestroySystem.h"
 #include "util/IntersectionUtil.h"
+#include "util/SerializerProperty.h"
 
 #include "../RecursiveRunnerGame.h"
 std::map<TextureRef, CollisionZone> texture2Collision;

@@ -71,7 +71,7 @@ class RecursiveRunnerGame : public Game {
       RecursiveRunnerGame();
       ~RecursiveRunnerGame();
       bool wantsAPI(ContextAPI::Enum api) const override;
-      void sacInit() override;
+      void sacInitFromGameThread() override;
       void init(const uint8_t* in = 0, int size = 0) override;
       void quickInit() override;
       void tick(float dt) override;

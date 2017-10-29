@@ -18,6 +18,7 @@
     along with RecursiveRunner.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "SessionSystem.h"
+#include "util/SerializerProperty.h"
 
 INSTANCE_IMPL(SessionSystem);
 

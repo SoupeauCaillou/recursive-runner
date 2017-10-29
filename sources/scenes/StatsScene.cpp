@@ -391,7 +391,7 @@ public:
     ///----------------------------------------------------------------------------//
 
     Scene::Enum update(float) override {
-        RENDERING(buttons[Button::Back])->color = BUTTON(buttons[Button::Back])->mouseOver ? Color("gray") : Color();
+        RENDERING(buttons[Button::Back])->color = BUTTON(buttons[Button::Back])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
 
         for (auto b: bars) {
             float height = ADSR(b)->value;

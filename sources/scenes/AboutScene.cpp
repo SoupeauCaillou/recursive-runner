@@ -129,9 +129,9 @@ public:
     ///----------------------------------------------------------------------------//
 
     Scene::Enum update(float) override {
-        RENDERING(buttons[Button::Back])->color = BUTTON(buttons[Button::Back])->mouseOver ? Color("gray") : Color();
-        RENDERING(buttons[Button::Flattr])->color = BUTTON(buttons[Button::Flattr])->mouseOver ? Color("gray") : Color();
-        RENDERING(buttons[Button::Web])->color = BUTTON(buttons[Button::Web])->mouseOver ? Color("gray") : Color();
+        RENDERING(buttons[Button::Back])->color = BUTTON(buttons[Button::Back])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
+        RENDERING(buttons[Button::Flattr])->color = BUTTON(buttons[Button::Flattr])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
+        RENDERING(buttons[Button::Web])->color = BUTTON(buttons[Button::Web])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
 
         if (BUTTON(buttons[Button::Flattr])->clicked) {
             std::string url = game->gameThreadContext->localizeAPI->text("donate_flattr_url");

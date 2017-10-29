@@ -25,26 +25,27 @@
 
 #pragma once
 
+#include "api/LocalizeAPI.h"
+
 #include "base/Entity.h"
 #include "base/PlacementHelper.h"
-#include "base/TouchInputManager.h"
 #include "base/StateMachine.inl"
-
-#include "api/LocalizeAPI.h"
+#include "base/TimeUtil.h"
+#include "base/TouchInputManager.h"
 
 #include "scenes/Scenes.h"
 
-#include "systems/SessionSystem.h"
-#include "systems/AnchorSystem.h"
-#include "systems/RenderingSystem.h"
-#include "systems/TransformationSystem.h"
-#include "systems/AnimationSystem.h"
-#include "systems/PhysicsSystem.h"
 #include "systems/ADSRSystem.h"
-#include "systems/MusicSystem.h"
+#include "systems/AnchorSystem.h"
+#include "systems/AnimationSystem.h"
 #include "systems/ButtonSystem.h"
+#include "systems/MusicSystem.h"
+#include "systems/PhysicsSystem.h"
+#include "systems/RenderingSystem.h"
 #include "systems/RunnerSystem.h"
+#include "systems/SessionSystem.h"
 #include "systems/TextSystem.h"
+#include "systems/TransformationSystem.h"
 
 #include "RecursiveRunnerGame.h"
 
@@ -376,21 +377,21 @@ public:
                     rc->jumpTimes.push_back(rc->elapsed);
                     rc->jumpDurations.push_back(RunnerSystem::MaxJumpDuration * 0.8);
                 },
-                "avoid_him"));
+                "Avoid yourself, who will continue scoring points!"));
         // 10. BestScore
         tutorialStateMachine.registerState(
             Tutorial::BestScore,
             new TutorialStep(
                 Tutorial::BestScore,
                 [session] () { return (TRANSFORM(session->currentRunner)->position.x < -15); },
-                "ten_heroes"));
+                "Try for the best score with and against 10 instances of yourself!"));
         // 11. TheEnd
         tutorialStateMachine.registerState(
             Tutorial::TheEnd,
             new TutorialStep(
                 Tutorial::TheEnd,
                 [session] () { return (TRANSFORM(session->currentRunner)->position.x < -29); },
-                "good_luck"));
+                "Good luck!"));
         // 12. Finished
         tutorialStateMachine.registerState(
             Tutorial::Finished,

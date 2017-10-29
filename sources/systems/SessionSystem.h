@@ -19,7 +19,10 @@
 */
 #pragma once
 
+#include "base/Color.h"
 #include "systems/System.h"
+
+class Color;
 
 struct Statistics {
     int score;

@@ -46,8 +46,10 @@
 
 #include "../RecursiveRunnerGame.h"
 #include "../Parameters.h"
+
 #include <glm/gtx/compatibility.hpp>
 #include <cmath>
+#include <iostream>
 
 static Entity addRunnerToPlayer(RecursiveRunnerGame* game, Entity player, PlayerComponent* p, int playerIndex, SessionComponent* sc);
 static void updateSessionTransition(const SessionComponent* session, float progress);
@@ -146,7 +148,7 @@ public:
 			if (BUTTON(pauseButton)->clicked) {
 				return Scene::Pause;
 			}
-			RENDERING(pauseButton)->color = BUTTON(pauseButton)->mouseOver ? Color("gray") : Color();
+			RENDERING(pauseButton)->color = BUTTON(pauseButton)->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
 
 			// Manage piano's volume depending on the distance from the current runner to the piano
 			double distanceAbs = glm::abs(TRANSFORM(sc->currentRunner)->position.x -

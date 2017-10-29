@@ -22,6 +22,7 @@
 #include "systems/RenderingSystem.h"
 #include "RunnerSystem.h"
 #include "util/IntersectionUtil.h"
+#include "util/SerializerProperty.h"
 #include "steering/SteeringBehavior.h"
 #include "base/PlacementHelper.h"
 #include "../Parameters.h"

@@ -276,8 +276,8 @@ void backgroundUpdate(float) {
                 }
                 game->ignoreClick |= BUTTON(game->statman)->mouseOver;
             }
-            RENDERING(buttons[Button::Help])->color = BUTTON(buttons[Button::Help])->mouseOver ? Color("gray") : Color();
-            RENDERING(buttons[Button::About])->color = BUTTON(buttons[Button::About])->mouseOver ? Color("gray") : Color();
+            RENDERING(buttons[Button::Help])->color = BUTTON(buttons[Button::Help])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
+            RENDERING(buttons[Button::About])->color = BUTTON(buttons[Button::About])->mouseOver ? Color(HASH("gray", 0xd8a86c30)) : Color();
 
             // Start game? (tutorial if no game done)
             if (!theTouchInputManager.isTouched(0) && theTouchInputManager.wasTouched(0) && !game->ignoreClick) {
